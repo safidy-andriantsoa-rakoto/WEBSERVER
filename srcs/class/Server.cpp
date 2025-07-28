@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 11:22:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:45:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ void Server::get_request(Request &request, int &_acceptStatus)
 	std::cout << "Find . pos:" << pe << std::endl;
 	ext_file = tmp_ext.erase(0, pe + 1);
 	std::cout << "extension->" << ext_file << std::endl;
-	std::string path = "test/";
+	std::string path = "site/";
 	line.erase(0,1);
 	if (ext_file == "/")
 	{
