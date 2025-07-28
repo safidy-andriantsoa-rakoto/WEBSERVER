@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 11:45:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/28 20:16:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ Server &Server::operator=(Server &other)
         _serverName = other._serverName;
         _root = other._root;
         _location = other._location;
-        _networkSocket = other._networkSocket;
-        _requestList = other._requestList;
     }
     return *this;
 }
@@ -67,27 +65,13 @@ std::string Server::getLocation() const
     return _location;
 }
 
-intVect Server::getNetworkSocket() const
-{
-    return _networkSocket;
-}
-
-RequestList Server::getRequestList() const
-{
-    return _requestList;
-}
-
-void Server::addRequest(Request request)
-{
-    _requestList.push_back(request);
-}
-
 int Server::get_fdClient()
 {
     return (this->_fdClient);
 }
 
-int Server::creat_socket()
+//Afaka atao throw
+int Server::create_socket()
 {
     this->_fdSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (this->_fdSocket == -1)
@@ -106,6 +90,7 @@ void Server::configure_sockaddrin(int port)
     this->_size_sockaddrin = sizeof(_sockaddrIn);
 }
 
+//Afaka atao throw
 int Server::link_socket_adress()
 {
     int     status;
@@ -119,6 +104,7 @@ int Server::link_socket_adress()
     return (1);
 }
 
+//Afaka atao throw
 int Server::wait_connexion_from_client()
 {
     this->_fdClient = listen(this->_fdSocket, _NB_CLIENT);
@@ -131,6 +117,7 @@ int Server::wait_connexion_from_client()
     return (1);
 }
 
+//Afaka atao throw
 int Server::accept_client_connexion()
 {
     this->_fdClient = accept(_fdSocket, (sockaddr *)&(this->_sockaddrIn), (socklen_t *)&(this->_size_sockaddrin));
@@ -142,6 +129,7 @@ int Server::accept_client_connexion()
     return (1);
 }
 
+//Afaka atao throw
 std::string Server::get_client_request()
 {
     char response[_BUFFER];

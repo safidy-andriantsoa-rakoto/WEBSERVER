@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   define.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
+/*   Updated: 2025/07/28 20:41:00 by barandri         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef DEFINE_HPP
 # define DEFINE_HPP
 
@@ -11,5 +23,13 @@
 #define CONTENT_TYPE_CSS "Content-Type: text/css\r\n"
 #define CONTENT_LENGTH "Content-Length: "
 #define _EMPTY_LINE "\n\r\n"
+
+#ifndef _NB_CLIENT
+#define _NB_CLIENT 10
+#endif
+
+#ifndef _BUFFER
+#define _BUFFER 1024
+#endif
 
 #endif

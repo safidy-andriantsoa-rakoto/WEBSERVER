@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/07/28 11:41:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/28 21:02:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void    launchServer()
 {
 	Server server;
 
-    if (!server.creat_socket())
+    if (!server.create_socket())
         return ;
     server.configure_sockaddrin(2003);
     if (!server.link_socket_adress())
@@ -33,12 +33,14 @@ void    launchServer()
 
             std::cout << "Connected!" << std::endl;
             clientRequest = server.get_client_request();
-			parseRequest(clientRequest, request);
             if (clientRequest.length())
             {	
+                request.parseRequest(clientRequest);
                 fd = server.get_fdClient();
 				if (request.getMethod() == "GET")
                 	server.get_request(request, fd);
+                else
+                    std::cout << request.getMethod() << std::endl;
             }
             close(server.get_fdClient());
         }

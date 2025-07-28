@@ -6,14 +6,14 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 09:16:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/28 20:41:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 
-#include "classUtils.hpp"
+#include "general.hpp"
 
 class Request
 {
@@ -45,6 +45,9 @@ class Request
 		void    addHeader(std::string & field, std::string & content);
 
 		void	displayRequest() const;
+
+		void	getRequestBody(std::string const & requeststring, size_t const & pos);
+		void	parseRequest(std::string const & requestString);
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 10:42:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/28 21:04:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ stringVect	splitString(std::string const & target, std::string const & sep)
 	return result;
 }
 
-//Safidy function
 void split_line(std::vector<std::string> &_data, std::string line)
 {
 	size_t pos = -1;
@@ -100,7 +99,6 @@ void split_line(std::vector<std::string> &_data, std::string line)
 	_data.push_back(line);
 }
 
-//Safidy function (get_index_content)
 std::string readFileToString(std::string _path)
 {
 	std::fstream index;
@@ -120,22 +118,6 @@ std::string response_generator(std::string response, std::string type, std::stri
     out << "Content-Length: " << content.size() << "\n\r\n";// index.html -> string -> omena ny size 
     out << content << "\r\n";
     return (out.str());
-}
-
-std::string get_index_content(std::string _path)
-{
-    std::fstream index;
-    index.open(_path.c_str());
-    if (index.is_open())
-    {
-        std::string _index_value((std::istreambuf_iterator<char>(index)), std::istreambuf_iterator<char>());
-        index.close();
-        return (_index_value);
-    }
-    index.open("404.html");
-    std::string _index_value((std::istreambuf_iterator<char>(index)), std::istreambuf_iterator<char>());
-    index.close();
-    return (_index_value);
 }
 
 void send_value(int &_acceptStatus, std::string &_send_content)

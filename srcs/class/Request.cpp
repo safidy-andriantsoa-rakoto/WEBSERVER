@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 09:16:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/28 20:59:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,4 +99,50 @@ void Request::displayRequest() const
 	if (_body.size())
 		std::cout << std::endl << "==== Body ===" << std::endl << _body << std::endl;
 	std::cout << "==============END OF REQUEST PARSING=============" << std::endl;
+}
+
+void	Request::getRequestBody(std::string const & requeststring, size_t const & pos)
+{
+	int			length;
+	std::string		content;
+	stringMapIt	it;
+
+	length = 0;
+	it = _header.find("Content-Length");
+	if (it == _header.end())
+		return ;
+	length = atoi((*it).second.c_str());
+	content = requeststring.substr(pos, static_cast<size_t>(length));
+	//Length error management to see
+	_body = content;
+}
+
+void	Request::parseRequest(std::string const & requeststring)
+{
+	size_t		pos;
+	size_t		startPos;
+	std::string	sep = "\r\n";
+	std::string	line;
+	stringVect	bodyVect;
+
+	startPos = 0;
+	pos = requeststring.find(sep, startPos);
+	if (pos == std::string::npos)
+		throw std::runtime_error("No request line found");
+	line = requeststring.substr(startPos, pos - startPos);
+	this->setRequestLine(line);
+	startPos = pos + sep.size();
+	while (pos != std::string::npos)
+	{
+		pos = requeststring.find(sep, startPos);
+		if (pos == startPos)
+			break ;
+		line = requeststring.substr(startPos, pos - startPos);
+		bodyVect = strictSplit(line, ": ");
+		this->addHeader(bodyVect[0], bodyVect[1]);
+		startPos = pos + sep.size();
+		bodyVect.clear();
+	}
+	this->getRequestBody(requeststring, pos + sep.size());
+	this->displayRequest();
 }

@@ -17,7 +17,7 @@ UTILS_DIR = utils/
 UTILS = utils.cpp
 
 SERV_DIR = server/
-SERV = server.cpp parseRequest.cpp
+SERV = launchServer.cpp
 
 CLASS = Server.cpp Request.cpp
 

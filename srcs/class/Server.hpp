@@ -6,46 +6,31 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 11:17:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/28 20:41:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-#include "classUtils.hpp"
+#include "general.hpp"
 #include "Request.hpp"
-
-typedef std::list<Request>  RequestList;
-typedef RequestList::iterator	itRequestList;
-
-
-#ifndef _NB_CLIENT
-#define _NB_CLIENT 10
-#endif
-
-#ifndef _BUFFER
-#define _BUFFER 1024
-#endif
 
 class Server
 {
 	private:
 	// From Config file (need to review attributes)
-		std::string	_port;
-		std::string	_host;
-		std::string	_serverName;
-		std::string	_root;
-		std::string	_location;
+		std::string			_port;
+		std::string			_host;
+		std::string			_serverName;
+		std::string			_root;
+		std::string			_location;
 
-	// For server operation
-		intVect		_networkSocket;
-		RequestList	_requestList;
-	
-	    int     _fdSocket;
-        int     _fdClient;
-        size_t  _size_sockaddrin;
-        struct  sockaddr_in _sockaddrIn;
+	// For socket
+	    int     			_fdSocket;
+        int     			_fdClient;
+        size_t  			_size_sockaddrin;
+        struct  sockaddr_in	_sockaddrIn;
 
 	public:
 		Server();
@@ -59,19 +44,16 @@ class Server
 		std::string getRoot() const;
 		std::string getLocation() const;
 
-		intVect 	getNetworkSocket() const;
-		RequestList	getRequestList() const;
-
-		void		addRequest(Request request);
-
-		int get_fdClient();
-        int creat_socket();
-        void configure_sockaddrin(int port);
-        int link_socket_adress();
-        int wait_connexion_from_client();
-        int accept_client_connexion();
+		int 		get_fdClient();
+        int 		create_socket();
+        void 		configure_sockaddrin(int port);
+        int 		link_socket_adress();
+        int 		wait_connexion_from_client();
+        int 		accept_client_connexion();
         std::string get_client_request();
-		void get_request(Request & request, int &_acceptStatus);
+
+		//HTTP Method
+		void 		get_request(Request & request, int &_acceptStatus);
 };
 
 #endif
