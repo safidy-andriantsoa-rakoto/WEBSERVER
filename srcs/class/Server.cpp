@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 20:16:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 08:19:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,20 @@ Server &Server::operator=(Server &other)
         _serverName = other._serverName;
         _root = other._root;
         _location = other._location;
+		_fdSocket = other._fdSocket;
+        _fdClient = other._fdClient;
+        _size_sockaddrin = other._size_sockaddrin;
+        _sockaddrIn = other._sockaddrIn;
     }
     return *this;
 }
 
 Server::~Server()
 {
-    if (this->_fdClient != -1)
-        close(this->_fdClient);
-    if (this->_fdSocket != -1)
-        close(this->_fdSocket);
+    if (_fdClient != -1)
+        close(_fdClient);
+    if (_fdSocket != -1)
+        close(_fdSocket);
 }
 
 std::string Server::getPort() const

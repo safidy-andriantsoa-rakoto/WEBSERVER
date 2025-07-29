@@ -14,7 +14,7 @@ CGI_DIR = cgi/
 CGI = cgi.cpp
 
 UTILS_DIR = utils/
-UTILS = utils.cpp
+UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp
 
 SERV_DIR = server/
 SERV = launchServer.cpp

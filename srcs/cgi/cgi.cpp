@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:57 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 08:07:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 08:17:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void    execCgi(std::string const & path, char **envp, int & pid, int & status, 
 	file.open(path.c_str());
 	if (!file.is_open())
 		throw std::runtime_error("File can't be opened");
-	checkExtension(path, FILE_EXT);
+	checkFileExtension(path, FILE_EXT);
 	php = "/usr/bin/php-cgi";
 	exec[0] = const_cast<char * >(php.c_str());
 	exec[1] = const_cast<char * >(path.c_str());

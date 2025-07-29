@@ -6,12 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 21:03:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 08:20:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GENERAL_HPP
 # define GENERAL_HPP
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -49,15 +50,16 @@ int         callCgi(char const **argv, char **envp);
 void	    launchServer();
 
 //Utils
-void        checkExtension(std::string const & fileName, std::string extension);
+void        checkFileExtension(std::string const & fileName, std::string extension);
 void	    printFileContent(std::string const & path);
+std::string	readFileToString(std::string _path);
+
 void	    displayFormatting(std::string const & text, std::string const & title);
 stringVect	strictSplit(std::string const & target, std::string const & sep);
 void	    split_line(std::vector<std::string> &_data, std::string line);
 void	    displayStringPair(stringPair const & pair);
 void	    displayStringMap(stringMap const & map);
 stringVect	splitString(std::string const & target, std::string const & sep);
-std::string	readFileToString(std::string _path);
 
 void        send_value(int &_acceptStatus, std::string &_send_content);
 std::string response_generator(std::string response, std::string type, std::string content);
