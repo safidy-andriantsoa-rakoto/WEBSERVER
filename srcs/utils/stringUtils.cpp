@@ -1,37 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
+/*   stringUtils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 21:04:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 08:13:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-
-void	printFileContent(std::string const & path)
-{
-	std::string		line;
-	std::ifstream	file;
-
-	file.open(path.c_str());
-	if (!file.is_open())
-		return ;
-	while (!file.eof())
-	{
-		std::getline(file, line);
-		std::cout << line << std::endl;
-	}
-}
-
-void    checkExtension(std::string const & fileName, std::string extension)
-{
-	if (fileName.compare(fileName.size() - extension.size(), extension.size(), extension) != 0)
-		throw std::runtime_error("Extension file sent to cgi error");
-}
 
 void	displayFormatting(std::string const & text, std::string const & title)
 {
@@ -99,35 +78,3 @@ void split_line(std::vector<std::string> &_data, std::string line)
 	_data.push_back(line);
 }
 
-std::string readFileToString(std::string _path)
-{
-	std::fstream index;
-
-	index.open(_path.c_str());
-	if (!index.is_open())
-		throw std::runtime_error("File can't be opened");
-	std::string _index_value((std::istreambuf_iterator<char>(index)), std::istreambuf_iterator<char>());
-	return (_index_value);
-}
-
-std::string response_generator(std::string response, std::string type, std::string content)
-{
-    std::stringstream out;
-    out << response;// misy ilay zavatra nangatahin'ilay client
-    out << "Content-Type: " << type << "\r\nAccess-Control-Allow-Origin: *\r\n";// mime text/html
-    out << "Content-Length: " << content.size() << "\n\r\n";// index.html -> string -> omena ny size 
-    out << content << "\r\n";
-    return (out.str());
-}
-
-void send_value(int &_acceptStatus, std::string &_send_content)
-{
-    size_t tb = 0;
-    while (tb < _send_content.size())
-    {
-        size_t _send_request = send(_acceptStatus, _send_content.c_str(), _send_content.size(), 0);
-        if (!_send_request)
-            std::cout << "Error\nSend" << std::endl;
-        tb += _send_request;
-    }
-}
