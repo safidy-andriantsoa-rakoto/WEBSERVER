@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 08:19:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 11:04:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,14 +146,14 @@ std::string Server::get_client_request()
     return (response);
 }
 
-void Server::get_request(Request &request, int &_acceptStatus)
+void Server::get_request(Request & request, Response & response, int &_acceptStatus)
 {
 	std::string ext_file;
 	std::string	line;
 	std::string f_line;
 	std::string tmp_ext;
 	std::string content;
-	std::string response;
+	std::string responseString;
 
 	tmp_ext = request.getRequestTarget();
 	line = tmp_ext;
@@ -165,46 +165,55 @@ void Server::get_request(Request &request, int &_acceptStatus)
 	line.erase(0,1);
 	if (ext_file == "/")
 	{
-		content = readFileToString(path + "index.html"); //Nampiana path
-		std::cout << "CONTENT = " << content << std::endl;
-        response = response_generator("HTTP/1.1 200 OK\r\n", "text/html", content);// line request + content index.html
-		std::cout << "\n" << response << std::endl;
-		send_value(_acceptStatus, response);
+        response.setStatusLine(200, "OK");
+        response.addHeader("Content-Type", "text/html");
+        response.addHeader("Content-Lenght", response.getResponseFile().size());
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.setResponseBody(path + "index.html");
+        responseString = response.responseGenerator(); //Avoaka atao ao @ launchServercpp !!!
+        send_value(_acceptStatus, responseString); //Avoaka atao ao @ launchServercpp !!!
+		std::cout << "\n" << responseString << std::endl;
+
+		// content = readFileToString(path + "index.html");
+		// std::cout << "CONTENT = " << content << std::endl;
+        // response = response_generator("HTTP/1.1 200 OK\r\n", "text/html", content);// line request + content index.html
 	}
 	else if (ext_file == "css" || ext_file == "html" || ext_file == "plain")
 	{
-		std::cout << "aty ee" << std::endl;
 		path += line;
 		content = readFileToString(path);
 		std::string type = "text/";
 		type += ext_file;
-		response = response_generator("HTTP/1.1 200 OK\r\n", type, content);
-		send_value(_acceptStatus, response);
+		responseString = response_generator("HTTP/1.1 200 OK\r\n", type, content);
+		send_value(_acceptStatus, responseString);
 	}
 	else if (ext_file == "js")
 	{
 		path += line;
 		content = readFileToString(path);
-		response = response_generator("HTTP/1.1 200 OK\r\n", "text/javascript", content);
-		send_value(_acceptStatus, response);
+		responseString = response_generator("HTTP/1.1 200 OK\r\n", "text/javascript", content);
+		send_value(_acceptStatus, responseString);
 	}
-	else if (ext_file == "jpg" || ext_file == "png" || ext_file == "jpeg" || ext_file == "ico")
-	{
-		path += line;
-		content = readFileToString(path);
-		std::string ext = "image/";
-		ext += ext_file;
-		response = response_generator("HTTP/1.1 200 OK\r\n", ext, content);
-		send_value(_acceptStatus, response);
-	}
+    else if (ext_file == "jpg" || ext_file == "png" || ext_file == "jpeg" || ext_file == "ico" || ext_file == "svg")
+    {
+        path += line[1];
+        content = readFileToString(path);
+        std::string ext = "image/";
+        if (ext_file == "svg")
+            ext += "svg+xml";  
+        else
+            ext += ext_file;
+        responseString = response_generator("HTTP/1.1 200 OK\r\n", ext, content);
+        send_value(_acceptStatus, responseString);
+    }
 	else if (ext_file == "woff" || ext_file == "pdf")
 	{
 		path += line;
 		content = readFileToString(path);
 		std::string ext = "application/";
 		ext += ext_file;
-		response = response_generator("HTTP/1.1 200 OK\r\n", ext, content);
-		send_value(_acceptStatus, response);
+		responseString = response_generator("HTTP/1.1 200 OK\r\n", ext, content);
+		send_value(_acceptStatus, responseString);
 	}
 	else if (ext_file == "mp4")
 	{
@@ -212,7 +221,11 @@ void Server::get_request(Request &request, int &_acceptStatus)
 		content = readFileToString(path);
 		std::string ext = "video/";
 		ext += ext_file;
-		response = response_generator("HTTP/1.1 200 OK\r\n", ext, content);
-		send_value(_acceptStatus, response);
+		responseString = response_generator("HTTP/1.1 200 OK\r\n", ext, content);
+		send_value(_acceptStatus, responseString);
 	}
+    else
+    {
+        throw std::runtime_error("Server get request : No file");
+    }
 }

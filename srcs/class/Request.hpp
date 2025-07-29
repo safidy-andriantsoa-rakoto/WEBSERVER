@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 20:41:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 09:30:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 class Request
 {
-	protected:
+	private:
 		std::string		_requestLine;
 		std::string		_method;
 		std::string		_requestTarget;

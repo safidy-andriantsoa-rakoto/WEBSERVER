@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 20:59:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 10:35:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	Request::parseRequest(std::string const & requeststring)
 	startPos = 0;
 	pos = requeststring.find(sep, startPos);
 	if (pos == std::string::npos)
-		throw std::runtime_error("No request line found");
+		throw std::runtime_error("Parsing request : No request line found");
 	line = requeststring.substr(startPos, pos - startPos);
 	this->setRequestLine(line);
 	startPos = pos + sep.size();

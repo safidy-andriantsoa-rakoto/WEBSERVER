@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 20:41:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 08:50:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <string>
 
 typedef std::map<std::string, std::string>  stringMap;
-typedef stringMap::iterator					stringMapIt;
+typedef stringMap::const_iterator					stringMapIt;
 
 typedef std::pair<std::string, std::string>	stringPair;
 

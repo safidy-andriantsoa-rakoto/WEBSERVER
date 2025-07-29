@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 20:41:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 09:44:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 class Response
 {
 	private:
+		std::string	_statusLine;
 		int			_statusCode;
 		stringMap	_header;
 		std::string	_body;
@@ -31,10 +32,14 @@ class Response
 		int			getStatusCode() const;
 		std::string	getResponseFile() const;
 
-		void		setStatusCode(int const & status);
-		void		setResponseFile(std::string const & path);
+		void		setStatusLine(int const & status, std::string const & reasonPhrase);
+		void		setResponseBody(std::string const & path);
 
-		std::string	responseGenerator() const;
+		void    	addHeader(std::string const & field, std::string const & content);
+		void		addHeader(std::string const & field, int const & content);
+
+		std::string	joinHeader() const;
+		std::string	responseGenerator();
 };
 
 #endif

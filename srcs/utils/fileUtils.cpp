@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 08:15:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 10:37:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ std::string readFileToString(std::string _path)
 
 	index.open(_path.c_str());
 	if (!index.is_open())
-		throw std::runtime_error("File can't be opened");
+		throw std::runtime_error("ReadFileToString : File can't be opened");
 	std::string _index_value((std::istreambuf_iterator<char>(index)), std::istreambuf_iterator<char>());
 	return (_index_value);
 }

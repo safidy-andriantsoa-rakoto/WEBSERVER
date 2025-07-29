@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 08:20:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 10:16:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,6 @@
 //CGI
 void        execCgi(std::string const & path, char **envp, int & pid, int & status, int & fd);
 int         callCgi(char const **argv, char **envp);
-
-// Server main
-void	    launchServer();
 
 //Utils
 void        checkFileExtension(std::string const & fileName, std::string extension);

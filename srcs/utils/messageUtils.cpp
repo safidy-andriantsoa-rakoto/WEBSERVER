@@ -6,12 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 08:13:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 10:31:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
+//Soloina @ ilay class Response
 std::string response_generator(std::string response, std::string type, std::string content)
 {
     std::stringstream out;

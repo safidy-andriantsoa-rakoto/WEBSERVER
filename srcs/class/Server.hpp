@@ -6,15 +6,16 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 20:41:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 09:35:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-#include "general.hpp"
 #include "Request.hpp"
+#include "Response.hpp"
+#include "general.hpp"
 
 class Server
 {
@@ -53,7 +54,7 @@ class Server
         std::string get_client_request();
 
 		//HTTP Method
-		void 		get_request(Request & request, int &_acceptStatus);
+		void		get_request(Request & request, Response & response, int &_acceptStatus);
 };
 
 #endif
