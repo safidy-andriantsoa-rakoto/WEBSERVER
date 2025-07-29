@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 11:04:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 14:41:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,16 +167,11 @@ void Server::get_request(Request & request, Response & response, int &_acceptSta
 	{
         response.setStatusLine(200, "OK");
         response.addHeader("Content-Type", "text/html");
-        response.addHeader("Content-Lenght", response.getResponseFile().size());
+        response.addHeader("Content-Lenght", response.getResponseBody().size());
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setResponseBody(path + "index.html");
         responseString = response.responseGenerator(); //Avoaka atao ao @ launchServercpp !!!
         send_value(_acceptStatus, responseString); //Avoaka atao ao @ launchServercpp !!!
-		std::cout << "\n" << responseString << std::endl;
-
-		// content = readFileToString(path + "index.html");
-		// std::cout << "CONTENT = " << content << std::endl;
-        // response = response_generator("HTTP/1.1 200 OK\r\n", "text/html", content);// line request + content index.html
 	}
 	else if (ext_file == "css" || ext_file == "html" || ext_file == "plain")
 	{

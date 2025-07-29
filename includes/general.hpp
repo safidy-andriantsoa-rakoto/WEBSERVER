@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 10:16:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/29 14:31:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int         callCgi(char const **argv, char **envp);
 void        checkFileExtension(std::string const & fileName, std::string extension);
 void	    printFileContent(std::string const & path);
 std::string	readFileToString(std::string _path);
+stringMap	splitFileToMapString(std::string const & filePath, std::string const & sep);
 
 void	    displayFormatting(std::string const & text, std::string const & title);
 stringVect	strictSplit(std::string const & target, std::string const & sep);
