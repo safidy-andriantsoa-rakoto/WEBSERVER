@@ -1,6 +1,5 @@
 audio/mpeg   | mp3,mpga,mp2
 audio/wav    | wav
-audio/x-wav  | wav
 audio/webm   | webm
 audio/ogg    | ogg,oga
 audio/opus   | opus

@@ -33,4 +33,3 @@ application/x-pem-file                                                    | pem
 application/x-font-ttf                                                    | ttf
 application/font-woff                                                     | woff
 application/font-woff2                                                    | woff2
-application/x-msdownload                                                  | exe
