@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 10:29:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:28:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Request
 		std::string	getBody() const;
 
 		void    setRequestLine(std::string & set, Server & server);
-		void	setRequestTarget(std::string const & target);
+		void	setRequestTarget(std::string const & target, Server & server);
 		void    setBody(std::string & set);
 
 		void    addHeader(std::string & field, std::string & content);

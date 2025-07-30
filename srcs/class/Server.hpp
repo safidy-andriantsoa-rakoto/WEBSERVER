@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 10:26:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:29:15 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class Server
 		std::string			_port;
 		std::string			_host;
 		std::string			_serverName;
+		std::string			_generalRoot;
 		stringMap			_location;
 
 	// For socket
@@ -41,6 +42,7 @@ class Server
 		std::string getPort() const;
 		std::string getHost() const;
 		std::string getServerName() const;
+		std::string	getGeneralRoot() const;
 		stringMap	getLocation() const;
 
 		int 		get_fdClient();

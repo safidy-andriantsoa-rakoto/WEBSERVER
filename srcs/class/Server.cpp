@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 11:18:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:29:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,11 @@ std::string Server::getServerName() const
 stringMap Server::getLocation() const
 {
 	return _location;
+}
+
+std::string Server::getGeneralRoot() const
+{
+    return _generalRoot;
 }
 
 int Server::get_fdClient()

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 11:25:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:36:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,15 +71,24 @@ void Request::setRequestLine(std::string &replacement, Server & server)
 	if (splitted.size() != 3)
 		throw std::runtime_error("Error on request line");
 	_method = splitted[0];
-	setRequestTarget(splitted[1]);
+	setRequestTarget(splitted[1], server);
 	_clientHttpVersion = splitted[2];
 }
 
-void Request::setRequestTarget(std::string const & target)
+void Request::setRequestTarget(std::string const & target, Server & server)
 {
 	//Split target to get matching_location and target_file
 	//Find matching_location, if not, use / location
-	//Replace first "/" from the target !!! Add / at the end if use /
+	//Replace first "/" from the target to root!!! Add / at the end if use /
+	std::string	searchPath;
+	size_t		pos;
+	
+	pos = target.find_last_of("/");
+	searchPath = target.substr(0, pos);
+	_targetFileName = target.substr(pos + 1, *(target.end() - 1));
+	if (!server.getGeneralRoot().empty())
+	{
+	}
 }
 
 void Request::setBody(std::string & replacement)
