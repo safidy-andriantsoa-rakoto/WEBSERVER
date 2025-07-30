@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 10:35:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 11:25:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ std::string Request::getBody() const
 	return _body;
 }
 
-void Request::setRequestLine(std::string & replacement)
+void Request::setRequestLine(std::string &replacement, Server & server)
 {
 	stringVect	splitted;
 
@@ -71,8 +71,15 @@ void Request::setRequestLine(std::string & replacement)
 	if (splitted.size() != 3)
 		throw std::runtime_error("Error on request line");
 	_method = splitted[0];
-	_requestTarget = splitted[1];
+	setRequestTarget(splitted[1]);
 	_clientHttpVersion = splitted[2];
+}
+
+void Request::setRequestTarget(std::string const & target)
+{
+	//Split target to get matching_location and target_file
+	//Find matching_location, if not, use / location
+	//Replace first "/" from the target !!! Add / at the end if use /
 }
 
 void Request::setBody(std::string & replacement)
@@ -117,7 +124,7 @@ void	Request::getRequestBody(std::string const & requeststring, size_t const & p
 	_body = content;
 }
 
-void	Request::parseRequest(std::string const & requeststring)
+void	Request::parseRequest(std::string const & requeststring, Server & server)
 {
 	size_t		pos;
 	size_t		startPos;
@@ -130,7 +137,7 @@ void	Request::parseRequest(std::string const & requeststring)
 	if (pos == std::string::npos)
 		throw std::runtime_error("Parsing request : No request line found");
 	line = requeststring.substr(startPos, pos - startPos);
-	this->setRequestLine(line);
+	this->setRequestLine(line, server);
 	startPos = pos + sep.size();
 	while (pos != std::string::npos)
 	{

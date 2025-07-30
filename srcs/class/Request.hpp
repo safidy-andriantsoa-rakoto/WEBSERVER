@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 09:30:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 10:29:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define REQUEST_HPP
 
 #include "general.hpp"
+#include "Server.hpp"
 
 class Request
 {
@@ -22,6 +23,7 @@ class Request
 		std::string		_method;
 		std::string		_requestTarget;
 		std::string		_clientHttpVersion;
+		std::string		_targetFileName;
 
 		stringMap		_header;
 		std::string		_body;
@@ -39,7 +41,8 @@ class Request
 		stringMap	getHeader() const;
 		std::string	getBody() const;
 
-		void    setRequestLine(std::string & set);
+		void    setRequestLine(std::string & set, Server & server);
+		void	setRequestTarget(std::string const & target);
 		void    setBody(std::string & set);
 
 		void    addHeader(std::string & field, std::string & content);
@@ -47,7 +50,7 @@ class Request
 		void	displayRequest() const;
 
 		void	getRequestBody(std::string const & requeststring, size_t const & pos);
-		void	parseRequest(std::string const & requestString);
+		void	parseRequest(std::string const & requestString, Server & server);
 };
 
 #endif

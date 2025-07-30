@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 14:36:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 09:32:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ std::string readFileToString(std::string filePath)
 
 	file.open(filePath.c_str());
 	if (!file.is_open())
-		throw std::runtime_error("ReadFileToString : File can't be opened");
+		throw std::runtime_error("ReadFileToString : File can't be opened"); //Review exception to throw by the situation (StatusCode)
 	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	return (fileString);
 }
@@ -66,4 +66,15 @@ stringMap splitFileToMapString(std::string const &filePath, std::string const & 
 	}
 	file.close();
 	return (result);
+}
+
+std::string	getFileExtension(std::string const & fileName)
+{
+	std::string ext_file;
+	int 		pe;
+
+	ext_file = fileName;
+	pe = fileName.find_last_of(".");
+	ext_file.erase(0, pe + 1);
+	return ext_file;
 }

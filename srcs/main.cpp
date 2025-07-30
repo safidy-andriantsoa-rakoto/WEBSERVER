@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 14:23:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 09:51:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ int main()
 {
 	try
 	{
-		// initServerConfig(); //Server Config
-		Response::initAllStatusCode("responseSample/statusCode.txt");
+		Response::initAllStatusCode("response/statusCode.txt");
 		launchServer();
 	}
 	catch(const std::exception & e)

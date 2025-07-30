@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 08:13:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 10:24:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,3 +78,19 @@ void split_line(std::vector<std::string> &_data, std::string line)
 	_data.push_back(line);
 }
 
+std::string convertIntToString(int const & n)
+{
+	std::stringstream	ss;
+	std::string			result;
+
+	ss << n;
+	ss >> result;
+	return result;
+}
+
+void	addToMapString(stringMap & map, std::string const & first, std::string const & second)
+{
+	stringPair	pair(first, second);
+
+	map.insert(pair);
+}

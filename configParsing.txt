@@ -1,0 +1,10 @@
+* Strict parsing : 
+    location => /[directory]/
+    root => /[directory]
+
+* location stored inside a stringMap (function utils to add)
+
+*Must have a location /
+
+Questions - what to do?
+    Multiple server bloc listening to one port????
