@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 11:04:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 11:34:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ void Server::get_request(Request & request, Response & response, int &_acceptSta
 	std::cout << "Find . pos:" << pe << std::endl;
 	ext_file = tmp_ext.erase(0, pe + 1);
 	std::cout << "extension->" << ext_file << std::endl;
-	std::string path = "site/";
+	std::string path = "clean/";
 	line.erase(0,1);
 	if (ext_file == "/")
 	{
@@ -196,7 +196,7 @@ void Server::get_request(Request & request, Response & response, int &_acceptSta
 	}
     else if (ext_file == "jpg" || ext_file == "png" || ext_file == "jpeg" || ext_file == "ico" || ext_file == "svg")
     {
-        path += line[1];
+        path += line;
         content = readFileToString(path);
         std::string ext = "image/";
         if (ext_file == "svg")
