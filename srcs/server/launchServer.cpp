@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/07/30 10:01:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 20:11:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void    processRequest(std::string const & clientRequest, Server & server)
 		return ;
 	try
 	{
-		request.parseRequest(clientRequest, server);
+		request.parseRequest(clientRequest, server.getLocation(), server.getGeneralRoot());
 		fd = server.get_fdClient();
 		if (request.getMethod() == "GET")
 		{

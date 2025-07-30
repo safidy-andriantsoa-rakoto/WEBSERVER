@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 15:36:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 21:28:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ std::string Request::getBody() const
 	return _body;
 }
 
-void Request::setRequestLine(std::string &replacement, Server & server)
+void Request::setRequestLine(std::string &replacement, stringMap const & locationMap, std::string const & generalRoot)
 {
 	stringVect	splitted;
 
@@ -71,24 +71,34 @@ void Request::setRequestLine(std::string &replacement, Server & server)
 	if (splitted.size() != 3)
 		throw std::runtime_error("Error on request line");
 	_method = splitted[0];
-	setRequestTarget(splitted[1], server);
+	setRequestTarget(splitted[1], locationMap, generalRoot);
 	_clientHttpVersion = splitted[2];
 }
 
-void Request::setRequestTarget(std::string const & target, Server & server)
+void Request::setRequestTarget(std::string const & target, stringMap const & locationMap, std::string const & generalRoot)
 {
-	//Split target to get matching_location and target_file
-	//Find matching_location, if not, use / location
-	//Replace first "/" from the target to root!!! Add / at the end if use /
 	std::string	searchPath;
 	size_t		pos;
-	
-	pos = target.find_last_of("/");
-	searchPath = target.substr(0, pos);
-	_targetFileName = target.substr(pos + 1, *(target.end() - 1));
-	if (!server.getGeneralRoot().empty())
+	stringMapIt	it;
+
+	if (target == "/")
 	{
+		searchPath = "/";
+		_targetFileName = "index.html";
 	}
+	else
+	{
+		pos = target.find_last_of("/");
+		searchPath = target.substr(0, pos + 1);
+		_targetFileName = target.substr(pos + 1, *(target.end() - 1));
+	}
+	it = findLongestMatch(searchPath, locationMap);
+	// std::cout << "LOCATION SELECTED = " << (*it).first 	<< " => " << (*it).second << std::endl;
+	if (!generalRoot.empty())
+		_requestTarget = generalRoot + (*it).first + _targetFileName;
+	else
+		_requestTarget = (*it).second + (*it).first + _targetFileName;
+	// std::cout << "REQUEST TARGET = " << _requestTarget << std::endl;
 }
 
 void Request::setBody(std::string & replacement)
@@ -133,7 +143,7 @@ void	Request::getRequestBody(std::string const & requeststring, size_t const & p
 	_body = content;
 }
 
-void	Request::parseRequest(std::string const & requeststring, Server & server)
+void	Request::parseRequest(std::string const & requeststring, stringMap const & locationMap, std::string const & generalRoot)
 {
 	size_t		pos;
 	size_t		startPos;
@@ -146,7 +156,7 @@ void	Request::parseRequest(std::string const & requeststring, Server & server)
 	if (pos == std::string::npos)
 		throw std::runtime_error("Parsing request : No request line found");
 	line = requeststring.substr(startPos, pos - startPos);
-	this->setRequestLine(line, server);
+	this->setRequestLine(line, locationMap, generalRoot);
 	startPos = pos + sep.size();
 	while (pos != std::string::npos)
 	{

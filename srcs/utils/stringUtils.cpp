@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 16:02:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 21:20:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,14 +95,14 @@ void	addToMapString(stringMap & map, std::string const & first, std::string cons
 	map.insert(pair);
 }
 
-stringMapIt	findLongestMatch(std::string const & text, stringMap & map)
+stringMapIt	findLongestMatch(std::string const & text, stringMap const & map)
 {
-	int	sizeMax = 0;
+	size_t	sizeMax = 0;
 	size_t	i;
 	std::string	compare;
 	stringMapIt	itFinal;
 
-	for(stringMapIt it; it != map.end(); it++)
+	for(stringMapIt it = map.begin(); it != map.end(); it++)
 	{
 		compare = (*it).first;
 		for(i = 0; i < compare.size(); i++)
@@ -115,7 +115,9 @@ stringMapIt	findLongestMatch(std::string const & text, stringMap & map)
 			sizeMax = i;
 			itFinal = it;
 		}
-		i = 0;
+		// i = 0;
 	}
+	if (itFinal == map.end())
+		itFinal = map.begin();
 	return itFinal;
 }

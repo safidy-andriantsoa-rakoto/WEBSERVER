@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 15:29:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 21:18:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,10 +199,10 @@ void Server::get_request(Request & request, Response & response)
 
 void Server::simpleInit()
 {
-	_port = 2003;
+	_port = convertIntToString(2003);
 	_host = "localhost";
 	_serverName = "_";
-	addToMapString(_location, "/", "/site");
-	addToMapString(_location, "/image/", "/site");
-	addToMapString(_location, "/audio/", "/site");
+	addToMapString(_location, "/", "./site");
+	addToMapString(_location, "/image/", "./site");
+	addToMapString(_location, "/audio/", "./site");
 }
