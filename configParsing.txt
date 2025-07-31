@@ -1,7 +1,11 @@
-* Strict parsing : 
-    location => /[directory]/
-    root => /[directory]
+* Strict parsing :
+    location => /[directory or file] (ex: /images)
+    root => /[ (+) directory] (ex: /audio)
+    [tmp] [one space] [tmp_content] (ex: servername myServername.com)
 
-* location stored inside a stringMap (function utils to add)
+* Construct a location class to store : root, index, cgi
 
-*Must have a location /
+* Config file content :
+    - Must have a location "/"
+    - Must have root/location or general root?
+    - Must have index/location or general index if directory?
