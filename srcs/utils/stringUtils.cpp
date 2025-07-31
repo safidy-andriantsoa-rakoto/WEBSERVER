@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 21:20:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:51:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ stringMapIt	findLongestMatch(std::string const & text, stringMap const & map)
 			sizeMax = i;
 			itFinal = it;
 		}
-		// i = 0;
 	}
 	if (itFinal == map.end())
 		itFinal = map.begin();

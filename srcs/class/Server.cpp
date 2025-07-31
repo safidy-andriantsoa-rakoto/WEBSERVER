@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 21:18:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:49:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,38 +147,29 @@ std::string Server::get_client_request()
 
 void Server::get_request(Request & request, Response & response)
 {
-	std::string	line;
-	std::string tmp_ext;
-	std::string ext_file;
-	std::string type;
-	// std::string path = "site/";
+	std::string		line;
+	std::string 	tmp_ext;
+	std::string 	ext_file;
+	std::string 	type;
+	std::fstream	file;
 
 	tmp_ext = request.getRequestTarget();
-	//Check if tmp_ext exist
-	line = tmp_ext;
+	//Use of config file parameter to search for the file!!!
+	//On error : need to specify the statusCode (no need to throw?)
+	file.open(tmp_ext.c_str());
+	if (!file.is_open())
+		throw std::runtime_error("Error on get request");
+	//Calling a generic function to get type based on file extension
 	ext_file = getFileExtension(tmp_ext);
-	// std::cout << "extension->" << ext_file << std::endl;
-	line.erase(0,1);
+	std::cout << "extension->" << ext_file << std::endl;
 	if (ext_file == "/")
-	{
 		type = "text/html";
-	}
 	else if (ext_file == "css" || ext_file == "html" || ext_file == "plain")
-	{
-		// path += line;
-		// content = readFileToString(path);
 		type = "text/" + ext_file;
-	}
 	else if (ext_file == "js")
-	{
-		// path += line;
-		// content = readFileToString(path);
 		type = "text/javascript";
-	}
 	else if (ext_file == "jpg" || ext_file == "png" || ext_file == "jpeg" || ext_file == "ico" || ext_file == "svg")
 	{
-		// path += line[1];
-		// content = readFileToString(path);
 		type = "image/";
 		if (ext_file == "svg")
 			type += "svg+xml";  
@@ -186,13 +177,9 @@ void Server::get_request(Request & request, Response & response)
 			type += ext_file;
 	}
 	else if (ext_file == "woff" || ext_file == "pdf")
-	{
 		type = "application/" + ext_file;
-	}
 	else if (ext_file == "mp4")
-	{
 		type = "video/" + ext_file;
-	}
 	response.setStatusCode(200);
 	response.setType(type);
 }
@@ -202,7 +189,9 @@ void Server::simpleInit()
 	_port = convertIntToString(2003);
 	_host = "localhost";
 	_serverName = "_";
-	addToMapString(_location, "/", "./site");
-	addToMapString(_location, "/image/", "./site");
-	addToMapString(_location, "/audio/", "./site");
+	addToMapString(_location, "/", "/home/barandri/site/agency");
+	addToMapString(_location, "/images/", "/home/barandri/site/agency/assets");
+	addToMapString(_location, "/css/", "/home/barandri/site/agency/assets");
+	addToMapString(_location, "/js/", "/home/barandri/site/agency/assets");
+	addToMapString(_location, "/webfonts/", "/home/barandri/site/agency/assets");
 }

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 21:28:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:26:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ void Request::setRequestTarget(std::string const & target, stringMap const & loc
 	size_t		pos;
 	stringMapIt	it;
 
+	std::cout << "********TARGET = " << target << "***************" << std::endl;
 	if (target == "/")
 	{
 		searchPath = "/";

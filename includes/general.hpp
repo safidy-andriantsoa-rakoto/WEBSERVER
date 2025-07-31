@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 21:09:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:41:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@
 
 #include "typedef.hpp"
 #include "define.hpp"
+
+// Error handling
+void	generateErrorResponse(int & fd, int const & statusCode);
 
 //CGI
 void        execCgi(std::string const & path, char **envp, int & pid, int & status, int & fd);
