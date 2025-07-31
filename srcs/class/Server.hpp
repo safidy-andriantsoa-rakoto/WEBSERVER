@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 11:45:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/31 15:09:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ class Server
 		//HTTP Method
 		void		get_request(Request & request, Response & response);
 
-		//For testing only
+		//For testing only !!!!
 		void		simpleInit();
 };
 

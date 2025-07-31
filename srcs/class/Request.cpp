@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 11:26:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/31 15:15:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,28 +77,31 @@ void Request::setRequestLine(std::string &replacement, stringMap const & locatio
 
 void Request::setRequestTarget(std::string const & target, stringMap const & locationMap, std::string const & generalRoot)
 {
-	std::string	searchPath;
 	size_t		pos;
 	stringMapIt	it;
 
-	std::cout << "********TARGET = " << target << "***************" << std::endl;
+	// std::cout << "********TARGET = " << target << "***************" << std::endl;
 	if (target == "/")
 	{
-		searchPath = "/";
-		_targetFileName = "index.html";
+		_targetFileName = "index.html"; //See config file parameter on index !!!!
+		_requestTarget = (*locationMap.begin()).second + "/" + _targetFileName;
+		// std::cout << "REQUEST TARGET = " << _requestTarget << std::endl;
+		return ;
 	}
 	else
 	{
 		pos = target.find_last_of("/");
-		searchPath = target.substr(0, pos + 1);
-		_targetFileName = target.substr(pos + 1, *(target.end() - 1));
+		_targetFileName = target.substr(pos + 1, target.size() - 1);
 	}
-	it = findLongestMatch(searchPath, locationMap);
+	it = findLongestMatch(target, locationMap);
 	// std::cout << "LOCATION SELECTED = " << (*it).first 	<< " => " << (*it).second << std::endl;
-	if (!generalRoot.empty())
-		_requestTarget = generalRoot + (*it).first + _targetFileName;
+	_requestTarget = target;
+	if (!generalRoot.empty() && (*it).first != "/")
+		_requestTarget.replace(_requestTarget.find((*it).first, 0), (*it).first.size(), generalRoot);
+	else if ((*it).first != "/")
+		_requestTarget.replace(_requestTarget.find((*it).first, 0), (*it).first.size(), (*it).second);
 	else
-		_requestTarget = (*it).second + (*it).first + _targetFileName;
+		_requestTarget = (*it).second + target;
 	// std::cout << "REQUEST TARGET = " << _requestTarget << std::endl;
 }
 

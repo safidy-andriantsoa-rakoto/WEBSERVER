@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 11:49:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/31 15:31:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,9 +189,16 @@ void Server::simpleInit()
 	_port = convertIntToString(2003);
 	_host = "localhost";
 	_serverName = "_";
-	addToMapString(_location, "/", "/home/barandri/site/agency");
-	addToMapString(_location, "/images/", "/home/barandri/site/agency/assets");
-	addToMapString(_location, "/css/", "/home/barandri/site/agency/assets");
-	addToMapString(_location, "/js/", "/home/barandri/site/agency/assets");
-	addToMapString(_location, "/webfonts/", "/home/barandri/site/agency/assets");
+	// addToMapString(_location, "/", "/home/barandri/site/agency");
+	// addToMapString(_location, "/images", "/home/barandri/site/agency/assets/images");
+	// addToMapString(_location, "/css", "/home/barandri/site/agency/assets/css");
+	// addToMapString(_location, "/js", "/home/barandri/site/agency/assets/js");
+	// addToMapString(_location, "/webfonts", "/home/barandri/site/agency/assets/webfonts");
+
+	addToMapString(_location, "/", "/home/barandri/site/dim");
+	addToMapString(_location, "/images", "/home/barandri/site/dim/images");
+	addToMapString(_location, "/css", "/home/barandri/site/dim/assets/css");
+	addToMapString(_location, "/js", "/home/barandri/site/dim/assets/js");
+	addToMapString(_location, "/webfonts", "/home/barandri/site/dim/assets/webfonts");
+	addToMapString(_location, "/sass", "/home/barandri/site/dim/assets/sass");
 }
