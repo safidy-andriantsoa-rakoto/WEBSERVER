@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 09:35:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/31 15:09:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ class Server
 		std::string			_port;
 		std::string			_host;
 		std::string			_serverName;
-		std::string			_root;
-		std::string			_location;
+		std::string			_generalRoot;
+		stringMap			_location;
 
 	// For socket
 	    int     			_fdSocket;
@@ -42,8 +42,8 @@ class Server
 		std::string getPort() const;
 		std::string getHost() const;
 		std::string getServerName() const;
-		std::string getRoot() const;
-		std::string getLocation() const;
+		std::string	getGeneralRoot() const;
+		stringMap	getLocation() const;
 
 		int 		get_fdClient();
         int 		create_socket();
@@ -54,7 +54,10 @@ class Server
         std::string get_client_request();
 
 		//HTTP Method
-		void		get_request(Request & request, Response & response, int &_acceptStatus);
+		void		get_request(Request & request, Response & response);
+
+		//For testing only !!!!
+		void		simpleInit();
 };
 
 #endif

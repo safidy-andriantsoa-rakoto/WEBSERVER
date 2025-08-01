@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 10:37:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/30 09:32:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,51 @@ void	printFileContent(std::string const & path)
 void    checkFileExtension(std::string const & fileName, std::string extension)
 {
 	if (fileName.compare(fileName.size() - extension.size(), extension.size(), extension) != 0)
-		throw std::runtime_error("Extension file sent to cgi error");
+		throw std::runtime_error("Extension file problem");
 }
 
-std::string readFileToString(std::string _path)
+std::string readFileToString(std::string filePath)
 {
-	std::fstream index;
+	std::fstream file;
 
-	index.open(_path.c_str());
-	if (!index.is_open())
-		throw std::runtime_error("ReadFileToString : File can't be opened");
-	std::string _index_value((std::istreambuf_iterator<char>(index)), std::istreambuf_iterator<char>());
-	return (_index_value);
+	file.open(filePath.c_str());
+	if (!file.is_open())
+		throw std::runtime_error("ReadFileToString : File can't be opened"); //Review exception to throw by the situation (StatusCode)
+	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	return (fileString);
+}
+
+stringMap splitFileToMapString(std::string const &filePath, std::string const & sep)
+{
+	std::fstream	file;
+	std::string		line;
+	stringPair		pair;
+	stringVect		vect;
+	stringMap		result;
+
+	file.open(filePath.c_str());
+	if (!file.is_open())
+		throw std::runtime_error("splitFileToMapString : File is not available");
+	while (getline(file, line))
+	{
+		vect = strictSplit(line, sep);
+		pair.first = vect[0];
+		pair.second = vect[1];
+		result.insert(pair);
+		vect.clear();
+		line.clear();
+	}
+	file.close();
+	return (result);
+}
+
+std::string	getFileExtension(std::string const & fileName)
+{
+	std::string ext_file;
+	int 		pe;
+
+	ext_file = fileName;
+	pe = fileName.find_last_of(".");
+	ext_file.erase(0, pe + 1);
+	return ext_file;
 }

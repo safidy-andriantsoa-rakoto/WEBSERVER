@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 08:55:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/01 08:31:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,14 @@ int main()
 {
 	try
 	{
-		// initServerConfig(); //Server Config
+		Response::initAllStatusCode("txtRegistry/statusCode.txt");
 		launchServer();
+
+		// Server server;
+		// Request request;
+
+		// server.simpleInit();
+		// request.setRequestTarget("/images/images", server.getLocation(), server.getGeneralRoot());
 	}
 	catch(const std::exception & e)
 	{

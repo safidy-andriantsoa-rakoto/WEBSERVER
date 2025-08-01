@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/07/29 10:53:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/07/31 11:45:15 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,31 +23,34 @@ void    processRequest(std::string const & clientRequest, Server & server)
 		return ;
 	try
 	{
-		request.parseRequest(clientRequest);
+		request.parseRequest(clientRequest, server.getLocation(), server.getGeneralRoot());
 		fd = server.get_fdClient();
 		if (request.getMethod() == "GET")
-			server.get_request(request, response, fd);
+		{
+			server.get_request(request, response);
+			responseString = response.responseGenerator(request.getRequestTarget());
+			send_value(fd, responseString);
+		}
 		else if (request.getMethod() == "POST")
 			std::cout << request.getMethod() << std::endl; // Calling post_request
 		else if (request.getMethod() == "DELETE")
 			std::cout << request.getMethod() << std::endl; // Calling delete_request
 		else
-			generateErrorResponse(fd, 501, "Not implemented");
+			generateErrorResponse(fd, 501);
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
-		generateErrorResponse(fd, 404, "Not found"); //Class exception?
+		std::cerr << "Process Request error \n" << e.what() << std::endl;
+		generateErrorResponse(fd, 404); //Class exception?? //Try catch if needed
 		return ;
 	}
-	//Atao eto ny fandefasana ny reponse any @ client !!!
-	// responseString = response.responseGenerator();
-    // send_value(fd, responseString);
 }
 
 void    launchServer()
 {
 	Server server;
+
+	server.simpleInit(); //For test only !!!!!!!!
 
 	if (!server.create_socket())
 		return ;

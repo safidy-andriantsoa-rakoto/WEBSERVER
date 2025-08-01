@@ -1,0 +1,25 @@
+* Strict parsing :
+    location => /[directory or file] (ex: /images)
+    root => /[ (+) directory] (ex: /audio)
+    [tmp] [one space] [tmp_content] (ex: servername myServername.com)
+
+* Construct a location class to store : root, index, cgi
+
+* Config file content :
+    - Must have a location "/"
+    - Must have root/location or general root?
+    - Must have index/location or general index if directory?
+
+*CGI parsing :
+
+Example :
+
+location /cgi-bin
+{
+    SCRIPT_FILENAME /cgi-bin (Real location of the cgi script but not necessary? can be root instead of script filename)
+
+    SCRIPT_NAME /cgi-bin/$1 (From the URI but not necessary?)
+
+    PATH_INFO $2 (Everything after the $1 but not necessary?)
+
+}

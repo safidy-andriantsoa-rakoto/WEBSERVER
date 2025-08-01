@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 10:35:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/01 07:57:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ std::string Request::getBody() const
 	return _body;
 }
 
-void Request::setRequestLine(std::string & replacement)
+void Request::setRequestLine(std::string &replacement, stringMap const & locationMap, std::string const & generalRoot)
 {
 	stringVect	splitted;
 
@@ -71,8 +71,38 @@ void Request::setRequestLine(std::string & replacement)
 	if (splitted.size() != 3)
 		throw std::runtime_error("Error on request line");
 	_method = splitted[0];
-	_requestTarget = splitted[1];
+	setRequestTarget(splitted[1], locationMap, generalRoot);
 	_clientHttpVersion = splitted[2];
+}
+
+void Request::setRequestTarget(std::string const & target, stringMap const & locationMap, std::string const & generalRoot)
+{
+	size_t		pos;
+	stringMapIt	it;
+
+	std::cout << "********TARGET = " << target << "***************" << std::endl;
+	if (target == "/")
+	{
+		_targetFileName = "index.html"; //See config file parameter on index !!!!
+		_requestTarget = (*locationMap.begin()).second + "/" + _targetFileName;
+		std::cout << "REQUEST TARGET = " << _requestTarget << std::endl;
+		return ;
+	}
+	else
+	{
+		pos = target.find_last_of("/");
+		_targetFileName = target.substr(pos + 1, target.size() - 1);
+	}
+	it = findLongestMatch(target, locationMap);
+	std::cout << "LOCATION SELECTED = " << (*it).first 	<< " => " << (*it).second << std::endl;
+	_requestTarget = target;
+	if (!generalRoot.empty() && (*it).first != "/")
+		_requestTarget.replace(_requestTarget.find((*it).first, 0), (*it).first.size(), generalRoot);
+	else if ((*it).first != "/")
+		_requestTarget.replace(_requestTarget.find((*it).first, 0), (*it).first.size(), (*it).second);
+	else
+		_requestTarget = (*it).second + target;
+	std::cout << "REQUEST TARGET = " << _requestTarget << std::endl;
 }
 
 void Request::setBody(std::string & replacement)
@@ -117,7 +147,7 @@ void	Request::getRequestBody(std::string const & requeststring, size_t const & p
 	_body = content;
 }
 
-void	Request::parseRequest(std::string const & requeststring)
+void	Request::parseRequest(std::string const & requeststring, stringMap const & locationMap, std::string const & generalRoot)
 {
 	size_t		pos;
 	size_t		startPos;
@@ -130,7 +160,7 @@ void	Request::parseRequest(std::string const & requeststring)
 	if (pos == std::string::npos)
 		throw std::runtime_error("Parsing request : No request line found");
 	line = requeststring.substr(startPos, pos - startPos);
-	this->setRequestLine(line);
+	this->setRequestLine(line, locationMap, generalRoot);
 	startPos = pos + sep.size();
 	while (pos != std::string::npos)
 	{
