@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 15:15:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/01 07:57:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,12 +80,12 @@ void Request::setRequestTarget(std::string const & target, stringMap const & loc
 	size_t		pos;
 	stringMapIt	it;
 
-	// std::cout << "********TARGET = " << target << "***************" << std::endl;
+	std::cout << "********TARGET = " << target << "***************" << std::endl;
 	if (target == "/")
 	{
 		_targetFileName = "index.html"; //See config file parameter on index !!!!
 		_requestTarget = (*locationMap.begin()).second + "/" + _targetFileName;
-		// std::cout << "REQUEST TARGET = " << _requestTarget << std::endl;
+		std::cout << "REQUEST TARGET = " << _requestTarget << std::endl;
 		return ;
 	}
 	else
@@ -94,7 +94,7 @@ void Request::setRequestTarget(std::string const & target, stringMap const & loc
 		_targetFileName = target.substr(pos + 1, target.size() - 1);
 	}
 	it = findLongestMatch(target, locationMap);
-	// std::cout << "LOCATION SELECTED = " << (*it).first 	<< " => " << (*it).second << std::endl;
+	std::cout << "LOCATION SELECTED = " << (*it).first 	<< " => " << (*it).second << std::endl;
 	_requestTarget = target;
 	if (!generalRoot.empty() && (*it).first != "/")
 		_requestTarget.replace(_requestTarget.find((*it).first, 0), (*it).first.size(), generalRoot);
@@ -102,7 +102,7 @@ void Request::setRequestTarget(std::string const & target, stringMap const & loc
 		_requestTarget.replace(_requestTarget.find((*it).first, 0), (*it).first.size(), (*it).second);
 	else
 		_requestTarget = (*it).second + target;
-	// std::cout << "REQUEST TARGET = " << _requestTarget << std::endl;
+	std::cout << "REQUEST TARGET = " << _requestTarget << std::endl;
 }
 
 void Request::setBody(std::string & replacement)

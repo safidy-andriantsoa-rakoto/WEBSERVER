@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 11:41:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/01 08:35:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,4 +69,6 @@ stringMapIt	findLongestMatch(std::string const & text, stringMap const & map);
 void        send_value(int &_acceptStatus, std::string &_send_content);
 std::string response_generator(std::string response, std::string type, std::string content);
 
+void	    printString(std::string const & text);
+void	    printStringVect(stringVect const & vect, std::string const & title);
 #endif

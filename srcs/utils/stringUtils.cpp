@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 15:17:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/01 08:35:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ stringVect	splitString(std::string const & target, std::string const & sep)
 	while (findPos != std::string::npos)
 	{
 		findPos = target.find(sep, startPos);
-		result.push_back(target.substr(startPos, findPos - startPos));
+		if (startPos != findPos)
+			result.push_back(target.substr(startPos, findPos - startPos));
 		startPos = findPos + sep.size();
 	}
 	return result;
@@ -97,31 +98,44 @@ void	addToMapString(stringMap & map, std::string const & first, std::string cons
 
 stringMapIt	findLongestMatch(std::string const & text, stringMap const & map)
 {
-	size_t		sizeMax = 0;
-	size_t		i;
 	std::string	compare;
 	stringMapIt	itFinal;
+	stringVect	vect1;
+	stringVect	vect2;
+	int			nbMatch = 0;
+	int			nbMatchMax = 0;
 
+	vect1 = splitString(text, "/");
+	itFinal = map.begin();
 	for(stringMapIt it = map.begin(); it != map.end(); it++)
 	{
 		compare = (*it).first;
 		if (text == compare)
+			return it;
+		vect2 = splitString(compare, "/");
+		nbMatch = 0;
+		for(size_t i = 0; i < vect1.size() && i < vect2.size(); i++)
 		{
-			itFinal = it;
-			break;
-		}
-		for(i = 0; i < compare.size() && i < text.size(); i++)
-		{
-			if (text[i] != compare[i])
+			if (vect1[i] != vect2[i])
 				break;
+			nbMatch++;
 		}
-		if (i > sizeMax)
+		if (nbMatch > nbMatchMax)
 		{
-			sizeMax = i;
+			nbMatchMax = nbMatch;
 			itFinal = it;
 		}
 	}
-	if (itFinal == map.end())
-		itFinal = map.begin();
 	return itFinal;
+}
+
+void	printString(std::string const & text)
+{
+	std::cout << "[" << text << "]" << std::endl;
+}
+
+void	printStringVect(stringVect const & vect, std::string const & title)
+{
+	std::cout << "<<<< " << title << " >>>>\n";
+	std::for_each(vect.begin(), vect.end(), printString);	
 }
