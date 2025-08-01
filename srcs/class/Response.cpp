@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 09:02:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/01 09:33:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ std::string Response::getStatusLine(int const &statusCode)
 	std::string	statusCodeString;
 
 	statusCodeString = convertIntToString(statusCode);
-	statusLine = "HTTP/1.1 " + statusCodeString + " " + reasonPhrase;
 	reasonPhrase = (*_allStatusCode.find(statusCodeString)).second;
+	statusLine = "HTTP/1.1 " + statusCodeString + " " + reasonPhrase;
     return statusLine;
 }
 
@@ -80,8 +80,25 @@ std::string Response::responseGenerator(std::string const &responsePath)
 	return fullResponse;
 }
 
-// Use a generic function to replace a word inside a file ($env)
-// Read the file and add endline correctly
+std::string Response::responseErrorGenerator(int const & statusCode, std::string const &responsePath)
+{
+	std::string	fullResponse;
+	std::string	statusLine;
+	std::string	header;
+	std::string	body;
+	std::string	replace;
+	std::string	endLine = "\r\n";
+
+	body = readFileToString(responsePath);
+	replace = convertIntToString(statusCode);
+	replace += " : " + (*_allStatusCode.find(replace)).second;
+	replaceString(body, replace, "$status");
+	statusLine = getStatusLine(_statusCode) + endLine;
+	header = "Content-Type: " + _type + endLine + "Content-Length: " + convertIntToString(body.size()) + endLine;
+	fullResponse = statusLine + header + endLine + body + endLine;
+	return fullResponse;
+}
+
 std::string Response::responseGenerator(int const & statusCode, std::string const & responsePath, std::string const & type)
 {
 	std::string	fullResponse;

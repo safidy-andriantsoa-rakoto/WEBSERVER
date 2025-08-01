@@ -6,29 +6,11 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/01 08:35:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/01 09:44:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-
-void	displayFormatting(std::string const & text, std::string const & title)
-{
-	std::cout
-	<< "=======================" << title << "=======================" << std::endl
-	<< text 
-	<< "===========End of " << title << "==============" << std::endl << std::endl;
-}
-
-void	displayStringPair(stringPair const & pair)
-{
-	std::cout << "[" << pair.first << "]: " << "[" << pair.second << "]" << std::endl;
-}
-
-void	displayStringMap(stringMap const & map)
-{
-	std::for_each(map.begin(), map.end(), displayStringPair);
-}
 
 stringVect	strictSplit(std::string const & target, std::string const & sep)
 {
@@ -129,13 +111,11 @@ stringMapIt	findLongestMatch(std::string const & text, stringMap const & map)
 	return itFinal;
 }
 
-void	printString(std::string const & text)
+void	replaceString(std::string & text, std::string const & replaceText, std::string const & findText)
 {
-	std::cout << "[" << text << "]" << std::endl;
-}
+	size_t	pos;
 
-void	printStringVect(stringVect const & vect, std::string const & title)
-{
-	std::cout << "<<<< " << title << " >>>>\n";
-	std::for_each(vect.begin(), vect.end(), printString);	
+	pos = text.find(findText);
+	text.erase(pos, findText.size());
+	text.insert(pos, replaceText);
 }

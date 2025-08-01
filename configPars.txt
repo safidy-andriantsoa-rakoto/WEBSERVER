@@ -1,0 +1,64 @@
+* Strict parsing :
+	Tabulation at first?
+	location => /[directory or file] (ex: /images)
+	root => /[ (+) directory] (ex: /audio)
+	[tmp] [one space] [tmp_content] (ex: servername myServername.com)
+
+* Construct a location class to store : root, index, cgi
+
+* Config file content :
+	- Must have a location "/"
+	- Must have root/location or general root?
+
+*CGI parsing :
+
+Example :
+location /cgi-bin
+{
+	SCRIPT_FILENAME (or root?) /cgi-bin (Real location of the cgi script but not necessary? can be root instead of script filename)
+
+	SCRIPT_NAME /cgi-bin/$1 (From the URI but not necessary?)
+
+	PATH_INFO $2 (Everything after the $1 but not necessary?)
+}
+
+
+Full example:
+
+server1 {
+
+	host localhost
+	port 2003
+	server_names localhost login1.fr
+	error_page ./errorPage (No custom location?)
+
+	redirect https://login2.fr permanent(or redirect)
+
+	location / {
+
+		root ./site/dim
+		index index.html
+		method GET
+	}
+
+	location /images {
+
+		root ./site/dim/images
+		method GET POST DELETE
+		autoindex on (directory listing if no index)
+	}
+
+	location .php {
+
+		SCRIPT_FILENAME ./cgi-bin
+		index index.php
+		method GET POST DELETE
+	}
+}
+
+server2 {
+	....
+	server_names login2.fr
+}
+
+...
