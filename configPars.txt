@@ -8,20 +8,7 @@
 
 * Config file content :
 	- Must have a location "/"
-	- Must have root/location or general root?
-
-*CGI parsing :
-
-Example :
-location /cgi-bin
-{
-	SCRIPT_FILENAME (or root?) /cgi-bin (Real location of the cgi script but not necessary? can be root instead of script filename)
-
-	SCRIPT_NAME /cgi-bin/$1 (From the URI but not necessary?)
-
-	PATH_INFO $2 (Everything after the $1 but not necessary?)
-}
-
+	- Must have root/location
 
 Full example:
 
@@ -30,7 +17,7 @@ server1 {
 	host localhost
 	port 2003
 	server_names localhost login1.fr
-	error_page ./errorPage (No custom location?)
+	error_page 404 502 (list all code available)
 
 	redirect https://login2.fr permanent(or redirect)
 
@@ -51,7 +38,6 @@ server1 {
 	location .php {
 
 		SCRIPT_FILENAME ./cgi-bin
-		index index.php
 		method GET POST DELETE
 	}
 }
