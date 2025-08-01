@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/01 09:33:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/01 15:21:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,6 @@ void Response::setType(std::string const &type)
 {
 	_type = type;
 }
-
-// void	Response::setResponseBody(std::string const & path)
-// {
-// 	_body = readFileToString(path);
-// }
 
 std::string Response::getStatusLine(int const &statusCode)
 {

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 21:41:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/01 15:20:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,11 +189,6 @@ void Server::simpleInit()
 	_port = convertIntToString(2003);
 	_host = "localhost";
 	_serverName = "_";
-	// addToMapString(_location, "/", "./site/agency");
-	// addToMapString(_location, "/images", "./site/agency/assets/images");
-	// addToMapString(_location, "/css", "./site/agency/assets/css");
-	// addToMapString(_location, "/js", "./site/agency/assets/js");
-	// addToMapString(_location, "/webfonts", "./site/agency/assets/webfonts");
 
 	addToMapString(_location, "/", "./site/dim");
 	addToMapString(_location, "/images", "./site/dim/images");
