@@ -14,17 +14,18 @@ Full example:
 
 server1 {
 
-	host localhost
-	port 2003
-	server_names localhost login1.fr
-	error_page 404 502 (list all code available)
+	host localhost [string]
+	port 2003 [string]
+	server_names localhost login1.fr [container = n]
+ 	error_page 404 502 (list all code available) [container = n]
+	size 200MB [string]
 
-	redirect https://login2.fr permanent(or redirect)
+	redirect https://login2.fr permanent(or redirect) [container = 2; optionnel]
 
-	location / {
+	location / {     [class ; obligatoire "/"]
 
 		root ./site/dim
-		index index.html
+		index index.html [optionnel]
 		method GET
 	}
 
@@ -35,10 +36,10 @@ server1 {
 		autoindex on (directory listing if no index)
 	}
 
-	location .php {
+	location .php { [a rechercher si un ou plusieurs]
 
 		SCRIPT_FILENAME ./cgi-bin
-		method GET POST DELETE
+		method GET POST
 	}
 }
 
