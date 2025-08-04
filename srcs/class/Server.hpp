@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 15:09:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 14:34:45 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ class Server
 		std::string	getGeneralRoot() const;
 		stringMap	getLocation() const;
 
-		int 		get_fdClient();
+		int 		get_fdClient() const;
+		int 		get_fdSocket() const;
         int 		create_socket();
         void 		configure_sockaddrin(int port);
         int 		link_socket_adress();

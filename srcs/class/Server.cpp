@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 21:41:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 14:34:34 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,14 @@ std::string Server::getGeneralRoot() const
     return _generalRoot;
 }
 
-int Server::get_fdClient()
+int Server::get_fdClient() const
 {
 	return (this->_fdClient);
+}
+
+int Server::get_fdSocket() const
+{
+    return (this->_fdSocket);
 }
 
 //Afaka atao throw
