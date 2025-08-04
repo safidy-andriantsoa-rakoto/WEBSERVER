@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 15:02:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 21:53:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "Request.hpp"
 #include "Response.hpp"
+#include "ErrorExcept.hpp"
 #include "general.hpp"
 
 class Server
@@ -41,7 +42,6 @@ class Server
 		//Server utils functionnality
 		void		processRequestWithConfig(Request & request);
 		void		buildRequestTarget(Request & request);
-		void		sendResponse(std::string const & requestTarget, Response & response);
 	
 	public:
 		Server();

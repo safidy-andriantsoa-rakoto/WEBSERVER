@@ -6,30 +6,22 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 15:54:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 22:00:20 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-void Server::sendResponse(std::string const & requestTarget, Response &response)
-{
-	std::string	responseString;
-
-	responseString = response.responseGenerator(requestTarget);
-	send_value(_fdClient, responseString);
-}
-
 //Process request data vs config file and throw exception if needed, redirection
 void Server::processRequestWithConfig(Request &request)
 {
+	//Check primary data
 	buildRequestTarget(request);
 }
 
 //From config file, build Request Target from the request URI
 void Server::buildRequestTarget(Request & request)
 {
-	size_t		pos;
 	stringMapIt	it;
 	std::string	target;
 
@@ -41,8 +33,6 @@ void Server::buildRequestTarget(Request & request)
 		std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
 		return ;
 	}
-	else
-		pos = target.find_last_of("/");
 	it = findLongestMatch(target, _location);
 	std::cout << "LOCATION SELECTED = " << (*it).first 	<< " => " << (*it).second << std::endl;
 	if ((*it).first != "/")
@@ -189,7 +179,6 @@ std::string Server::get_client_request()
 
 void Server::processRequest(std::string const &clientRequest)
 {
-	int         fd;
 	Request		request;
 	Response	response;
     std::string responseString;
@@ -200,23 +189,21 @@ void Server::processRequest(std::string const &clientRequest)
 	{
 		request.parseRequest(clientRequest);
 		processRequestWithConfig(request);
-
-		fd = get_fdClient();
 		if (request.getMethod() == "GET")
 			response = get_request(request); 
 		else if (request.getMethod() == "POST")
 			std::cout << request.getMethod() << std::endl; // Calling post_request
 		else if (request.getMethod() == "DELETE")
 			std::cout << request.getMethod() << std::endl; // Calling delete_request
-		// else
-		// 	response.responseErrorGenerator(501);
 	}
-	catch(const std::exception& e)
+	catch(ErrorExcept const & e)
 	{
-		std::cerr << "Process Request error \n" << e.what() << std::endl;
-		// response.responseErrorGenerator(404);
+		std::cerr << "Process Request error \n" << e._error << std::endl;
+		response.responseErrorGenerator(e._status, ERR_PATH);
 	}
-	sendResponse(request.getRequestTarget(), response);
+	// std::cout << "Response = \n" << response.getFullResponse() << std::endl;
+	responseString = response.getFullResponse();
+	send_value(_fdClient, responseString);
 }
 
 Response Server::get_request(Request & request)
@@ -226,7 +213,7 @@ Response Server::get_request(Request & request)
 	std::string 	ext_file;
 	std::string 	type;
 	std::fstream	file;
-
+	
 	tmp_ext = request.getRequestTarget();
 	//Use of config file parameter to search for the file!!!
 	//On error : need to specify the statusCode (no need to throw?)
@@ -252,9 +239,11 @@ Response Server::get_request(Request & request)
 	}
 	else if (ext_file == "woff" || ext_file == "pdf")
 		type = "application/" + ext_file;
-	else if (ext_file == "mp4")
+		else if (ext_file == "mp4")
 		type = "video/" + ext_file;
-	return Response(200, type);
+	Response response(200, type);
+	response.responseGenerator(request.getRequestTarget());
+	return response;
 }
 
 Response Server::post_request(Request &request)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/01 09:45:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 21:50:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
+#include <exception>
 #include <exception>
 #include <iomanip>
 #include <sstream>
@@ -65,6 +66,7 @@ std::string convertIntToString(int const & n);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
 stringMapIt	findLongestMatch(std::string const & text, stringMap const & map);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
+std::string	convertStringMapToString(stringMap const & map, std::string const & sep);
 
     //DisplayUtils
 void	    displayFormatting(std::string const & text, std::string const & title);

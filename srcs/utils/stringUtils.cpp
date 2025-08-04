@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/01 09:44:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 19:47:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,4 +118,15 @@ void	replaceString(std::string & text, std::string const & replaceText, std::str
 	pos = text.find(findText);
 	text.erase(pos, findText.size());
 	text.insert(pos, replaceText);
+}
+
+std::string	convertStringMapToString(stringMap const & map, std::string const & sep)
+{
+	std::string	result;
+
+	for (stringMapIt it = map.begin(); it != map.end(); it++)
+	{
+		result += (*it).first + ": " + (*it).second + sep;
+	}
+	return result;
 }

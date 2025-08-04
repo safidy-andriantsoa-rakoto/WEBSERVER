@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/28 20:41:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 21:20:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 //CGI
 #define FILE_EXT ".php"
 #define RESPONSE_FILE_NAME "response.txt"
+
+//Response
+#define ERR_PATH "errorPage/error.html"
 
 // #define POST "POST "
 #define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"
