@@ -6,13 +6,13 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/04 14:36:43 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/04 15:24:28 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-void    processRequest(std::string const & clientRequest, Server & server, int fd)
+void    processRequest(std::string const & clientRequest, Server & server, int& fd)
 {
 	// int         fd;
 	Request		request;
@@ -21,14 +21,16 @@ void    processRequest(std::string const & clientRequest, Server & server, int f
 
 	if (!clientRequest.length())
 		return ;
+	std::cout << clientRequest << std::endl;
 	try
 	{
 		request.parseRequest(clientRequest, server.getLocation(), server.getGeneralRoot());
-		fd = server.get_fdClient();
+		// fd = server.get_fdClient();
 		if (request.getMethod() == "GET")
 		{
 			server.get_request(request, response);
 			responseString = response.responseGenerator(request.getRequestTarget());
+			std::cout << "Dest->fd=" << fd << std::endl;
 			send_value(fd, responseString);
 		}
 		else if (request.getMethod() == "POST")
@@ -68,6 +70,7 @@ std::string get_client_request(int fdCli)
         std::cout << "Error\nreceive a message from a socket" << std::endl;
         return ("");
     }
+	std::cout << "Ecoute sur fd=" << fdCli << std::endl;
     return (response);
 }
 
@@ -102,11 +105,12 @@ void    launchServer()
 	while (1)
 	{
 		int ewait = epoll_wait(efds, max_event, 10, -1);
-		std::cout << "--------------------->aty eee\n" ;
 		for (int i = 0; i < ewait; i++)
 		{
+			std::cout << "	LE FD:" << max_event[i].data.fd << std::endl;
 			if (max_event[i].data.fd == server.get_fdSocket())
 			{
+				std::cout << "ACCEPTER" << std::endl;
 				struct sockaddr_in cli;
 				cli.sin_family = AF_INET;
 				cli.sin_port = htons(2003);
@@ -125,7 +129,9 @@ void    launchServer()
 			}
 			else
 			{
-				processRequest(get_client_request(max_event[i].data.fd), server,max_event[i].data.fd);
+				std::cout << "ATY ve?" << std::endl;
+				int fd =  max_event[i].data.fd;
+				processRequest(get_client_request(max_event[i].data.fd), server, fd);
 				epoll_ctl(efds, EPOLL_CTL_DEL, max_event[i].data.fd, NULL);
 			}
 		}
@@ -145,7 +151,7 @@ void    launchServer()
 
 	// 		std::cout << "Connected!" << std::endl;
 	// 		clientRequest = server.get_client_request();
-	// 		processRequest(clientRequest, server);
+	// 		processRequest(clientRequest, server, server.get_fdClient());
 	// 		close(server.get_fdClient());
 	// 	}
 	// }

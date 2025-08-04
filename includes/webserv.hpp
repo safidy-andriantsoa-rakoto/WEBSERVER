@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 14:37:02 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/04 14:54:36 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 typedef std::list<Server>   ServerList;
 
 // Server main
-void    processRequest(std::string const & clientRequest, Server & server, int fd);
+void    processRequest(std::string const & clientRequest, Server & server, int& fd);
 void	launchServer();
 
 #endif
