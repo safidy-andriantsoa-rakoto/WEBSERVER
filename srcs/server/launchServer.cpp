@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/04 15:24:28 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/04 15:43:38 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,10 @@ void    launchServer()
 		perror("epoll_create: ");
 		return ;
 	}
+	// int flags = fcntl(server.get_fdSocket(), O_NONBLOCK, 0);
+	// fcntl(server.get_fdSocket(), F_SETFL, flags | O_NONBLOCK);// socket non bloquant
 	struct epoll_event event;
-	event.events = EPOLLIN;
+	event.events = EPOLLIN | EPOLLOUT;
 	event.data.fd = server.get_fdSocket();
 	if(epoll_ctl(efds, EPOLL_CTL_ADD, server.get_fdSocket(), &event) < 0)
 	{
@@ -123,7 +125,7 @@ void    launchServer()
 					continue;
 				}
 				struct epoll_event client;
-				client.events = EPOLLIN;
+				client.events = EPOLLIN | EPOLLOUT;
 				client.data.fd = fd_cli;
 				epoll_ctl(efds, EPOLL_CTL_ADD, fd_cli, &client);
 			}
