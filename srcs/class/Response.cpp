@@ -6,13 +6,17 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/01 15:21:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 16:01:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
 stringMap Response::_allStatusCode;
+
+void Response::addDefaultHeader()
+{
+}
 
 Response::Response(){}
 
@@ -33,22 +37,12 @@ Response &Response::operator=(Response const & other)
 
 Response::~Response(){}
 
-int	Response::getStatusCode() const
+std::string Response::getFullResponse()
 {
-	return _statusCode;
+	return _fullResponse;
 }
 
-void Response::setStatusCode(int const &statusCode)
-{
-	_statusCode = statusCode;
-}
-
-void Response::setType(std::string const &type)
-{
-	_type = type;
-}
-
-std::string Response::getStatusLine(int const &statusCode)
+Response::Response(int const &statusCode)
 {
 	std::string	statusLine;
 	std::string	reasonPhrase;
@@ -57,10 +51,9 @@ std::string Response::getStatusLine(int const &statusCode)
 	statusCodeString = convertIntToString(statusCode);
 	reasonPhrase = (*_allStatusCode.find(statusCodeString)).second;
 	statusLine = "HTTP/1.1 " + statusCodeString + " " + reasonPhrase;
-    return statusLine;
 }
 
-std::string Response::responseGenerator(std::string const &responsePath)
+Response::Response(std::string const &responsePath)
 {
 	std::string	fullResponse;
 	std::string	statusLine;
@@ -69,13 +62,12 @@ std::string Response::responseGenerator(std::string const &responsePath)
 	std::string	endLine = "\r\n";
 
 	body = readFileToString(responsePath);
-	statusLine = getStatusLine(_statusCode) + endLine;
+	statusLine = convertIntToString(_statusCode) + _allStatusCode[convertIntToString(_statusCode)] + endLine;
 	header = "Content-Type: " + _type + endLine + "Content-Length: " + convertIntToString(body.size()) + endLine;
 	fullResponse = statusLine + header + endLine + body + endLine;
-	return fullResponse;
 }
 
-std::string Response::responseErrorGenerator(int const & statusCode, std::string const &responsePath)
+Response::Response(int const & statusCode, std::string const &responsePath)
 {
 	std::string	fullResponse;
 	std::string	statusLine;
@@ -88,25 +80,22 @@ std::string Response::responseErrorGenerator(int const & statusCode, std::string
 	replace = convertIntToString(statusCode);
 	replace += " : " + (*_allStatusCode.find(replace)).second;
 	replaceString(body, replace, "$status");
-	statusLine = getStatusLine(_statusCode) + endLine;
+	statusLine = convertIntToString(_statusCode) + _allStatusCode[convertIntToString(_statusCode)] + endLine;
 	header = "Content-Type: " + _type + endLine + "Content-Length: " + convertIntToString(body.size()) + endLine;
-	fullResponse = statusLine + header + endLine + body + endLine;
-	return fullResponse;
+	_fullResponse = statusLine + header + endLine + body + endLine;
 }
 
-std::string Response::responseGenerator(int const & statusCode, std::string const & responsePath, std::string const & type)
+Response::Response(int const & statusCode, std::string const & responsePath, std::string const & type)
 {
 	std::string	fullResponse;
 	std::string	statusLine;
-	std::string	header;
-	std::string	body;
+	std::string	headerString;
 	std::string	endLine = "\r\n";
 
-	body = readFileToString(responsePath);
-	statusLine = getStatusLine(statusCode) + endLine;
-	header = "Content-Type: " + type + endLine + "Content-Length: " + convertIntToString(body.size()) + endLine;
-	fullResponse = statusLine + header + endLine + body + endLine;
-	return fullResponse;
+	_body = readFileToString(responsePath);
+	statusLine = convertIntToString(_statusCode) + _allStatusCode[convertIntToString(_statusCode)] + endLine;
+	headerString = "Content-Type: " + type + endLine + "Content-Length: " + convertIntToString(_body.size()) + endLine;
+	_fullResponse = statusLine + headerString + endLine + _body + endLine;
 }
 
 void Response::initAllStatusCode(std::string const & filePath)

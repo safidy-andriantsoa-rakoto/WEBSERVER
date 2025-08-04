@@ -6,13 +6,55 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/01 15:20:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 15:54:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(){}
+void Server::sendResponse(std::string const & requestTarget, Response &response)
+{
+	std::string	responseString;
+
+	responseString = response.responseGenerator(requestTarget);
+	send_value(_fdClient, responseString);
+}
+
+//Process request data vs config file and throw exception if needed, redirection
+void Server::processRequestWithConfig(Request &request)
+{
+	buildRequestTarget(request);
+}
+
+//From config file, build Request Target from the request URI
+void Server::buildRequestTarget(Request & request)
+{
+	size_t		pos;
+	stringMapIt	it;
+	std::string	target;
+
+	target = request.getRequestTarget();
+	std::cout << "********TARGET = " << target << "***************" << std::endl;
+	if (target == "/")
+	{
+		request.setRequestTarget((*_location.begin()).second + "/" + "index.html");
+		std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
+		return ;
+	}
+	else
+		pos = target.find_last_of("/");
+	it = findLongestMatch(target, _location);
+	std::cout << "LOCATION SELECTED = " << (*it).first 	<< " => " << (*it).second << std::endl;
+	if ((*it).first != "/")
+		target.replace(target.find((*it).first, 0), (*it).first.size(), (*it).second);
+	else
+		target = (*it).second + target;
+	request.setRequestTarget(target);
+	std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
+	
+}
+
+Server::Server() {}
 
 Server::Server(Server & other)
 {
@@ -145,7 +187,39 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-void Server::get_request(Request & request, Response & response)
+void Server::processRequest(std::string const &clientRequest)
+{
+	int         fd;
+	Request		request;
+	Response	response;
+    std::string responseString;
+
+	if (!clientRequest.length())
+		return ;
+	try
+	{
+		request.parseRequest(clientRequest);
+		processRequestWithConfig(request);
+
+		fd = get_fdClient();
+		if (request.getMethod() == "GET")
+			response = get_request(request); 
+		else if (request.getMethod() == "POST")
+			std::cout << request.getMethod() << std::endl; // Calling post_request
+		else if (request.getMethod() == "DELETE")
+			std::cout << request.getMethod() << std::endl; // Calling delete_request
+		// else
+		// 	response.responseErrorGenerator(501);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << "Process Request error \n" << e.what() << std::endl;
+		// response.responseErrorGenerator(404);
+	}
+	sendResponse(request.getRequestTarget(), response);
+}
+
+Response Server::get_request(Request & request)
 {
 	std::string		line;
 	std::string 	tmp_ext;
@@ -180,8 +254,19 @@ void Server::get_request(Request & request, Response & response)
 		type = "application/" + ext_file;
 	else if (ext_file == "mp4")
 		type = "video/" + ext_file;
-	response.setStatusCode(200);
-	response.setType(type);
+	return Response(200, type);
+}
+
+Response Server::post_request(Request &request)
+{
+	(void) request;
+    return Response();
+}
+
+Response Server::delete_request(Request &request)
+{
+	(void) request;
+    return Response();
 }
 
 void Server::simpleInit()

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/01 14:52:20 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 15:02:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,16 @@ class Server
         size_t  			_size_sockaddrin;
         struct  sockaddr_in	_sockaddrIn;
 
+		//HTTP Method
+		Response	get_request(Request & request);
+		Response	post_request(Request & request);
+		Response	delete_request(Request & request);
+
+		//Server utils functionnality
+		void		processRequestWithConfig(Request & request);
+		void		buildRequestTarget(Request & request);
+		void		sendResponse(std::string const & requestTarget, Response & response);
+	
 	public:
 		Server();
 		Server(Server & other);
@@ -45,6 +55,7 @@ class Server
 		std::string	getGeneralRoot() const;
 		stringMap	getLocation() const;
 
+		//Server connection
 		int 		get_fdClient();
         int 		create_socket();
         void 		configure_sockaddrin(int port);
@@ -53,8 +64,8 @@ class Server
         int 		accept_client_connexion();
         std::string get_client_request();
 
-		//HTTP Method
-		void		get_request(Request & request, Response & response);
+		//Server main functionnality
+		void    processRequest(std::string const & clientRequest);
 
 		//For testing only !!!!
 		void		simpleInit();
