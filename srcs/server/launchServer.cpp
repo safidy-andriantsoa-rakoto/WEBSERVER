@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/05 09:28:32 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/05 10:39:00 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,19 @@ std::string get_client_request(int fdCli)
 void    launchServer()
 {
 	Server server;
+	Server server2;
 
 	server.simpleInit(); //For test only !!!!!!!!
+	server2.simpleInit();
 
 	struct epoll_event max_event[10];
 
 	int stat1 = server_create(server, 2003);
-	if (!stat1)
+	int stat2 = server_create(server2, 2004);
+	std::cout << "Server fd=" << server.get_fdSocket() << std::endl;
+	std::cout << "Server2 fd=" << server2.get_fdSocket() << std::endl;
+	// return ;
+	if (!stat1 || !stat2)
 	{
 		std::cout << "Error\nFailed to load server1" << std::endl;
 		return ;
@@ -94,28 +100,45 @@ void    launchServer()
 		perror("epoll_create: ");
 		return ;
 	}
+	/************************************* */
 	int flags = fcntl(server.get_fdSocket(), O_NONBLOCK, 0);
-	fcntl(server.get_fdSocket(), F_SETFL, flags | O_NONBLOCK);// socket non bloquant
+	fcntl(server.get_fdSocket(), F_SETFL, flags | O_NONBLOCK);
 	struct epoll_event event;
 	event.events = EPOLLIN | EPOLLOUT;
 	event.data.fd = server.get_fdSocket();
 	if(epoll_ctl(efds, EPOLL_CTL_ADD, server.get_fdSocket(), &event) < 0)
 	{
-		perror("EPOLL_CTRL:");
+		perror("1EPOLL_CTRL:");
 		return ;
 	}
+	/************************************ */
+	int flags2 = fcntl(server2.get_fdSocket(), O_NONBLOCK, 0);
+	fcntl(server2.get_fdSocket(), F_SETFL, flags2 | O_NONBLOCK);
+	struct epoll_event event2;
+	event2.events = EPOLLIN | EPOLLOUT;
+	event2.data.fd = server2.get_fdSocket();
+	std::cout << "FD_server2=" << server2.get_fdSocket() << std::endl;
+	if(epoll_ctl(efds, EPOLL_CTL_ADD, server2.get_fdSocket(), &event2) < 0)
+	{
+		perror("2EPOLL_CTRL:");
+		return ;
+	}
+	/************************************ */
 	while (1)
 	{
 		int ewait = epoll_wait(efds, max_event, 10, -1);
 		for (int i = 0; i < ewait; i++)
 		{
 			std::cout << "	LE FD:" << max_event[i].data.fd << std::endl;
-			if (max_event[i].data.fd == server.get_fdSocket())
+			if (max_event[i].data.fd == server.get_fdSocket() || max_event[i].data.fd == server2.get_fdSocket())
 			{
 				std::cout << "ACCEPTER" << std::endl;
 				struct sockaddr_in cli;
 				cli.sin_family = AF_INET;
-				cli.sin_port = htons(2003);
+				if (max_event[i].data.fd == server2.get_fdSocket())
+					cli.sin_port = htons(2004);
+				else
+					cli.sin_port = htons(2003);
 				cli.sin_addr.s_addr = INADDR_ANY;
 				size_t size = sizeof(cli);
 				int fd_cli = accept(max_event[i].data.fd, (sockaddr *)&(cli), (socklen_t *)&(size));
@@ -131,7 +154,6 @@ void    launchServer()
 			}
 			else
 			{
-				std::cout << "ATY ve?" << std::endl;
 				int fd =  max_event[i].data.fd;
 				processRequest(get_client_request(max_event[i].data.fd), server, fd);
 				epoll_ctl(efds, EPOLL_CTL_DEL, max_event[i].data.fd, NULL);
@@ -154,8 +176,10 @@ void    launchServer()
 
 	// 		std::cout << "Connected!" << std::endl;
 	// 		clientRequest = server.get_client_request();
-	// 		processRequest(clientRequest, server, server.get_fdClient());
+	// 		int fd = server.get_fdClient();
+	// 		processRequest(clientRequest, server, fd);
 	// 		close(server.get_fdClient());
 	// 	}
+	// 	sleep(2);
 	// }
 }
