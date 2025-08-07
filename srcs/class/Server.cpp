@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 22:00:20 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/07 14:30:09 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,12 @@ void Server::buildRequestTarget(Request & request)
 
 Server::Server() {}
 
-Server::Server(Server & other)
+Server::Server(Server const & other)
 {
 	*this = other;
 }
 
-Server &Server::operator=(Server &other)
+Server &Server::operator=(Server const & other)
 {
 	if (this != &other)
 	{
@@ -75,7 +75,7 @@ Server::~Server()
 		close(_fdSocket);
 }
 
-std::string Server::getPort() const
+int Server::getPort() const
 {
 	return _port;
 }
@@ -100,12 +100,17 @@ std::string Server::getGeneralRoot() const
     return _generalRoot;
 }
 
-int Server::get_fdClient()
+int Server::get_fdClient() const
 {
 	return (this->_fdClient);
 }
 
-//Afaka atao throw
+int Server::get_fdSocket() const
+{
+    return _fdSocket;
+}
+
+// Afaka atao throw
 int Server::create_socket()
 {
 	this->_fdSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -177,7 +182,7 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-void Server::processRequest(std::string const &clientRequest)
+void Server::processRequest(std::string const & clientRequest, int const & fd_cli)
 {
 	Request		request;
 	Response	response;
@@ -203,7 +208,7 @@ void Server::processRequest(std::string const &clientRequest)
 	}
 	// std::cout << "Response = \n" << response.getFullResponse() << std::endl;
 	responseString = response.getFullResponse();
-	send_value(_fdClient, responseString);
+	send_value(fd_cli, responseString);
 }
 
 Response Server::get_request(Request & request)
@@ -219,7 +224,7 @@ Response Server::get_request(Request & request)
 	//On error : need to specify the statusCode (no need to throw?)
 	file.open(tmp_ext.c_str());
 	if (!file.is_open())
-		throw std::runtime_error("Error on get request");
+		throw ErrorExcept(404, "File unreachable");
 	//Calling a generic function to get type based on file extension
 	ext_file = getFileExtension(tmp_ext);
 	std::cout << "extension->" << ext_file << std::endl;
@@ -258,16 +263,10 @@ Response Server::delete_request(Request &request)
     return Response();
 }
 
-void Server::simpleInit()
+void Server::simpleInit(int const & port, std::string const & locationPath)
 {
-	_port = convertIntToString(2003);
+	_port = port;
 	_host = "localhost";
 	_serverName = "_";
-
-	addToMapString(_location, "/", "./site/dim");
-	addToMapString(_location, "/images", "./site/dim/images");
-	addToMapString(_location, "/css", "./site/dim/assets/css");
-	addToMapString(_location, "/js", "./site/dim/assets/js");
-	addToMapString(_location, "/webfonts", "./site/dim/assets/webfonts");
-	addToMapString(_location, "/sass", "./site/dim/assets/sass");
+	_location = splitFileToMapString(locationPath, " | ");
 }

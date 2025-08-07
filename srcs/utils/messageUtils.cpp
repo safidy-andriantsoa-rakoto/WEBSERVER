@@ -6,13 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/01 09:05:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/07 14:19:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-void send_value(int &_acceptStatus, std::string &_send_content)
+void send_value(int const & _acceptStatus, std::string & _send_content)
 {
     size_t tb = 0;
     while (tb < _send_content.size())

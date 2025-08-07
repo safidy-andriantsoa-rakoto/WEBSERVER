@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 21:53:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/07 14:23:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class Server
 {
 	private:
 	// From Config file (need to review attributes)
-		std::string			_port;
+		int					_port;
 		std::string			_host;
 		std::string			_serverName;
 		std::string			_generalRoot;
@@ -45,18 +45,19 @@ class Server
 	
 	public:
 		Server();
-		Server(Server & other);
-		Server & operator=(Server & other);
+		Server(Server const & other);
+		Server & operator=(Server const & other);
 		~Server();
 
-		std::string getPort() const;
+		int 		getPort() const;
 		std::string getHost() const;
 		std::string getServerName() const;
 		std::string	getGeneralRoot() const;
 		stringMap	getLocation() const;
 
 		//Server connection
-		int 		get_fdClient();
+		int 		get_fdClient() const;
+		int 		get_fdSocket() const;
         int 		create_socket();
         void 		configure_sockaddrin(int port);
         int 		link_socket_adress();
@@ -65,10 +66,11 @@ class Server
         std::string get_client_request();
 
 		//Server main functionnality
-		void    processRequest(std::string const & clientRequest);
+		void    processRequest(std::string const & clientRequest, int const & fd_cli);
 
 		//For testing only !!!!
-		void		simpleInit();
+		void simpleInit(int const & port, std::string const & locationPath);
+
 };
 
 #endif
