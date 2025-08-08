@@ -3,23 +3,55 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 14:34:34 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/08 08:15:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(){}
+//Process request data vs config file and throw exception if needed, redirection
+void Server::processRequestWithConfig(Request &request)
+{
+	//Check primary data
+	buildRequestTarget(request);
+}
 
-Server::Server(Server & other)
+//From config file, build Request Target from the request URI
+void Server::buildRequestTarget(Request & request)
+{
+	stringMapIt	it;
+	std::string	target;
+
+	target = request.getRequestTarget();
+	std::cout << "********TARGET = " << target << "***************" << std::endl;
+	if (target == "/")
+	{
+		request.setRequestTarget((*_location.begin()).second + "/" + "index.html");
+		std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
+		return ;
+	}
+	it = findLongestMatch(target, _location);
+	std::cout << "LOCATION SELECTED = " << (*it).first 	<< " => " << (*it).second << std::endl;
+	if ((*it).first != "/")
+		target.replace(target.find((*it).first, 0), (*it).first.size(), (*it).second);
+	else
+		target = (*it).second + target;
+	request.setRequestTarget(target);
+	std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
+	
+}
+
+Server::Server() {}
+
+Server::Server(Server const & other)
 {
 	*this = other;
 }
 
-Server &Server::operator=(Server &other)
+Server &Server::operator=(Server const & other)
 {
 	if (this != &other)
 	{
@@ -43,7 +75,7 @@ Server::~Server()
 		close(_fdSocket);
 }
 
-std::string Server::getPort() const
+int Server::getPort() const
 {
 	return _port;
 }
@@ -63,11 +95,6 @@ stringMap Server::getLocation() const
 	return _location;
 }
 
-std::string Server::getGeneralRoot() const
-{
-    return _generalRoot;
-}
-
 int Server::get_fdClient() const
 {
 	return (this->_fdClient);
@@ -75,7 +102,7 @@ int Server::get_fdClient() const
 
 int Server::get_fdSocket() const
 {
-    return (this->_fdSocket);
+    return _fdSocket;
 }
 
 //Afaka atao throw
@@ -150,20 +177,49 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-void Server::get_request(Request & request, Response & response)
+void Server::processRequest(std::string const & clientRequest, int const & fd_cli)
+{
+	Request		request;
+	Response	response;
+    std::string responseString;
+
+	if (!clientRequest.length())
+		return ;
+	try
+	{
+		request.parseRequest(clientRequest);
+		processRequestWithConfig(request);
+		if (request.getMethod() == "GET")
+			response = get_request(request); 
+		else if (request.getMethod() == "POST")
+			std::cout << request.getMethod() << std::endl; // Calling post_request
+		else if (request.getMethod() == "DELETE")
+			std::cout << request.getMethod() << std::endl; // Calling delete_request
+	}
+	catch(ErrorExcept const & e)
+	{
+		std::cerr << "Process Request error \n" << e._error << std::endl;
+		response.responseErrorGenerator(e._status, ERR_PATH);
+	}
+	// std::cout << "Response = \n" << response.getFullResponse() << std::endl;
+	responseString = response.getFullResponse();
+	send_value(fd_cli, responseString);
+}
+
+Response Server::get_request(Request & request)
 {
 	std::string		line;
 	std::string 	tmp_ext;
 	std::string 	ext_file;
 	std::string 	type;
 	std::fstream	file;
-
+	
 	tmp_ext = request.getRequestTarget();
 	//Use of config file parameter to search for the file!!!
 	//On error : need to specify the statusCode (no need to throw?)
 	file.open(tmp_ext.c_str());
 	if (!file.is_open())
-		throw std::runtime_error("Error on get request");
+		throw ErrorExcept(404, "File unreachable");
 	//Calling a generic function to get type based on file extension
 	ext_file = getFileExtension(tmp_ext);
 	std::cout << "extension->" << ext_file << std::endl;
@@ -183,27 +239,29 @@ void Server::get_request(Request & request, Response & response)
 	}
 	else if (ext_file == "woff" || ext_file == "pdf")
 		type = "application/" + ext_file;
-	else if (ext_file == "mp4")
+		else if (ext_file == "mp4")
 		type = "video/" + ext_file;
-	response.setStatusCode(200);
-	response.setType(type);
+	Response response(200, type);
+	response.responseGenerator(request.getRequestTarget());
+	return response;
 }
 
-void Server::simpleInit()
+Response Server::post_request(Request &request)
 {
-	_port = convertIntToString(2003);
+	(void) request;
+    return Response();
+}
+
+Response Server::delete_request(Request &request)
+{
+	(void) request;
+    return Response();
+}
+
+void Server::simpleInit(int const & port, std::string const & locationPath)
+{
+	_port = port;
 	_host = "localhost";
 	_serverName = "_";
-	// addToMapString(_location, "/", "./site/agency");
-	// addToMapString(_location, "/images", "./site/agency/assets/images");
-	// addToMapString(_location, "/css", "./site/agency/assets/css");
-	// addToMapString(_location, "/js", "./site/agency/assets/js");
-	// addToMapString(_location, "/webfonts", "./site/agency/assets/webfonts");
-
-	addToMapString(_location, "/", "./site/dim");
-	addToMapString(_location, "/images", "./site/dim/images");
-	addToMapString(_location, "/css", "./site/dim/assets/css");
-	addToMapString(_location, "/js", "./site/dim/assets/js");
-	addToMapString(_location, "/webfonts", "./site/dim/assets/webfonts");
-	addToMapString(_location, "/sass", "./site/dim/assets/sass");
+	_location = splitFileToMapString(locationPath, " | ");
 }

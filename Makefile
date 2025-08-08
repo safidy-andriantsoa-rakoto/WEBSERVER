@@ -8,16 +8,16 @@ INC	= $(addprefix $(INC_DIR), $(INC_FILE))
 MAIN = main.cpp
 
 CLASS_DIR = class/
-CLASS = Server.cpp Request.cpp Response.cpp
+CLASS = Server.cpp Request.cpp Response.cpp ErrorExcept.cpp
 
 CGI_DIR = cgi/
 CGI = cgi.cpp
 
 UTILS_DIR = utils/
-UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp
+UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp
 
 SERV_DIR = server/
-SERV = launchServer.cpp errorHandling.cpp
+SERV = launchServer.cpp parseConfig.cpp serverHandler.cpp
 
 SRC_DIR = srcs/
 SRC = $(addprefix $(SRC_DIR), $(MAIN)) \

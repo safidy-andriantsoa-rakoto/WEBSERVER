@@ -1,0 +1,6 @@
+/ | ./site/dim
+/images | ./site/dim/images
+/css | ./site/dim/assets/css
+/js | ./site/dim/assets/js
+/webfonts | ./site/dim/assets/webfonts
+/sass | ./site/dim/assets/sass

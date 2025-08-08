@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 09:02:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 21:18:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,29 +18,31 @@
 class Response
 {
 	private:
-		int			_statusCode;
-		std::string	_type;
-		// std::string	_body;
+		int					_statusCode;
+		std::string			_type;
+		std::string			_body;
+		std::string			_statusLine;
+		stringMap			_header;
+		std::string			_fullResponse;
 
 		static stringMap	_allStatusCode;
 
+		void				addDefaultHeader();
+		void				buildErrorPage(std::string const & path);
+		void				setStatusLine();
+
 	public:
 		Response();
+		Response(int const & statusCode);
+		Response(int const & statusCode, std::string const & type);
 		Response(Response const & other);
 		Response & operator=(Response const & other);
 		~Response();
 
-		int			getStatusCode() const;
+		std::string	getFullResponse();
 
-		void		setStatusCode(int const & statusCode);
-		void		setType(std::string const & type);
-
-		// void		setResponseBody(std::string const & path);
-
-		std::string getStatusLine(int const & statusCode);
-
-		std::string	responseGenerator(std::string const & responsePath);
-		std::string	responseGenerator(int const & statusCode, std::string const & responsePath, std::string const & type);
+		void		responseGenerator(std::string const & filePath);
+		void		responseErrorGenerator(int const & statusCode, std::string const &  filePath);
 
 		static void	initAllStatusCode(std::string const & filePath);
 };

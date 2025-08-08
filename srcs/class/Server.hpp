@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 14:34:45 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/08 08:13:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 
 #include "Request.hpp"
 #include "Response.hpp"
+#include "ErrorExcept.hpp"
 #include "general.hpp"
 
 class Server
 {
 	private:
 	// From Config file (need to review attributes)
-		std::string			_port;
+		int					_port;
 		std::string			_host;
 		std::string			_serverName;
 		std::string			_generalRoot;
@@ -33,18 +34,27 @@ class Server
         size_t  			_size_sockaddrin;
         struct  sockaddr_in	_sockaddrIn;
 
+		//HTTP Method
+		Response	get_request(Request & request);
+		Response	post_request(Request & request);
+		Response	delete_request(Request & request);
+
+		//Server utils functionnality
+		void		processRequestWithConfig(Request & request);
+		void		buildRequestTarget(Request & request);
+	
 	public:
 		Server();
-		Server(Server & other);
-		Server & operator=(Server & other);
+		Server(Server const & other);
+		Server & operator=(Server const & other);
 		~Server();
 
-		std::string getPort() const;
+		int 		getPort() const;
 		std::string getHost() const;
 		std::string getServerName() const;
-		std::string	getGeneralRoot() const;
 		stringMap	getLocation() const;
 
+		//Server connection
 		int 		get_fdClient() const;
 		int 		get_fdSocket() const;
         int 		create_socket();
@@ -54,11 +64,12 @@ class Server
         int 		accept_client_connexion();
         std::string get_client_request();
 
-		//HTTP Method
-		void		get_request(Request & request, Response & response);
+		//Server main functionnality
+		void    processRequest(std::string const & clientRequest, int const & fd_cli);
 
 		//For testing only !!!!
-		void		simpleInit();
+		void simpleInit(int const & port, std::string const & locationPath);
+
 };
 
 #endif

@@ -1,23 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   errorHandling.cpp                                  :+:      :+:    :+:   */
+/*   ErrorExcept.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/29 10:03:49 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/31 11:29:11 by barandri         ###   ########.fr       */
+/*   Created: 2025/08/04 21:48:39 by barandri          #+#    #+#             */
+/*   Updated: 2025/08/04 22:19:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#ifndef  ERROREXCEPT_HPP
+# define ERROREXCEPT_HPP
 
-void	generateErrorResponse(int & fd, int const & statusCode)
+#include "general.hpp"
+
+class ErrorExcept : public std::exception
 {
-    Response    response;
-    std::string responseString;
+	public:
+		int			_status;
+		std::string	_error;
 
-    std::cout << "RESPONSE ERROR SENT!!!!" << std::endl;
-	responseString = response.responseGenerator(statusCode, "./errorPage/error.html", "text/html");
-    send_value(fd, responseString);
-}
+		ErrorExcept(int const & status, std::string const & error);
+		~ErrorExcept() throw();
+};
+
+#endif

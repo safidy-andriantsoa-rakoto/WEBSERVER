@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 14:54:36 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/08 08:09:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,19 @@
 #include "../srcs/class/Request.hpp"
 #include "../srcs/class/Response.hpp"
 
-typedef std::list<Server>   ServerList;
+typedef std::vector<Server>		vectServer;
+typedef vectServer::iterator	itVectServer;
+
+//Server handler
+void			server_create(Server & server);
+void			initAllServer(vectServer & allServer);
+int	            launchEpoll(vectServer & allServer);
+itVectServer	findFd(vectServer & allServer, int const & fd);
 
 // Server main
-void    processRequest(std::string const & clientRequest, Server & server, int& fd);
-void	launchServer();
+void    		launchServer(vectServer & allServer);
+
+//Waiting for real parser
+vectServer 		parseConfigFile();
 
 #endif

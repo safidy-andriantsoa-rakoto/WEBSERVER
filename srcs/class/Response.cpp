@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 09:02:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/04 21:35:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,13 @@
 
 stringMap Response::_allStatusCode;
 
+void Response::addDefaultHeader(){}
+
 Response::Response(){}
+
+Response::Response(int const & statusCode) : _statusCode(statusCode){}
+
+Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type){}
 
 Response::Response(Response const & other)
 {
@@ -25,76 +31,63 @@ Response &Response::operator=(Response const & other)
 {
 	if (this != &other)
 	{
-		// _statusCode = other._statusCode;
-		// _body = other._body;
+		_statusCode = other._statusCode;
+		_type = other._type;
+		_body = other._body;
+		_statusLine = other._statusLine;
+		_header = other._header;
+		_fullResponse = other._fullResponse;
 	}
 	return *this;
 }
 
 Response::~Response(){}
 
-int	Response::getStatusCode() const
+std::string Response::getFullResponse()
 {
-	return _statusCode;
+	return _fullResponse;
 }
 
-void Response::setStatusCode(int const &statusCode)
+void Response::buildErrorPage(std::string const & filePath)
 {
+	std::string	replace;
+
+	_body = readFileToString(filePath);
+	replace = convertIntToString(_statusCode);
+	replace += " : " + (*_allStatusCode.find(replace)).second;
+	replaceString(_body, replace, "$status");
+}
+
+void Response::setStatusLine()
+{
+	_statusLine = "HTTP/1.0 " + convertIntToString(_statusCode) + " " + _allStatusCode[convertIntToString(_statusCode)];
+}
+
+void	Response::responseGenerator(std::string const &  filePath)
+{
+	std::string	headerString;
+	std::string	endLine = "\r\n";
+
+	setStatusLine();
+	_body = readFileToString( filePath);
+	_header["Content-Length"] = convertIntToString(_body.size());
+	headerString = convertStringMapToString(_header, endLine);
+	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
+}
+
+//Error response + replacing html page
+void	Response::responseErrorGenerator(int const & statusCode, std::string const & filePath)
+{
+	std::string	headerString;
+	std::string	replace;
+	std::string	endLine = "\r\n";
+
 	_statusCode = statusCode;
-}
-
-void Response::setType(std::string const &type)
-{
-	_type = type;
-}
-
-// void	Response::setResponseBody(std::string const & path)
-// {
-// 	_body = readFileToString(path);
-// }
-
-std::string Response::getStatusLine(int const &statusCode)
-{
-	std::string	statusLine;
-	std::string	reasonPhrase;
-	std::string	statusCodeString;
-
-	statusCodeString = convertIntToString(statusCode);
-	statusLine = "HTTP/1.1 " + statusCodeString + " " + reasonPhrase;
-	reasonPhrase = (*_allStatusCode.find(statusCodeString)).second;
-    return statusLine;
-}
-
-std::string Response::responseGenerator(std::string const &responsePath)
-{
-	std::string	fullResponse;
-	std::string	statusLine;
-	std::string	header;
-	std::string	body;
-	std::string	endLine = "\r\n";
-
-	body = readFileToString(responsePath);
-	statusLine = getStatusLine(_statusCode) + endLine;
-	header = "Content-Type: " + _type + endLine + "Content-Length: " + convertIntToString(body.size()) + endLine;
-	fullResponse = statusLine + header + endLine + body + endLine;
-	return fullResponse;
-}
-
-// Use a generic function to replace a word inside a file ($env)
-// Read the file and add endline correctly
-std::string Response::responseGenerator(int const & statusCode, std::string const & responsePath, std::string const & type)
-{
-	std::string	fullResponse;
-	std::string	statusLine;
-	std::string	header;
-	std::string	body;
-	std::string	endLine = "\r\n";
-
-	body = readFileToString(responsePath);
-	statusLine = getStatusLine(statusCode) + endLine;
-	header = "Content-Type: " + type + endLine + "Content-Length: " + convertIntToString(body.size()) + endLine;
-	fullResponse = statusLine + header + endLine + body + endLine;
-	return fullResponse;
+	setStatusLine();
+	buildErrorPage(filePath);
+	_header["Content-Length"] = convertIntToString(_body.size());
+	headerString = convertStringMapToString(_header, endLine);
+	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 }
 
 void Response::initAllStatusCode(std::string const & filePath)

@@ -6,24 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 10:31:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/07 14:19:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-//Soloina @ ilay class Response
-std::string response_generator(std::string response, std::string type, std::string content)
-{
-    std::stringstream out;
-    out << response;// misy ilay zavatra nangatahin'ilay client
-    out << "Content-Type: " << type << "\r\nAccess-Control-Allow-Origin: *\r\n";// mime text/html
-    out << "Content-Length: " << content.size() << "\n\r\n";// index.html -> string -> omena ny size 
-    out << content << "\r\n";
-    return (out.str());
-}
-
-void send_value(int &_acceptStatus, std::string &_send_content)
+void send_value(int const & _acceptStatus, std::string & _send_content)
 {
     size_t tb = 0;
     while (tb < _send_content.size())
