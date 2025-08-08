@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/08 08:13:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/08 08:48:47 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "Response.hpp"
 #include "ErrorExcept.hpp"
 #include "general.hpp"
+#include "typedef.hpp"
 
 class Server
 {
@@ -32,7 +33,7 @@ class Server
 	    int     			_fdSocket;
         int     			_fdClient;
         size_t  			_size_sockaddrin;
-        struct  sockaddr_in	_sockaddrIn;
+        SockAddrIn			_sockaddrIn;
 
 		//HTTP Method
 		Response	get_request(Request & request);
@@ -57,6 +58,7 @@ class Server
 		//Server connection
 		int 		get_fdClient() const;
 		int 		get_fdSocket() const;
+		SockAddrIn	get_confSockAddrIn() const;
         int 		create_socket();
         void 		configure_sockaddrin(int port);
         int 		link_socket_adress();
