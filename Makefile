@@ -8,7 +8,7 @@ INC	= $(addprefix $(INC_DIR), $(INC_FILE))
 MAIN = main.cpp
 
 CLASS_DIR = class/
-CLASS = Server.cpp Request.cpp Response.cpp ErrorExcept.cpp
+CLASS = Server.cpp Request.cpp Response.cpp ErrorExcept.cpp EpollCreation.cpp Client.cpp
 
 CGI_DIR = cgi/
 CGI = cgi.cpp

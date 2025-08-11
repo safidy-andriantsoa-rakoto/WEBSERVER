@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/08 09:37:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/11 14:37:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,18 @@
 #include "Response.hpp"
 #include "ErrorExcept.hpp"
 #include "general.hpp"
+#include "typedef.hpp"
 
 class Server
 {
 	private:
 	// From Config file (need to review attributes)
-		int					_port;
-		std::string			_host;
-		std::string			_serverName;
-		stringMap			_location;
 
 	// For socket
 	    int     			_fdSocket;
         int     			_fdClient;
         size_t  			_size_sockaddrin;
-        struct  sockaddr_in	_sockaddrIn;
+        SockAddrIn			_sockaddrIn;
 
 		//HTTP Method
 		Response	get_request(Request & request);
@@ -48,14 +45,10 @@ class Server
 		Server & operator=(Server const & other);
 		~Server();
 
-		int 		getPort() const;
-		std::string getHost() const;
-		std::string getServerName() const;
-		stringMap	getLocation() const;
-
 		//Server connection
 		int 		get_fdClient() const;
 		int 		get_fdSocket() const;
+		SockAddrIn	get_confSockAddrIn() const;
         int 		create_socket();
         void 		configure_sockaddrin(int port);
         int 		link_socket_adress();

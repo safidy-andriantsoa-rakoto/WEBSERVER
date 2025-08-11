@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/08 09:37:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/11 14:37:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,6 @@ Server &Server::operator=(Server const & other)
 {
 	if (this != &other)
 	{
-		_port = other._port;
-		_host = other._host;
-		_serverName = other._serverName;
-		_location = other._location;
 		_fdSocket = other._fdSocket;
 		_fdClient = other._fdClient;
 		_size_sockaddrin = other._size_sockaddrin;
@@ -75,26 +71,6 @@ Server::~Server()
 		close(_fdSocket);
 }
 
-int Server::getPort() const
-{
-	return _port;
-}
-
-std::string Server::getHost() const
-{
-	return _host;
-}
-
-std::string Server::getServerName() const
-{
-	return _serverName;
-}
-
-stringMap Server::getLocation() const
-{
-	return _location;
-}
-
 int Server::get_fdClient() const
 {
 	return (this->_fdClient);
@@ -105,7 +81,12 @@ int Server::get_fdSocket() const
     return _fdSocket;
 }
 
-// Afaka atao throw
+SockAddrIn Server::get_confSockAddrIn() const
+{
+    return (this->_sockaddrIn);
+}
+
+//Afaka atao throw
 int Server::create_socket()
 {
 	this->_fdSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -155,13 +136,13 @@ int Server::wait_connexion_from_client()
 //Afaka atao throw
 int Server::accept_client_connexion()
 {
-	this->_fdClient = accept(_fdSocket, (sockaddr *)&(this->_sockaddrIn), (socklen_t *)&(this->_size_sockaddrin));
+	int fd = accept(_fdSocket, (sockaddr *)&(this->_sockaddrIn), (socklen_t *)&(this->_size_sockaddrin));
 	if (this->_fdClient == -1)
 	{
 		std::cout << "Error\naccept a connection on a socket" << std::endl;
-		return (0);
+		return (-2);
 	}
-	return (1);
+	return (fd);
 }
 
 //Afaka atao throw
@@ -233,7 +214,7 @@ Response Server::get_request(Request & request)
 	{
 		type = "image/";
 		if (ext_file == "svg")
-			type += "svg+xml";  
+			type += "svg+xml";
 		else
 			type += ext_file;
 	}

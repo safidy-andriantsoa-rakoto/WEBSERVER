@@ -6,13 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 21:35:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/11 14:55:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
-stringMap Response::_allStatusCode;
+stringMap	Response::_allStatusCode;
 
 void Response::addDefaultHeader(){}
 
@@ -93,4 +93,9 @@ void	Response::responseErrorGenerator(int const & statusCode, std::string const 
 void Response::initAllStatusCode(std::string const & filePath)
 {
 	_allStatusCode = splitFileToMapString(filePath, " | ");
+}
+
+stringMap Response::getAllStatusCode()
+{
+    return _allStatusCode;
 }

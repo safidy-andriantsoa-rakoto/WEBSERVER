@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/04 21:18:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/11 14:54:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ class Response
 		void		responseGenerator(std::string const & filePath);
 		void		responseErrorGenerator(int const & statusCode, std::string const &  filePath);
 
-		static void	initAllStatusCode(std::string const & filePath);
+		static void			initAllStatusCode(std::string const & filePath);
+		static stringMap	getAllStatusCode();
 };
 
 #endif
