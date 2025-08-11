@@ -6,13 +6,11 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 14:47:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/11 20:35:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ALocation.hpp"
-
-ALocation::ALocation() : _autoindex(false){}
 
 bool ALocation::getAutoindex() const
 {
@@ -42,4 +40,17 @@ stringVect ALocation::getRedirect() const
 stringVect ALocation::getIndex() const
 {
     return _index;
+}
+
+void ALocation::displayLocation() const
+{
+    std::cout << "Location " << _location << " {\n"
+    << "    Root " << _root << std::endl;
+    if (_method.size())
+        displayStringVect(_method, "method");
+    if (_redirect.size())
+        displayStringVect(_redirect, "redirect");
+    if (_index.size())
+        displayStringVect(_index, "index");
+    std::cout << "} \n";
 }

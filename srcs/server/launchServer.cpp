@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/11 14:06:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/11 19:57:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void    launchServer(vectServer & allServer)
 {
-	itVectServer		it;
-	itVectServer		it2;
+	vectServerIt		it;
+	vectServerIt		it2;
 	std::string			request;
 	EpollCreation		epoll;
 	std::vector<Client>	v_client;

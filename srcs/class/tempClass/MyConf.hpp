@@ -1,27 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   MyLoc.hpp                                          :+:      :+:    :+:   */
+/*   MyConf.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/08 09:58:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 14:34:17 by barandri         ###   ########.fr       */
+/*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
+/*   Updated: 2025/08/11 20:19:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MYLOC_HPP
-# define MYLOC_HPP
+#ifndef MYCONF_HPP
+# define MYCONF_HPP
 
-#include "ALocation.hpp"
+#include "AConfig.hpp"
 
-class MyLoc : public ALocation
+class MyConf : public AConfig
 {
 	public:
-		MyLoc();
-		~MyLoc();
+		MyConf();
+		MyConf(int const & port);
+		~MyConf();
 
-		void	parseLocation(std::string const & filePath);
+		void	parseConfig(std::string const & filePath);
+
+		virtual void	displayConfig() const;
 };
 
 #endif

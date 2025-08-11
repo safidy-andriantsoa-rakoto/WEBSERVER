@@ -1,23 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   MyConf.cpp                                         :+:      :+:    :+:   */
+/*   AConfig.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 14:51:31 by barandri         ###   ########.fr       */
+/*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
+/*   Updated: 2025/08/11 18:17:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "MyConf.hpp"
 #include "AConfig.hpp"
 
-MyConf::MyConf(){}
-
-MyConf::~MyConf(){}
-
-void MyConf::parseConfig(std::string const &filePath)
+int			AConfig::getServPort() const
 {
+    return _port;
 }
 
+std::string	AConfig::getServHost() const
+{
+    return _host;
+}
+
+stringVect	AConfig::getServName() const
+{
+    return _serverName;
+}
+
+t_errPage	AConfig::getErrPage() const
+{
+    return _errPage;
+}
+
+vectLocation AConfig::getClassLocation() const
+{
+    return _location;
+}

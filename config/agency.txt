@@ -1,4 +1,4 @@
-/ | ./site/agency
+/ | ./site/agency |
 /css | ./site/agency/assets/css
 /images | ./site/agency/assets/images
 /js | ./site/agency/assets/js

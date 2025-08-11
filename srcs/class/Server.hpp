@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 14:37:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/11 20:16:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@
 #include "Request.hpp"
 #include "Response.hpp"
 #include "ErrorExcept.hpp"
+
+#include "tempClass/MyConf.hpp"
+#include "tempClass/MyLoc.hpp"
+
 #include "general.hpp"
 #include "typedef.hpp"
 
@@ -23,6 +27,7 @@ class Server
 {
 	private:
 	// From Config file (need to review attributes)
+		MyConf				_config;
 
 	// For socket
 	    int     			_fdSocket;
@@ -45,6 +50,9 @@ class Server
 		Server & operator=(Server const & other);
 		~Server();
 
+		//Server config
+		MyConf		getConfig() const;
+
 		//Server connection
 		int 		get_fdClient() const;
 		int 		get_fdSocket() const;
@@ -58,6 +66,9 @@ class Server
 
 		//Server main functionnality
 		void    processRequest(std::string const & clientRequest, int const & fd_cli);
+
+		//Server utils
+		vectLocationcIt	findLongestMatch(std::string const & text, vectLocation const & location);
 
 		//For testing only !!!!
 		void simpleInit(int const & port, std::string const & locationPath);

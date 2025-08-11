@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/07 14:19:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/11 20:03:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ void	    split_line(std::vector<std::string> &_data, std::string line);
 stringVect	splitString(std::string const & target, std::string const & sep);
 std::string convertIntToString(int const & n);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
-stringMapIt	findLongestMatch(std::string const & text, stringMap const & map);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
 std::string	convertStringMapToString(stringMap const & map, std::string const & sep);
 

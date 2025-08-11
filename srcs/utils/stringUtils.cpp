@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/07 14:25:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/11 20:06:20 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,39 +73,6 @@ void	addToMapString(stringMap & map, std::string const & first, std::string cons
 	stringPair	pair(first, second);
 
 	map.insert(pair);
-}
-
-stringMapIt	findLongestMatch(std::string const & text, stringMap const & map)
-{
-	std::string	compare;
-	stringMapIt	itFinal;
-	stringVect	vect1;
-	stringVect	vect2;
-	int			nbMatch = 0;
-	int			nbMatchMax = 0;
-
-	vect1 = splitString(text, "/");
-	itFinal = map.begin();
-	for(stringMapIt it = map.begin(); it != map.end(); it++)
-	{
-		compare = (*it).first;
-		if (text == compare)
-			return it;
-		vect2 = splitString(compare, "/");
-		nbMatch = 0;
-		for(size_t i = 0; i < vect1.size() && i < vect2.size(); i++)
-		{
-			if (vect1[i] != vect2[i])
-				break;
-			nbMatch++;
-		}
-		if (nbMatch > nbMatchMax)
-		{
-			nbMatchMax = nbMatch;
-			itFinal = it;
-		}
-	}
-	return itFinal;
 }
 
 void	replaceString(std::string & text, std::string const & replaceText, std::string const & findText)

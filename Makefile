@@ -8,7 +8,8 @@ INC	= $(addprefix $(INC_DIR), $(INC_FILE))
 MAIN = main.cpp
 
 CLASS_DIR = class/
-CLASS = Server.cpp Request.cpp Response.cpp ErrorExcept.cpp EpollCreation.cpp Client.cpp
+CLASS = Server.cpp Request.cpp Response.cpp ErrorExcept.cpp EpollCreation.cpp Client.cpp \
+		tempClass/AConfig.cpp tempClass/ALocation.cpp tempClass/MyConf.cpp tempClass/MyLoc.cpp
 
 CGI_DIR = cgi/
 CGI = cgi.cpp
@@ -46,8 +47,10 @@ all : $(NAME)
 $(NAME) : $(OBJ_ALL_DIR) $(OBJ)
 	$(CC) $(FLAG) $(OBJ) -o $(NAME)
 
+# Review this part !!!!
 $(OBJ_ALL_DIR) :
 	mkdir -p $(OBJ_ALL_DIR)
+	mkdir obj/class/tempClass
 
 $(OBJ) : $(OBJ_DIR)%.o:$(SRC_DIR)%.cpp $(INC)
 	$(CC) $(FLAG) -c $< -o $@ -I $(INC_DIR)

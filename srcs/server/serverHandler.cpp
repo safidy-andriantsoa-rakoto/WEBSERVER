@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/08 10:59:36 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/11 20:07:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void server_create(Server & server)
 {
 	if (!server.create_socket())
 		throw std::runtime_error("Failed to load server");
-	server.configure_sockaddrin(server.getPort());
+	server.configure_sockaddrin(server.getConfig().getServPort());
 	if (!server.link_socket_adress())
 		throw std::runtime_error("Failed to load server");
 	if (!server.wait_connexion_from_client())
@@ -32,7 +32,7 @@ void	launchEpoll(vectServer & allServer, EpollCreation &epoll)
 {
 	int					flags;
 
-	for(itVectServer it = allServer.begin(); it != allServer.end(); it++)
+	for(vectServerIt it = allServer.begin(); it != allServer.end(); it++)
 	{
 		flags = fcntl((*it).get_fdSocket(), O_NONBLOCK, 0);
 		fcntl((*it).get_fdSocket(), F_SETFL, flags | O_NONBLOCK);
@@ -41,9 +41,9 @@ void	launchEpoll(vectServer & allServer, EpollCreation &epoll)
 	}
 }
 
-itVectServer	findFd(vectServer & allServer, int const & fd)
+vectServerIt	findFd(vectServer & allServer, int const & fd)
 {
-	itVectServer it;
+	vectServerIt it;
 
 	for(it = allServer.begin(); it != allServer.end(); it++)
 	{
