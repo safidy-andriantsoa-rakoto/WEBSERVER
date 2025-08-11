@@ -6,14 +6,14 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/07 14:30:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/08 09:37:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
 //Process request data vs config file and throw exception if needed, redirection
-void Server::processRequestWithConfig(Request &request)
+void Server::processRequestWithConfig(Request & request)
 {
 	//Check primary data
 	buildRequestTarget(request);
@@ -93,11 +93,6 @@ std::string Server::getServerName() const
 stringMap Server::getLocation() const
 {
 	return _location;
-}
-
-std::string Server::getGeneralRoot() const
-{
-    return _generalRoot;
 }
 
 int Server::get_fdClient() const
