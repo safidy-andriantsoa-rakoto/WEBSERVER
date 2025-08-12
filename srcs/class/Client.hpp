@@ -6,13 +6,13 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/08 11:48:49 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/12 10:03:09 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "../../includes/general.hpp"
+#include "general.hpp"
 
 class Client
 {
@@ -20,7 +20,7 @@ class Client
         int _parentFD;
         int _clientFD;
         SockAddrIn  _configSockAddrIn;
-        bool        _server_socket;     
+        bool        _server_socket;
         Client();
         
     public:
@@ -32,4 +32,3 @@ class Client
         int         get_parent() const;
         std::string ClientRequest();
 };
-

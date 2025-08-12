@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 14:53:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 15:05:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@
 #include <map>
 #include <list>
 #include <string>
+#include "general.hpp"
 
-typedef std::map<std::string, std::string>  stringMap;
-typedef stringMap::const_iterator			stringMapIt;
+typedef std::map<std::string, std::string >    MapMime;
+typedef std::map<std::string, std::string>                  stringMap;
+typedef stringMap::const_iterator			                stringMapIt;
 
-typedef std::pair<std::string, std::string>	stringPair;
+typedef std::pair<std::string, std::string>	                stringPair;
 
 typedef std::vector<std::string>	stringVect;
 typedef stringVect::iterator        stringVectIt;

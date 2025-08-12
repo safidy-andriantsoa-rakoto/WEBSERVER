@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 14:59:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 15:03:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,6 @@ void Server::processRequest(std::string const & clientRequest, int const & fd_cl
 		std::cerr << "Process Request error \n" << e._error << std::endl;
 		response.responseErrorGenerator(e._status, ERR_PATH);
 	}
-	std::cout << "Response = \n" << response.getFullResponse() << std::endl;
 	responseString = response.getFullResponse();
 	send_value(fd_cli, responseString);
 }

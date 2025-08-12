@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 20:05:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 15:05:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@
 #include "../srcs/class/tempClass/ALocation.hpp"
 #include "../srcs/class/tempClass/MyConf.hpp"
 #include "../srcs/class/tempClass/MyLoc.hpp"
+#include "../srcs/class/Mime.hpp"
 
+typedef std::vector<Client>     VClient;
 typedef std::vector<Server>		vectServer;
 typedef vectServer::iterator	vectServerIt;
 
