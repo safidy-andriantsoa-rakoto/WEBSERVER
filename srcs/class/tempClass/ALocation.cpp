@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 14:01:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:09:54 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,14 @@ stringVect ALocation::getIndex() const
 
 void ALocation::displayLocation() const
 {
-    displayStringVect(_location);
+    displayStringVect(_location, "location ");
     std::cout << "{ \n";
-    displayStringVect(_root, "  ");
+    displayStringVect(_root, "  root : ");
     if (_method.size() > 1)
-        displayStringVect(_method, "    ");
+        displayStringVect(_method, "    method : ");
     if (_redirect.size() > 1)
-        displayStringVect(_redirect, "  ");
+        displayStringVect(_redirect, "  redirect : ");
     if (_index.size() > 1)
-        displayStringVect(_index, " ");
+        displayStringVect(_index, " index : ");
     std::cout << "} \n";
 }
