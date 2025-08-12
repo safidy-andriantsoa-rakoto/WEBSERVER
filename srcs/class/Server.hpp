@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 20:16:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:51:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ class Server
 		void    processRequest(std::string const & clientRequest, int const & fd_cli);
 
 		//Server utils
-		vectLocationcIt	findLongestMatch(std::string const & text, vectLocation const & location);
+		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 
 		//For testing only !!!!
 		void simpleInit(int const & port, std::string const & locationPath);

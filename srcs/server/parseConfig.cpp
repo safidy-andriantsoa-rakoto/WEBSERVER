@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 10:19:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 15:52:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:35:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,5 @@ vectServer parseConfigFile()
 	result.push_back(server2);
 	result.push_back(server3);
 	result.push_back(server4);
-
-	for (vectServerIt it = result.begin(); it != result.end(); it++)
-		(*it).getConfig().displayConfig();
 	return result;
 }

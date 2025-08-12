@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 15:59:20 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:58:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,20 @@ void Server::processRequestWithConfig(Request & request)
 void Server::buildRequestTarget(Request & request)
 {
 	vectLocationcIt	it;
-	std::string	target;
+	std::string		target;
+	vectLocation	loc;
 
 	target = request.getRequestTarget();
-	std::cout << "********TARGET = " << target << "***************" << std::endl;
+	// std::cout << "********TARGET = " << target << "***************" << std::endl;
 	if (target == "/")
 	{
-		request.setRequestTarget(_config.getClassLocation()[0].getLocation() + "/" + "index.html");
+		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
 		std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
 		return ;
 	}
-	//Create a function that turn location into stringMap?
-	it = findLongestMatch(target, getConfig().getClassLocation());
-	std::cout << "LOCATION SELECTED = " << (*it).getLocation() 	<< " => " << (*it).getRootDirectory()[0] << std::endl;
+	loc = _config.getClassLocation();
+	it = findLongestMatch(target, loc);
+	// std::cout << "LOCATION SELECTED = " << (*it).getLocation() 	<< " => " << (*it).getRootDirectory() << std::endl;
 	if ((*it).getLocation() != "/")
 		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 	else
@@ -249,15 +250,13 @@ void Server::simpleInit(int const & port, std::string const & locationPath)
 	MyConf conf(port);
 
 	conf.parseConfig(locationPath);
-	conf.displayConfig();
 	_config = conf;
-	_config.displayConfig();
 }
 
-vectLocationcIt	Server::findLongestMatch(std::string const & text, vectLocation const & location)
+vectLocationIt	Server::findLongestMatch(std::string const & text, vectLocation & location)
 {
 	std::string		compare;
-	vectLocationcIt	itFinal;
+	vectLocationIt	itFinal;
 	stringVect		vect1;
 	stringVect		vect2;
 	int				nbMatch = 0;
@@ -265,11 +264,11 @@ vectLocationcIt	Server::findLongestMatch(std::string const & text, vectLocation 
 
 	vect1 = splitString(text, "/");
 	itFinal = location.begin();
-	for(vectLocationcIt it = location.begin(); it != location.end(); it++)
+	for(vectLocationIt it = location.begin(); it != location.end(); it++)
 	{
 		compare = (*it).getLocation();
 		if (text == compare)
-			return it;
+		return it;
 		vect2 = splitString(compare, "/");
 		nbMatch = 0;
 		for(size_t i = 0; i < vect1.size() && i < vect2.size(); i++)
@@ -278,6 +277,7 @@ vectLocationcIt	Server::findLongestMatch(std::string const & text, vectLocation 
 				break;
 			nbMatch++;
 		}
+		std::cout << "Compare = " << compare << " ; nbMatch = " << nbMatch << std::endl;
 		if (nbMatch > nbMatchMax)
 		{
 			nbMatchMax = nbMatch;
