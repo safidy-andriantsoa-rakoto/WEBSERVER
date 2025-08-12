@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 13:49:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:47:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,20 +29,19 @@ void Server::buildRequestTarget(Request & request)
 	std::cout << "********TARGET = " << target << "***************" << std::endl;
 	if (target == "/")
 	{
-		request.setRequestTarget(_config.getClassLocation()[0].getLocation()[1] + "/" + "index.html");
+		request.setRequestTarget(_config.getClassLocation()[0].getLocation() + "/" + "index.html");
 		std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
 		return ;
 	}
 	//Create a function that turn location into stringMap?
 	it = findLongestMatch(target, getConfig().getClassLocation());
-	std::cout << "LOCATION SELECTED = " << (*it).getLocation()[1] 	<< " => " << (*it).getRootDirectory()[1] << std::endl;
-	if ((*it).getLocation()[1] != "/")
-		target.replace(target.find((*it).getLocation()[1], 0), (*it).getLocation().size(), (*it).getRootDirectory()[1]);
+	std::cout << "LOCATION SELECTED = " << (*it).getLocation() 	<< " => " << (*it).getRootDirectory()[0] << std::endl;
+	if ((*it).getLocation() != "/")
+		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 	else
-		target = (*it).getRootDirectory()[1] + target;
+		target = (*it).getRootDirectory() + target;
 	request.setRequestTarget(target);
 	std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
-	
 }
 
 Server::Server() {}
@@ -188,7 +187,7 @@ void Server::processRequest(std::string const & clientRequest, int const & fd_cl
 		std::cerr << "Process Request error \n" << e._error << std::endl;
 		response.responseErrorGenerator(e._status, ERR_PATH);
 	}
-	// std::cout << "Response = \n" << response.getFullResponse() << std::endl;
+	std::cout << "Response = \n" << response.getFullResponse() << std::endl;
 	responseString = response.getFullResponse();
 	send_value(fd_cli, responseString);
 }
@@ -249,7 +248,6 @@ void Server::simpleInit(int const & port, std::string const & locationPath)
 {
 	_config = MyConf(port);
 	_config.parseConfig(locationPath);
-	_config.displayConfig();
 }
 
 vectLocationcIt	Server::findLongestMatch(std::string const & text, vectLocation const & location)
@@ -265,7 +263,7 @@ vectLocationcIt	Server::findLongestMatch(std::string const & text, vectLocation 
 	itFinal = location.begin();
 	for(vectLocationcIt it = location.begin(); it != location.end(); it++)
 	{
-		compare = (*it).getLocation()[1];
+		compare = (*it).getLocation();
 		if (text == compare)
 			return it;
 		vect2 = splitString(compare, "/");

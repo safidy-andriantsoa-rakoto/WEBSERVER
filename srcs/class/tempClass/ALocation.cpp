@@ -6,25 +6,25 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 14:09:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:40:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ALocation.hpp"
 
-stringVect ALocation::getAutoindex() const
+std::string ALocation::getAutoindex() const
 {
-    return _autoindex;
+    return _autoindex[0];
 }
 
-stringVect ALocation::getLocation() const
+std::string ALocation::getLocation() const
 {
-    return _location;
+    return _location[0];
 }
 
-stringVect ALocation::getRootDirectory() const
+std::string ALocation::getRootDirectory() const
 {
-    return _root;
+    return _root[0];
 }
 
 stringVect ALocation::getAvailableMethod() const
