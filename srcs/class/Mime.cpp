@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/12 11:43:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/12 12:00:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,20 @@ void Mime::get_file_content_mime(std::ifstream &fd)
         pos = ext.find_first_of(",");
         if (pos != -1)
         {
-            
-            std::cout << "Mila parse" << std::endl;
+            while (pos != -1)
+            {
+                this->_mime[ext.substr(0, pos)] = line;
+                ext.erase(0, pos + 1);
+                std::cout << "1" << std::endl;
+                pos = ext.find_first_of(",");
+            }
+            this->_mime[ext] = line;
+            // std::cout << "Mila parse" << std::endl;
         }
         else
         {
             std::cout << "-->" << ext << std::endl;
-            stringVect mime_txt;
-            mime_txt.push_back(line);
-            this->_mime[ext] = mime_txt;
+            this->_mime[ext] = line;
         }
         // std::cout << pos << ":" << ext << " ->" << line << std::endl;
     }
