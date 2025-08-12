@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   EpollCreation.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/08 11:09:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:58:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

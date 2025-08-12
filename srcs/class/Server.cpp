@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 14:47:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:59:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,10 @@ Server &Server::operator=(Server const & other)
 
 Server::~Server()
 {
-	// if (_fdClient != -1)
-	// 	close(_fdClient);
-	// if (_fdSocket != -1)
-	// 	close(_fdSocket);
+	if (_fdClient != -1)
+		close(_fdClient);
+	if (_fdSocket != -1)
+		close(_fdSocket);
 }
 
 MyConf Server::getConfig() const
