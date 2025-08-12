@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 14:08:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 15:58:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,24 @@
 #include "ALocation.hpp"
 
 MyLoc::MyLoc(){}
+
+MyLoc::MyLoc(MyLoc const &other)
+{
+    *this = other;
+}
+
+MyLoc &MyLoc::operator=(MyLoc const &other)
+{
+    if (this != &other)
+    {
+        _autoindex = other._autoindex;
+        _location = other._location;
+        _root = other._root;
+        _redirect = other._redirect;
+        _index = other._index;
+    }
+    return *this;
+}
 
 MyLoc::~MyLoc(){}
 

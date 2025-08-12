@@ -6,17 +6,16 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/12 15:07:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 15:22:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-
-void    launchServer(vectServer & allServer)
+static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServer & allServer)
 {
-	itVectServer		it;
-	itVectServer		it2;
+	vectServerIt		it;
+	vectServerIt		it2;
 	int					fd;
 
 	fd = epoll.get_fdEvent(i);
@@ -40,15 +39,17 @@ void    launchServer(vectServer & allServer)
 
 void    launchServer(vectServer & allServer)
 {
-	std::string			request;
-	EpollCreation		epoll;
-	VClient	v_client;
+	EpollCreation	epoll;
+	VClient			v_client;
 
 	initAllServer(allServer);
 	launchEpoll(allServer, epoll);
 	while (1)
 	{
 		for (int i = 0; i < epoll.epoll_wait_event(); i++)
+		{
+			std::cout << "REQUEST TREATMENT" << std::endl;
 			run_process(i, epoll, v_client, allServer);
+		}
 	}
 }

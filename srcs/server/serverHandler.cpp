@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 20:07:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 15:29:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	initAllServer(vectServer & allServer)
 
 void	launchEpoll(vectServer & allServer, EpollCreation &epoll)
 {
-	int					flags;
+	int	flags;
 
 	for(vectServerIt it = allServer.begin(); it != allServer.end(); it++)
 	{
