@@ -6,23 +6,23 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 20:35:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 13:59:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ALocation.hpp"
 
-bool ALocation::getAutoindex() const
+stringVect ALocation::getAutoindex() const
 {
     return _autoindex;
 }
 
-std::string ALocation::getLocation() const
+stringVect ALocation::getLocation() const
 {
     return _location;
 }
 
-std::string ALocation::getRootDirectory() const
+stringVect ALocation::getRootDirectory() const
 {
     return _root;
 }
@@ -44,13 +44,14 @@ stringVect ALocation::getIndex() const
 
 void ALocation::displayLocation() const
 {
-    std::cout << "Location " << _location << " {\n"
-    << "    Root " << _root << std::endl;
-    if (_method.size())
-        displayStringVect(_method, "method");
-    if (_redirect.size())
-        displayStringVect(_redirect, "redirect");
-    if (_index.size())
-        displayStringVect(_index, "index");
+    displayStringVect(_location);
+    std::cout << "{ \n";
+    displayStringVect(_root);
+    if (_method.size() > 1)
+        displayStringVect(_method);
+    if (_redirect.size() > 1)
+        displayStringVect(_redirect);
+    if (_index.size() > 1)
+        displayStringVect(_index);
     std::cout << "} \n";
 }

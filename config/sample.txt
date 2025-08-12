@@ -1,1 +1,1 @@
-/ | ./site/sample
+location / | root ./site/sample

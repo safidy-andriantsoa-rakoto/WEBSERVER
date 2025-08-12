@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 20:21:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 11:41:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 #include "general.hpp"
 #include "ALocation.hpp"
 
-//For test only
-#include "MyLoc.hpp"
 
 struct s_errPage
 {
@@ -26,9 +24,12 @@ struct s_errPage
 	std::string	fileName;
 };
 
-typedef std::vector<MyLoc>  vectLocation;
-typedef vectLocation::iterator  vectLocationIt;
-typedef vectLocation::const_iterator  vectLocationcIt;
+//For test only
+#include "MyLoc.hpp"
+
+typedef std::vector<MyLoc>				vectLocation;
+typedef vectLocation::iterator			vectLocationIt;
+typedef vectLocation::const_iterator	vectLocationcIt;
 
 class AConfig
 {

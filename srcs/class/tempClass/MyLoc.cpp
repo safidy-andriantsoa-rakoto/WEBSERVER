@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 21:09:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 13:55:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,21 @@ void MyLoc::parseLocation(std::string const & line)
     stringVect  elt;
 
     attr = splitString(line, " | ");
-    if (attr.size() == 2)
+    for(stringVectIt it = attr.begin(); it != attr.end(); it++)
     {
-        _location = attr[0];
-        _root = attr[1];
-        // displayLocation();
-        return ; 
+        elt = splitString(*it, " ");
+        if (elt[0] == "location")
+            _location = elt;
+        else if (elt[0] == "root")
+            _root = elt;
+        else if (elt[0] == "autoindex")
+            _autoindex = elt;
+        else if (elt[0] == "method")
+            _method = elt;
+        else if (elt[0] == "redirect")
+            _redirect = elt;
+        else if (elt[0] == "index")
+            _index = elt;
     }
-    if (attr[AUTOINDEX] == "on")
-        _autoindex = true;
-    else
-        _autoindex = false;
-    _method = splitString(attr[METHOD], " ");
-    _redirect = splitString(attr[REDIRECT], " ");
-    _index = splitString(attr[INDEX], " ");
 }
 

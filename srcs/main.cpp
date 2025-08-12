@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 21:10:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 13:46:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int main()
 	{
 		Response::initAllStatusCode("ext/statusCode.txt");
 		vectServer	allServer = parseConfigFile();
-		launchServer(allServer);
+		// launchServer(allServer);
 	}
 	catch(const std::exception & e)
 	{

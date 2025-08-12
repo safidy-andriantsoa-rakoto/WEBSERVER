@@ -1,6 +1,6 @@
-/ | ./site/dim
-/images | ./site/dim/images
-/css | ./site/dim/assets/css
-/js | ./site/dim/assets/js
-/webfonts | ./site/dim/assets/webfonts
-/sass | ./site/dim/assets/sass
+location / | root ./site/dim
+location /images | root ./site/dim/images
+location /css | root ./site/dim/assets/css
+location /js | root ./site/dim/assets/js
+location /webfonts | root ./site/dim/assets/webfonts
+location /sass | root ./site/dim/assets/sass
