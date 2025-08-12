@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 09:45:26 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/12 10:06:31 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@
 #include "../srcs/class/Response.hpp"
 #include "../srcs/class/EpollCreation.hpp"
 #include "../srcs/class/Client.hpp"
+#include "../srcs/class/Mime.hpp"
 
 typedef std::vector<Client>     VClient;
-
 typedef std::vector<Server>		vectServer;
 typedef vectServer::iterator	itVectServer;
 

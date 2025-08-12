@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/07 14:15:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 11:04:53 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,36 @@
 
 int main()
 {
-	try
+	stringVect path;
+    DIR* dir = opendir("ext");
+	if (!dir)
 	{
-		Response::initAllStatusCode("ext/statusCode.txt");
-		vectServer	allServer = parseConfigFile();
-		launchServer(allServer);
+		std::cout << "Error\n dirent" << std::endl;
+		return (0);
 	}
-	catch(const std::exception & e)
+    struct dirent* entry;
+    while ((entry = readdir(dir)) != NULL)
 	{
-		std::cerr << e.what() << std::endl;
+		std::string name(entry->d_name);
+		if (!name.compare(".") || !name.compare(".."))
+			continue;	
+		path.push_back("./ext/" + name);
+    }
+    closedir(dir);
+	for (size_t i = 0; i < path.size(); i++)
+	{
+		std::cout << path[i] << std::endl;
 	}
+	Mime test(path);
+	// try
+	// {
+	// 	Response::initAllStatusCode("ext/statcode/statusCode.txt");
+	// 	vectServer	allServer = parseConfigFile();
+	// 	launchServer(allServer);
+	// }
+	// catch(const std::exception & e)
+	// {
+	// 	std::cerr << e.what() << std::endl;
+	// }
 	return 0;
 }

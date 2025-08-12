@@ -6,14 +6,13 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/12 09:45:02 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/12 10:03:09 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "general.hpp"
-
 
 class Client
 {

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 09:44:30 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/12 10:07:25 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,18 @@
 #include <string>
 #include "general.hpp"
 
-typedef std::map<std::string, std::string>  stringMap;
-typedef stringMap::const_iterator			stringMapIt;
+typedef std::map<std::string, std::vector<std::string> >    MapMime;
+typedef std::map<std::string, std::string>                  stringMap;
+typedef stringMap::const_iterator			                stringMapIt;
 
-typedef std::pair<std::string, std::string>	stringPair;
+typedef std::pair<std::string, std::string>	                stringPair;
 
-typedef std::vector<std::string>	        stringVect;
-typedef std::vector<int>			        intVect;
+typedef std::vector<std::string>	                        stringVect;
+typedef std::vector<int>			                        intVect;
 
-typedef std::list<std::string>	            stringList;
-typedef std::list<int>			            intList;
-typedef struct sockaddr_in                  SockAddrIn;
-typedef struct epoll_event                  SEpollEvent;
+typedef std::list<std::string>	                            stringList;
+typedef std::list<int>			                            intList;
+typedef struct sockaddr_in                                  SockAddrIn;
+typedef struct epoll_event                                  SEpollEvent;
 
 #endif
