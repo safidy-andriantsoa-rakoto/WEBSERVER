@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/08 11:57:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/12 09:46:01 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,44 +41,42 @@
 // 	return request;
 // }
 
-void    launchServer(vectServer & allServer)
+static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServer & allServer)
 {
 	itVectServer		it;
 	itVectServer		it2;
+	int					fd;
+
+	fd = epoll.get_fdEvent(i);
+	it = findFd(allServer, fd);
+	if (it != allServer.end())
+	{
+		int fdc = (*it).accept_client_connexion();
+		epoll.epoll_control(EPOLLIN | EPOLLOUT, fdc);
+		Client client((*it).get_fdSocket(), fdc, (*it).get_confSockAddrIn(), false);
+		v_client.push_back(client);
+	}
+	else
+	{
+		it2 = findFd(allServer, v_client.begin()->get_parent());
+		(*it2).processRequest(v_client.begin()->ClientRequest(), fd);
+		epoll.epoll_clean(fd);
+		close(fd);
+		v_client.pop_back();
+	}
+}
+
+void    launchServer(vectServer & allServer)
+{
 	std::string			request;
 	EpollCreation		epoll;
-	std::vector<Client>	v_client;
+	VClient	v_client;
 
 	initAllServer(allServer);
-
 	launchEpoll(allServer, epoll);
 	while (1)
 	{
 		for (int i = 0; i < epoll.epoll_wait_event(); i++)
-		{
-			int fd = epoll.get_fdEvent(i);
-			std::cout << "	Server fd  = " << fd << std::endl;
-			it = findFd(allServer, fd);//socket
-			if (it != allServer.end())
-			{
-				//miandry client vaovao ra socket fd no azo
-				std::cout << "aty eefd =" << (*it).get_fdSocket() << std::endl;
-				int fdc = (*it).accept_client_connexion();
-				std::cout << "vita fdc =" << fdc << std::endl;
-				epoll.epoll_control(EPOLLIN | EPOLLOUT, fdc);
-				Client client((*it).get_fdSocket(), fdc, (*it).get_confSockAddrIn(), false);
-				v_client.push_back(client);
-			}
-			else
-			{
-				it2 = findFd(allServer, v_client.begin()->get_parent());
-				(*it2).processRequest(v_client.begin()->ClientRequest(), fd);
-				epoll.epoll_clean(fd);
-				close(fd);
-				v_client.pop_back();
-			}
-		}
-		sleep(1);
+			run_process(i, epoll, v_client, allServer);
 	}
 }
-

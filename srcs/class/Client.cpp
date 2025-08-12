@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/08 11:49:28 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/12 09:17:39 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ Client &Client::operator=(const Client &client)
 {
     this->_clientFD = client._clientFD;
     this->_parentFD = client._parentFD;
-    this->_configSockAddrIn = this->_configSockAddrIn;
+    this->_configSockAddrIn = client._configSockAddrIn;
     this->_server_socket = client._server_socket;
     return (*this);
 }
