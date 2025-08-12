@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 13:53:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:03:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void MyConf::parseConfig(std::string const & filePath)
 
 void	MyConf::displayConfig() const
 {
+	std::cout << "------------------------------------------" << std::endl;
 	std::cout << "Host " << _host << std::endl
 	<< "Port " << _port << std::endl;
 	if (_serverName.size())
@@ -51,7 +52,10 @@ void	MyConf::displayConfig() const
 		std::cout << "Error file = " << _errPage.fileName << std::endl;
 	}
 	for (vectLocationcIt it = _location.begin(); it != _location.end(); it++)
+	{
 		(*it).displayLocation();
+		std::cout << std::endl;
+	}
 }
 
 

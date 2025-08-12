@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 13:59:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:01:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,12 @@ void ALocation::displayLocation() const
 {
     displayStringVect(_location);
     std::cout << "{ \n";
-    displayStringVect(_root);
+    displayStringVect(_root, "  ");
     if (_method.size() > 1)
-        displayStringVect(_method);
+        displayStringVect(_method, "    ");
     if (_redirect.size() > 1)
-        displayStringVect(_redirect);
+        displayStringVect(_redirect, "  ");
     if (_index.size() > 1)
-        displayStringVect(_index);
+        displayStringVect(_index, " ");
     std::cout << "} \n";
 }

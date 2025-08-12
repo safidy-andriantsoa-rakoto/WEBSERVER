@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 09:43:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 13:57:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:01:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	displayString(std::string const & text)
 
 void	displayStringVect(stringVect const & vect, std::string const & title)
 {
-	std::cout << title << " : ";
+	std::cout << title << " ";
 	std::for_each(vect.begin(), vect.end(), displayString);
 	std::cout << std::endl;
 }

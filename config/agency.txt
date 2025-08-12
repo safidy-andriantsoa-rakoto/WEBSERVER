@@ -1,5 +1,5 @@
 location / | root ./site/agency
 location /css | root ./site/agency/assets/css
-location /images | ./site/agency/assets/images
+location /images | root ./site/agency/assets/images
 location /js | root ./site/agency/assets/js
 location /webfonts | root ./site/agency/assets/webfonts
