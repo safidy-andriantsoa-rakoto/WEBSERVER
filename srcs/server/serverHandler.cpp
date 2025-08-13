@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 15:29:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/13 10:13:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ vectServerIt	findFd(vectServer & allServer, int const & fd)
 
 	for(it = allServer.begin(); it != allServer.end(); it++)
 	{
-		std::cout << "SOCKET=" << (*it).get_fdSocket() << std::endl;
+		// std::cout << "SOCKET=" << (*it).get_fdSocket() << std::endl;
 		if ((*it).get_fdSocket() == fd)
 			break;
 	}

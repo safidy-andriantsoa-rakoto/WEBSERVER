@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 21:58:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:00:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-void Server::processRequest(std::string const & clientRequest, int const & fd_cli)
+void Server:: processRequest(std::string const & clientRequest, int const & fd_cli)
 {
 	Request		request;
 	Response	response;
@@ -277,7 +277,6 @@ vectLocationIt	Server::findLongestMatch(std::string const & text, vectLocation &
 				break;
 			nbMatch++;
 		}
-		std::cout << "Compare = " << compare << " ; nbMatch = " << nbMatch << std::endl;
 		if (nbMatch > nbMatchMax)
 		{
 			nbMatchMax = nbMatch;
