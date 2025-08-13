@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 10:25:14 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/13 10:33:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/13 16:42:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@
 
 // Put here all typedef used in all code through webserv.hpp
 typedef std::vector<Client>     VClient;
+typedef VClient::iterator       VClientIt;
+
 typedef std::vector<Server>		vectServer;
 typedef vectServer::iterator	vectServerIt;
 

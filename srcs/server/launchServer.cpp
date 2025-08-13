@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/13 11:31:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/13 17:57:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,27 @@
 
 static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServer & allServer)
 {
-	vectServerIt		it;
-	vectServerIt		it2;
-	int					fd;
+	vectServerIt	itServ;
+	VClientIt		itCli;
+	int				fd;
 
 	fd = epoll.get_fdEvent(i);
-	it = findFd(allServer, fd);
-	if (it != allServer.end()) //Add new client
+	itServ = findFdInServer(allServer, fd);
+	if (itServ != allServer.end()) //Add new client
 	{
-		int fdc = (*it).accept_client_connexion();
+		int fdc = (*itServ).accept_client_connexion();
 		epoll.epoll_control(EPOLLIN | EPOLLOUT, fdc);
-		Client client((*it).get_fdSocket(), fdc, (*it).get_confSockAddrIn(), false);
+		Client client((*itServ).get_fdSocket(), fdc, (*itServ).get_confSockAddrIn(), false);
 		v_client.push_back(client);
 	}
 	else //Run process request
 	{
-		it2 = findFd(allServer, v_client.begin()->get_parent());
-		(*it2).processRequest(v_client.begin()->ClientRequest(), fd);
+		itCli = findFdInClient(v_client, fd);
+		itServ = findFdInServer(allServer, (*itCli).get_parent());
+		(*itServ).processRequest((*itCli).ClientRequest(), fd);
 		epoll.epoll_clean(fd);
 		close(fd);
-		v_client.pop_back(); 
+		v_client.erase(itCli); 
 	}
 }
 

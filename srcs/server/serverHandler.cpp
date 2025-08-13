@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/13 10:13:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/13 16:59:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,18 @@ void	launchEpoll(vectServer & allServer, EpollCreation &epoll)
 	}
 }
 
-vectServerIt	findFd(vectServer & allServer, int const & fd)
+vectServerIt	findFdInServer(vectServer & allServer, int const & fd)
 {
 	vectServerIt it;
 
-	for(it = allServer.begin(); it != allServer.end(); it++)
-	{
-		// std::cout << "SOCKET=" << (*it).get_fdSocket() << std::endl;
-		if ((*it).get_fdSocket() == fd)
-			break;
-	}
+	for(it = allServer.begin(); it != allServer.end() && (*it).get_fdSocket() != fd; it++);
+	return it;
+}
+
+VClientIt	findFdInClient(VClient & allClient, int const & fd)
+{
+	VClientIt it;
+
+	for(it = allClient.begin(); it != allClient.end() && (*it).get_clientFD() != fd; it++);
 	return it;
 }
