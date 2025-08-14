@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/08 10:59:36 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 14:35:44 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,7 @@ itVectServer	findFd(vectServer & allServer, int const & fd)
 	itVectServer it;
 
 	for(it = allServer.begin(); it != allServer.end(); it++)
-	{
-		std::cout << "SOCKET=" << (*it).get_fdSocket() << std::endl;
 		if ((*it).get_fdSocket() == fd)
 			break;
-	}
 	return it;
 }

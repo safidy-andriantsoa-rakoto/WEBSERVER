@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/14 08:37:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 14:33:53 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ Mime::Mime(stringVect &path)
         if (fd.is_open())
         {
             this->get_file_content_mime(fd);
-            std::cout << "Open" << std::endl;
             fd.close();
         }
     }
@@ -64,7 +63,6 @@ void Mime::get_file_content_mime(std::ifstream &fd)
             {
                 this->_mime[ext.substr(0, pos)] = line;
                 ext.erase(0, pos + 1);
-                std::cout << "1" << std::endl;
                 pos = ext.find_first_of(",");
             }
             this->_mime[ext] = line;
