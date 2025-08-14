@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 11:04:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 07:55:25 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int main()
 		std::cout << path[i] << std::endl;
 	}
 	Mime test(path);
+	test.print_map();
 	// try
 	// {
 	// 	Response::initAllStatusCode("ext/statcode/statusCode.txt");

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/12 12:00:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 07:58:23 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,25 @@ void Mime::trim_space(std::string &data)
         data.erase(data.find(' '), 1);
 }
 
+void Mime::print_map()
+{
+    for (MapMime::iterator it = _mime.begin(); it != _mime.end(); ++it)
+    {
+        std::cout << "->" << it->first << std::endl;
+        std::cout << "-->" << it->second << std::endl;
+        std::cout << std::endl;
+    }
+}
+
 void Mime::get_file_content_mime(std::ifstream &fd)
 {
     std::string line;
-    std::cout << "---------------------" << std::endl;
     while (getline(fd, line))
     {
         this->trim_space(line);
         int pos = line.find_first_of("|");
         std::string ext = line.substr(pos + 1, line.size());
-        line.erase(pos + 1, line.size());
+        line.erase(pos, line.size());
         pos = ext.find_first_of(",");
         if (pos != -1)
         {
@@ -54,14 +63,9 @@ void Mime::get_file_content_mime(std::ifstream &fd)
                 pos = ext.find_first_of(",");
             }
             this->_mime[ext] = line;
-            // std::cout << "Mila parse" << std::endl;
         }
         else
-        {
-            std::cout << "-->" << ext << std::endl;
             this->_mime[ext] = line;
-        }
-        // std::cout << pos << ":" << ext << " ->" << line << std::endl;
     }
 }
 

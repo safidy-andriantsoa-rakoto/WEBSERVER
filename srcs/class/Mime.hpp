@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:28 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/12 11:13:29 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 07:54:38 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,6 @@ class Mime
         Mime(stringVect &path);
         void get_file_content_mime(std::ifstream &fd);
         void trim_space(std::string &data);
+        void print_map();
         ~Mime();
 };
