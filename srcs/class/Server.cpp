@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/14 08:42:19 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 15:09:46 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@ Server &Server::operator=(Server const & other)
 
 Server::~Server()
 {
-	if (_fdClient != -1)
-		close(_fdClient);
-	if (_fdSocket != -1)
-		close(_fdSocket);
+	// if (_fdClient != -1)
+	// 	close(_fdClient);
+	// if (_fdSocket != -1)
+	// 	close(_fdSocket);
 }
 
 int Server::getPort() const
@@ -114,6 +114,8 @@ SockAddrIn Server::get_confSockAddrIn() const
 int Server::create_socket()
 {
 	this->_fdSocket = socket(AF_INET, SOCK_STREAM, 0);
+	int flags = fcntl(this->_fdSocket, O_NONBLOCK, 0);
+	fcntl(this->_fdSocket, F_SETFL, flags | O_NONBLOCK);
 	if (this->_fdSocket == -1)
 	{
 		std::cout << "Error\ncreate an endpoint for communication" << std::endl;

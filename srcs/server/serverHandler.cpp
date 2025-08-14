@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/14 14:35:44 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 15:09:59 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,8 @@ void	initAllServer(vectServer & allServer)
 
 void	launchEpoll(vectServer & allServer, EpollCreation &epoll)
 {
-	int					flags;
-
 	for(itVectServer it = allServer.begin(); it != allServer.end(); it++)
 	{
-		flags = fcntl((*it).get_fdSocket(), O_NONBLOCK, 0);
-		fcntl((*it).get_fdSocket(), F_SETFL, flags | O_NONBLOCK);
 		int fd = ((*it).get_fdSocket());
 		epoll.epoll_control(EPOLLIN | EPOLLOUT, fd);
 	}

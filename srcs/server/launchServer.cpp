@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/12 09:46:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 15:05:20 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,14 @@ static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServ
 	}
 }
 
+int sign = -1;
+
+void handle_c(int SIGNUM)
+{
+	if (SIGNUM == SIGINT)
+		sign = SIGINT;
+}
+
 void    launchServer(vectServer & allServer)
 {
 	std::string			request;
@@ -74,9 +82,19 @@ void    launchServer(vectServer & allServer)
 
 	initAllServer(allServer);
 	launchEpoll(allServer, epoll);
-	while (1)
+	signal(SIGINT, handle_c);
+	while (SIGINT != sign)
 	{
 		for (int i = 0; i < epoll.epoll_wait_event(); i++)
 			run_process(i, epoll, v_client, allServer);
+	}
+	for (size_t i = 0; i < allServer.size(); i++)
+	{
+		int fd = allServer[i].get_fdSocket();
+		if (fd > -1)
+		{
+			std::cout << "FD=" << fd << std::endl;
+			close(fd);
+		}
 	}
 }
