@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/08 08:48:47 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 08:39:01 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "ErrorExcept.hpp"
 #include "general.hpp"
 #include "typedef.hpp"
+#include "Mime.hpp"
 
 class Server
 {
@@ -36,7 +37,7 @@ class Server
         SockAddrIn			_sockaddrIn;
 
 		//HTTP Method
-		Response	get_request(Request & request);
+		Response	get_request(Request & request, MapMime mime);
 		Response	post_request(Request & request);
 		Response	delete_request(Request & request);
 

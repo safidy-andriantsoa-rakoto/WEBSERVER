@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/14 07:58:23 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/14 08:37:53 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,11 @@ void Mime::print_map()
         std::cout << "-->" << it->second << std::endl;
         std::cout << std::endl;
     }
+}
+
+MapMime Mime::get_mime() const
+{
+    return (this->_mime);
 }
 
 void Mime::get_file_content_mime(std::ifstream &fd)
