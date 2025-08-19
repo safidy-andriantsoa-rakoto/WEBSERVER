@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 21:58:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/19 10:59:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 int			AConfig::getServPort() const
 {
     return _port;
+}
+
+std::string AConfig::getMaxSize() const
+{
+    return _maxSize;
 }
 
 std::string	AConfig::getServHost() const

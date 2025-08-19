@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 15:12:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/19 11:19:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,19 @@
 
 int main()
 {
+	try
+	{
+		Response::initAllStatusCode("ext/statcode/statusCode.txt");
+		vectServer	allServer = parseConfigFile();
+		launchServer(allServer);
+	}
+	catch(const std::exception & e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	return 0;
+}
+
 	// stringVect path;
     // DIR* dir = opendir("ext");
 	// if (!dir)
@@ -35,15 +48,3 @@ int main()
 	// 	std::cout << path[i] << std::endl;
 	// }
 	// Mime test(path);
-	try
-	{
-		Response::initAllStatusCode("ext/statcode/statusCode.txt");
-		vectServer	allServer = parseConfigFile();
-		launchServer(allServer);
-	}
-	catch(const std::exception & e)
-	{
-		std::cerr << e.what() << std::endl;
-	}
-	return 0;
-}

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/13 12:00:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/19 11:26:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@
 void Server::processRequestWithConfig(Request & request)
 {
 	//Check primary data
+	if (compareSize(request.getHeader()["Content-Length"], _config.getMaxSize()) == ">")
+	{
+		//Error
+	}
 	buildRequestTarget(request);
 }
 

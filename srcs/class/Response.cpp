@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 14:55:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/19 10:31:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	Response::responseGenerator(std::string const &  filePath)
 	std::string	endLine = "\r\n";
 
 	setStatusLine();
-	_body = readFileToString( filePath);
+	_body = readFileToString(filePath);
 	_header["Content-Length"] = convertIntToString(_body.size());
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;

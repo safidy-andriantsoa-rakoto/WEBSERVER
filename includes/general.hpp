@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 13:58:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/19 11:10:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ std::string convertIntToString(int const & n);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
 std::string	convertStringMapToString(stringMap const & map, std::string const & sep);
+std::string	compareSize(std::string const & a, std::string const & b);
 
     //DisplayUtils
 void	    displayFormatting(std::string const & text, std::string const & title);

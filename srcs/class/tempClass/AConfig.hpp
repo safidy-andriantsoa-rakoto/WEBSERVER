@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 21:58:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/19 10:59:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class AConfig
 	protected:
 
 		int				_port;
+		std::string		_maxSize;
 		std::string		_host;
 		stringVect		_serverName;
 		t_errPage		_errPage;
@@ -44,6 +45,7 @@ class AConfig
 	public:
 
 		int				getServPort() const;
+		std::string		getMaxSize() const;
 		std::string		getServHost() const;
 		stringVect		getServName() const;
 		t_errPage		getErrPage() const;

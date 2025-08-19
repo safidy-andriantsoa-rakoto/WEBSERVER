@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/13 17:57:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/19 10:38:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServ
 		(*itServ).processRequest((*itCli).ClientRequest(), fd);
 		epoll.epoll_clean(fd);
 		close(fd);
-		v_client.erase(itCli); 
+		v_client.erase(itCli);
 	}
 }
 
