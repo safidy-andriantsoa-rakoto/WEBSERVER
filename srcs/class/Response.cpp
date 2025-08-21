@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 10:39:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 14:43:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ std::string Response::getFullResponse()
 	return _fullResponse;
 }
 
-void Response::setToDefaultErrorPage(int const & status)
+void Response::setToDefaultErrorPage()
 {
 	std::string	replace;
 
@@ -65,14 +65,14 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage)
 
 	if (!errPage.listError.size())
 	{
-		setToDefaultErrorPage(status);
+		setToDefaultErrorPage();
 		return;
 	}
 	it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
 	if (it != errPage.listError.end())
 		_body = errPage.fileContent;
 	else
-		setToDefaultErrorPage(status);
+		setToDefaultErrorPage();
 }
 
 void Response::setStatusLine()

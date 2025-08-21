@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 11:29:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 14:59:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void MyConf::parseConfig(std::string const &servPath, std::string const &locPath
 
 	file.open(servPath.c_str());
 	if (!file.is_open())
-		throw std::runtime_error("Error on parsing config");
+		throw std::runtime_error("Error on parsing config 1");
 	while (std::getline(file, line))
 	{
 		vect = splitString(line, " ");
@@ -81,10 +81,11 @@ void MyConf::parseConfig(std::string const &servPath, std::string const &locPath
 		}
 		else if (vect[0] == "error_page")
 		{
-			_errPage.fileName = *(vect.end() - 1);
+			_errPage.filePath = *(vect.end() - 1);
 			vect.erase((vect.end() - 1));
 			vect.erase(vect.begin());
 			_errPage.listError = vect;
+			_errPage.fileContent = readFileToString(_errPage.filePath);
 		}
 		else if (vect[0] == "size")
 			_maxSize = convertStringToFLoat(vect[1]);
@@ -104,7 +105,7 @@ void	MyConf::displayConfig() const
 	if (_errPage.listError.size())
 	{
 		displayStringVect(_errPage.listError, "List error");
-		std::cout << "Error file = " << _errPage.fileName << std::endl;
+		std::cout << "Error file = " << _errPage.filePath << std::endl;
 	}
 	for (vectLocationcIt it = _location.begin(); it != _location.end(); it++)
 	{

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 10:49:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 14:38:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,11 +254,11 @@ Response Server::delete_request(Request &request)
     return Response();
 }
 
-void Server::simpleInit(int const & port, std::string const & locationPath)
+void Server::simpleInit(std::string const & servPath, std::string const & locationPath)
 {
-	MyConf conf(port);
+	MyConf conf;
 
-	conf.parseConfig(locationPath);
+	conf.parseConfig(servPath, locationPath);
 	_config = conf;
 }
 

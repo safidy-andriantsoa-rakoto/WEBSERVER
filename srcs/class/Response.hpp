@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 10:39:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 14:43:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define RESPONSE_HPP
 
 #include "general.hpp"
-#include "AConfig.hpp"
+#include "./tempClass/AConfig.hpp"
 
 class Response
 {
@@ -31,7 +31,7 @@ class Response
 
 		void				addDefaultHeader();
 		void				setStatusLine();
-        void 				setToDefaultErrorPage(int const &status);
+        void 				setToDefaultErrorPage();
 		void				buildErrorPage(int const & statusCode, t_errPage & errPage);
 
 	public:
