@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/19 11:19:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 08:35:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,16 @@ std::string convertIntToString(int const & n)
 	return result;
 }
 
+float convertStringToFLoat(std::string const & n)
+{
+	std::stringstream	ss;
+	float				result;
+
+	ss << n;
+	ss >> result;
+	return result;
+}
+
 void	addToMapString(stringMap & map, std::string const & first, std::string const & second)
 {
 	stringPair	pair(first, second);
@@ -95,35 +105,3 @@ std::string	convertStringMapToString(stringMap const & map, std::string const & 
 	return result;
 }
 
-std::string	compareSize(std::string const & a, std::string const & b)
-{
-	float				value[2];
-	std::string			unit[2];
-	std::stringstream	ss;
-	std::string			get;
-	std::string			result;
-
-	get = a;
-	for(int i = 0; i < 2; i++)
-	{
-		if (i == 1)
-			get = b;
-		ss << get;
-		ss >> value[i];
-		ss >> unit[i];
-		ss.clear();
-	}
-	//Assuming there is only kb kylobytes and mb megabytes
-	// std::cout << "a = " << value[0] << " " << unit[0] << " ; b = " << value[1] << " " << unit[1] << std::endl;
-	if (unit[0] == "mb")
-		value[0] *= 1000;
-	if (unit[1] == "mb")
-		value[1] *= 1000;
-	if (value[0] < value[1])
-		result = "<";
-	else if (value[0] == value[1])
-		result = "==";
-	else if (value[0] > value[1])
-		result = ">";
-	return result;
-}

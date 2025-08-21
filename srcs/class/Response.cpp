@@ -6,13 +6,14 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/19 10:31:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 09:29:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
 stringMap	Response::_allStatusCode;
+std::string	Response::_defaultErrPage;
 
 void Response::addDefaultHeader(){}
 
@@ -48,11 +49,14 @@ std::string Response::getFullResponse()
 	return _fullResponse;
 }
 
-void Response::buildErrorPage(std::string const & filePath)
+void Response::buildErrorPage()
 {
 	std::string	replace;
 
-	_body = readFileToString(filePath);
+	//Check from config errPage
+	//If statusCode find inside config with another err page => _body = errPage(content)
+	//Else _body = _defaultErrPage;
+	_body = _defaultErrPage;
 	replace = convertIntToString(_statusCode);
 	replace += " : " + (*_allStatusCode.find(replace)).second;
 	replaceString(_body, replace, "$status");
@@ -76,7 +80,7 @@ void	Response::responseGenerator(std::string const &  filePath)
 }
 
 //Error response + replacing html page
-void	Response::responseErrorGenerator(int const & statusCode, std::string const & filePath)
+void	Response::responseErrorGenerator(int const & statusCode)
 {
 	std::string	headerString;
 	std::string	replace;
@@ -84,15 +88,16 @@ void	Response::responseErrorGenerator(int const & statusCode, std::string const 
 
 	_statusCode = statusCode;
 	setStatusLine();
-	buildErrorPage(filePath);
+	buildErrorPage();
 	_header["Content-Length"] = convertIntToString(_body.size());
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 }
 
-void Response::initAllStatusCode(std::string const & filePath)
+void Response::initResponseUtils(std::string const & statPath, std::string const & errPath)
 {
-	_allStatusCode = splitFileToMapString(filePath, " | ");
+	_allStatusCode = splitFileToMapString(statPath, " | ");
+	_defaultErrPage = readFileToString(errPath);
 }
 
 stringMap Response::getAllStatusCode()

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/19 11:26:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 09:30:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,14 @@
 //Process request data vs config file and throw exception if needed, redirection
 void Server::processRequestWithConfig(Request & request)
 {
+	float	maxSize;
+	float	requestSize;
+
 	//Check primary data
-	if (compareSize(request.getHeader()["Content-Length"], _config.getMaxSize()) == ">")
-	{
-		//Error
-	}
+	maxSize = _config.getMaxSize();
+	requestSize = convertStringToFLoat(request.getHeader()["Content-Length"]);
+	if (requestSize > maxSize)
+		throw ErrorExcept(400, "Size limit not respected");
 	buildRequestTarget(request);
 }
 
@@ -191,7 +194,7 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 	catch(ErrorExcept const & e)
 	{
 		std::cerr << "Process Request error \n" << e._error << std::endl;
-		response.responseErrorGenerator(e._status, ERR_PATH);
+		response.responseErrorGenerator(e._status);
 	}
 	responseString = response.getFullResponse();
 	send_value(fd_cli, responseString);
