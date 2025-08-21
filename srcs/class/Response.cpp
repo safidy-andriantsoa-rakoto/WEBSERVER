@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 09:29:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 10:39:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,22 +49,35 @@ std::string Response::getFullResponse()
 	return _fullResponse;
 }
 
-void Response::buildErrorPage()
+void Response::setToDefaultErrorPage(int const & status)
 {
 	std::string	replace;
 
-	//Check from config errPage
-	//If statusCode find inside config with another err page => _body = errPage(content)
-	//Else _body = _defaultErrPage;
 	_body = _defaultErrPage;
 	replace = convertIntToString(_statusCode);
 	replace += " : " + (*_allStatusCode.find(replace)).second;
 	replaceString(_body, replace, "$status");
 }
 
+void Response::buildErrorPage(int const & status, t_errPage & errPage)
+{
+	stringVectIt it;
+
+	if (!errPage.listError.size())
+	{
+		setToDefaultErrorPage(status);
+		return;
+	}
+	it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
+	if (it != errPage.listError.end())
+		_body = errPage.fileContent;
+	else
+		setToDefaultErrorPage(status);
+}
+
 void Response::setStatusLine()
 {
-	_statusLine = "HTTP/1.0 " + convertIntToString(_statusCode) + " " + _allStatusCode[convertIntToString(_statusCode)];
+	_statusLine = "HTTP/1.1 " + convertIntToString(_statusCode) + " " + _allStatusCode[convertIntToString(_statusCode)];
 }
 
 void	Response::responseGenerator(std::string const &  filePath)
@@ -80,7 +93,7 @@ void	Response::responseGenerator(std::string const &  filePath)
 }
 
 //Error response + replacing html page
-void	Response::responseErrorGenerator(int const & statusCode)
+void	Response::responseErrorGenerator(int const & statusCode, t_errPage & errPage)
 {
 	std::string	headerString;
 	std::string	replace;
@@ -88,7 +101,7 @@ void	Response::responseErrorGenerator(int const & statusCode)
 
 	_statusCode = statusCode;
 	setStatusLine();
-	buildErrorPage();
+	buildErrorPage(statusCode, errPage);
 	_header["Content-Length"] = convertIntToString(_body.size());
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;

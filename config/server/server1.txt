@@ -1,0 +1,5 @@
+host localhost
+port 2003
+server_names localhost login1.fr
+error_page 404 502 
+size 2000000

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/07 14:15:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 10:04:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #define RESPONSE_FILE_NAME "response.txt"
 
 //Response
-#define ERR_PATH "errorPage/error.html"
+#define ERR_PATH "errorPage/default/index.html"
 
 // #define POST "POST "
 #define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"

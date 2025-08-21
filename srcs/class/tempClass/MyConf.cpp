@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/19 10:49:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 11:29:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,42 @@ void MyConf::parseConfig(std::string const & filePath)
 	}
 }
 
+void MyConf::parseConfig(std::string const &servPath, std::string const &locPath)
+{
+	std::ifstream	file;
+	std::string		line;
+	stringVect		vect;
+
+	file.open(servPath.c_str());
+	if (!file.is_open())
+		throw std::runtime_error("Error on parsing config");
+	while (std::getline(file, line))
+	{
+		vect = splitString(line, " ");
+		if (vect[0] == "host")
+			_host = vect[1];
+		else if (vect[0] == "port")
+			_port = convertStringToFLoat(vect[1]);
+		else if (vect[0] == "server_names")
+		{
+			vect.erase(vect.begin());
+			_serverName = vect;
+		}
+		else if (vect[0] == "error_page")
+		{
+			_errPage.fileName = *(vect.end() - 1);
+			vect.erase((vect.end() - 1));
+			vect.erase(vect.begin());
+			_errPage.listError = vect;
+		}
+		else if (vect[0] == "size")
+			_maxSize = convertStringToFLoat(vect[1]);
+		vect.clear();
+		line.clear();
+	}
+	parseConfig(locPath);
+}
+
 void	MyConf::displayConfig() const
 {
 	std::cout << "------------------------------------------" << std::endl;
@@ -76,5 +112,3 @@ void	MyConf::displayConfig() const
 		std::cout << std::endl;
 	}
 }
-
-

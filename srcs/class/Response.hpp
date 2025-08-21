@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 09:29:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 10:39:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define RESPONSE_HPP
 
 #include "general.hpp"
+#include "AConfig.hpp"
 
 class Response
 {
@@ -29,8 +30,9 @@ class Response
 		static std::string	_defaultErrPage;
 
 		void				addDefaultHeader();
-		void				buildErrorPage();
 		void				setStatusLine();
+        void 				setToDefaultErrorPage(int const &status);
+		void				buildErrorPage(int const & statusCode, t_errPage & errPage);
 
 	public:
 		Response();
@@ -42,8 +44,9 @@ class Response
 
 		std::string	getFullResponse();
 
-		void		responseGenerator(std::string const & filePath);
-		void		responseErrorGenerator(int const & statusCode);
+
+        void		responseGenerator(std::string const & filePath);
+		void		responseErrorGenerator(int const & statusCode, t_errPage & errPage);
 
 		static void			initResponseUtils(std::string const & statPath, std::string const & errPath);
 		static stringMap	getAllStatusCode();

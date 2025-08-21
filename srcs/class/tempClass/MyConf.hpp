@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 15:47:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/21 10:47:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class MyConf : public AConfig
 		~MyConf();
 
 		void	parseConfig(std::string const & filePath);
+		void	parseConfig(std::string const & servPath, std::string const & locPath);
 
 		virtual void	displayConfig() const;
 };
