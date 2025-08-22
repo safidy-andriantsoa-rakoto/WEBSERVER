@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 14:38:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/22 09:57:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,20 @@ void Server::processRequestWithConfig(Request & request)
 {
 	float	maxSize;
 	float	requestSize;
+	stringMapIt	itFind;
 
 	//Check primary data
-	maxSize = _config.getMaxSize();
-	requestSize = convertStringToFLoat(request.getHeader()["Content-Length"]);
-	if (requestSize > maxSize)
-		throw ErrorExcept(400, "Size limit not respected");
+	itFind = request.getHeader().find("Content-Length");
+	if (itFind != request.getHeader().end())
+	{
+		maxSize = _config.getMaxSize();
+		requestSize = convertStringToFLoat(request.getHeader()["Content-Length"]);
+		if (requestSize > maxSize)
+		{
+			std::cout << "Request size = " << requestSize << " vs " << maxSize << std::endl;
+			throw ErrorExcept(400, "Size limit not respected");
+		}
+	}
 	buildRequestTarget(request);
 }
 
@@ -34,7 +42,7 @@ void Server::buildRequestTarget(Request & request)
 	vectLocation	loc;
 
 	target = request.getRequestTarget();
-	// std::cout << "********TARGET = " << target << "***************" << std::endl;
+	std::cout << "********TARGET = " << target << "***************" << std::endl;
 	if (target == "/")
 	{
 		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");

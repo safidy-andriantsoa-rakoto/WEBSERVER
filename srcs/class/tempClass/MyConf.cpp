@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 14:59:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/22 08:05:09 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void MyConf::parseConfig(std::string const &servPath, std::string const &locPath
 		if (vect[0] == "host")
 			_host = vect[1];
 		else if (vect[0] == "port")
-			_port = convertStringToFLoat(vect[1]);
+			_port = convertStringToInt(vect[1]);
 		else if (vect[0] == "server_names")
 		{
 			vect.erase(vect.begin());

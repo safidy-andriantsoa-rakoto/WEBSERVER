@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 08:35:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/22 08:03:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,26 +58,6 @@ void split_line(std::vector<std::string> &_data, std::string line)
 	_data.push_back(line);
 }
 
-std::string convertIntToString(int const & n)
-{
-	std::stringstream	ss;
-	std::string			result;
-
-	ss << n;
-	ss >> result;
-	return result;
-}
-
-float convertStringToFLoat(std::string const & n)
-{
-	std::stringstream	ss;
-	float				result;
-
-	ss << n;
-	ss >> result;
-	return result;
-}
-
 void	addToMapString(stringMap & map, std::string const & first, std::string const & second)
 {
 	stringPair	pair(first, second);
@@ -94,14 +74,4 @@ void	replaceString(std::string & text, std::string const & replaceText, std::str
 	text.insert(pos, replaceText);
 }
 
-std::string	convertStringMapToString(stringMap const & map, std::string const & sep)
-{
-	std::string	result;
-
-	for (stringMapIt it = map.begin(); it != map.end(); it++)
-	{
-		result += (*it).first + ": " + (*it).second + sep;
-	}
-	return result;
-}
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 08:36:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/22 08:03:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,15 @@ std::string	getFileExtension(std::string const & fileName);
 stringVect	strictSplit(std::string const & target, std::string const & sep);
 void	    split_line(std::vector<std::string> &_data, std::string line);
 stringVect	splitString(std::string const & target, std::string const & sep);
-std::string convertIntToString(int const & n);
-float       convertStringToFLoat(std::string const & n);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
-std::string	convertStringMapToString(stringMap const & map, std::string const & sep);
 std::string	checkLimitSize(std::string const & a, std::string const & b);
+
+    //Conversion
+std::string convertIntToString(int const & n);
+float       convertStringToFLoat(std::string const & n);
+int         convertStringToInt(std::string const & n);
+std::string	convertStringMapToString(stringMap const & map, std::string const & sep);
 
     //DisplayUtils
 void	    displayFormatting(std::string const & text, std::string const & title);

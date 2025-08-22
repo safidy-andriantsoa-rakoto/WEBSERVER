@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 14:43:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:43:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void Response::setToDefaultErrorPage()
 {
 	std::string	replace;
 
+	// std::cout << "USING DEFAULT ERROR PAGE FOR " << _statusCode << std::endl;
 	_body = _defaultErrPage;
 	replace = convertIntToString(_statusCode);
 	replace += " : " + (*_allStatusCode.find(replace)).second;
@@ -88,6 +89,7 @@ void	Response::responseGenerator(std::string const &  filePath)
 	setStatusLine();
 	_body = readFileToString(filePath);
 	_header["Content-Length"] = convertIntToString(_body.size());
+	//Add content-Type with mime
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 }
@@ -103,8 +105,10 @@ void	Response::responseErrorGenerator(int const & statusCode, t_errPage & errPag
 	setStatusLine();
 	buildErrorPage(statusCode, errPage);
 	_header["Content-Length"] = convertIntToString(_body.size());
+	_header["Content-Type"] = "text/html"; //Depends on the type of file
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
+	// std::cout << "FULL RESPONSE = " << std::endl << _fullResponse << std::endl;
 }
 
 void Response::initResponseUtils(std::string const & statPath, std::string const & errPath)
