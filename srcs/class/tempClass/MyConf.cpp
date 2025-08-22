@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/22 08:05:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/22 15:45:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,11 @@ void MyConf::parseConfig(std::string const & filePath)
 		loc.parseLocation(line);
 		_location.push_back(loc);
 	}
+	//Add default error page location if not mentionned
+	// vectLocationIt it;
+	// it = std::find(_location.begin(), _location.end(), );
+	loc.parseLocation("location /errorPage | root ./errorPage");
+	_location.push_back(loc);
 }
 
 void MyConf::parseConfig(std::string const &servPath, std::string const &locPath)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/13 17:33:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/22 15:47:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ class ALocation
 		stringVect  getAvailableMethod() const;
 		stringVect  getRedirect() const;
 		stringVect  getIndex() const;
+
+		//Create operator == && != for Alocation
 
         virtual void	parseLocation(std::string const & locationString) = 0;
 
