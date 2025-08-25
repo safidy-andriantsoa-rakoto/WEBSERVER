@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/22 10:43:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 15:21:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	Response::responseGenerator(std::string const &  filePath)
 }
 
 //Error response + replacing html page
-void	Response::responseErrorGenerator(int const & statusCode, t_errPage & errPage)
+void	Response::responseErrorGenerator(int const & statusCode, t_errPage & errPage, std::string const & newUri)
 {
 	std::string	headerString;
 	std::string	replace;
@@ -103,12 +103,23 @@ void	Response::responseErrorGenerator(int const & statusCode, t_errPage & errPag
 
 	_statusCode = statusCode;
 	setStatusLine();
-	buildErrorPage(statusCode, errPage);
-	_header["Content-Length"] = convertIntToString(_body.size());
-	_header["Content-Type"] = "text/html"; //Depends on the type of file
+	if (statusCode < 400)
+		responseRedirect(newUri);
+	else
+	{
+		buildErrorPage(statusCode, errPage);
+		_header["Content-Length"] = convertIntToString(_body.size());
+		_header["Content-Type"] = "text/html";
+	}
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 	// std::cout << "FULL RESPONSE = " << std::endl << _fullResponse << std::endl;
+}
+
+void Response::responseRedirect(std::string const &newUri)
+{
+	_header["Location"] = newUri;
+	//View if other header needed
 }
 
 void Response::initResponseUtils(std::string const & statPath, std::string const & errPath)

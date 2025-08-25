@@ -1,0 +1,6 @@
+location / | root ./site/redirect | method GET
+location /css | root ./site/redirect/assets/css | method GET
+location /js | root ./site/redirect/assets/js | method GET
+location /webfonts | root ./site/redirect/assets/webfonts | method GET
+location /errorPage | root ./errorPage | method GET
+location /images | redirect 301 https://localhost:2004/temp

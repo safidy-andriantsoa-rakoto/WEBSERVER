@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 11:10:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 15:57:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,8 @@ void Server::buildRequestTarget(Request & request)
 	std::cout << "********TARGET = " << target << "***************" << std::endl;
 	if (target == "/")
 	{
-		//Function to check error for location
-		it = _config.getClassLocation().begin();
-		processLocationOption(*it, request);
-		request.setRequestTarget((*it).getRootDirectory() + "/" + "index.html");
+		processLocationOption(_config.getClassLocation()[0], request);
+		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
 		std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
 		return ;
 	}
@@ -65,18 +63,19 @@ void Server::buildRequestTarget(Request & request)
 	std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
 }
 
-void Server::processLocationOption(MyLoc &location, Request & request)
+void Server::processLocationOption(MyLoc const & location, Request & request)
 {
-	checkMethodInLocation(location, request.getMethod());
-	processRedirection(location);
-}
-
-void Server::checkMethodInLocation(MyLoc &location, std::string const & method)
-{
-	stringVectIt it;
 	stringVect	locationMethod;
 
 	locationMethod = location.getAvailableMethod();
+	processRedirection(location);
+	checkMethodInLocation(locationMethod, request.getMethod());
+}
+
+void Server::checkMethodInLocation(stringVect & locationMethod, std::string const & method)
+{
+	stringVectIt	it;
+
 	it = std::find(locationMethod.begin(), locationMethod.end(), method);
 	if (it == locationMethod.end())
 	{
@@ -88,9 +87,21 @@ void Server::checkMethodInLocation(MyLoc &location, std::string const & method)
 }
 
 // Review redirection function
-void Server::processRedirection(MyLoc &location)
+void Server::processRedirection(MyLoc const &location)
 {
-	(void) location;
+	stringVect		redirect;
+	int				statusRedirect;
+
+	redirect = location.getRedirect();
+	if (!redirect.size())
+	{
+		std::cout << "********* NOOOO REDIRECTION*********" << std::endl;
+		return ;
+	}
+	std::cout << "********* REDIRECTION HEREEE*********" << std::endl;
+	redirect = location.getRedirect();
+	statusRedirect = convertStringToInt(redirect[0]);
+	throw ErrorExcept(statusRedirect, "Redirection", redirect[1]);
 }
 
 Server::Server(){}
@@ -234,7 +245,7 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 	{
 		std::cerr << "Process Request error \n" << e._error << std::endl;
 		errPage = _config.getErrPage();
-		response.responseErrorGenerator(e._status, errPage);
+		response.responseErrorGenerator(e._status, errPage, e._redir);
 	}
 	responseString = response.getFullResponse();
 	send_value(fd_cli, responseString);
@@ -296,7 +307,7 @@ void Server::simpleInit(std::string const & servPath, std::string const & locati
 
 	conf.parseConfig(servPath, locationPath);
 	_config = conf;
-	_config.displayConfig();
+	// _config.displayConfig();
 }
 
 vectLocationIt	Server::findLongestMatch(std::string const & text, vectLocation & location)

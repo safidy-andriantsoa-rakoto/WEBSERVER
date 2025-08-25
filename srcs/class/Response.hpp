@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 14:43:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 15:21:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ class Response
 
 		std::string	getFullResponse();
 
-
         void		responseGenerator(std::string const & filePath);
-		void		responseErrorGenerator(int const & statusCode, t_errPage & errPage);
+		void		responseErrorGenerator(int const & statusCode, t_errPage & errPage, std::string const & newUri);
+		void		responseRedirect(std::string const & newUri);
 
 		static void			initResponseUtils(std::string const & statPath, std::string const & errPath);
 		static stringMap	getAllStatusCode();

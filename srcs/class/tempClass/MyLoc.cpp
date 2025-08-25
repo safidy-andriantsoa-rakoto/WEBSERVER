@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 11:53:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 15:56:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void MyLoc::parseLocation(std::string const & line)
         elt = splitString(*it, " ");
         topic = elt[0];
         elt.erase(elt.begin());
-        std::cout << "TOPIC = [" << topic << "]" << std::endl;
         if (topic == "location")
             _location = elt;
         if (topic == "root")
