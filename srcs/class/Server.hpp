@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 14:38:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 10:37:54 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,14 @@ class Server
 
 		//Server utils functionnality
 		void		processRequestWithConfig(Request & request);
+		void		checkContentLength(Request & request);
+
 		void		buildRequestTarget(Request & request);
+	
+		//Location requirements
+		void		processLocationOption(MyLoc & location, Request & request);
+		void		checkMethodInLocation(MyLoc & location, std::string const & method);
+		void		processRedirection(MyLoc & location);
 	
 	public:
 		Server();

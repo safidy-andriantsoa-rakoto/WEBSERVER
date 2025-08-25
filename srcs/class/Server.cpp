@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 08:40:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 11:10:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,32 +15,30 @@
 //Process request data vs config file and throw exception if needed, redirection
 void Server::processRequestWithConfig(Request & request)
 {
-	float	maxSize;
-	float	requestSize;
-	stringMapIt	itFind;
-
-	//Check content-length
-	itFind = request.getHeader().find("Content-Length");
-	if (itFind != request.getHeader().end())
-	{
-		maxSize = _config.getMaxSize();
-		requestSize = convertStringToFLoat(request.getHeader()["Content-Length"]);
-		if (requestSize > maxSize)
-		{
-			std::cout << "Request size = " << requestSize << " vs " << maxSize << std::endl;
-			throw ErrorExcept(413, "Size limit not respected");
-		}
-	}
+	checkContentLength(request);
 	buildRequestTarget(request);
 }
 
+void Server::checkContentLength(Request &request)
+{
+	float		maxSize;
+	float		requestSize;
+	stringMapIt	itFind;
+
+	itFind = request.getHeader().find("Content-Length");
+	if (itFind == request.getHeader().end())
+		return ;
+	maxSize = _config.getMaxSize();
+	requestSize = convertStringToFLoat(request.getHeader()["Content-Length"]);
+	if (requestSize > maxSize)
+		throw ErrorExcept(413, "Size limit not respected");
+}
+
 //From config file, build Request Target from the request URI
-//Check the location error
-//Work on redirect and directory listing
 //Index? Default file if directory
 void Server::buildRequestTarget(Request & request)
 {
-	vectLocationcIt	it;
+	vectLocationIt	it;
 	std::string		target;
 	vectLocation	loc;
 
@@ -49,19 +47,50 @@ void Server::buildRequestTarget(Request & request)
 	if (target == "/")
 	{
 		//Function to check error for location
-		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
+		it = _config.getClassLocation().begin();
+		processLocationOption(*it, request);
+		request.setRequestTarget((*it).getRootDirectory() + "/" + "index.html");
 		std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
 		return ;
 	}
 	loc = _config.getClassLocation();
 	it = findLongestMatch(target, loc);
 	// std::cout << "LOCATION SELECTED = " << (*it).getLocation() 	<< " => " << (*it).getRootDirectory() << std::endl;
+	processLocationOption(*it, request);
 	if ((*it).getLocation() != "/")
 		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 	else
 		target = (*it).getRootDirectory() + target;
 	request.setRequestTarget(target);
 	std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
+}
+
+void Server::processLocationOption(MyLoc &location, Request & request)
+{
+	checkMethodInLocation(location, request.getMethod());
+	processRedirection(location);
+}
+
+void Server::checkMethodInLocation(MyLoc &location, std::string const & method)
+{
+	stringVectIt it;
+	stringVect	locationMethod;
+
+	locationMethod = location.getAvailableMethod();
+	it = std::find(locationMethod.begin(), locationMethod.end(), method);
+	if (it == locationMethod.end())
+	{
+		if (method != "GET" && method != "POST" && method != "DELETE")
+			throw ErrorExcept(501, "Method not implemented");
+		else
+			throw ErrorExcept(405, "Method not allowed");
+	}
+}
+
+// Review redirection function
+void Server::processRedirection(MyLoc &location)
+{
+	(void) location;
 }
 
 Server::Server(){}
@@ -267,6 +296,7 @@ void Server::simpleInit(std::string const & servPath, std::string const & locati
 
 	conf.parseConfig(servPath, locationPath);
 	_config = conf;
+	_config.displayConfig();
 }
 
 vectLocationIt	Server::findLongestMatch(std::string const & text, vectLocation & location)

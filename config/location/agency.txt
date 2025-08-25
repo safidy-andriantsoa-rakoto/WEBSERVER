@@ -1,5 +1,5 @@
-location / | root ./site/agency
-location /css | root ./site/agency/assets/css
-location /images | root ./site/agency/assets/images
-location /js | root ./site/agency/assets/js
-location /webfonts | root ./site/agency/assets/webfonts
+location / | root ./site/agency | method GET
+location /css | root ./site/agency/assets/css | method GET
+location /images | root ./site/agency/assets/images | method GET
+location /js | root ./site/agency/assets/js | method GET
+location /webfonts | root ./site/agency/assets/webfonts | method GET

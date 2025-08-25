@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/22 08:03:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 11:36:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void split_line(std::vector<std::string> &_data, std::string line)
 		pos =  line.find_first_of(" ");
 	}
 	if (line.size())
-	_data.push_back(line);
+		_data.push_back(line);
 }
 
 void	addToMapString(stringMap & map, std::string const & first, std::string const & second)
