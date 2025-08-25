@@ -6,19 +6,16 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/22 15:45:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 08:06:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MyConf.hpp"
 #include "AConfig.hpp"
 
-MyConf::MyConf(){}
-
-MyConf::MyConf(int const &port){	
-	_host = "localhost";
-	_port = port;
-	_maxSize = 50;
+MyConf::MyConf()
+{
+	_hasErrPage = false;
 }
 
 MyConf::MyConf(MyConf const & other)
@@ -34,6 +31,7 @@ MyConf &MyConf::operator=(MyConf const &other)
 		_host = other._host;
 		_serverName = other._serverName;
 		_errPage = other._errPage;
+		_hasErrPage = other._hasErrPage;
 		_location = other._location;
 	}
 	return *this;
@@ -56,10 +54,8 @@ void MyConf::parseConfig(std::string const & filePath)
 		loc.parseLocation(line);
 		_location.push_back(loc);
 	}
-	//Add default error page location if not mentionned
-	// vectLocationIt it;
-	// it = std::find(_location.begin(), _location.end(), );
-	loc.parseLocation("location /errorPage | root ./errorPage");
+	if (_hasErrPage == false)
+		loc.parseLocation("location /errorPage | root ./errorPage");
 	_location.push_back(loc);
 }
 
@@ -86,6 +82,7 @@ void MyConf::parseConfig(std::string const &servPath, std::string const &locPath
 		}
 		else if (vect[0] == "error_page")
 		{
+			_hasErrPage = true;
 			_errPage.filePath = *(vect.end() - 1);
 			vect.erase((vect.end() - 1));
 			vect.erase(vect.begin());

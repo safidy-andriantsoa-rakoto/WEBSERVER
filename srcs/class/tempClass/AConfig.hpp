@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 14:48:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 08:04:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class AConfig
 		std::string		_host;
 		stringVect		_serverName;
 		t_errPage		_errPage;
+		bool			_hasErrPage;
 		vectLocation	_location;
 
 	public:
@@ -50,6 +51,8 @@ class AConfig
 		stringVect		getServName() const;
 		t_errPage		getErrPage() const;
 		vectLocation	getClassLocation() const;
+
+		vectLocationIt	findClassLocation(std::string const & toFind);
 
 		virtual 		~AConfig(){};
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/21 10:47:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 08:05:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ class MyConf : public AConfig
 {
 	public:
 		MyConf();
-		MyConf(int const & port);
 		MyConf(MyConf const & other);
 		MyConf & operator=(MyConf const & other);
 		~MyConf();

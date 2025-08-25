@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/22 09:57:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/25 08:40:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void Server::processRequestWithConfig(Request & request)
 	float	requestSize;
 	stringMapIt	itFind;
 
-	//Check primary data
+	//Check content-length
 	itFind = request.getHeader().find("Content-Length");
 	if (itFind != request.getHeader().end())
 	{
@@ -28,13 +28,16 @@ void Server::processRequestWithConfig(Request & request)
 		if (requestSize > maxSize)
 		{
 			std::cout << "Request size = " << requestSize << " vs " << maxSize << std::endl;
-			throw ErrorExcept(400, "Size limit not respected");
+			throw ErrorExcept(413, "Size limit not respected");
 		}
 	}
 	buildRequestTarget(request);
 }
 
 //From config file, build Request Target from the request URI
+//Check the location error
+//Work on redirect and directory listing
+//Index? Default file if directory
 void Server::buildRequestTarget(Request & request)
 {
 	vectLocationcIt	it;
@@ -45,6 +48,7 @@ void Server::buildRequestTarget(Request & request)
 	std::cout << "********TARGET = " << target << "***************" << std::endl;
 	if (target == "/")
 	{
+		//Function to check error for location
 		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
 		std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
 		return ;
@@ -60,7 +64,7 @@ void Server::buildRequestTarget(Request & request)
 	std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
 }
 
-Server::Server() {}
+Server::Server(){}
 
 Server::Server(Server const & other)
 {
@@ -82,10 +86,10 @@ Server &Server::operator=(Server const & other)
 
 Server::~Server()
 {
-	if (_fdClient != -1)
-		close(_fdClient);
-	if (_fdSocket != -1)
-		close(_fdSocket);
+	// if (_fdClient != -1)
+	// 	close(_fdClient);
+	// if (_fdSocket != -1)
+	// 	close(_fdSocket);
 }
 
 MyConf Server::getConfig() const
@@ -142,7 +146,6 @@ int Server::link_socket_adress()
 	return (1);
 }
 
-//Afaka atao throw
 int Server::wait_connexion_from_client()
 {
 	this->_fdClient = listen(this->_fdSocket, _NB_CLIENT);
@@ -155,7 +158,6 @@ int Server::wait_connexion_from_client()
 	return (1);
 }
 
-//Afaka atao throw
 int Server::accept_client_connexion()
 {
 	int fd = accept(_fdSocket, (sockaddr *)&(this->_sockaddrIn), (socklen_t *)&(this->_size_sockaddrin));
@@ -167,7 +169,6 @@ int Server::accept_client_connexion()
 	return (fd);
 }
 
-//Afaka atao throw
 std::string Server::get_client_request()
 {
 	char response[_BUFFER];
@@ -219,9 +220,7 @@ Response Server::get_request(Request & request)
 	std::fstream	file;
 	
 	tmp_ext = request.getRequestTarget();
-	//Use of config file parameter to search for the file!!!
-	//On error : need to specify the statusCode (no need to throw?)
-	file.open(tmp_ext.c_str());
+	file.open(tmp_ext.c_str()); //Epoll???
 	if (!file.is_open())
 		throw ErrorExcept(404, "File unreachable");
 	//Calling a generic function to get type based on file extension
