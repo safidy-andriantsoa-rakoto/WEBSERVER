@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 15:21:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:59:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,12 +113,13 @@ void	Response::responseErrorGenerator(int const & statusCode, t_errPage & errPag
 	}
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
-	// std::cout << "FULL RESPONSE = " << std::endl << _fullResponse << std::endl;
+	// std::cout << "\033[42mFULL RESPONSE = " << std::endl << _fullResponse << "\033[0m" << std::endl;
 }
 
 void Response::responseRedirect(std::string const &newUri)
 {
 	_header["Location"] = newUri;
+	_header["Content-Lenght"] = "0";
 	//View if other header needed
 }
 

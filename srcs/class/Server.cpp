@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 15:57:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:26:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,24 +43,24 @@ void Server::buildRequestTarget(Request & request)
 	vectLocation	loc;
 
 	target = request.getRequestTarget();
-	std::cout << "********TARGET = " << target << "***************" << std::endl;
+	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
 	if (target == "/")
 	{
 		processLocationOption(_config.getClassLocation()[0], request);
 		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
-		std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
+		std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
 		return ;
 	}
 	loc = _config.getClassLocation();
 	it = findLongestMatch(target, loc);
-	// std::cout << "LOCATION SELECTED = " << (*it).getLocation() 	<< " => " << (*it).getRootDirectory() << std::endl;
 	processLocationOption(*it, request);
+	std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
 	if ((*it).getLocation() != "/")
 		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 	else
 		target = (*it).getRootDirectory() + target;
 	request.setRequestTarget(target);
-	std::cout << "REQUEST TARGET = " << request.getRequestTarget() << std::endl;
+	std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
 }
 
 void Server::processLocationOption(MyLoc const & location, Request & request)
@@ -68,7 +68,7 @@ void Server::processLocationOption(MyLoc const & location, Request & request)
 	stringVect	locationMethod;
 
 	locationMethod = location.getAvailableMethod();
-	processRedirection(location);
+	processRedirection(location, request);
 	checkMethodInLocation(locationMethod, request.getMethod());
 }
 
@@ -87,21 +87,28 @@ void Server::checkMethodInLocation(stringVect & locationMethod, std::string cons
 }
 
 // Review redirection function
-void Server::processRedirection(MyLoc const &location)
+void Server::processRedirection(MyLoc const & location, Request & request)
 {
-	stringVect		redirect;
-	int				statusRedirect;
+	std::string	oldUri;
+	std::string	newUri;
+	stringVect	redirect;
+	int			statusRedirect;
 
 	redirect = location.getRedirect();
 	if (!redirect.size())
 	{
-		std::cout << "********* NOOOO REDIRECTION*********" << std::endl;
+		std::cout << "\033[31m<<<<<<NOOOO REDIRECTION>>>>>>\033[0m" << std::endl;
 		return ;
 	}
-	std::cout << "********* REDIRECTION HEREEE*********" << std::endl;
+	std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
 	redirect = location.getRedirect();
 	statusRedirect = convertStringToInt(redirect[0]);
-	throw ErrorExcept(statusRedirect, "Redirection", redirect[1]);
+	oldUri = request.getRequestTarget();
+	oldUri.erase(oldUri.find(location.getLocation()), location.getLocation().size() + 1);
+	newUri = redirect[1];
+	replaceString(newUri, oldUri, "$uri");
+	std::cout << "Old = " << oldUri << " => " << newUri << std::endl;
+	throw ErrorExcept(statusRedirect, "Redirection", newUri);
 }
 
 Server::Server(){}
@@ -233,6 +240,14 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 	try
 	{
 		request.parseRequest(clientRequest);
+	}
+	catch(const std::exception & e)
+	{
+		//msg from client error
+		return;
+	}
+	try
+	{
 		processRequestWithConfig(request);
 		if (request.getMethod() == "GET")
 			response = get_request(request); 
@@ -241,7 +256,7 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 		else if (request.getMethod() == "DELETE")
 			std::cout << request.getMethod() << std::endl; // Calling delete_request
 	}
-	catch(ErrorExcept const & e)
+	catch(ErrorExcept & e)
 	{
 		std::cerr << "Process Request error \n" << e._error << std::endl;
 		errPage = _config.getErrPage();
@@ -325,11 +340,12 @@ vectLocationIt	Server::findLongestMatch(std::string const & text, vectLocation &
 	{
 		compare = (*it).getLocation();
 		if (text == compare)
-		return it;
+			return it;
 		vect2 = splitString(compare, "/");
 		nbMatch = 0;
 		for(size_t i = 0; i < vect1.size() && i < vect2.size(); i++)
 		{
+			// std::cout << "Compare " << vect1[i] << " | " << vect2[i] << std::endl;
 			if (vect1[i] != vect2[i])
 				break;
 			nbMatch++;
@@ -340,5 +356,6 @@ vectLocationIt	Server::findLongestMatch(std::string const & text, vectLocation &
 			itFinal = it;
 		}
 	}
+	// std::cout << "++++++++++++++++++ nbMatchMax = " << nbMatchMax << std::endl;
 	return itFinal;
 }

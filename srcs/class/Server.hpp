@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 15:47:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/26 08:05:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class Server
 		//Location requirements
 		void		processLocationOption(MyLoc const & location, Request & request);
 		void		checkMethodInLocation(stringVect & locationMethod, std::string const & method);
-		void		processRedirection(MyLoc const & location);
+		void		processRedirection(MyLoc const & location, Request & request);
 	
 	public:
 		Server();

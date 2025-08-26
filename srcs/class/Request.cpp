@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 14:38:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:15:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	Request::parseRequest(std::string const & requeststring)
 
 void Request::displayRequest() const
 {
-	std::cout << "==================REQUEST PARSING==================" << std::endl
+	std::cout << "\033[44m==================REQUEST PARSING==================" << std::endl
 	<< "==== Request Line ===" << std::endl;
 	std::cout << "Method = ["<< _method << "]" << std::endl
 	<< "Request target = [" << _requestTarget << "]" << std::endl
@@ -137,5 +137,5 @@ void Request::displayRequest() const
 	displayStringMap(_header);
 	if (_body.size())
 		std::cout << std::endl << "==== Body ===" << std::endl << _body << std::endl;
-	std::cout << "==============END OF REQUEST PARSING=============" << std::endl;
+	std::cout << "==============END OF REQUEST PARSING=============\033[0m" << std::endl;
 }
