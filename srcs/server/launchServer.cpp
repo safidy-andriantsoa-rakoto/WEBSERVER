@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/14 15:05:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/26 11:37:58 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,22 +48,61 @@ static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServ
 	int					fd;
 
 	fd = epoll.get_fdEvent(i);
+	std::cout << "		FD EVENT:" << fd << std::endl;
 	it = findFd(allServer, fd);
+
 	if (it != allServer.end())
 	{
 		int fdc = (*it).accept_client_connexion();
+		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << std::endl;
 		epoll.epoll_control(EPOLLIN | EPOLLOUT, fdc);
 		Client client((*it).get_fdSocket(), fdc, (*it).get_confSockAddrIn(), false);
 		v_client.push_back(client);
 	}
 	else
 	{
-		it2 = findFd(allServer, v_client.begin()->get_parent());
-		(*it2).processRequest(v_client.begin()->ClientRequest(), fd);
-		epoll.epoll_clean(fd);
-		close(fd);
-		v_client.pop_back();
+		for (size_t i = 0; i < v_client.size(); i++)
+		{
+			std::cout << "\033[45mFD EVENT:" << fd << " | " << v_client[i].get_clientFD() << "\033[0m" << std::endl;
+			if (v_client[i].get_clientFD() == fd)
+			{
+				it2 = findFd(allServer, v_client[i].get_parent());
+				if (it2 != allServer.end())
+				{
+					std::string client_request;
+					try
+					{
+						client_request = v_client[i].ClientRequest();
+						// std::cout << "-->> \033[40m	" << client_request << "\033[0m" << std::endl;
+						(*it2).processRequest(client_request, fd);
+					}
+					catch(const std::exception& e)
+					{
+						std::cout << e.what();
+						return ;
+					}
+					// epoll.epoll_clean(fd);
+					// close(fd);
+				}
+			}
+		}
 	}
+	// else
+	// {
+	// 	for (size_t i = 0; i < v_client.size(); i++)
+	// 	{
+	// 		int fd_rec = v_client[i].get_clientFD();
+	// 		std::cout << "\033[41mCLIENT FD=\033[0m " << fd_rec << " et de i = " << i << std::endl;
+	// 		if (fd == fd_rec)
+	// 		{
+	// 			it2 = findFd(allServer, v_client[i].get_parent());
+	// 			(*it2).processRequest(v_client[i].ClientRequest(), fd);
+	// 			epoll.epoll_clean(fd);
+	// 		}
+	// 	}
+	// 	// close(fd);
+	// 	// v_client.pop_back();
+	// }
 }
 
 int sign = -1;
@@ -85,8 +124,23 @@ void    launchServer(vectServer & allServer)
 	signal(SIGINT, handle_c);
 	while (SIGINT != sign)
 	{
-		for (int i = 0; i < epoll.epoll_wait_event(); i++)
-			run_process(i, epoll, v_client, allServer);
+		int nb_event = epoll.epoll_wait_event();
+		if (nb_event)
+		{
+			for (int i = 0; i < nb_event; i++)
+			{
+				run_process(i, epoll, v_client, allServer);
+				sleep(1);
+			}
+		}
+		sleep(1);
+	}
+	for (size_t i = 0; i < v_client.size(); i++)
+	{
+		int fd = v_client[i].get_clientFD();
+		std::cout << "end Client join fd =" << fd << std::endl;
+		if (fd > -1)
+			close(fd);
 	}
 	for (size_t i = 0; i < allServer.size(); i++)
 	{

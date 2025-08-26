@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/08 11:09:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/26 11:31:16 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,9 @@ EpollCreation::~EpollCreation()
 
 void EpollCreation::epoll_control(int _opt, int &clientFD)
 {
+    (void)_opt;
     struct epoll_event client;
-    client.events = _opt;
+    client.events = EPOLLIN | EPOLLOUT;
     client.data.fd = clientFD;
     if (epoll_ctl(this->efds, EPOLL_CTL_ADD, clientFD, &client) < 0)
     {
@@ -47,8 +48,8 @@ void EpollCreation::epoll_clean(int &clientFD)
 {
     if (epoll_ctl(efds, EPOLL_CTL_DEL, clientFD, NULL) < 0)
         perror ("EPOLL_CLEAN");
-    if (clientFD > -1)
-        close(clientFD);
+    // if (clientFD > -1)
+    //     close(clientFD);
 }
 
 int EpollCreation::get_fdEvent(int index)
@@ -60,5 +61,5 @@ int EpollCreation::get_fdEvent(int index)
 
 int EpollCreation::epoll_wait_event()
 {
-    return (epoll_wait(this->efds, this->max_event, MAX_EVENT, -1));
+    return (epoll_wait(this->efds, this->max_event, MAX_EVENT, 1000));
 }

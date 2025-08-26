@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/12 10:03:09 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/26 10:39:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 class Client
 {
     private:
+        int _client_stat;
         int _parentFD;
         int _clientFD;
         SockAddrIn  _configSockAddrIn;
@@ -31,4 +32,14 @@ class Client
         int         get_clientFD() const;
         int         get_parent() const;
         std::string ClientRequest();
+        class Deconnect: public std::exception
+        {
+            public:
+                const char *what() const throw();
+        };
+        class RecvError: public std::exception
+        {
+            public:
+                const char *what() const throw();
+        };
 };

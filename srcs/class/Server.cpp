@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/14 15:09:46 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/26 11:08:31 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,8 @@ SockAddrIn Server::get_confSockAddrIn() const
 int Server::create_socket()
 {
 	this->_fdSocket = socket(AF_INET, SOCK_STREAM, 0);
-	int flags = fcntl(this->_fdSocket, O_NONBLOCK, 0);
-	fcntl(this->_fdSocket, F_SETFL, flags | O_NONBLOCK);
+	// int flags = fcntl(this->_fdSocket, O_NONBLOCK, 0);
+	// fcntl(this->_fdSocket, F_SETFL, flags | O_NONBLOCK);
 	if (this->_fdSocket == -1)
 	{
 		std::cout << "Error\ncreate an endpoint for communication" << std::endl;
@@ -219,6 +219,15 @@ void Server::processRequest(std::string const & clientRequest, int const & fd_cl
 	try
 	{
 		request.parseRequest(clientRequest);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << "OAY eeee\n";
+		return;
+	}
+	
+	try
+	{
 		processRequestWithConfig(request);
 		if (request.getMethod() == "GET")
 			response = get_request(request, test.get_mime());

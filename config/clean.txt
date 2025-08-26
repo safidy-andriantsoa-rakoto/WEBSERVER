@@ -1,5 +1,5 @@
 / | ./site/clean
 /css | ./site/clean/css
-/fonts | ./site/clean/fonts
+/fonts | ./site/clean/fonts/
 /images | ./site/clean/images
 /js | ./site/clean/js
