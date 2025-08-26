@@ -7,9 +7,43 @@ INC	= $(addprefix $(INC_DIR), $(INC_FILE))
 
 MAIN = main.cpp
 
+CSERV_DIR = Server/
+CSERV = Server.cpp
+
+REQ_DIR = Request/
+REQ = Request.cpp
+
+RESP_DIR = Response/
+RESP = Response.cpp ErrorExcept.cpp
+
+EPOL_DIR = Epoll/
+EPOL = EpollCreation.cpp
+
+CLI_DIR = Client/
+CLI = Client.cpp
+
+MIME_DIR = Mime/
+MIME = Mime.cpp
+
+CONF_DIR = Config/
+CONF = AConfig.cpp ALocation.cpp MyConf.cpp MyLoc.cpp
+
 CLASS_DIR = class/
-CLASS = Server.cpp Request.cpp Response.cpp ErrorExcept.cpp EpollCreation.cpp Client.cpp Mime.cpp \
-		tempClass/AConfig.cpp tempClass/ALocation.cpp tempClass/MyConf.cpp tempClass/MyLoc.cpp
+CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(CSERV_DIR)) \
+				$(addprefix $(CLASS_DIR), $(REQ_DIR)) \
+				$(addprefix $(CLASS_DIR), $(RESP_DIR)) \
+				$(addprefix $(CLASS_DIR), $(EPOL_DIR)) \
+				$(addprefix $(CLASS_DIR), $(CLI_DIR)) \
+				$(addprefix $(CLASS_DIR), $(MIME_DIR)) \
+				$(addprefix $(CLASS_DIR), $(CONF_DIR))
+
+CLASS = $(addprefix $(CSERV_DIR), $(CSERV)) \
+		$(addprefix $(REQ_DIR), $(REQ)) \
+		$(addprefix $(RESP_DIR), $(RESP)) \
+		$(addprefix $(EPOL_DIR), $(EPOL)) \
+		$(addprefix $(CLI_DIR), $(CLI)) \
+		$(addprefix $(MIME_DIR), $(MIME)) \
+		$(addprefix $(CONF_DIR), $(CONF))
 
 CGI_DIR = cgi/
 CGI = cgi.cpp
@@ -28,7 +62,7 @@ SRC = $(addprefix $(SRC_DIR), $(MAIN)) \
 		$(addprefix $(SRC_DIR), $(addprefix $(SERV_DIR), $(SERV)))
 
 OBJ_DIR = obj/
-OBJ_ALL_DIR = $(addprefix $(OBJ_DIR), $(CLASS_DIR)) \
+OBJ_SUB_DIR = $(addprefix $(OBJ_DIR), $(CLASS_SUB_DIR)) \
 				$(addprefix $(OBJ_DIR), $(CGI_DIR)) \
 				$(addprefix $(OBJ_DIR), $(UTILS_DIR)) \
 				$(addprefix $(OBJ_DIR), $(SERV_DIR))
@@ -44,13 +78,11 @@ NAME = webserv
 
 all : $(NAME)
 
-$(NAME) : $(OBJ_ALL_DIR) $(OBJ)
+$(NAME) : $(OBJ_SUB_DIR) $(OBJ)
 	$(CC) $(FLAG) $(OBJ) -o $(NAME)
 
-# Review this part !!!!
-$(OBJ_ALL_DIR) :
-	mkdir -p $(OBJ_ALL_DIR)
-	mkdir obj/class/tempClass
+$(OBJ_SUB_DIR) :
+	mkdir -p $(OBJ_SUB_DIR)
 
 $(OBJ) : $(OBJ_DIR)%.o:$(SRC_DIR)%.cpp $(INC)
 	$(CC) $(FLAG) -c $< -o $@ -I $(INC_DIR)

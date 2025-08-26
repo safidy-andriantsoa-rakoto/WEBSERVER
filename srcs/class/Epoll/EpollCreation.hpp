@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   EpollCreation.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:25:40 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/08 09:50:59 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/26 15:08:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "../../includes/general.hpp"
+#include "general.hpp"
 
 class EpollCreation
 {

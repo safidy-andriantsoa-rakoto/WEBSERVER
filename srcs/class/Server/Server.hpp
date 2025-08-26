@@ -6,19 +6,19 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/26 08:05:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/26 15:04:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-#include "Request.hpp"
-#include "Response.hpp"
-#include "ErrorExcept.hpp"
+#include "../Request/Request.hpp"
+#include "../Response/Response.hpp"
+#include "../Response/ErrorExcept.hpp"
 
-#include "tempClass/MyConf.hpp"
-#include "tempClass/MyLoc.hpp"
+#include "../Config/MyConf.hpp"
+#include "../Config/MyLoc.hpp"
 
 #include "general.hpp"
 #include "typedef.hpp"

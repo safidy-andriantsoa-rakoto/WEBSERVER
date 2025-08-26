@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 15:21:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/26 15:04:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define RESPONSE_HPP
 
 #include "general.hpp"
-#include "./tempClass/AConfig.hpp"
+#include "../Config/AConfig.hpp"
 
 class Response
 {
