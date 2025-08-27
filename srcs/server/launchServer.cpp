@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/27 14:26:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:40:13 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,10 +94,10 @@ void    launchServer(vectServer & allServer)
 			for (int i = 0; i < nb_event; i++)
 			{
 				run_process(i, epoll, v_client, allServer);
-				sleep(1);
+				// sleep(1);
 			}
 		}
-		sleep(1);
+		// sleep(1);
 	}
 	for (size_t i = 0; i < v_client.size(); i++)
 	{

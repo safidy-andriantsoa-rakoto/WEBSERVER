@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 14:18:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:40:39 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 
 #include "general.hpp"
 #include "typedef.hpp"
+#include "../Mime/Mime.hpp"
 
 class Server
 {
@@ -35,7 +36,7 @@ class Server
         SockAddrIn			_sockaddrIn;
 
 		//HTTP Method
-		Response	get_request(Request & request);
+		Response	get_request(Request & request, MapMime mime);
 		Response	post_request(Request & request);
 		Response	delete_request(Request & request);
 

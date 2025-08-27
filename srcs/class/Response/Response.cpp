@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 14:17:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:43:09 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,8 @@ void	Response::generateSuccessResponse(std::string const &  filePath)
 	setStatusLine();
 	_body = readFileToString(filePath);
 	_header["Content-Length"] = convertIntToString(_body.size());
-	//Add content-Type with mime
+	_header["Content-Type"] = _type;
+	_header["Connection"] = "keep-alive";
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 }
@@ -120,6 +121,7 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage)
 	buildErrorPage(_statusCode, errPage);
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = "text/html";
+	_header["Connection"] = "keep-alive";
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 	// std::cout << "\033[42mFULL RESPONSE = " << std::endl << _fullResponse << "\033[0m" << std::endl;
@@ -135,6 +137,7 @@ void Response::generateRedirectResponse(RedirExcept & r)
 	setStatusLine();
 	_header["Location"] = r._uri;
 	_header["Content-Lenght"] = "0";
+	_header["Connection"] = "keep-alive";
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 	// std::cout << "\033[42mFULL RESPONSE = " << std::endl << _fullResponse << "\033[0m" << std::endl;

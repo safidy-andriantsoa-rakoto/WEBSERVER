@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 14:18:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:41:07 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,29 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 	Response	response;
     std::string responseString;
 	t_errPage	errPage;
-
+	/************************* */
+	stringVect path;
+    DIR* dir = opendir("ext");
+	if (!dir)
+	{
+		std::cout << "Error\n dirent" << std::endl;
+		return ;
+	}
+    struct dirent* entry;
+    while ((entry = readdir(dir)) != NULL)
+	{
+		std::string name(entry->d_name);
+		if (!name.compare(".") || !name.compare(".."))
+			continue;	
+		path.push_back("./ext/" + name);
+    }
+    closedir(dir);
+	for (size_t i = 0; i < path.size(); i++)
+	{
+		std::cout << path[i] << std::endl;
+	}
+	Mime test(path);
+	/************************ */
 	if (!clientRequest.length())
 		return ;
 	try
@@ -253,7 +275,7 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 	{
 		processRequestWithConfig(request);
 		if (request.getMethod() == "GET")
-			response = get_request(request); 
+			response = get_request(request, test.get_mime());
 		else if (request.getMethod() == "POST")
 			std::cout << request.getMethod() << std::endl; // Calling post_request
 		else if (request.getMethod() == "DELETE")
@@ -269,39 +291,29 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 	send_value(fd_cli, responseString);
 }
 
-Response Server::get_request(Request & request)
+
+Response Server::get_request(Request & request, MapMime mime)
 {
 	std::string		line;
 	std::string 	tmp_ext;
 	std::string 	ext_file;
 	std::string 	type;
 	std::fstream	file;
+	MapMime::iterator it;
 	
 	tmp_ext = request.getRequestTarget();
-	file.open(tmp_ext.c_str()); //Epoll???
+	//Use of config file parameter to search for the file!!!
+	//On error : need to specify the statusCode (no need to throw?)
+	file.open(tmp_ext.c_str());
 	if (!file.is_open())
 		throw ErrorExcept(404, "File unreachable");
 	//Calling a generic function to get type based on file extension
 	ext_file = getFileExtension(tmp_ext);
-	std::cout << "extension->" << ext_file << std::endl;
+	it = mime.find(ext_file);
 	if (ext_file == "/")
 		type = "text/html";
-	else if (ext_file == "css" || ext_file == "html" || ext_file == "plain")
-		type = "text/" + ext_file;
-	else if (ext_file == "js")
-		type = "text/javascript";
-	else if (ext_file == "jpg" || ext_file == "png" || ext_file == "jpeg" || ext_file == "ico" || ext_file == "svg")
-	{
-		type = "image/";
-		if (ext_file == "svg")
-			type += "svg+xml";
-		else
-			type += ext_file;
-	}
-	else if (ext_file == "woff" || ext_file == "pdf")
-		type = "application/" + ext_file;
-		else if (ext_file == "mp4")
-		type = "video/" + ext_file;
+	else if (it != mime.end())
+		type = it->second;
 	Response response(200, type);
 	response.generateSuccessResponse(request.getRequestTarget());
 	return response;
