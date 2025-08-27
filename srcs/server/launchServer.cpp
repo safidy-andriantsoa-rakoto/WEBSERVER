@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/27 14:19:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:26:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,10 @@ static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServ
 
 	fd = epoll.get_fdEvent(i);
 	std::cout << "		FD EVENT:" << fd << std::endl;
-	it = findFd(allServer, fd);
-
-	if (it != allServer.end())
+	itServ = findFdInServer(allServer, fd);
+	if (itServ != allServer.end())
 	{
-		int fdc = (*it).accept_client_connexion();
+		int fdc = (*itServ).accept_client_connexion();
 		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << fd << "\033[0m" << std::endl;
 		epoll.epoll_control(EPOLLIN | EPOLLOUT, fdc);
 		Client client((*itServ).get_fdSocket(), fdc, (*itServ).get_confSockAddrIn(), false);
@@ -32,31 +31,26 @@ static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServ
 	}
 	else //Run process request
 	{
-		for (size_t i = 0; i < v_client.size(); i++)
-		{
-			std::cout << "\033[45mFD EVENT:" << fd << " | " << v_client[i].get_clientFD() << "\033[0m" << std::endl;
-			if (v_client[i].get_clientFD() == fd)
+			itCli = findFdInClient(v_client, fd);
+			std::cout << "\033[45mFD EVENT:" << fd << " | " << (*itCli).get_clientFD() << "\033[0m" << std::endl;
+			itServ = findFdInServer(allServer, (*itCli).get_parent());
+			if (itServ != allServer.end())
 			{
-				it2 = findFd(allServer, v_client[i].get_parent());
-				if (it2 != allServer.end())
+				std::string client_request;
+				try
 				{
-					std::string client_request;
-					try
-					{
-						client_request = v_client[i].ClientRequest();
-						// std::cout << "-->> \033[40m	" << client_request << "\033[0m" << std::endl;
-						(*it2).processRequest(client_request, fd);
-					}
-					catch(const std::exception& e)
-					{
-						std::cout << e.what();
-						return ;
-					}
-					// epoll.epoll_clean(fd);
-					// close(fd);
+					client_request = (*itCli).ClientRequest();
+					// std::cout << "-->> \033[40m	" << client_request << "\033[0m" << std::endl;
+					(*itServ).processRequest(client_request, fd);
 				}
+				catch(const std::exception& e)
+				{
+					std::cout << e.what();
+					return ;
+				}
+				// epoll.epoll_clean(fd);
+				// close(fd);
 			}
-		}
 	}
 	// else
 	// {
