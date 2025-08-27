@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 09:46:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 11:36:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,10 +103,13 @@ void Server::processRedirection(MyLoc const & location, Request & request)
 	std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
 	redirect = location.getRedirect();
 	statusRedirect = convertStringToInt(redirect[0]);
-	oldUri = request.getRequestTarget();
-	oldUri.erase(oldUri.find(location.getLocation()), location.getLocation().size() + 1);
 	newUri = redirect[1];
-	replaceString(newUri, oldUri, "$uri");
+	if (newUri.find("$uri") != std::string::npos)
+	{
+		oldUri = request.getRequestTarget();
+		oldUri.erase(oldUri.find(location.getLocation()), location.getLocation().size() + 1);
+		replaceString(newUri, oldUri, "$uri");
+	}
 	// std::cout << "Old = " << oldUri << " => " << newUri << std::endl;
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
