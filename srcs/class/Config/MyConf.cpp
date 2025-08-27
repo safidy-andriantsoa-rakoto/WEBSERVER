@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 11:27:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 10:19:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,7 @@ void MyConf::parseConfig(std::string const & filePath)
 		loc.parseLocation(line);
 		_location.push_back(loc);
 	}
-	if (_hasErrPage == false)
-		loc.parseLocation("location /errorPage | root ./errorPage");
+	loc.parseLocation("location /errorPage | root ./errorPage/default | method GET POST DELETE"); //Add default error page location
 	_location.push_back(loc);
 }
 

@@ -1,5 +1,5 @@
-location / | root ./site/clean
-location /css | root ./site/clean/css
-location /fonts | root ./site/clean/fonts
-location /images | root ./site/clean/images
-location /js | root ./site/clean/js
+location / | root ./site/clean | method GET POST DELETE
+location /css | root ./site/clean/css | method GET POST DELETE
+location /fonts | root ./site/clean/fonts | method GET POST DELETE
+location /images | root ./site/clean/images | method GET POST DELETE
+location /js | root ./site/clean/js | method GET POST DELETE

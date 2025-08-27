@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/26 10:59:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 09:29:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void Response::setToDefaultErrorPage()
 {
 	std::string	replace;
 
-	// std::cout << "USING DEFAULT ERROR PAGE FOR " << _statusCode << std::endl;
 	_body = _defaultErrPage;
 	replace = convertIntToString(_statusCode);
 	replace += " : " + (*_allStatusCode.find(replace)).second;
@@ -81,7 +80,7 @@ void Response::setStatusLine()
 	_statusLine = "HTTP/1.1 " + convertIntToString(_statusCode) + " " + _allStatusCode[convertIntToString(_statusCode)];
 }
 
-void	Response::responseGenerator(std::string const &  filePath)
+void	Response::generateSuccessResponse(std::string const &  filePath)
 {
 	std::string	headerString;
 	std::string	endLine = "\r\n";
@@ -94,33 +93,51 @@ void	Response::responseGenerator(std::string const &  filePath)
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 }
 
-//Error response + replacing html page
-void	Response::responseErrorGenerator(int const & statusCode, t_errPage & errPage, std::string const & newUri)
+void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage)
+{
+	try
+	{
+		ErrorExcept & err = dynamic_cast<ErrorExcept & >(e);
+		generateErrorResponse(err, errPage);
+		return;
+	}
+	catch(const std::exception & e){}
+	try
+	{
+		RedirExcept & redir = dynamic_cast<RedirExcept & >(e);
+		generateRedirectResponse(redir);
+	}
+	catch(const std::exception& e){}
+}
+
+void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage)
 {
 	std::string	headerString;
-	std::string	replace;
 	std::string	endLine = "\r\n";
 
-	_statusCode = statusCode;
+	_statusCode = e._statusCode;
 	setStatusLine();
-	if (statusCode < 400)
-		responseRedirect(newUri);
-	else
-	{
-		buildErrorPage(statusCode, errPage);
-		_header["Content-Length"] = convertIntToString(_body.size());
-		_header["Content-Type"] = "text/html";
-	}
+	buildErrorPage(_statusCode, errPage);
+	_header["Content-Length"] = convertIntToString(_body.size());
+	_header["Content-Type"] = "text/html";
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 	// std::cout << "\033[42mFULL RESPONSE = " << std::endl << _fullResponse << "\033[0m" << std::endl;
 }
 
-void Response::responseRedirect(std::string const &newUri)
+void Response::generateRedirectResponse(RedirExcept & r)
 {
-	_header["Location"] = newUri;
+	std::string	headerString;
+	std::string	replace;
+	std::string	endLine = "\r\n";
+
+	_statusCode = r._statusCode;
+	setStatusLine();
+	_header["Location"] = r._uri;
 	_header["Content-Lenght"] = "0";
-	//View if other header needed
+	headerString = convertStringMapToString(_header, endLine);
+	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
+	// std::cout << "\033[42mFULL RESPONSE = " << std::endl << _fullResponse << "\033[0m" << std::endl;
 }
 
 void Response::initResponseUtils(std::string const & statPath, std::string const & errPath)

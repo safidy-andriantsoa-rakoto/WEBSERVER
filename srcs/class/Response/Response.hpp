@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/26 15:04:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 09:28:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 # define RESPONSE_HPP
 
 #include "general.hpp"
-#include "../Config/AConfig.hpp"
+#include "ErrorExcept.hpp"
+#include "RedirExcept.hpp"
 
 class Response
 {
@@ -44,9 +45,11 @@ class Response
 
 		std::string	getFullResponse();
 
-        void		responseGenerator(std::string const & filePath);
-		void		responseErrorGenerator(int const & statusCode, t_errPage & errPage, std::string const & newUri);
-		void		responseRedirect(std::string const & newUri);
+        void		generateSuccessResponse(std::string const & filePath);
+		void		generateCatchedResponse(AExcept & e, t_errPage & errPage);
+		void		identifyCatchedExcept(AExcept & e);
+		void		generateErrorResponse(ErrorExcept & e, t_errPage & errPage);
+		void		generateRedirectResponse(RedirExcept & r);
 
 		static void			initResponseUtils(std::string const & statPath, std::string const & errPath);
 		static stringMap	getAllStatusCode();

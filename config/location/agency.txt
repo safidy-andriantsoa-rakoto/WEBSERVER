@@ -3,4 +3,3 @@ location /css | root ./site/agency/assets/css | method GET
 location /images | root ./site/agency/assets/images | method GET
 location /js | root ./site/agency/assets/js | method GET
 location /webfonts | root ./site/agency/assets/webfonts | method GET
-location /errorPage | root ./errorPage | method GET

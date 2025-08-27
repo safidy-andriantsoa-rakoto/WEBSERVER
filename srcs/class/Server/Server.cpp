@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/26 10:26:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 09:46:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void Server::processRedirection(MyLoc const & location, Request & request)
 	redirect = location.getRedirect();
 	if (!redirect.size())
 	{
-		std::cout << "\033[31m<<<<<<NOOOO REDIRECTION>>>>>>\033[0m" << std::endl;
+		// std::cout << "\033[31m<<<<<<NOOOO REDIRECTION>>>>>>\033[0m" << std::endl;
 		return ;
 	}
 	std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
@@ -107,8 +107,8 @@ void Server::processRedirection(MyLoc const & location, Request & request)
 	oldUri.erase(oldUri.find(location.getLocation()), location.getLocation().size() + 1);
 	newUri = redirect[1];
 	replaceString(newUri, oldUri, "$uri");
-	std::cout << "Old = " << oldUri << " => " << newUri << std::endl;
-	throw ErrorExcept(statusRedirect, "Redirection", newUri);
+	// std::cout << "Old = " << oldUri << " => " << newUri << std::endl;
+	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
 Server::Server(){}
@@ -256,11 +256,11 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 		else if (request.getMethod() == "DELETE")
 			std::cout << request.getMethod() << std::endl; // Calling delete_request
 	}
-	catch(ErrorExcept & e)
+	catch(AExcept & e)
 	{
-		std::cerr << "Process Request error \n" << e._error << std::endl;
+		std::cerr << "Process Request exception catched : " << e._errMsg << std::endl; //Fafana
 		errPage = _config.getErrPage();
-		response.responseErrorGenerator(e._status, errPage, e._redir);
+		response.generateCatchedResponse(e, errPage);
 	}
 	responseString = response.getFullResponse();
 	send_value(fd_cli, responseString);
@@ -300,7 +300,7 @@ Response Server::get_request(Request & request)
 		else if (ext_file == "mp4")
 		type = "video/" + ext_file;
 	Response response(200, type);
-	response.responseGenerator(request.getRequestTarget());
+	response.generateSuccessResponse(request.getRequestTarget());
 	return response;
 }
 

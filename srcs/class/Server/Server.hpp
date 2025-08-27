@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/26 15:04:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/27 08:43:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include "../Request/Request.hpp"
 #include "../Response/Response.hpp"
-#include "../Response/ErrorExcept.hpp"
 
 #include "../Config/MyConf.hpp"
 #include "../Config/MyLoc.hpp"

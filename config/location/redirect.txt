@@ -1,5 +1,6 @@
-location / | root ./site/redirect | method GET POST DELETE
+location / | root ./site/redirect | method POST DELETE
 location /css | root ./site/redirect/css | method GET
 location /fonts | root ./site/redirect/fonts | method GET
 location /images | redirect 303 http://localhost:2003/tmp/$uri
 location /js | root ./site/redirect/js | method GET
+location /custom | root ./errorPage/custom | method GET

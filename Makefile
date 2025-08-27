@@ -14,7 +14,7 @@ REQ_DIR = Request/
 REQ = Request.cpp
 
 RESP_DIR = Response/
-RESP = Response.cpp ErrorExcept.cpp
+RESP = Response.cpp AExcept.cpp ErrorExcept.cpp RedirExcept.cpp
 
 EPOL_DIR = Epoll/
 EPOL = EpollCreation.cpp
