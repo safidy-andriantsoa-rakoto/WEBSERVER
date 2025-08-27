@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/14 08:12:04 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:16:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <cmath>
 #include <fcntl.h>
 #include <csignal>
 #include <cstdlib>
@@ -62,10 +63,14 @@ std::string	getFileExtension(std::string const & fileName);
 stringVect	strictSplit(std::string const & target, std::string const & sep);
 void	    split_line(std::vector<std::string> &_data, std::string line);
 stringVect	splitString(std::string const & target, std::string const & sep);
-std::string convertIntToString(int const & n);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
-stringMapIt	findLongestMatch(std::string const & text, stringMap const & map);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
+std::string	checkLimitSize(std::string const & a, std::string const & b);
+
+    //Conversion
+std::string convertIntToString(int const & n);
+float       convertStringToFLoat(std::string const & n);
+int         convertStringToInt(std::string const & n);
 std::string	convertStringMapToString(stringMap const & map, std::string const & sep);
 
     //DisplayUtils
@@ -74,6 +79,7 @@ void	    displayStringPair(stringPair const & pair);
 void	    displayStringMap(stringMap const & map);
 void	    displayString(std::string const & text);
 void	    displayStringVect(stringVect const & vect, std::string const & title);
+void	    displayStringVect(stringVect const & vect);
 
     //messageUtils
 void        send_value(int const & _acceptStatus, std::string & _send_content);

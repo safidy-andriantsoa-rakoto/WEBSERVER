@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   define.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 11:33:50 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:15:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 #define RESPONSE_FILE_NAME "response.txt"
 
 //Response
-#define ERR_PATH "errorPage/error.html"
+#define ERR_PATH "errorPage/default/index.html"
+#define STAT_PATH "ext/statcode/statusCode.txt"
 
 // #define POST "POST "
 #define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"

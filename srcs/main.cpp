@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/14 14:34:29 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:17:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int main()
 {
 	try
 	{
-		Response::initAllStatusCode("ext/statcode/statusCode.txt");
+		Response::initResponseUtils(STAT_PATH, ERR_PATH);
 		vectServer	allServer = parseConfigFile();
 		launchServer(allServer);
 	}

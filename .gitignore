@@ -1,8 +1,4 @@
 obj/
 webserv
 .vscode/
-db/
-dim/
-clean/
-agency/
-site/
+follow-up/

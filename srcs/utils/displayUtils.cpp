@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   display.cpp                                        :+:      :+:    :+:   */
+/*   displayUtils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 09:43:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/01 09:44:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/12 14:01:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,18 @@ void	displayStringMap(stringMap const & map)
 
 void	displayString(std::string const & text)
 {
-	std::cout << "[" << text << "]" << std::endl;
+	std::cout << "[" << text << "] ";
 }
 
 void	displayStringVect(stringVect const & vect, std::string const & title)
 {
-	std::cout << "<<<< " << title << " >>>>\n";
-	std::for_each(vect.begin(), vect.end(), displayString);	
+	std::cout << title << " ";
+	std::for_each(vect.begin(), vect.end(), displayString);
+	std::cout << std::endl;
+}
+
+void	displayStringVect(stringVect const & vect)
+{
+	std::for_each(vect.begin(), vect.end(), displayString);
+	std::cout << std::endl;
 }

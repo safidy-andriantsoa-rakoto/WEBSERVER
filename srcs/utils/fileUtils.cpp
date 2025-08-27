@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/30 09:32:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/19 10:34:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ void	printFileContent(std::string const & path)
 	std::string		line;
 	std::ifstream	file;
 
-	file.open(path.c_str());
+	file.open(path.c_str()); //Use C open() and get fd
 	if (!file.is_open())
 		return ;
 	while (!file.eof())
 	{
-		std::getline(file, line);
+		std::getline(file, line); //Use read with epoll
 		std::cout << line << std::endl;
 	}
 }
@@ -37,10 +37,10 @@ std::string readFileToString(std::string filePath)
 {
 	std::fstream file;
 
-	file.open(filePath.c_str());
+	file.open(filePath.c_str()); //Use C open() and get fd
 	if (!file.is_open())
 		throw std::runtime_error("ReadFileToString : File can't be opened"); //Review exception to throw by the situation (StatusCode)
-	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>()); //Use read with epoll
 	return (fileString);
 }
 
@@ -52,10 +52,10 @@ stringMap splitFileToMapString(std::string const &filePath, std::string const & 
 	stringVect		vect;
 	stringMap		result;
 
-	file.open(filePath.c_str());
+	file.open(filePath.c_str()); //Use C open() and get fd
 	if (!file.is_open())
 		throw std::runtime_error("splitFileToMapString : File is not available");
-	while (getline(file, line))
+	while (getline(file, line)) //Use read with epoll
 	{
 		vect = strictSplit(line, sep);
 		pair.first = vect[0];
