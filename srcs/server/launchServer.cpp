@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/26 11:37:58 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/27 11:53:38 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServ
 	if (it != allServer.end())
 	{
 		int fdc = (*it).accept_client_connexion();
-		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << std::endl;
+		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << fd << "\033[0m" << std::endl;
 		epoll.epoll_control(EPOLLIN | EPOLLOUT, fdc);
 		Client client((*it).get_fdSocket(), fdc, (*it).get_confSockAddrIn(), false);
 		v_client.push_back(client);

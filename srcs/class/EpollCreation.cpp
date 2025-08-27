@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/26 11:31:16 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/27 11:46:28 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ EpollCreation::~EpollCreation()
 
 void EpollCreation::epoll_control(int _opt, int &clientFD)
 {
-    (void)_opt;
+    // (void)_opt;
     struct epoll_event client;
-    client.events = EPOLLIN | EPOLLOUT;
+    client.events = _opt;
     client.data.fd = clientFD;
     if (epoll_ctl(this->efds, EPOLL_CTL_ADD, clientFD, &client) < 0)
     {
