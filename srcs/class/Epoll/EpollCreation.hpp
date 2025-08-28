@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   EpollCreation.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:25:40 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/26 15:08:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:11:47 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,6 @@ class EpollCreation
         void epoll_clean(int &clientFD);
         int  get_fdEvent(int index);
         int  epoll_wait_event();
+        SEpollEvent getEvent_struct(int index);
+        
 };

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/26 10:39:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:45:48 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ class Client
         int _clientFD;
         SockAddrIn  _configSockAddrIn;
         bool        _server_socket;
+        std::string _clientRequest;
         Client();
         
     public:
@@ -32,6 +33,7 @@ class Client
         int         get_clientFD() const;
         int         get_parent() const;
         std::string ClientRequest();
+        std::string getClientRequest() const;
         class Deconnect: public std::exception
         {
             public:

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   EpollCreation.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/27 14:17:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:54:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,16 @@ int EpollCreation::get_fdEvent(int index)
 {
     if (index < 0)
         return (-1);
+
     return (this->max_event[index].data.fd);
 }
 
 int EpollCreation::epoll_wait_event()
 {
     return (epoll_wait(this->efds, this->max_event, MAX_EVENT, -1));
+}
+
+SEpollEvent EpollCreation::getEvent_struct(int index)
+{
+    return (this->max_event[index]);
 }

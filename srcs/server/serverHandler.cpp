@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 14:29:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/28 15:04:43 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	launchEpoll(vectServer & allServer, EpollCreation &epoll)
 
 	for(vectServerIt it = allServer.begin(); it != allServer.end(); it++)
 	{
-		flags = fcntl((*it).get_fdSocket(), O_NONBLOCK, 0);
+		flags = fcntl((*it).get_fdSocket(), F_GETFL, 0);
 		fcntl((*it).get_fdSocket(), F_SETFL, flags | O_NONBLOCK);
 		int fd = ((*it).get_fdSocket());
 		std::cout << "\033[046mSERVER FD= " << fd << "\033[0m" << std::endl;

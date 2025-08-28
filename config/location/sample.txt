@@ -1,1 +1,1 @@
-location / | root ./site/sample
+location / | root ./site/sample | method GET

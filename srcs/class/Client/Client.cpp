@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/27 14:15:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:48:57 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 Client::Client(const int &_parentFD, const int &_clientFD,const SockAddrIn& _configSockAddrIn, bool is_socketDF) : _parentFD(_parentFD),
 _clientFD(_clientFD), _configSockAddrIn(_configSockAddrIn), _server_socket(is_socketDF)
 {
+    this->_clientRequest= "";
     if (_clientFD < 0 || _parentFD < 0)
     {
         std::cout << "Error\nInvalid input FD" << std::endl; 
@@ -50,7 +51,13 @@ std::string Client::ClientRequest()
         std::cout << "Error\nreceive a message from a socket" << std::endl;
         return ("");
     }
-    return (response);
+    this->_clientRequest = response;
+    return (_clientRequest);
+}
+
+std::string Client::getClientRequest() const
+{
+    return (this->_clientRequest);
 }
 
 Client::Client(const Client &client)
