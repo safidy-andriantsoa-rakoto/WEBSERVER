@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/29 10:10:32 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/29 14:22:20 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,11 @@ void Client::ClientRequest()
 {
     char response[_BUFFER];
     int _respStatus = recv(this->get_clientFD(), response, sizeof(response), 0);
+    if (_respStatus == 0)
+    {
+        std::cout << "Le client est deconnecte." << std::endl;
+        return ;
+    }
     if (_respStatus == -1)
     {
         std::cout << "Error\nreceive a message from a socket" << std::endl;
