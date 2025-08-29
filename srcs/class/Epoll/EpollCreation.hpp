@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:25:40 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/28 14:11:47 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/29 08:58:27 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,5 @@ class EpollCreation
         int  get_fdEvent(int index);
         int  epoll_wait_event();
         SEpollEvent getEvent_struct(int index);
-        
+        void epoll_update_event(int &fd, int event);        
 };

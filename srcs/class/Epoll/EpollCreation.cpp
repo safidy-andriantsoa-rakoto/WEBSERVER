@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/28 14:54:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/29 09:01:58 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,16 @@ int EpollCreation::epoll_wait_event()
 SEpollEvent EpollCreation::getEvent_struct(int index)
 {
     return (this->max_event[index]);
+}
+
+void EpollCreation::epoll_update_event(int &fd, int event)
+{
+    epoll_event up;
+    up.data.fd = fd;
+    up.events = event;
+    if (epoll_ctl(this->efds, EPOLL_CTL_MOD, fd, &up) < 0) //modifier le fd deja inscrit dans l'epoll avec le EPOLL_CTL_MOD
+    {
+        perror("add ctl:");
+        throw std::runtime_error("epoll_ctl_add error ee");
+    }
 }

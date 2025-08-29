@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 10:19:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/28 10:18:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/29 10:09:03 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ vectServer parseConfigFile()
 	// Server		server3;
 	// Server		server4;
 
-	server1.simpleInit("./config/server/server1.txt", "./config/location/dim.txt");
+	server1.simpleInit("./config/server/server1.txt", "./config/location/clean.txt");
 	// server2.simpleInit("./config/server/server2.txt", "./config/location/dim.txt");
 	// server3.simpleInit("./config/server/server1.txt", "./config/location/clean.txt");
 	// server4.simpleInit("./config/server/server1.txt", "./config/location/sample.txt");

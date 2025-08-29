@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/28 14:48:57 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/29 10:10:32 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,16 @@ Client &Client::operator=(const Client &client)
     return (*this);
 }
 
-std::string Client::ClientRequest()
+void Client::ClientRequest()
 {
     char response[_BUFFER];
     int _respStatus = recv(this->get_clientFD(), response, sizeof(response), 0);
     if (_respStatus == -1)
     {
         std::cout << "Error\nreceive a message from a socket" << std::endl;
-        return ("");
+        return ;
     }
     this->_clientRequest = response;
-    return (_clientRequest);
 }
 
 std::string Client::getClientRequest() const

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/28 15:38:37 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/08/29 10:12:39 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,51 +21,49 @@ static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServ
 
 	event = epoll.getEvent_struct(i);
 	fd = epoll.get_fdEvent(i);
-	if (event.events & EPOLLRDHUP)
-		std::cout << "\033[031,047mDECONECTION AU NIVEAU DU CLIENT\033[0m" << std::endl;
-	if (event.events & EPOLLIN)
-		std::cout << "\033[047mEVENT EPOLLIN NOW-->\033[0m" << event.data.fd << std::endl;
-	if (event.events & EPOLLOUT)
-		std::cout << "\033[047mEVENT EPOLLOUT NOW--->\033[0m" << event.data.fd << std::endl;
-	// std::cout << "		FD EVENT:" << fd << std::endl;
 	if (event.events & EPOLLIN)
 	{
+		std::cout << "\033[047mEVENT EPOLLIN NOW-->\033[0m" << event.data.fd << std::endl;
 		itServ = findFdInServer(allServer, fd);
 		itCli = findFdInClient(v_client, fd);
 		if (itServ != allServer.end() && (*itServ).get_fdSocket() == fd)
 		{
 			int fdc = (*itServ).accept_client_connexion();
 			std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << fd << "\033[0m" << std::endl;
-			epoll.epoll_control(EPOLLIN | EPOLLOUT, fdc);
+			epoll.epoll_control(EPOLLIN, fdc);
 			Client client((*itServ).get_fdSocket(), fdc, (*itServ).get_confSockAddrIn(), false);
 			v_client.push_back(client);
+			epoll.epoll_update_event(fd, EPOLLIN);
 		}
 		else if (itCli != v_client.end() && (*itCli).get_clientFD() == fd)
 		{
-			std::string		client_request;
-			client_request = (*itCli).ClientRequest();
+			(*itCli).ClientRequest();
 			std::cout
 			<< "*******************************************\n" 
-			<< client_request
+			<< (*itCli).getClientRequest()
 			<< "*******************************************\n"
 			<< std::endl;
-			// epoll.epoll_control();
+			epoll.epoll_update_event(fd, EPOLLOUT);
 		}
 	}
-	if (event.events & EPOLLOUT)
+	else if (event.events & EPOLLOUT)
 	{
+		std::cout << "\033[047mEVENT EPOLLOUT NOW--->\033[0m" << event.data.fd << std::endl;
 		itCli = findFdInClient(v_client, fd);
-		std::cout << "\033[045mFD EVENT:" << fd << " | " << (*itCli).get_clientFD() << "\033[0m" << std::endl;
 		itServ = findFdInServer(allServer, (*itCli).get_parent());
+		std::cout << "\033[045mFD EVENT:" << fd << " | " << (*itCli).get_clientFD() << " WITH PARENT="<< (*itCli).get_parent() <<  "\033[0m" << std::endl;
 		if (itCli != v_client.end())
 		{
 			std::string client_request;
 			try
 			{
-				// client_request = (*itCli).ClientRequest();
+				client_request = (*itCli).getClientRequest();
 				// std::cout << "-->> \033[40m	" << client_request << "\033[0m" << std::endl;
-				if (itServ != allServer.end())
-					(*itServ).processRequest((*itCli).getClientRequest(), fd);
+				if (client_request.find("HTTP") != std::string::npos)
+				{
+					if (itServ != allServer.end())
+						(*itServ).processRequest(client_request, fd);
+				}
 			}
 			catch(const std::exception& e)
 			{
@@ -73,41 +71,8 @@ static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServ
 				return ;
 			}
 		}
-		else
-			std::cout << "		ERROR, client fd" << std::endl;
+		epoll.epoll_update_event(fd, EPOLLIN);
 	}
-	// if (itServ != allServer.end())
-	// {
-	// 	int fdc = (*itServ).accept_client_connexion();
-	// 	std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << fd << "\033[0m" << std::endl;
-	// 	epoll.epoll_control(EPOLLIN | EPOLLOUT, fdc);
-	// 	Client client((*itServ).get_fdSocket(), fdc, (*itServ).get_confSockAddrIn(), false);
-	// 	v_client.push_back(client);
-	// }
-	// else //Run process request
-	// {
-	// 		itCli = findFdInClient(v_client, fd);
-	// 		std::cout << "\033[45mFD EVENT:" << fd << " | " << (*itCli).get_clientFD() << "\033[0m" << std::endl;
-	// 		itServ = findFdInServer(allServer, (*itCli).get_parent());
-	// 		if (itCli != v_client.end())
-	// 		{
-	// 			std::string client_request;
-	// 			try
-	// 			{
-	// 				client_request = (*itCli).ClientRequest();
-	// 				// std::cout << "-->> \033[40m	" << client_request << "\033[0m" << std::endl;
-	// 				if (itServ != allServer.end())
-	// 					(*itServ).processRequest(client_request, fd);
-	// 			}
-	// 			catch(const std::exception& e)
-	// 			{
-	// 				std::cout << e.what();
-	// 				return ;
-	// 			}
-	// 		}
-	// 		else
-	// 			std::cout << "		ERROR, client fd" << std::endl;
-	// }
 }
 
 int sign = -1;
