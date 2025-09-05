@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 14:16:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/03 18:13:39 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	    replaceString(std::string & text, std::string const & replaceText, std:
 std::string	checkLimitSize(std::string const & a, std::string const & b);
 
     //Conversion
-std::string convertIntToString(int const & n);
+std::string convertIntToString(ssize_t const & n);
 float       convertStringToFLoat(std::string const & n);
 int         convertStringToInt(std::string const & n);
 std::string	convertStringMapToString(stringMap const & map, std::string const & sep);

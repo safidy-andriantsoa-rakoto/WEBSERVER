@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   conversion.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 08:02:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/22 08:03:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/03 18:12:58 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "general.hpp"
 
-std::string convertIntToString(int const & n)
+std::string convertIntToString(ssize_t const & n)
 {
 	std::stringstream	ss;
 	std::string			result;

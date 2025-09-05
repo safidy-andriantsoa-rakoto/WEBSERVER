@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 14:41:07 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/03 19:35:21 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,10 +254,6 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 		path.push_back("./ext/" + name);
     }
     closedir(dir);
-	for (size_t i = 0; i < path.size(); i++)
-	{
-		std::cout << path[i] << std::endl;
-	}
 	Mime test(path);
 	/************************ */
 	if (!clientRequest.length())
@@ -288,9 +284,11 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 		response.generateCatchedResponse(e, errPage);
 	}
 	responseString = response.getFullResponse();
-	send_value(fd_cli, responseString);
+	if (responseString.size())
+		send_value(fd_cli, responseString);
+	else
+		std::cout << "ERROR/nresponce null" << std::endl;
 }
-
 
 Response Server::get_request(Request & request, MapMime mime)
 {
@@ -300,8 +298,14 @@ Response Server::get_request(Request & request, MapMime mime)
 	std::string 	type;
 	std::fstream	file;
 	MapMime::iterator it;
+	struct stat st;
 	
 	tmp_ext = request.getRequestTarget();
+	stat(tmp_ext.c_str(), &st); //permet d'obtenir extement la taille du fichier !important
+	request.setRequestSize(st.st_size);
+
+	std::cout << "			TAILLE DE LA FICHIER EXACT=" << (request.getRequestSize()) << std::endl;
+
 	//Use of config file parameter to search for the file!!!
 	//On error : need to specify the statusCode (no need to throw?)
 	file.open(tmp_ext.c_str());
@@ -315,7 +319,7 @@ Response Server::get_request(Request & request, MapMime mime)
 	else if (it != mime.end())
 		type = it->second;
 	Response response(200, type);
-	response.generateSuccessResponse(request.getRequestTarget());
+	response.generateSuccessResponse(request.getRequestTarget(), request.getRequestSize());
 	return response;
 }
 

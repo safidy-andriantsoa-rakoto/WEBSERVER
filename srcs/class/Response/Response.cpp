@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 14:43:09 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/03 19:46:49 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,14 @@ void Response::setStatusLine()
 	_statusLine = "HTTP/1.1 " + convertIntToString(_statusCode) + " " + _allStatusCode[convertIntToString(_statusCode)];
 }
 
-void	Response::generateSuccessResponse(std::string const &  filePath)
+void	Response::generateSuccessResponse(std::string const &  filePath, ssize_t size)
 {
 	std::string	headerString;
 	std::string	endLine = "\r\n";
 
 	setStatusLine();
 	_body = readFileToString(filePath);
-	_header["Content-Length"] = convertIntToString(_body.size());
+	_header["Content-Length"] = convertIntToString(size);
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
 	headerString = convertStringMapToString(_header, endLine);
@@ -136,7 +136,7 @@ void Response::generateRedirectResponse(RedirExcept & r)
 	_statusCode = r._statusCode;
 	setStatusLine();
 	_header["Location"] = r._uri;
-	_header["Content-Lenght"] = "0";
+	_header["Content-Lenght"] = "0"; // on a besoin le taille de la contenue ici pas zero ! important
 	_header["Connection"] = "keep-alive";
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;

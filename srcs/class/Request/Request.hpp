@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/11 14:40:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/03 18:02:57 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class Request
 
 		stringMap	_header;
 		std::string	_body;
+		ssize_t		_request_length;
 
 		void    	setRequestLine(std::string const & set);
 		void		setRequestBody(std::string const & requeststring, size_t const & pos);
@@ -41,6 +42,10 @@ class Request
 		std::string	getRequestLine() const;
 		std::string	getBody() const;
 		stringMap	getHeader() const;
+
+		void		setRequestSize(ssize_t size);
+
+		ssize_t		getRequestSize();
 
 		void		setRequestTarget(std::string const & target);
 	

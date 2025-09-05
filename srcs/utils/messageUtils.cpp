@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/29 14:17:41 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/03 19:54:41 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,40 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
     size_t total_sent = 0;
     size_t to_send = _send_content.size();
 
+    // std::cout << "\n\n[" << _send_content.size() << "]\n\n" << std::endl;
+
+
+    //     ssize_t sent = send(
+    //         _acceptStatus,
+    //         _send_content.c_str(),
+    //         to_send,
+    //         0
+    //     );
+    //     if (sent < 0)
+    //     {
+    //         perror("send failed");
+    //     }
+    //     else if (sent == 0)
+    //     {
+    //         std::cerr << "Connection closed by peer\n";
+    //     }
+
+    std::cout << "\033[048mSIZE=" << to_send << std::endl;
+    if (_acceptStatus < 0)
+    {
+        std::cerr << "INVALID FD TO SEND\n";
+        return ;
+    }
     while (total_sent < to_send)
     {
-        ssize_t sent = send(_acceptStatus,_send_content.c_str() + total_sent, to_send - total_sent, 0);
+        const char *resp =  _send_content.c_str() + total_sent;
+        // std::cout << "+++++++++++++++++++++++++++++++++++\n" << resp << "|" << std::endl;
+        ssize_t sent = send(
+            _acceptStatus,
+            resp,
+            to_send - total_sent,
+            0
+        );
         if (sent < 0)
         {
             perror("send failed");
@@ -32,6 +63,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
         }
         total_sent += sent; 
     }
+    _send_content.clear();
     if (total_sent == to_send)
         std::cout << "Tout le message a été envoyé (" << total_sent << " octets).\n";
     else

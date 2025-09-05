@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 09:28:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/03 18:18:27 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ class Response
 
 		std::string	getFullResponse();
 
-        void		generateSuccessResponse(std::string const & filePath);
+        void		generateSuccessResponse(std::string const & filePath, ssize_t size);
 		void		generateCatchedResponse(AExcept & e, t_errPage & errPage);
 		void		identifyCatchedExcept(AExcept & e);
 		void		generateErrorResponse(ErrorExcept & e, t_errPage & errPage);

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/08/29 14:22:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:17:33 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ Client &Client::operator=(const Client &client)
     this->_parentFD = client._parentFD;
     this->_configSockAddrIn = client._configSockAddrIn;
     this->_server_socket = client._server_socket;
+    this->_clientRequest = client.getClientRequest();
     return (*this);
 }
 
@@ -48,20 +49,24 @@ void Client::ClientRequest()
     int _respStatus = recv(this->get_clientFD(), response, sizeof(response), 0);
     if (_respStatus == 0)
     {
-        std::cout << "Le client est deconnecte." << std::endl;
-        return ;
+        throw Deconnect();
+        // std::cout << "RECV:Le client est deconnecte." << std::endl;
+        // return ;
     }
     if (_respStatus == -1)
     {
-        std::cout << "Error\nreceive a message from a socket" << std::endl;
-        return ;
+        throw RecvError();
+        // std::cout << "Error\nreceive a message from a socket" << std::endl;
+        // return ;
     }
     this->_clientRequest = response;
 }
 
 std::string Client::getClientRequest() const
 {
-    return (this->_clientRequest);
+    if (this->_clientRequest.size())
+        return (this->_clientRequest);
+    return ("");
 }
 
 Client::Client(const Client &client)
@@ -70,3 +75,13 @@ Client::Client(const Client &client)
 }
 
 Client::~Client() {}
+
+const char *Client::Deconnect::what() const throw()
+{
+    return ("Le client est Deconnecte!");
+}
+
+const char *Client::RecvError::what() const throw()
+{
+    return ("Probleme avec RECV");
+}
