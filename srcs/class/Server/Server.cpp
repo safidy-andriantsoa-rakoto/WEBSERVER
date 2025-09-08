@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/03 19:35:21 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/08 11:00:14 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,7 +296,7 @@ Response Server::get_request(Request & request, MapMime mime)
 	std::string 	tmp_ext;
 	std::string 	ext_file;
 	std::string 	type;
-	std::fstream	file;
+	// std::fstream	file;
 	MapMime::iterator it;
 	struct stat st;
 	
@@ -308,9 +308,9 @@ Response Server::get_request(Request & request, MapMime mime)
 
 	//Use of config file parameter to search for the file!!!
 	//On error : need to specify the statusCode (no need to throw?)
-	file.open(tmp_ext.c_str());
-	if (!file.is_open())
-		throw ErrorExcept(404, "File unreachable");
+	// file.open(tmp_ext.c_str());
+	// if (!file.is_open())
+	// 	throw ErrorExcept(404, "File unreachable");
 	//Calling a generic function to get type based on file extension
 	ext_file = getFileExtension(tmp_ext);
 	it = mime.find(ext_file);
