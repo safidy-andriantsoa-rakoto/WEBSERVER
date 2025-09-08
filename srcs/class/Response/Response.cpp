@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/03 19:46:49 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/08 15:47:51 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void	Response::generateSuccessResponse(std::string const &  filePath, ssize_t si
 	_header["Content-Length"] = convertIntToString(size);
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
+	_header["Refresh"] = "5";
 	headerString = convertStringMapToString(_header, endLine);
 	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 }
