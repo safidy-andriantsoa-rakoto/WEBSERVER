@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/08 15:21:48 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/08 15:26:42 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServer & allServer)
 {
-	// std::cout << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;
 	vectServerIt	itServ;
 	VClientIt		itCli;
 	int				fd;
@@ -41,13 +40,11 @@ static void run_process(int i, EpollCreation &epoll, VClient &v_client, vectServ
 			v_client.push_back(client);
 			fdc = (*itServ).accept_client_connexion();
 		}
-		// epoll.epoll_update_event(fd, EPOLLIN);
 	}
 	else
 	{
-		if (event.events & EPOLLIN) // mizara roa ra client de ->request ilay izy, ra FD file -> read()
+		if (event.events & EPOLLIN)
 		{
-			std::cout << "______________________________________" << std::endl;
 			itCli = findFdInClient(v_client, fd);
 			if (itCli != v_client.end())
 			{
@@ -133,7 +130,7 @@ void    launchServer(vectServer & allServer)
 		{
 			for (int i = 0; i < nb_event; i++)
 			{
-				std::cout << "["<< i <<"]" << "EVENTS------------------"<< nb_event << std::endl;
+				// std::cout << "["<< i <<"]" << "EVENTS------------------"<< nb_event << std::endl;
 				run_process(i, epoll, v_client, allServer);
 			}
 		}
@@ -142,7 +139,7 @@ void    launchServer(vectServer & allServer)
 	{
 		int fd = v_client[i].get_clientFD();
 		epoll.epoll_clean(fd);
-		std::cout << "\nclose Client join fd =" << fd << std::endl;
+		// std::cout << "\nclose Client join fd =" << fd << std::endl;
 	}
 	for (size_t i = 0; i < allServer.size(); i++)
 	{
