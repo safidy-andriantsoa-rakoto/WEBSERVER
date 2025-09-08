@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/08 11:00:14 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/08 15:15:14 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,14 @@ SockAddrIn Server::get_confSockAddrIn() const
 //Afaka atao throw
 int Server::create_socket()
 {
+	int opt = 1;
+
 	this->_fdSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (setsockopt(this->_fdSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+	{
+		perror("setsockopt");
+		return 1;
+	}
 	if (this->_fdSocket == -1)
 	{
 		std::cout << "Error\ncreate an endpoint for communication" << std::endl;
@@ -304,7 +311,7 @@ Response Server::get_request(Request & request, MapMime mime)
 	stat(tmp_ext.c_str(), &st); //permet d'obtenir extement la taille du fichier !important
 	request.setRequestSize(st.st_size);
 
-	std::cout << "			TAILLE DE LA FICHIER EXACT=" << (request.getRequestSize()) << std::endl;
+	// std::cout << "			TAILLE DE LA FICHIER EXACT=" << (request.getRequestSize()) << std::endl;
 
 	//Use of config file parameter to search for the file!!!
 	//On error : need to specify the statusCode (no need to throw?)

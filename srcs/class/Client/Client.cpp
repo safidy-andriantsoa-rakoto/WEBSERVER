@@ -6,14 +6,14 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/05 16:17:33 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/08 15:08:19 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(const int &_parentFD, const int &_clientFD,const SockAddrIn& _configSockAddrIn, bool is_socketDF) : _parentFD(_parentFD),
-_clientFD(_clientFD), _configSockAddrIn(_configSockAddrIn), _server_socket(is_socketDF)
+Client::Client(const int &_parentFD, const int &_clientFD,const SockAddrIn& _configSockAddrIn, bool is_connect) : _parentFD(_parentFD),
+_clientFD(_clientFD), _configSockAddrIn(_configSockAddrIn), _connect(is_connect)
 {
     this->_clientRequest= "";
     if (_clientFD < 0 || _parentFD < 0)
@@ -38,7 +38,7 @@ Client &Client::operator=(const Client &client)
     this->_clientFD = client._clientFD;
     this->_parentFD = client._parentFD;
     this->_configSockAddrIn = client._configSockAddrIn;
-    this->_server_socket = client._server_socket;
+    this->_connect = client._connect;
     this->_clientRequest = client.getClientRequest();
     return (*this);
 }
@@ -48,17 +48,9 @@ void Client::ClientRequest()
     char response[_BUFFER];
     int _respStatus = recv(this->get_clientFD(), response, sizeof(response), 0);
     if (_respStatus == 0)
-    {
-        throw Deconnect();
-        // std::cout << "RECV:Le client est deconnecte." << std::endl;
-        // return ;
-    }
+        this->_connect = false;
     if (_respStatus == -1)
-    {
         throw RecvError();
-        // std::cout << "Error\nreceive a message from a socket" << std::endl;
-        // return ;
-    }
     this->_clientRequest = response;
 }
 
@@ -67,6 +59,11 @@ std::string Client::getClientRequest() const
     if (this->_clientRequest.size())
         return (this->_clientRequest);
     return ("");
+}
+
+bool Client::getConnexionStat()
+{
+    return (this->_connect);
 }
 
 Client::Client(const Client &client)
