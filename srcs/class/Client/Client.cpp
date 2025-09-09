@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 10:37:59 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:30:20 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Client::Client(Server const &server, int const &fdCli)
     _parentFD = server.get_fdSocket();
     _clientFD = fdCli;
     _configSockAddrIn = server.get_confSockAddrIn();
-    _connect = false;
+    _connect = true;
 }
 
 int Client::get_clientFD() const

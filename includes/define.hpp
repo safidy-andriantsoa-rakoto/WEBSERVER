@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:30:26 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:42:37 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 #endif
 
 #ifndef _BUFFER
-#define _BUFFER 1024
+#define _BUFFER 4048
 #endif
 
 #define MAX_EVENT 2042

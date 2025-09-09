@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 10:40:11 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:41:28 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,19 @@ void	handleClient(Handler & handler, int const & index, EpollCreation & epoll)
 {
 	Server	server = handler.getVectServer()[index];
 	int fdc;
-	fdc = server.accept_client_connexion();
-	while (fdc > 0)
+	// std::cout << "		fdc=" << fdc << std::endl;
+	while ((fdc = server.accept_client_connexion()) > 0)
 	{
-		epoll.no_blocking_fd(fdc);
-		epoll.epoll_control(EPOLLIN , fdc);
-		handler.addToVectClient(server, fdc);
-		fdc = server.accept_client_connexion();
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+			break;
+		else
+		{
+			epoll.no_blocking_fd(fdc);
+			epoll.epoll_control(EPOLLIN , fdc);
+			handler.addToVectClient(server, fdc);
+			std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << server.get_fdSocket() << "\033[0m" << std::endl;
+		}
 	}
-	std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << server.get_fdSocket() << "\033[0m" << std::endl;
 }
 
 void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, int const & eventIndex)
@@ -35,25 +39,13 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 	{
 		if (client.getConnexionStat())
 		{
+			std::cout << "\033[45mFD EVENT:" << fd << "\033[0m" << std::endl;
 			std::string client_request;
-
-			try
-			{
-				client.ClientRequest();
-				// epoll.epoll_update_event(fd, EPOLLOUT);
-			}
-			catch(const std::exception& e)
-			{
-				epoll.epoll_clean(fd);
-				handler.removeClient(index);
-				std::cerr << e.what() << '\n';
-			}
 			int	fdServer = client.get_fdparent();
 			int	fdFile;
 			int	opt;
 			Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
 
-			std::cout << "\033[45mFD EVENT:" << fd << "\033[0m" << std::endl;
 			try
 			{
 				client.ClientRequest();
@@ -67,6 +59,8 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 			}
 			catch(const std::exception& e)
 			{
+				epoll.epoll_clean(fd);
+				handler.removeClient(index);
 				std::cout << "Error on handleRequest : \n" << e.what() << std::endl;
 			}	
 		}
@@ -157,11 +151,13 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 		std::cout << "\033[43mFD EPOLLIN FOR FILE IO" << "\033[0m" << std::endl;
 		char buf[_BUFFER];
 		fileFd.manageFd();
-		if (read(fileFd.getStockFd(), buf, _BUFFER == -1))
+		std::cout << "READ->" << std::endl;
+		if (read(fileFd.getFileFd(), buf, _BUFFER) == -1)
 			throw std::runtime_error("Error on reading");
+		std::cout << "READ->" << std::endl;
 		fileFd.setBuffer(buf);
-		fileFd.closeAllOwnedFileFd();
-		int fd= fileFd.getClientFd();
+		// fileFd.closeAllOwnedFileFd();
+		int fd = fileFd.getClientFd();
 		epoll.epoll_update_event(fd, EPOLLOUT);
 		VClientIt it = findFdInClient(handler.getVectClient(), fileFd.getClientFd());
 		(*it).setFileFD(fileFd);
