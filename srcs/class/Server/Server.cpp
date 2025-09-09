@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:48:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:54:49 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "webserv.hpp"
 
 //Process request data vs config file and throw exception if needed, redirection
 void Server::processRequestWithConfig(Request & request)
@@ -345,4 +346,11 @@ vectLocationIt	Server::findLongestMatch(std::string const & text, vectLocation &
 	}
 	// std::cout << "++++++++++++++++++ nbMatchMax = " << nbMatchMax << std::endl;
 	return itFinal;
+}
+
+void Server::getParsAllServer(vectServer &server, stringVect file)
+{
+	size_t i(0);
+	
+
 }

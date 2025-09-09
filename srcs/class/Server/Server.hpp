@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:48:17 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:54:46 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ class Server
         int 		accept_client_connexion();
         std::string get_client_request();
 
+		//Server parsing
+		void getParsAllServer(vectServer &allServer, stringVect file);
 		//Server main functionnality
 		int processRequest(std::string const & clientRequest, int const & fd_cli, int & opt, std::string & filePath);
 

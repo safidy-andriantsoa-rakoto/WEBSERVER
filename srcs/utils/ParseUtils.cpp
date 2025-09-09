@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParseUtils.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 09:16:15 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 09:18:49 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:31:18 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,24 @@
 vectServer getServer(stringVect file)
 {
     vectServer tabServer;
+    Server server;
     stringVect vect;
 
     	for (size_t i = 0; i < file.size(); ++i)
         {
-            vect = splitString(file[i], " ");
-            if(vect[i] == "server")
-                tabServer.emplace_back();
+            std::string word;
+            std::istringstream iss(file[i]);
+            while(iss >> word)
+            {
+                if(word == "server")
+                {
+                    server = Server();
+                    tabServer.push_back(server);
+                }
+            }
         }
+       std::cout << tabServer.size();
 
     return (tabServer);
 }
+

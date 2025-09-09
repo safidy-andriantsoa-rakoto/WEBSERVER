@@ -8,7 +8,7 @@ INC	= $(addprefix $(INC_DIR), $(INC_FILE))
 MAIN = main.cpp
 
 CSERV_DIR = Server/
-CSERV = Server.cpp
+CSERV = Server.cpp 
 
 REQ_DIR = Request/
 REQ = Request.cpp
@@ -59,7 +59,7 @@ CGI_DIR = cgi/
 CGI = cgi.cpp
 
 UTILS_DIR = utils/
-UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp units.cpp conversion.cpp searchingUtils.cpp
+UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp units.cpp conversion.cpp searchingUtils.cpp ParseUtils.cpp
 
 SERV_DIR = server/
 SERV = launchServer.cpp parseConfig.cpp serverHandler.cpp initServer.cpp

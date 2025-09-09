@@ -159,7 +159,7 @@ bool checkWriteConfig(const std::vector<std::string> &lines, const std::string &
 			continue;
 		if (line.find(word) != std::string::npos)
 		{
-			foundWord = true;
+			foundWord = true; std::cout << "test";
 			if (line != writeLine)
 			{
 				std::cout << i << std::endl;
