@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:26:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:51:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,44 +16,56 @@ void	handleClient(Handler & handler, int const & index, EpollCreation & epoll)
 {
 	Server	server = handler.getVectServer()[index];
 	int fdc;
-
+	// std::cout << "		fdc=" << fdc << std::endl;
 	while ((fdc = server.accept_client_connexion()) > 0)
 	{
-		// std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << server.get_fdSocket() << "\033[0m" << std::endl;
-		epoll.no_blocking_fd(fdc);
-		epoll.epoll_control(EPOLLIN , fdc);
-		handler.addToVectClient(server, fdc);
- 	}
+		if (errno == EAGAIN || errno == EWOULDBLOCK)
+			break;
+		else
+		{
+			epoll.no_blocking_fd(fdc);
+			epoll.epoll_control(EPOLLIN , fdc);
+			handler.addToVectClient(server, fdc);
+			std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << server.get_fdSocket() << "\033[0m" << std::endl;
+		}
+	}
 }
 
 void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, int const & eventIndex)
 {
 	Client client = handler.getVectClient()[index];
 	int fd = client.get_clientFD();
-	if ((epoll.getEvent(eventIndex) & EPOLLIN) && client.getConnexionStat())
+	if (epoll.getEvent(eventIndex) & EPOLLIN)
 	{
-		std::string client_request;
-		int	fdServer = client.get_fdparent();
-		int	fdFile;
-		int	opt;
-		Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
-
-		std::cout << "\033[45mFD EVENT:" << fd << "\033[0m" << std::endl;
-		try
+		if (client.getConnexionStat())
 		{
-			client.ClientRequest();
-			client_request = client.getClientRequest();
-			std::string filePath;
-			std::cout << "-->> \033[40m	" << "Client request on treatment" << "\033[0m" << std::endl;
-			fdFile = server.processRequest(client_request, fd, opt, filePath);
-			handler.addToVectFileFd(fdFile, fd, filePath);
-			epoll.epoll_control(opt, fdFile);
+			std::cout << "\033[45mFD EVENT:" << fd << "\033[0m" << std::endl;
+			std::string client_request;
+			int	fdServer = client.get_fdparent();
+			int	fdFile;
+			int	opt;
+			Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
 
+			try
+			{
+				client.ClientRequest();
+				client_request = client.getClientRequest();
+				std::string filePath;
+				std::cout << "-->> \033[40m	" << "Client request on treatment" << "\033[0m" << std::endl;
+				fdFile = server.processRequest(client_request, fd, opt, filePath);
+				handler.addToVectFileFd(fdFile, fd, filePath);
+				epoll.epoll_control(opt, fdFile);
+
+			}
+			catch(const std::exception& e)
+			{
+				epoll.epoll_clean(fd);
+				handler.removeClient(index);
+				std::cout << "Error on handleRequest : \n" << e.what() << std::endl;
+			}	
 		}
-		catch(const std::exception& e)
+		else
 		{
-			std::cerr << e.what() << '\n';
-			std::cout << "Error on handleRequest : \n" << e.what() << std::endl;
 			epoll.epoll_clean(fd);
 			handler.removeClient(index);
 		}
@@ -84,11 +96,13 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 		std::cout << "\033[43mFD EPOLLIN FOR FILE IO" << "\033[0m" << std::endl;
 		char buf[_BUFFER];
 		fileFd.manageFd();
-		if (read(fileFd.getStockFd(), buf, _BUFFER == -1))
+		std::cout << "READ->" << std::endl;
+		if (read(fileFd.getFileFd(), buf, _BUFFER) == -1)
 			throw std::runtime_error("Error on reading");
+		std::cout << "READ->" << std::endl;
 		fileFd.setBuffer(buf);
-		fileFd.closeAllOwnedFileFd();
-		int fd= fileFd.getClientFd();
+		// fileFd.closeAllOwnedFileFd();
+		int fd = fileFd.getClientFd();
 		epoll.epoll_update_event(fd, EPOLLOUT);
 		VClientIt it = findFdInClient(handler.getVectClient(), fileFd.getClientFd());
 		(*it).setFileFD(fileFd);

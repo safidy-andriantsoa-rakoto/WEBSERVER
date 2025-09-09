@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 12:45:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:51:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,28 @@ void    launchServer(Handler & handler)
 			std::cout << "FD EVENT = " << fdEvent << std::endl;
 			identifier = handler.identifyFd(fdEvent, index);
 			if (identifier == "SERVER")
+			{
+				std::cout << "SERVER le" << std::endl;
 				handleClient(handler, index, epoll);
+			}
 			else if (identifier == "CLIENT")
+			{
+				std::cout << "CLIENT le" << std::endl;
 				handleRequest(handler, index, epoll, i);
+			}
 			else if (identifier == "FILEFD")
-				handleFileIO(handler, index, epoll, i);
+			{
+				std::cout << "FILEFD le" << std::endl;
+				try
+				{
+					handleFileIO(handler, index, epoll, i);
+				}
+				catch(const std::exception& e)
+				{
+					std::cerr << e.what() << '\n';
+				}
+				
+			}
 			else
 				std::cout << "Unknown Fd !!!!" << std::endl;
 		}

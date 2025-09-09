@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 09:29:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:24:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:51:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,20 +25,16 @@ void	initServer(vectServer & vectServer)
 
 void	launchEpoll(vectServer & vectServer, EpollCreation &epoll)
 {
-	int	flags;
-
 	for(vectServerIt it = vectServer.begin(); it != vectServer.end(); it++)
 	{
-		flags = fcntl((*it).get_fdSocket(), F_GETFL, 0);
-		fcntl((*it).get_fdSocket(), F_SETFL, flags | O_NONBLOCK);
 		int fd = ((*it).get_fdSocket());
-		std::cout << "\033[046mSERVER FD= " << fd << "\033[0m" << std::endl;
 		epoll.no_blocking_fd(fd);
-		epoll.epoll_control(EPOLLIN, fd);
+		std::cout << "\033[046mSERVER FD= " << fd << "\033[0m" << std::endl;
+		epoll.epoll_control(EPOLLIN | EPOLLET, fd);
 		(*it).configure_sockaddrin((*it).getConfig().getServPort());
 		if (!(*it).link_socket_adress())
-			throw std::runtime_error("Failed to load (*it)");
+			throw std::runtime_error("Failed to load server");
 		if (!(*it).wait_connexion_from_client())
-			throw std::runtime_error("Failed to load (*it)");
+			throw std::runtime_error("Failed to load server");
 	}
 }

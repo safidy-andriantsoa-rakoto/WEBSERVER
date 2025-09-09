@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:13:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:50:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,7 @@ int Server::link_socket_adress()
 
 int Server::wait_connexion_from_client()
 {
-	this->_fdClient = listen(this->_fdSocket, _NB_CLIENT);
+	this->_fdClient = listen(this->_fdSocket, SOMAXCONN);
 	std::cout << "Wait..." << std::endl;
 	if (this->_fdClient == -1)
 	{
