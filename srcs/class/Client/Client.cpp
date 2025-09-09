@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/08 15:08:19 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 08:46:45 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,10 @@ Client::~Client() {}
 
 const char *Client::Deconnect::what() const throw()
 {
-    return ("Le client est Deconnecte!");
+    return ("disconnected!");
 }
 
 const char *Client::RecvError::what() const throw()
 {
-    return ("Probleme avec RECV");
+    return ("Error RECV\nget Request from client");
 }
