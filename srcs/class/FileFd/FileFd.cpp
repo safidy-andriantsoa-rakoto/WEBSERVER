@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 10:26:37 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:52:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
