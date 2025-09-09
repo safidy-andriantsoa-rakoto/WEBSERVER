@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/03 18:13:39 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 09:18:36 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +83,15 @@ void	    displayStringVect(stringVect const & vect);
 
     //messageUtils
 void        send_value(int const & _acceptStatus, std::string & _send_content);
+
+//parse
+bool        checkBraceClose(std::vector<std::string> vect);
+bool        checkBracesAfterNewline(const std::vector<std::string> &file);
+bool        checkCountWord(const std::vector<std::string> &lines, const std::string &word, const int &count);
+bool        checkWriteConfig(const std::vector<std::string>& lines, const std::string &word, const std::string &writeLine);
+bool        checkNumberAllContent(std::vector<std::string> &file);
+
+std::vector<std::string> getContentFile(std::string _path);
+
 
 #endif

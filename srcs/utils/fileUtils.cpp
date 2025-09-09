@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/08 14:26:58 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 09:16:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,3 +78,155 @@ std::string	getFileExtension(std::string const & fileName)
 	ext_file.erase(0, pe + 1);
 	return ext_file;
 }
+
+std::vector<std::string> getContentFile(std::string _path)
+{
+	std::fstream fluxFile;
+	std::vector<std::string> lines;
+	fluxFile.open(_path.c_str(), std::ios::in);
+	if (fluxFile.is_open())
+	{
+		std::string line;
+		while (std::getline(fluxFile, line))
+		{
+			line += "\n";
+			lines.push_back(line);
+		}
+		fluxFile.close();
+	}
+	else
+		std::cout << "Error : to open the file" << std::endl;
+	return (lines);
+}
+
+std::vector<int> findLinesContain(const std::vector<std::string> &lines, const std::string &word)
+{
+	std::vector<int> Index;
+	for (int i = 0; i < (int)lines.size(); ++i)
+	{
+		if (lines[i].find(word) != std::string::npos)
+			Index.push_back(i);
+	}
+	return (Index);
+}
+std::string cleanLine(const std::string &s)
+{
+	std::string result = s;
+	while (!result.empty() && (result[result.size() - 1] == '\r' || result[result.size() - 1] == '\n'))
+		result.erase(result.size() - 1);
+	return result;
+}
+
+std::vector<int> containsExactWordInVector(const std::vector<std::string> &lines, const std::string &word)
+{
+	std::vector<int> index;
+	int i = 0;
+	for (std::vector<std::string>::const_iterator it = lines.begin(); it != lines.end(); ++it, i++)
+	{
+		const std::string &line = *it;
+
+		std::istringstream iss(line);
+		std::string w;
+		while (iss >> w)
+		{
+			if (w == word)
+			{
+				index.push_back(i);
+			}
+		}
+	}
+	return (index);
+}
+
+bool checkWriteConfig(const std::vector<std::string> &lines, const std::string &word, const std::string &writeLine)
+{
+	bool foundWord = false;
+
+	std::vector<int> index = containsExactWordInVector(lines, "server_names");
+	for (size_t i = 0; i < lines.size(); ++i)
+	{
+		std::string line = cleanLine(lines[i]);
+		bool skypIndex = false;
+		for (int j = 0; j < (int)index.size(); j++)
+		{
+			if ((int)i == index[j])
+			{
+				skypIndex = true;
+				break;
+			}
+		}
+		if (skypIndex)
+			continue;
+		if (line.find(word) != std::string::npos)
+		{
+			foundWord = true;
+			if (line != writeLine)
+			{
+				std::cout << i << std::endl;
+				std::cout << line << std::endl;
+				std::cerr << "Syntax Error\n"
+						  << std::endl;
+				return false;
+			}
+		}
+	}
+	if (!foundWord)
+	{
+		std::cerr << "Syntax Error\n";
+		return false;
+	}
+
+	return true;
+}
+
+// bool checkFilecontent(std::vector<std::string> lines)
+// {
+// 	std::map<std::string, std::vector<std::string>> content;
+// }
+
+bool checkCountWord(const std::vector<std::string> &lines, const std::string &word, const int &count)
+{
+	std::vector<int> indexW = containsExactWordInVector(lines, word);
+	for (size_t i = 0; i < indexW.size(); i++)
+	{
+		std::cout << indexW[i] << std::endl;
+	}
+	int countW = 0;
+	std::vector<int> countWord;
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		std::string word;
+		for (size_t j = 0; j < indexW.size(); j++)
+		{
+			if ((int)i == indexW[j])
+			{
+				countW = 0;
+				std::istringstream iss(lines[indexW[j]]);
+				while (iss >> word)
+				{
+					countW++;
+				}
+				countWord.push_back(countW);
+			}
+		}
+	}
+	for (size_t i = 0; i < countWord.size(); i++)
+	{
+		if (countWord[i] != count)
+		{
+			std::cerr << "Error : Syntax error ( " << word <<")"   << std::endl;
+			return (false);
+		}
+	}
+	return (true);
+}
+
+bool checkNumberAllContent(std::vector<std::string> &file)
+{
+	if (!checkCountWord(file, "host", 2) || !checkCountWord(file, "port", 2) || !checkCountWord(file, "size", 3) 
+		|| !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2)
+		|| !checkCountWord(file, "SRCIPT_FILENAME", 2) || !checkCountWord(file, "autoindex", 2))
+		return (false);
+	return (true);
+}
+
