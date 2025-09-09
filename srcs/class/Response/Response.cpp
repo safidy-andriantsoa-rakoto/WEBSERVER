@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/08 15:47:51 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/08 13:13:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 stringMap	Response::_allStatusCode;
 std::string	Response::_defaultErrPage;
-
-void Response::addDefaultHeader(){}
 
 Response::Response(){}
 
@@ -46,6 +44,11 @@ Response::~Response(){}
 
 std::string Response::getFullResponse()
 {
+	std::string	headerString;
+	std::string	endLine = "\r\n";
+
+	headerString = convertStringMapToString(_header, endLine);
+	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 	return _fullResponse;
 }
 
@@ -80,19 +83,13 @@ void Response::setStatusLine()
 	_statusLine = "HTTP/1.1 " + convertIntToString(_statusCode) + " " + _allStatusCode[convertIntToString(_statusCode)];
 }
 
-void	Response::generateSuccessResponse(std::string const &  filePath, ssize_t size)
+void	Response::generateStandardResponse(std::string const &  body)
 {
-	std::string	headerString;
-	std::string	endLine = "\r\n";
-
 	setStatusLine();
-	_body = readFileToString(filePath);
-	_header["Content-Length"] = convertIntToString(size);
+	_body = body;
+	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
-	_header["Refresh"] = "5";
-	headerString = convertStringMapToString(_header, endLine);
-	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
 }
 
 void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage)
@@ -114,34 +111,20 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage)
 
 void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage)
 {
-	std::string	headerString;
-	std::string	endLine = "\r\n";
-
 	_statusCode = e._statusCode;
 	setStatusLine();
 	buildErrorPage(_statusCode, errPage);
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = "text/html";
 	_header["Connection"] = "keep-alive";
-	headerString = convertStringMapToString(_header, endLine);
-	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
-	// std::cout << "\033[42mFULL RESPONSE = " << std::endl << _fullResponse << "\033[0m" << std::endl;
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)
 {
-	std::string	headerString;
-	std::string	replace;
-	std::string	endLine = "\r\n";
-
 	_statusCode = r._statusCode;
 	setStatusLine();
 	_header["Location"] = r._uri;
-	_header["Content-Lenght"] = "0"; // on a besoin le taille de la contenue ici pas zero ! important
 	_header["Connection"] = "keep-alive";
-	headerString = convertStringMapToString(_header, endLine);
-	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
-	// std::cout << "\033[42mFULL RESPONSE = " << std::endl << _fullResponse << "\033[0m" << std::endl;
 }
 
 void Response::initResponseUtils(std::string const & statPath, std::string const & errPath)

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/29 19:28:09 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 09:33:11 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,10 @@ int main()
 	try
 	{
 		Response::initResponseUtils(STAT_PATH, ERR_PATH);
+		Mime::initMapMime(MIME_PATH);
 		vectServer	allServer = parseConfigFile();
-		launchServer(allServer);
+		Handler		handler(allServer);
+		launchServer(handler);
 	}
 	catch(const std::exception & e)
 	{
@@ -26,3 +28,4 @@ int main()
 	}
 	return 0;
 }
+

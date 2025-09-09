@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/08 15:15:14 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 09:48:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,49 +238,32 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-void Server:: processRequest(std::string const & clientRequest, int const & fd_cli)
+int Server:: processRequest(std::string const & clientRequest, int const & fd_cli, int & opt, std::string & filePath)
 {
 	Request		request;
+	int			fileFd;
 	Response	response;
     std::string responseString;
 	t_errPage	errPage;
-	/************************* */
-	stringVect path;
-    DIR* dir = opendir("ext");
-	if (!dir)
-	{
-		std::cout << "Error\n dirent" << std::endl;
-		return ;
-	}
-    struct dirent* entry;
-    while ((entry = readdir(dir)) != NULL)
-	{
-		std::string name(entry->d_name);
-		if (!name.compare(".") || !name.compare(".."))
-			continue;	
-		path.push_back("./ext/" + name);
-    }
-    closedir(dir);
-	Mime test(path);
-	/************************ */
-	if (!clientRequest.length())
-		return ;
-	try
-	{
-		request.parseRequest(clientRequest);
-	}
-	catch(const std::exception & e)
-	{
-		//msg from client error
-		return;
-	}
+	std::string	type;
+
+	fileFd = -1;
+	request.parseRequest(clientRequest);
 	try
 	{
 		processRequestWithConfig(request);
 		if (request.getMethod() == "GET")
-			response = get_request(request, test.get_mime());
+		{
+			fileFd = get_request(request);
+			filePath = request.getRequestTarget();
+			type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
+			opt = EPOLLIN;
+		}
 		else if (request.getMethod() == "POST")
+		{
 			std::cout << request.getMethod() << std::endl; // Calling post_request
+			opt = EPOLLOUT;
+		}
 		else if (request.getMethod() == "DELETE")
 			std::cout << request.getMethod() << std::endl; // Calling delete_request
 	}
@@ -289,58 +272,36 @@ void Server:: processRequest(std::string const & clientRequest, int const & fd_c
 		std::cerr << "Process Request exception catched : " << e._errMsg << std::endl; //Fafana
 		errPage = _config.getErrPage();
 		response.generateCatchedResponse(e, errPage);
-	}
-	responseString = response.getFullResponse();
-	if (responseString.size())
+		responseString = response.getFullResponse();
 		send_value(fd_cli, responseString);
-	else
-		std::cout << "ERROR/nresponce null" << std::endl;
+		throw std::runtime_error("Error sent");
+	}
+	return fileFd;
 }
 
-Response Server::get_request(Request & request, MapMime mime)
+int Server::get_request(Request & request)
 {
-	std::string		line;
-	std::string 	tmp_ext;
-	std::string 	ext_file;
-	std::string 	type;
-	// std::fstream	file;
-	MapMime::iterator it;
-	struct stat st;
-	
-	tmp_ext = request.getRequestTarget();
-	stat(tmp_ext.c_str(), &st); //permet d'obtenir extement la taille du fichier !important
-	request.setRequestSize(st.st_size);
+	int			fd;
+	std::string	filePath;
 
-	// std::cout << "			TAILLE DE LA FICHIER EXACT=" << (request.getRequestSize()) << std::endl;
-
-	//Use of config file parameter to search for the file!!!
-	//On error : need to specify the statusCode (no need to throw?)
-	// file.open(tmp_ext.c_str());
-	// if (!file.is_open())
-	// 	throw ErrorExcept(404, "File unreachable");
-	//Calling a generic function to get type based on file extension
-	ext_file = getFileExtension(tmp_ext);
-	it = mime.find(ext_file);
-	if (ext_file == "/")
-		type = "text/html";
-	else if (it != mime.end())
-		type = it->second;
-	Response response(200, type);
-	response.generateSuccessResponse(request.getRequestTarget(), request.getRequestSize());
-	return response;
+	filePath = request.getRequestTarget();
+	fd = open(filePath.c_str(), O_RDONLY);
+	if (fd == -1)
+		throw ErrorExcept(404, "File can't be opened");
+	return fd;
 }
 
-Response Server::post_request(Request &request)
+int Server::post_request(Request &request)
 {
 	(void) request;
-    return Response();
+	return 0;
 }
 
-Response Server::delete_request(Request &request)
+void Server::delete_request(Request &request)
 {
 	(void) request;
-    return Response();
 }
+
 
 void Server::simpleInit(std::string const & servPath, std::string const & locationPath)
 {

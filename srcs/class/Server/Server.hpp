@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 14:40:39 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 09:48:17 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ class Server
         SockAddrIn			_sockaddrIn;
 
 		//HTTP Method
-		Response	get_request(Request & request, MapMime mime);
-		Response	post_request(Request & request);
-		Response	delete_request(Request & request);
+		int		get_request(Request & request);
+		int		post_request(Request & request);
+		void	delete_request(Request & request);
 
 		//Server utils functionnality
 		void		processRequestWithConfig(Request & request);
@@ -72,7 +72,7 @@ class Server
         std::string get_client_request();
 
 		//Server main functionnality
-		void    processRequest(std::string const & clientRequest, int const & fd_cli);
+		int processRequest(std::string const & clientRequest, int const & fd_cli, int & opt, std::string & filePath);
 
 		//Server utils
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 08:46:45 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 10:37:59 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,20 @@ _clientFD(_clientFD), _configSockAddrIn(_configSockAddrIn), _connect(is_connect)
     }
 }
 
+Client::Client(Server const &server, int const &fdCli)
+{
+    _parentFD = server.get_fdSocket();
+    _clientFD = fdCli;
+    _configSockAddrIn = server.get_confSockAddrIn();
+    _connect = false;
+}
+
 int Client::get_clientFD() const
 {
     return (this->_clientFD);
 }
 
-int Client::get_parent() const
+int Client::get_fdparent() const
 {
     return (this->_parentFD);
 }
@@ -39,6 +47,7 @@ Client &Client::operator=(const Client &client)
     this->_parentFD = client._parentFD;
     this->_configSockAddrIn = client._configSockAddrIn;
     this->_connect = client._connect;
+    this->_fileFD = client._fileFD;
     this->_clientRequest = client.getClientRequest();
     return (*this);
 }
@@ -64,6 +73,16 @@ std::string Client::getClientRequest() const
 bool Client::getConnexionStat()
 {
     return (this->_connect);
+}
+
+void Client::setFileFD(const FileFd &fileFd)
+{
+    this->_fileFD = fileFd;
+}
+
+FileFd Client::getFileFD()
+{
+    return (this->_fileFD);
 }
 
 Client::Client(const Client &client)

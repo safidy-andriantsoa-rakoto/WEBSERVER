@@ -1,5 +1,5 @@
 CC = c++
-FLAG = -Wall -Werror -Wextra -std=c++98 -g
+FLAG = -Wall -Werror -Wextra -std=c++98 -g -gdwarf-4
 
 INC_DIR = includes/
 INC_FILE = webserv.hpp
@@ -28,6 +28,12 @@ MIME = Mime.cpp
 CONF_DIR = Config/
 CONF = AConfig.cpp ALocation.cpp MyConf.cpp MyLoc.cpp
 
+HAND_DIR = Handler/
+HAND = Handler.cpp
+
+FILE_DIR = FileFd/
+FILE = FileFd.cpp
+
 CLASS_DIR = class/
 CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(CSERV_DIR)) \
 				$(addprefix $(CLASS_DIR), $(REQ_DIR)) \
@@ -35,7 +41,9 @@ CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(CSERV_DIR)) \
 				$(addprefix $(CLASS_DIR), $(EPOL_DIR)) \
 				$(addprefix $(CLASS_DIR), $(CLI_DIR)) \
 				$(addprefix $(CLASS_DIR), $(MIME_DIR)) \
-				$(addprefix $(CLASS_DIR), $(CONF_DIR))
+				$(addprefix $(CLASS_DIR), $(CONF_DIR)) \
+				$(addprefix $(CLASS_DIR), $(HAND_DIR)) \
+				$(addprefix $(CLASS_DIR), $(FILE_DIR))
 
 CLASS = $(addprefix $(CSERV_DIR), $(CSERV)) \
 		$(addprefix $(REQ_DIR), $(REQ)) \
@@ -43,16 +51,18 @@ CLASS = $(addprefix $(CSERV_DIR), $(CSERV)) \
 		$(addprefix $(EPOL_DIR), $(EPOL)) \
 		$(addprefix $(CLI_DIR), $(CLI)) \
 		$(addprefix $(MIME_DIR), $(MIME)) \
-		$(addprefix $(CONF_DIR), $(CONF))
+		$(addprefix $(CONF_DIR), $(CONF)) \
+		$(addprefix $(HAND_DIR), $(HAND)) \
+		$(addprefix $(FILE_DIR), $(FILE))
 
 CGI_DIR = cgi/
 CGI = cgi.cpp
 
 UTILS_DIR = utils/
-UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp units.cpp conversion.cpp
+UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp units.cpp conversion.cpp searchingUtils.cpp
 
 SERV_DIR = server/
-SERV = launchServer.cpp parseConfig.cpp serverHandler.cpp
+SERV = launchServer.cpp parseConfig.cpp serverHandler.cpp initServer.cpp
 
 SRC_DIR = srcs/
 SRC = $(addprefix $(SRC_DIR), $(MAIN)) \

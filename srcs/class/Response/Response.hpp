@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/03 18:18:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/08 13:06:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ class Response
 		static stringMap	_allStatusCode;
 		static std::string	_defaultErrPage;
 
-		void				addDefaultHeader();
 		void				setStatusLine();
         void 				setToDefaultErrorPage();
 		void				buildErrorPage(int const & statusCode, t_errPage & errPage);
@@ -45,9 +44,8 @@ class Response
 
 		std::string	getFullResponse();
 
-        void		generateSuccessResponse(std::string const & filePath, ssize_t size);
+        void		generateStandardResponse(std::string const & body);
 		void		generateCatchedResponse(AExcept & e, t_errPage & errPage);
-		void		identifyCatchedExcept(AExcept & e);
 		void		generateErrorResponse(ErrorExcept & e, t_errPage & errPage);
 		void		generateRedirectResponse(RedirExcept & r);
 

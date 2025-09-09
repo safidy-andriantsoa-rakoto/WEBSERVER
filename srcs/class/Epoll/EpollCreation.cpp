@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/08 15:36:09 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 09:39:51 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,4 +84,10 @@ void EpollCreation::no_blocking_fd(int fd)
 {
     int flags = fcntl(fd, F_GETFL, 0);
 	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+}
+
+
+uint32_t EpollCreation::getEvent(int const &index)
+{
+    return max_event[index].events;
 }

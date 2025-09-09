@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   define.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 14:15:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/09 09:30:26 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 #define CONTENT_TYPE_CSS "Content-Type: text/css\r\n"
 #define CONTENT_LENGTH "Content-Length: "
 #define _EMPTY_LINE "\n\r\n"
+
+#define MIME_PATH "ext"
 
 #ifndef _NB_CLIENT
 #define _NB_CLIENT 10
