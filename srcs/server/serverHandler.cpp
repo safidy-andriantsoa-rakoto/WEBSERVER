@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:51:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:29:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 		response.generateStandardResponse(client.getFileFD().getBuffer());
 		responseString = response.getFullResponse();
 		send_value(fd, responseString);
-		handler.removeFileFd(index);
+		epoll.epoll_update_event(fd, EPOLLIN);
 	}
 	else
 	{
@@ -95,17 +95,27 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 	{
 		std::cout << "\033[43mFD EPOLLIN FOR FILE IO" << "\033[0m" << std::endl;
 		char buf[_BUFFER];
+		std::string buffer;
+		size_t bytesRead;
+		int fd;
+
 		fileFd.manageFd();
-		std::cout << "READ->" << std::endl;
-		if (read(fileFd.getFileFd(), buf, _BUFFER) == -1)
-			throw std::runtime_error("Error on reading");
-		std::cout << "READ->" << std::endl;
-		fileFd.setBuffer(buf);
-		// fileFd.closeAllOwnedFileFd();
-		int fd = fileFd.getClientFd();
+		while ((bytesRead = read(fileFd.getFileFd(), buf, _BUFFER)) > 0)
+			buffer.append(buf, bytesRead);
+		if (!buffer.size())
+			throw std::runtime_error("Error on reading, no buffer");
+		fileFd.setBuffer(buffer);
+		fileFd.restoreFd();
+		fd = fileFd.getFileFd();
+		std::cout << "Fd = " << fd << std::endl;
+		epoll.epoll_clean(fd);
+		fileFd.closeAllOwnedFileFd();
+		fd = fileFd.getClientFd();
 		epoll.epoll_update_event(fd, EPOLLOUT);
 		VClientIt it = findFdInClient(handler.getVectClient(), fileFd.getClientFd());
 		(*it).setFileFD(fileFd);
+		handler.removeFileFd(index);
+		std::cout << "HANDLE FILE IO DONE \n";
 	}
 	else if (epoll.getEvent(evIndex) & EPOLLOUT) //Post or delete request
 	{

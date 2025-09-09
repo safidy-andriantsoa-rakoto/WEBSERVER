@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 13:51:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:27:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,12 @@ void    launchServer(Handler & handler)
 	initServer(handler.getVectServer());
 	launchEpoll(handler.getVectServer(), epoll);
 	signal(SIGINT, handle_c);
+	signal(SIGPIPE, SIG_IGN);
 	while (SIGINT != sign)
 	{
 		nb_event = epoll.epoll_wait_event();
 		index = 0;
-		handler.displayHandlerStat();
+		// handler.displayHandlerStat();
 		for (int i = 0; i < nb_event; i++)
 		{
 			fdEvent = epoll.get_fdEvent(i);
@@ -62,7 +63,6 @@ void    launchServer(Handler & handler)
 				{
 					std::cerr << e.what() << '\n';
 				}
-				
 			}
 			else
 				std::cout << "Unknown Fd !!!!" << std::endl;

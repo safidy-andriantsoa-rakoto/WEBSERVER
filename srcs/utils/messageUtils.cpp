@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   messageUtils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/03 19:54:41 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:23:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
     {
         const char *resp =  _send_content.c_str() + total_sent;
         // std::cout << "+++++++++++++++++++++++++++++++++++\n" << resp << "|" << std::endl;
-        ssize_t sent = send(
-            _acceptStatus,
-            resp,
-            to_send - total_sent,
-            0
-        );
+        ssize_t sent = send(_acceptStatus, resp, to_send - total_sent, 0);
         if (sent < 0)
         {
             perror("send failed");
