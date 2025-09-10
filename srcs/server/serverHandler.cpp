@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:45:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:52:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,8 +160,8 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 		fileFd.manageFd();
 		while ((bytesRead = read(fileFd.getFileFd(), buf, _BUFFER)) > 0)
 			buffer.append(buf, bytesRead);
-		if (!buffer.size())
-			throw std::runtime_error("Error on reading, no buffer");
+		// if (!buffer.size())
+		// 	throw std::runtime_error("Error on reading, no buffer");
 		fileFd.setBuffer(buffer);
 		fileFd.restoreFd();
 		fd = fileFd.getFileFd();
