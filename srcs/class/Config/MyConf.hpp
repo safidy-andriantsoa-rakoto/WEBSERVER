@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 08:05:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 11:39:46 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,13 @@ class MyConf : public AConfig
 		MyConf & operator=(MyConf const & other);
 		~MyConf();
 
+		void MyConf::parseConfig(stringVect file);
 		void	parseConfig(std::string const & filePath);
 		void	parseConfig(std::string const & servPath, std::string const & locPath);
-
+		bool getSatuts();
 		virtual void	displayConfig() const;
+	private:
+		bool _checkStats;
 };
 
 #endif

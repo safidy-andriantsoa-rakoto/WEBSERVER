@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:18:36 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 11:09:23 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ bool        checkBracesAfterNewline(const std::vector<std::string> &file);
 bool        checkCountWord(const std::vector<std::string> &lines, const std::string &word, const int &count);
 bool        checkWriteConfig(const std::vector<std::string>& lines, const std::string &word, const std::string &writeLine);
 bool        checkNumberAllContent(std::vector<std::string> &file);
+std::vector<int> containsExactWordInVector(const std::vector<std::string> &lines, const std::string &word);
 
 std::vector<std::string> getContentFile(std::string _path);
 

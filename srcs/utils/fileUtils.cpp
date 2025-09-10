@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fileUtils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:16:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 13:27:27 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ bool checkWriteConfig(const std::vector<std::string> &lines, const std::string &
 			continue;
 		if (line.find(word) != std::string::npos)
 		{
-			foundWord = true; std::cout << "test";
+			foundWord = true; 
 			if (line != writeLine)
 			{
 				std::cout << i << std::endl;
@@ -179,10 +179,6 @@ bool checkWriteConfig(const std::vector<std::string> &lines, const std::string &
 	return true;
 }
 
-// bool checkFilecontent(std::vector<std::string> lines)
-// {
-// 	std::map<std::string, std::vector<std::string>> content;
-// }
 
 bool checkCountWord(const std::vector<std::string> &lines, const std::string &word, const int &count)
 {
