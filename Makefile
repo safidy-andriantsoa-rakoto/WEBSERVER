@@ -34,6 +34,9 @@ HAND = Handler.cpp
 FILE_DIR = FileFd/
 FILE = FileFd.cpp
 
+SIGNAL_dir = signal/
+SIGNAL_CPP = Signal.cpp
+
 CLASS_DIR = class/
 CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(CSERV_DIR)) \
 				$(addprefix $(CLASS_DIR), $(REQ_DIR)) \
@@ -43,7 +46,9 @@ CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(CSERV_DIR)) \
 				$(addprefix $(CLASS_DIR), $(MIME_DIR)) \
 				$(addprefix $(CLASS_DIR), $(CONF_DIR)) \
 				$(addprefix $(CLASS_DIR), $(HAND_DIR)) \
-				$(addprefix $(CLASS_DIR), $(FILE_DIR))
+				$(addprefix $(CLASS_DIR), $(FILE_DIR)) \
+				$(addprefix $(CLASS_DIR), $(SIGNAL_dir))
+
 
 CLASS = $(addprefix $(CSERV_DIR), $(CSERV)) \
 		$(addprefix $(REQ_DIR), $(REQ)) \
@@ -53,7 +58,8 @@ CLASS = $(addprefix $(CSERV_DIR), $(CSERV)) \
 		$(addprefix $(MIME_DIR), $(MIME)) \
 		$(addprefix $(CONF_DIR), $(CONF)) \
 		$(addprefix $(HAND_DIR), $(HAND)) \
-		$(addprefix $(FILE_DIR), $(FILE))
+		$(addprefix $(FILE_DIR), $(FILE)) \
+		$(addprefix $(SIGNAL_dir), $(SIGNAL_CPP))
 
 CGI_DIR = cgi/
 CGI = cgi.cpp

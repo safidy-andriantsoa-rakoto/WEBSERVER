@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 15:27:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 11:37:18 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,11 @@ void    launchServer(Handler & handler)
 	int 			nb_event;
 	std::string		identifier;
 	EpollCreation	epoll;
+	Signal			sign;
 
 	initServer(handler.getVectServer());
 	launchEpoll(handler.getVectServer(), epoll);
-	signal(SIGINT, handle_c);
-	signal(SIGPIPE, SIG_IGN);
-	while (SIGINT != sign)
+	while (SIGINT != sign.getSigNum())
 	{
 		nb_event = epoll.epoll_wait_event();
 		index = 0;

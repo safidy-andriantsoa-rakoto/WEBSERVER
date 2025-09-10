@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:44:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 11:41:55 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

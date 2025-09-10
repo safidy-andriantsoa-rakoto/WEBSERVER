@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:52:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 11:32:17 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 			//Send value and epoll ???
 			send_value(fd, responseString);
 			handler.removeFileFd(index);
+			epoll.epoll_update_event(fd, EPOLLIN);
 		}
 		else
 		{
@@ -91,57 +92,6 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 			handler.removeClient(index);
 		}
 	}
-	// 	// if (client.getConnexionStat())
-	// 	// {
-		
-
-	// 	// 	// try
-	// 	// 	// {
-	// 	// 	// 	client_request = client.getClientRequest();
-	// 	// 	// 	if (client_request.find("HTTP") != std::string::npos)
-	// 	// 	// 	{
-	// 	// 	// 		if (itServ != allServer.end())
-	// 	// 	// 			(*itServ).processRequest(client_request, fd);
-	// 	// 	// 	}
-	// 	// 	// 	client_request.clear();
-	// 	// 		epoll.epoll_update_event(fd, EPOLLIN);
-	// 	// 	// }
-	// 	// 	// catch(const std::exception& e)
-	// 	// 	// {
-	// 	// 	// 	epoll.epoll_update_event(fd, EPOLLIN);
-	// 	// 	// 	std::cout << e.what();
-	// 	// 	// 	return ;
-	// 	// 	// }
-	// 	// }
-	// 	// else
-	// 	// {
-
-	// 	// }
-	// }
-	
-	// std::string client_request;
-	// Client	client = handler.getVectClient()[index];
-	// int	fdClient = client.get_clientFD();
-	// int	fdServer = client.get_fdparent();
-	// int	fdFile;
-	// int	opt;
-	// Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
-
-	// std::cout << "\033[45mFD EVENT:" << fdClient << "\033[0m" << std::endl;
-	// try
-	// {
-	// 	client.ClientRequest();
-	// 	client_request = client.getClientRequest();
-	// 	std::string filePath;
-	// 	std::cout << "-->> \033[40m	" << "Client request on treatment" << "\033[0m" << std::endl;
-	// 	fdFile = server.processRequest(client_request, fdClient, opt, filePath);
-	// 	handler.addToVectFileFd(fdFile, fdClient, filePath);
-	// 	epoll.epoll_control(opt, fdFile);
-	// }
-	// catch(const std::exception& e)
-	// {
-	// 	std::cout << "Error on handleRequest : \n" << e.what() << std::endl;
-	// }
 }
 
 void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, int const & evIndex)

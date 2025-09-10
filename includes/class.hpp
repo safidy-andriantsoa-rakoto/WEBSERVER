@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 10:25:14 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:29:56 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 11:36:48 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include "../srcs/class/Mime/Mime.hpp"
 #include "../srcs/class/FileFd/FileFd.hpp"
 #include "../srcs/class/Handler/Handler.hpp"
+#include "../srcs/class/signal/Signal.hpp"
 
 // Waiting for official class config and location
 #include "../srcs/class/Config/AConfig.hpp"
