@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:51:24 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:41:18 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,10 +218,10 @@ int Server::wait_connexion_from_client()
 int Server::accept_client_connexion()
 {
 	int fd = accept(_fdSocket, (sockaddr *)&(this->_sockaddrIn), (socklen_t *)&(this->_size_sockaddrin));
-	if (this->_fdClient == -1)
+	if (fd == -1)
 	{
 		std::cout << "Error\naccept a connection on a socket" << std::endl;
-		return (-2);
+		return (-1);
 	}
 	return (fd);
 }

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:12:11 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:42:03 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 #include <cerrno>
 #include <dirent.h>
 #include <cstring>
+
+#include <string.h>
 
 #include <sys/wait.h>
 #include <sys/types.h>

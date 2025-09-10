@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 10:26:37 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:16:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ FileFd &FileFd::operator=(FileFd const & other)
 		_stockFd = other._stockFd;
 		_clientFd = other._clientFd;
 		_fileFd = other._fileFd;
+		_sockFd[0] = other._sockFd[0];
+		_sockFd[1] = other._sockFd[1];
 		_buffer = other._buffer;
 		_filePath = other._filePath;
 		_fileType = other._fileType;
@@ -103,6 +105,11 @@ void FileFd::setupFd()
 void FileFd::manageFd()
 {
 	dup2(_stockFd, _fileFd);
+}
+
+void FileFd::restoreFd()
+{
+	dup2(_sockFd[1], _fileFd);
 }
 
 void FileFd::closeAllOwnedFileFd()

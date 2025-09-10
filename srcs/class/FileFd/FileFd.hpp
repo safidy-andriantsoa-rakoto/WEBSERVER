@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 10:26:26 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:10:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class FileFd
 
 		void		setupFd();
 		void		manageFd();
+		void		restoreFd();
 		void		closeAllOwnedFileFd();
 };
 
