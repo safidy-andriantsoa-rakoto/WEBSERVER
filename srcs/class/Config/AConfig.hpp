@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 08:04:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:06:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ class AConfig
 		vectLocation	_location;
 
 	public:
+		AConfig();
+		AConfig(AConfig const & other);
+		AConfig &		operator=(AConfig const &other);
 
 		int				getServPort() const;
 		float			getMaxSize() const;

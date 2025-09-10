@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 07:55:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:17:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ class ALocation
 		stringVect _index;
 
 	public:
+		ALocation();
+		ALocation(ALocation const & other);
+		ALocation & operator=(ALocation const & other);
 		virtual	~ALocation(){};
 
 		std::string	getAutoindex() const;

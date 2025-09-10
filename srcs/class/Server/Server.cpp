@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:50:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 09:56:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,12 +116,16 @@ void Server::processRedirection(MyLoc const & location, Request & request)
 
 Server::Server(){}
 
-Server::Server(Server const & other)
+Server::Server(Server const & other) : _config(other._config),
+  _fdSocket(other._fdSocket),
+  _fdClient(other._fdClient),
+  _size_sockaddrin(other._size_sockaddrin),
+  _sockaddrIn(other._sockaddrIn)
 {
-	*this = other;
+	// *this = other;
 }
 
-Server &Server::operator=(Server const & other)
+Server &Server::operator=(Server const & other) 
 {
 	if (this != &other)
 	{

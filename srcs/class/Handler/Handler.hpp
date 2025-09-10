@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/08 15:10:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:12:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ class Handler
 		vectFileFd	_vectFileFd;
 
 	public:
+		Handler();
 		Handler(vectServer & vectServer);
 		Handler(Handler const & other);
 		Handler & operator=(Handler const & other);
