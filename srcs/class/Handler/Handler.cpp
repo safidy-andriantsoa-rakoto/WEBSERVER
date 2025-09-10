@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:14:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 11:04:15 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ Handler::Handler(){}
 
 Handler::Handler(vectServer &vectServer) : _vectServer(vectServer){}
 
-Handler::Handler(Handler const & other)
-{
-	*this = other;
-}
+Handler::Handler(Handler const & other) :
+	_vectServer(other._vectServer),
+	_vectClient(other._vectClient),
+	_vectFileFd(other._vectFileFd){}
 
 Handler &Handler::operator=(Handler const & other)
 {
