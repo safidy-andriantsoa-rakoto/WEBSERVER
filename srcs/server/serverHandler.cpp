@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:52:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 11:26:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	handleClient(Handler & handler, int const & index, EpollCreation & epoll)
 {
-	Server	server = handler.getVectServer()[index];
+	// Server	server = handler.getVectServer()[index];
 	int fdc;
 	// std::cout << "		fdc=" << fdc << std::endl;
-	while ((fdc = server.accept_client_connexion()) > 0)
+	while ((fdc = handler.getVectServer()[index].accept_client_connexion()) > 0)
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			break;
@@ -25,8 +25,8 @@ void	handleClient(Handler & handler, int const & index, EpollCreation & epoll)
 		{
 			epoll.no_blocking_fd(fdc);
 			epoll.epoll_control(EPOLLIN , fdc);
-			handler.addToVectClient(server, fdc);
-			std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << server.get_fdSocket() << "\033[0m" << std::endl;
+			handler.addToVectClient(handler.getVectServer()[index], fdc);
+			std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[index].get_fdSocket() << "\033[0m" << std::endl;
 		}
 	}
 }
@@ -81,9 +81,8 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 			std::string	responseString;
 			response.generateStandardResponse(client.getFileFD().getBuffer());
 			responseString = response.getFullResponse();
-			//Send value and epoll ???
 			send_value(fd, responseString);
-			handler.removeFileFd(index);
+			// epoll.epoll_update_event(fd, EPOLLIN); //Ampiana ve satria lasa mandefa reponse foana ilay server?
 		}
 		else
 		{
@@ -160,8 +159,6 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 		fileFd.manageFd();
 		while ((bytesRead = read(fileFd.getFileFd(), buf, _BUFFER)) > 0)
 			buffer.append(buf, bytesRead);
-		// if (!buffer.size())
-		// 	throw std::runtime_error("Error on reading, no buffer");
 		fileFd.setBuffer(buffer);
 		fileFd.restoreFd();
 		fd = fileFd.getFileFd();
@@ -173,7 +170,7 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 		(*it).setFileFD(fileFd);
 		/**************************** */
 		epoll.epoll_clean(fd);
-		fileFd.closeAllOwnedFileFd();
+		// fileFd.closeAllOwnedFileFd();
 		handler.removeFileFd(index);
 		std::cout << "HANDLE FILE IO DONE \n";
 	}
