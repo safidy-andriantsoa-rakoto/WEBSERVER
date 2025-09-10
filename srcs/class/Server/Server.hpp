@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:48:17 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 09:34:06 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class Server
 		void		checkMethodInLocation(stringVect & locationMethod, std::string const & method);
 		void		processRedirection(MyLoc const & location, Request & request);
 	
+
 	public:
 		Server();
 		Server(Server const & other);

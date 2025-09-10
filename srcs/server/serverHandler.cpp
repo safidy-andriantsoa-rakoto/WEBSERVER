@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:41:28 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 15:20:14 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,10 +151,11 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 		std::cout << "\033[43mFD EPOLLIN FOR FILE IO" << "\033[0m" << std::endl;
 		char buf[_BUFFER];
 		fileFd.manageFd();
-		std::cout << "READ->" << std::endl;
+		std::cout << "READ->fd="<< fileFd.getFileFd() << std::endl;
 		if (read(fileFd.getFileFd(), buf, _BUFFER) == -1)
 			throw std::runtime_error("Error on reading");
-		std::cout << "READ->" << std::endl;
+		std::cout << "READ->" << buf << std::endl;
+		exit(0);
 		fileFd.setBuffer(buf);
 		// fileFd.closeAllOwnedFileFd();
 		int fd = fileFd.getClientFd();

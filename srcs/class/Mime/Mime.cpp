@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 09:22:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:14:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,6 @@ void Mime::trim_space(std::string &data)
 {
     while (-1 != static_cast<int>(data.find(' ')))
         data.erase(data.find(' '), 1);
-}
-
-void Mime::print_map()
-{
-    for (MapMime::iterator it = _mime.begin(); it != _mime.end(); ++it)
-    {
-        std::cout << "->" << it->first << std::endl;
-        std::cout << "-->" << it->second << std::endl;
-        std::cout << std::endl;
-    }
 }
 
 std::string Mime::getFileType(std::string const &file)
@@ -102,7 +92,8 @@ void Mime::initMapMime(std::string const &path)
     DIR* dir = opendir(path.c_str());
 	if (!dir)
 	{
-		std::cout << "Error\n dirent" << std::endl;
+        
+		std::cout << "Error\n Mime:" << strerror(errno) << std::endl;
 		return ;
 	}
     while ((entry = readdir(dir)) != NULL)

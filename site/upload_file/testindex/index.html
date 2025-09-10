@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index du Répertoire</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --border-radius: 15px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .path-breadcrumb {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9em;
+            margin: 20px 0;
+            word-break: break-all;
+        }
+
+        .controls {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 25px;
+            padding: 5px;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #667eea;
+        }
+
+        .view-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .sort-select {
+            padding: 10px 15px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            cursor: pointer;
+        }
+
+        .directory-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .directory-stats {
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.05);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Vue Liste */
+        .list-view {
+            display: block;
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .file-table th {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .file-table th:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .file-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: background 0.3s ease;
+        }
+
+        .file-row:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .file-link {
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .file-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        /* Vue Grille */
+        .grid-view {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .file-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .file-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+
+        .file-meta {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        /* Icônes par type de fichier */
+        .icon-folder { color: #ffa726; }
+        .icon-image { color: #4caf50; }
+        .icon-video { color: #f44336; }
+        .icon-audio { color: #9c27b0; }
+        .icon-document { color: #2196f3; }
+        .icon-archive { color: #ff5722; }
+        .icon-code { color: #607d8b; }
+        .icon-pdf { color: #d32f2f; }
+        .icon-default { color: #757575; }
+
+        .no-files {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .upload-zone {
+            border: 2px dashed rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 20px;
+            background: rgba(102, 126, 234, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.drag-over {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+
+            .directory-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .file-table {
+                font-size: 0.9em;
+            }
+
+            .file-table th,
+            .file-table td {
+                padding: 8px;
+            }
+
+            .grid-view {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+                padding: 15px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px;
+            border-left: 4px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📁 Index du Répertoire</h1>
+            <div class="path-breadcrumb" id="currentPath">
+                /
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Rechercher des fichiers...">
+                <span class="search-icon">🔍</span>
+            </div>
+            
+            <div class="view-toggle">
+                <button class="view-btn active" id="listViewBtn" data-view="list">📋 Liste</button>
+                <button class="view-btn" id="gridViewBtn" data-view="grid">🔲 Grille</button>
+            </div>
+            
+            <select class="sort-select" id="sortSelect">
+                <option value="name">Trier par nom</option>
+                <option value="date">Trier par date</option>
+                <option value="size">Trier par taille</option>
+                <option value="type">Trier par type</option>
+            </select>
+        </div>
+
+        <div class="directory-content">
+            <div class="directory-stats">
+                <div class="stat-item">
+                    <span>📊</span>
+                    <span id="totalFiles">0 fichiers</span>
+                </div>
+                <div class="stat-item">
+                    <span>📁</span>
+                    <span id="totalFolders">0 dossiers</span>
+                </div>
+                <div class="stat-item">
+                    <span>💾</span>
+                    <span id="totalSize">0 B</span>
+                </div>
+                <div class="stat-item">
+                    <span>🕒</span>
+                    <span id="lastModified">-</span>
+                </div>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Chargement du répertoire...</p>
+            </div>
+
+            <div class="list-view" id="listView">
+                <table class="file-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="name">📄 Nom</th>
+                            <th data-sort="date">📅 Date modifiée</th>
+                            <th data-sort="size">📏 Taille</th>
+                            <th data-sort="type">🏷️ Type</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fileListBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="grid-view" id="gridView">
+            </div>
+
+            <div class="upload-zone" id="uploadZone">
+                <p>📤 Glissez-déposez des fichiers ici pour les télécharger</p>
+                <small>(Fonctionnalité de démonstration)</small>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class DirectoryIndex {
+            constructor() {
+                this.currentPath = '/';
+                this.files = [];
+                this.filteredFiles = [];
+                this.currentView = 'list';
+                this.sortBy = 'name';
+                
+                this.initElements();
+                this.bindEvents();
+                this.loadDirectory();
+            }
+
+            initElements() {
+                this.pathElement = document.getElementById('currentPath');
+                this.searchInput = document.getElementById('searchInput');
+                this.listViewBtn = document.getElementById('listViewBtn');
+                this.gridViewBtn = document.getElementById('gridViewBtn');
+                this.sortSelect = document.getElementById('sortSelect');
+                this.listView = document.getElementById('listView');
+                this.gridView = document.getElementById('gridView');
+                this.fileListBody = document.getElementById('fileListBody');
+                this.loading = document.getElementById('loading');
+                this.uploadZone = document.getElementById('uploadZone');
+                
+                // Stats elements
+                this.totalFiles = document.getElementById('totalFiles');
+                this.totalFolders = document.getElementById('totalFolders');
+                this.totalSize = document.getElementById('totalSize');
+                this.lastModified = document.getElementById('lastModified');
+            }
+
+            bindEvents() {
+                // Recherche
+                this.searchInput.addEventListener('input', () => this.handleSearch());
+                
+                // Changement de vue
+                this.listViewBtn.addEventListener('click', () => this.changeView('list'));
+                this.gridViewBtn.addEventListener('click', () => this.changeView('grid'));
+                
+                // Tri
+                this.sortSelect.addEventListener('change', (e) => this.handleSort(e.target.value));
+                
+                // Tri par en-têtes de colonnes
+                document.querySelectorAll('th[data-sort]').forEach(th => {
+                    th.addEventListener('click', () => this.handleSort(th.dataset.sort));
+                });
+                
+                // Upload zone
+                this.setupUploadZone();
+            }
+
+            async loadDirectory(path = '/') {
+                this.currentPath = path;
+                this.pathElement.textContent = path;
+                this.showLoading(true);
+                
+                try {
+                    // Simulation de chargement de données
+                    await this.simulateAPICall();
+                    this.files = this.generateSampleFiles();
+                    this.filteredFiles = [...this.files];
+                    this.updateStats();
+                    this.renderFiles();
+                } catch (error) {
+                    this.showError('Erreur lors du chargement du répertoire');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            generateSampleFiles() {
+                const sampleFiles = [
+                    { name: '..', type: 'parent', isDirectory: true, size: 0, modified: new Date() },
+                    { name: 'Documents', type: 'folder', isDirectory: true, size: 0, modified: new Date('2024-01-15') },
+                    { name: 'Images', type: 'folder', isDirectory: true, size: 0, modified: new Date('2024-02-10') },
+                    { name: 'Vidéos', type: 'folder', isDirectory: true, size: 0, modified: new Date('2024-01-20') },
+                    { name: 'rapport.pdf', type: 'pdf', isDirectory: false, size: 2048576, modified: new Date('2024-03-01') },
+                    { name: 'presentation.pptx', type: 'document', isDirectory: false, size: 5242880, modified: new Date('2024-02-25') },
+                    { name: 'photo.jpg', type: 'image', isDirectory: false, size: 1024000, modified: new Date('2024-03-05') },
+                    { name: 'video.mp4', type: 'video', isDirectory: false, size: 52428800, modified: new Date('2024-02-28') },
+                    { name: 'music.mp3', type: 'audio', isDirectory: false, size: 4194304, modified: new Date('2024-03-02') },
+                    { name: 'archive.zip', type: 'archive', isDirectory: false, size: 10485760, modified: new Date('2024-02-20') },
+                    { name: 'script.js', type: 'code', isDirectory: false, size: 8192, modified: new Date('2024-03-06') },
+                    { name: 'styles.css', type: 'code', isDirectory: false, size: 4096, modified: new Date('2024-03-04') },
+                    { name: 'index.html', type: 'code', isDirectory: false, size: 16384, modified: new Date('2024-03-07') },
+                    { name: 'README.md', type: 'document', isDirectory: false, size: 2048, modified: new Date('2024-03-03') }
+                ];
+                
+                return sampleFiles;
+            }
+
+            simulateAPICall() {
+                return new Promise(resolve => {
+                    setTimeout(resolve, Math.random() * 1000 + 500);
+                });
+            }
+
+            handleSearch() {
+                const query = this.searchInput.value.toLowerCase();
+                this.filteredFiles = this.files.filter(file => 
+                    file.name.toLowerCase().includes(query)
+                );
+                this.renderFiles();
+            }
+
+            changeView(view) {
+                this.currentView = view;
+                
+                // Update buttons
+                document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+                document.getElementById(view + 'ViewBtn').classList.add('active');
+                
+                // Toggle views
+                if (view === 'list') {
+                    this.listView.style.display = 'block';
+                    this.gridView.style.display = 'none';
+                } else {
+                    this.listView.style.display = 'none';
+                    this.gridView.style.display = 'grid';
+                }
+                
+                this.renderFiles();
+            }
+
+            handleSort(sortBy) {
+                this.sortBy = sortBy;
+                this.sortSelect.value = sortBy;
+                
+                this.filteredFiles.sort((a, b) => {
+                    // Dossiers toujours en premier (sauf parent)
+                    if (a.name === '..') return -1;
+                    if (b.name === '..') return 1;
+                    if (a.isDirectory !== b.isDirectory) {
+                        return a.isDirectory ? -1 : 1;
+                    }
+                    
+                    switch (sortBy) {
+                        case 'name':
+                            return a.name.localeCompare(b.name);
+                        case 'date':
+                            return b.modified - a.modified;
+                        case 'size':
+                            return b.size - a.size;
+                        case 'type':
+                            return a.type.localeCompare(b.type);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                this.renderFiles();
+            }
+
+            renderFiles() {
+                if (this.currentView === 'list') {
+                    this.renderListView();
+                } else {
+                    this.renderGridView();
+                }
+            }
+
+            renderListView() {
+                this.fileListBody.innerHTML = '';
+                
+                if (this.filteredFiles.length === 0) {
+                    this.fileListBody.innerHTML = '<tr><td colspan="4" class="no-files">Aucun fichier trouvé</td></tr>';
+                    return;
+                }
+                
+                this.filteredFiles.forEach(file => {
+                    const row = document.createElement('tr');
+                    row.className = 'file-row';
+                    
+                    const icon = this.getFileIcon(file);
+                    const formattedSize = file.isDirectory ? '-' : this.formatBytes(file.size);
+                    const formattedDate = this.formatDate(file.modified);
+                    const fileType = file.isDirectory ? 'Dossier' : this.getFileTypeLabel(file.type);
+                    
+                    row.innerHTML = `
+                        <td>
+                            <a href="#" class="file-link" data-path="${file.name}" data-is-dir="${file.isDirectory}">
+                                <span class="${icon}"></span>
+                                <span>${file.name}</span>
+                            </a>
+                        </td>
+                        <td>${formattedDate}</td>
+                        <td>${formattedSize}</td>
+                        <td>${fileType}</td>
+                    `;
+                    
+                    this.fileListBody.appendChild(row);
+                });
+                
+                // Bind click events
+                this.bindFileClickEvents();
+            }
+
+            renderGridView() {
+                this.gridView.innerHTML = '';
+                
+                if (this.filteredFiles.length === 0) {
+                    this.gridView.innerHTML = '<div class="no-files" style="grid-column: 1 / -1;">Aucun fichier trouvé</div>';
+                    return;
+                }
+                
+                this.filteredFiles.forEach(file => {
+                    const card = document.createElement('div');
+                    card.className = 'file-card';
+                    card.dataset.path = file.name;
+                    card.dataset.isDir = file.isDirectory;
+                    
+                    const icon = this.getFileIcon(file, true);
+                    const formattedSize = file.isDirectory ? '' : this.formatBytes(file.size);
+                    const formattedDate = this.formatDate(file.modified);
+                    
+                    card.innerHTML = `
+                        <div class="file-icon ${icon}">
+                            ${this.getFileEmoji(file)}
+                        </div>
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-meta">
+                            ${formattedDate}<br>
+                            ${formattedSize}
+                        </div>
+                    `;
+                    
+                    this.gridView.appendChild(card);
+                });
+                
+                // Bind click events
+                this.bindFileClickEvents();
+            }
+
+            bindFileClickEvents() {
+                document.querySelectorAll('[data-path]').forEach(element => {
+                    element.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const path = element.dataset.path;
+                        const isDir = element.dataset.isDir === 'true';
+                        
+                        if (isDir) {
+                            if (path === '..') {
+                                this.navigateUp();
+                            } else {
+                                this.navigateToDirectory(path);
+                            }
+                        } else {
+                            this.openFile(path);
+                        }
+                    });
+                });
+            }
+
+            navigateUp() {
+                const pathParts = this.currentPath.split('/').filter(p => p);
+                pathParts.pop();
+                const newPath = '/' + pathParts.join('/');
+                this.loadDirectory(newPath || '/');
+            }
+
+            navigateToDirectory(dirName) {
+                const newPath = this.currentPath.endsWith('/') ? 
+                    this.currentPath + dirName : 
+                    this.currentPath + '/' + dirName;
+                this.loadDirectory(newPath);
+            }
+
+            openFile(fileName) {
+                // Simulation d'ouverture de fichier
+                alert(`Ouverture du fichier: ${fileName}\n(Dans un vrai serveur, ceci ouvrirait/téléchargerait le fichier)`);
+            }
+
+            updateStats() {
+                const files = this.files.filter(f => !f.isDirectory && f.name !== '..');
+                const folders = this.files.filter(f => f.isDirectory && f.name !== '..');
+                const totalSize = files.reduce((sum, f) => sum + f.size, 0);
+                const lastMod = Math.max(...this.files.map(f => f.modified.getTime()));
+                
+                this.totalFiles.textContent = `${files.length} fichier${files.length > 1 ? 's' : ''}`;
+                this.totalFolders.textContent = `${folders.length} dossier${folders.length > 1 ? 's' : ''}`;
+                this.totalSize.textContent = this.formatBytes(totalSize);
+                this.lastModified.textContent = this.formatDate(new Date(lastMod));
+            }
+
+            getFileIcon(file, isGrid = false) {
+                if (file.isDirectory) return 'icon-folder';
+                
+                const iconMap = {
+                    'image': 'icon-image',
+                    'video': 'icon-video',
+                    'audio': 'icon-audio',
+                    'document': 'icon-document',
+                    'archive': 'icon-archive',
+                    'code': 'icon-code',
+                    'pdf': 'icon-pdf'
+                };
+                
+                return iconMap[file.type] || 'icon-default';
+            }
+
+            getFileEmoji(file) {
+                if (file.name === '..') return '⬆️';
+                if (file.isDirectory) return '📁';
+                
+                const emojiMap = {
+                    'image': '🖼️',
+                    'video': '🎬',
+                    'audio': '🎵',
+                    'document': '📄',
+                    'archive': '📦',
+                    'code': '⚡',
+                    'pdf': '📕'
+                };
+                
+                return emojiMap[file.type] || '📄';
+            }
+
+            getFileTypeLabel(type) {
+                const typeMap = {
+                    'image': 'Image',
+                    'video': 'Vidéo',
+                    'audio': 'Audio',
+                    'document': 'Document',
+                    'archive': 'Archive',
+                    'code': 'Code',
+                    'pdf': 'PDF'
+                };
+                
+                return typeMap[type] || 'Fichier';
+            }
+
+            formatBytes(bytes) {
+                if (bytes === 0) return '0 B';
+                
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            }
+
+            formatDate(date) {
+                return new Intl.DateTimeFormat('fr-FR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }).format(date);
+            }
+
+            setupUploadZone() {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    this.uploadZone.addEventListener(eventName, this.preventDefaults, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    this.uploadZone.addEventListener(eventName, () => {
+                        this.uploadZone.classList.add('drag-over');
+                    }, false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    this.uploadZone.addEventListener(eventName, () => {
+                        this.uploadZone.classList.remove('drag-over');
+                    }, false);
+                });
+
+                this.uploadZone.addEventListener('drop', (e) => {
+                    const files = e.dataTransfer.files;
+                    this.handleFileUpload(files);
+                }, false);
+            }
+
+            preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            handleFileUpload(files) {
+                alert(`${files.length} fichier(s) sélectionné(s) pour upload\n(Fonctionnalité de démonstration)`);
+            }
+
+            showLoading(show) {
+                this.loading.style.display = show ? 'block' : 'none';
+            }
+
+            showError(message) {
+                const error = document.createElement('div');
+                error.className = 'error';
+                error.textContent = message;
+                this.container.appendChild(error);
+                
+                setTimeout(() => error.remove(), 5000);
+            }
+        }
+
+        // Initialiser l'application
+        document.addEventListener('DOMContentLoaded', () => {
+            new DirectoryIndex();
+        });
+    </script>
+</body>
+</html>

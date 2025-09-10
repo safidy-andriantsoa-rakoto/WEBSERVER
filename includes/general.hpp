@@ -6,12 +6,11 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:18:36 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:12:11 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GENERAL_HPP
-# define GENERAL_HPP
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -23,7 +22,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 #include <cmath>
 #include <fcntl.h>
@@ -31,8 +30,9 @@
 #include <cstdlib>
 #include <csignal>
 #include <typeinfo>
-#include <errno.h>
+#include <cerrno>
 #include <dirent.h>
+#include <cstring>
 
 #include <sys/wait.h>
 #include <sys/types.h>
@@ -92,6 +92,3 @@ bool        checkWriteConfig(const std::vector<std::string>& lines, const std::s
 bool        checkNumberAllContent(std::vector<std::string> &file);
 
 std::vector<std::string> getContentFile(std::string _path);
-
-
-#endif

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:18:30 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:51:24 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,6 +286,7 @@ int Server::get_request(Request & request)
 
 	filePath = request.getRequestTarget();
 	fd = open(filePath.c_str(), O_RDONLY);
+	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
 	if (fd == -1)
 		throw ErrorExcept(404, "File can't be opened");
 	return fd;

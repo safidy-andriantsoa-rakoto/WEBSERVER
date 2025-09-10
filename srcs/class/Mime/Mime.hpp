@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:28 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 09:22:49 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:14:39 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,5 @@ class Mime
 
 		static void			initMapMime(std::string const & path);
 		static MapMime &	getMapMime();
-		static void			print_map();
 		static std::string	getFileType(std::string const & file);
 };
