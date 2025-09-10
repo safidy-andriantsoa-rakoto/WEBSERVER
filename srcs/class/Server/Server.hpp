@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 09:34:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 14:07:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class Server
 	// For socket
 	    int     			_fdSocket;
         int     			_fdClient;
-        size_t  			_size_sockaddrin;
+        socklen_t  			_size_sockaddrin;
         SockAddrIn			_sockaddrIn;
 
 		//HTTP Method

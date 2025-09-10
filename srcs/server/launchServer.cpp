@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/10 11:37:18 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 14:31:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,36 +35,39 @@ void    launchServer(Handler & handler)
 	{
 		nb_event = epoll.epoll_wait_event();
 		index = 0;
-		// handler.displayHandlerStat();
+		handler.displayHandlerStat();
 		for (int i = 0; i < nb_event; i++)
 		{
-			fdEvent = epoll.get_fdEvent(i);
-			std::cout << "FD EVENT = " << fdEvent << std::endl;
-			identifier = handler.identifyFd(fdEvent, index);
-			if (identifier == "SERVER")
+			try
 			{
-				std::cout << "SERVER le" << std::endl;
-				handleClient(handler, index, epoll);
-			}
-			else if (identifier == "CLIENT")
-			{
-				std::cout << "CLIENT le" << std::endl;
-				handleRequest(handler, index, epoll, i);
-			}
-			else if (identifier == "FILEFD")
-			{
-				std::cout << "FILEFD le" << std::endl;
-				try
+				fdEvent = epoll.get_fdEvent(i);
+				std::cout << "\033[47;30mFD EVENT = " << fdEvent << "\033[0m" << std::endl;
+				identifier = handler.identifyFd(fdEvent, index);
+				if (identifier == "SERVER")
 				{
+					std::cout << "\033[42mSERVER" << "\033[0m" << std::endl;
+					handleClient(handler, index, epoll);
+				}
+				else if (identifier == "CLIENT")
+				{
+					std::cout << "\033[43mCLIENT" << "\033[0m" << std::endl;
+					handleRequest(handler, index, epoll, i);
+				}
+				else if (identifier == "FILEFD")
+				{
+					std::cout << "\033[43mFILEFD" << "\033[0m" << std::endl;
 					handleFileIO(handler, index, epoll, i);
 				}
-				catch(const std::exception& e)
+			}
+			catch(const std::exception& e)
+			{
+				std::cerr << "Error on main loop \n" << e.what() << '\n';
+				if (identifier == "CLIENT")
 				{
-					std::cerr << e.what() << '\n';
+					epoll.epoll_clean(fdEvent);
+					handler.removeClient(index);
 				}
 			}
-			else
-				std::cout << "Unknown Fd !!!!" << std::endl;
 		}
 	}
 }

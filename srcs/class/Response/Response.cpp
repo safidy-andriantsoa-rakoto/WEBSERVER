@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/08 13:13:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 14:23:20 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	Response::generateStandardResponse(std::string const &  body)
 {
 	setStatusLine();
 	_body = body;
-	_header["Content-Length"] = convertIntToString(_body.size());
+	_header["Content-Length"] = convertIntToString(_body.size() + 2);
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
 }
@@ -114,7 +114,7 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage)
 	_statusCode = e._statusCode;
 	setStatusLine();
 	buildErrorPage(_statusCode, errPage);
-	_header["Content-Length"] = convertIntToString(_body.size());
+	_header["Content-Length"] = convertIntToString(_body.size() + 2);
 	_header["Content-Type"] = "text/html";
 	_header["Connection"] = "keep-alive";
 }

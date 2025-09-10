@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 11:43:47 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 15:45:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,25 @@ void	handleClient(Handler & handler, int const & index, EpollCreation & epoll)
 {
 	// Server	server = handler.getVectServer()[index];
 	int fdc;
-	// std::cout << "		fdc=" << fdc << std::endl;
-	while ((fdc = handler.getVectServer()[index].accept_client_connexion()) > 0)
+
+	while (1)
 	{
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-			break;
-		else
+		fdc = handler.getVectServer()[index].accept_client_connexion();
+		std::cout << "		fdc = " << fdc << std::endl;
+		if (fdc < 0)
 		{
-			epoll.no_blocking_fd(fdc);
-			epoll.epoll_control(EPOLLIN , fdc);
-			handler.addToVectClient(handler.getVectServer()[index], fdc);
-			std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[index].get_fdSocket() << "\033[0m" << std::endl;
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+				return;
+			else
+			{
+				perror("accept");
+				return;
+			}
 		}
+		epoll.no_blocking_fd(fdc);
+		epoll.epoll_control(EPOLLIN , fdc);
+		handler.addToVectClient(handler.getVectServer()[index], fdc);
+		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[index].get_fdSocket() << "\033[0m" << std::endl;
 	}
 }
 
@@ -35,61 +42,45 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 {
 	Client client = handler.getVectClient()[index];
 	int fd = client.get_clientFD();
-	if (epoll.getEvent(eventIndex) & EPOLLIN)
-	{
-		if (client.getConnexionStat())
-		{
-			std::cout << "\033[45mFD EVENT:" << fd << "\033[0m" << std::endl;
-			std::string client_request;
-			int	fdServer = client.get_fdparent();
-			int	fdFile;
-			int	opt;
-			Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
 
-			try
-			{
-				client.ClientRequest();
-				client_request = client.getClientRequest();
-				std::string filePath;
-				std::cout << "-->> \033[40m	" << "Client request on treatment, size = " << client_request.size() << "\033[0m" << std::endl;
-				if (client_request.size() < 100)
-					std::cout << client_request << std::endl;
-				fdFile = server.processRequest(client_request, fd, opt, filePath);
-				handler.addToVectFileFd(fdFile, fd, filePath);
-				epoll.epoll_control(opt, fdFile);
-
-			}
-			catch(const std::exception& e)
-			{
-				std::cout << "Error on handleRequest : \n" << e.what() << std::endl;
-				epoll.epoll_clean(fd);
-				handler.removeClient(index);
-			}	
-		}
-		else
-		{
-			epoll.epoll_clean(fd);
-			handler.removeClient(index);
-		}
-	}
-	else if (epoll.getEvent(index) & EPOLLOUT)
+	// std::cout << "\033[45mFd = :" << fd << " ; connect : " << client.getConnexionStat() << "\033[0m" << std::endl;
+	if ((epoll.getEvent(eventIndex) & EPOLLIN) && client.getConnexionStat() == true)
 	{
-		if (client.getConnexionStat())
+		std::string client_request;
+		int	fdServer = client.get_fdparent();
+		int	fdFile;
+		int	opt;
+		Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
+
+		client.ClientRequest();
+		client_request = client.getClientRequest();
+		std::string filePath;
+		std::cout << "-->> \033[40m	" << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
+		if (client_request.size() == 0)
 		{
-			std::string type = Mime::getFileType(client.getFileFD().getFilePath());
-			Response response(200, type);
-			std::string	responseString;
-			response.generateStandardResponse(client.getFileFD().getBuffer());
-			responseString = response.getFullResponse();
-			send_value(fd, responseString);
-			epoll.epoll_update_event(fd, EPOLLIN); //Ampiana ve satria lasa mandefa reponse foana ilay server?
+			// throw std::runtime_error("Close the connection to the client");
+			return ;
 		}
-		else
-		{
-			epoll.epoll_clean(fd);
-			handler.removeClient(index);
-		}
+		fdFile = server.processRequest(client_request, fd, opt, filePath);
+		handler.addToVectFileFd(fdFile, fd, filePath);
+		epoll.epoll_control(opt, fdFile);
 	}
+	else if ((epoll.getEvent(eventIndex) & EPOLLOUT) && client.getConnexionStat() == true)
+	{
+		std::string type = Mime::getFileType(client.getFileFD().getFilePath());
+		Response response(200, type);
+		std::string	responseString;
+		response.generateStandardResponse(client.getFileFD().getBuffer());
+		responseString = response.getFullResponse();
+		send_value(fd, responseString);
+		epoll.epoll_update_event(fd, EPOLLIN);
+	}
+	else
+	{
+		epoll.epoll_clean(fd);
+		handler.removeClient(index);
+	}
+	// std::cout << "			End of handle request \n";
 }
 
 void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, int const & evIndex)
@@ -119,13 +110,12 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 		(*it).setFileFD(fileFd);
 		/**************************** */
 		epoll.epoll_clean(fd);
-		// fileFd.closeAllOwnedFileFd();
+		fileFd.closeAllOwnedFileFd();
 		handler.removeFileFd(index);
 		std::cout << "HANDLE FILE IO DONE \n";
 	}
 	else if (epoll.getEvent(evIndex) & EPOLLOUT)
 	{
-		
 		std::cout << "\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
 	}
 	else

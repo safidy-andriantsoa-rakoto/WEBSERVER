@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 11:04:15 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 13:05:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,9 @@ std::string Handler::identifyFd(int const & fd, int & index)
 			return ("FILEFD");
 		index++;
 	}
+	throw std::runtime_error("Unknown fd");
 	index = 0;
-    return ("Unknown");
+	return ("Unknown");
 }
 
 vectServer &Handler::getVectServer()
