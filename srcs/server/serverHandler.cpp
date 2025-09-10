@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:39:16 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:45:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,9 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 				client.ClientRequest();
 				client_request = client.getClientRequest();
 				std::string filePath;
-				std::cout << "-->> \033[40m	" << "Client request on treatment" << "\033[0m" << std::endl;
+				std::cout << "-->> \033[40m	" << "Client request on treatment, size = " << client_request.size() << "\033[0m" << std::endl;
+				if (client_request.size() < 100)
+					std::cout << client_request << std::endl;
 				fdFile = server.processRequest(client_request, fd, opt, filePath);
 				handler.addToVectFileFd(fdFile, fd, filePath);
 				epoll.epoll_control(opt, fdFile);
@@ -59,9 +61,9 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 			}
 			catch(const std::exception& e)
 			{
+				std::cout << "Error on handleRequest : \n" << e.what() << std::endl;
 				epoll.epoll_clean(fd);
 				handler.removeClient(index);
-				std::cout << "Error on handleRequest : \n" << e.what() << std::endl;
 			}	
 		}
 		else
@@ -150,28 +152,30 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 	{
 		std::cout << "\033[43mFD EPOLLIN FOR FILE IO" << "\033[0m" << std::endl;
 		char buf[_BUFFER];
+		std::string buffer;
+		size_t bytesRead;
+		int fd;
+		int	fdClient;
+
 		fileFd.manageFd();
-		std::cout << "READ->fd="<< fileFd.getFileFd() << std::endl;
-		if (read(fileFd.getFileFd(), buf, _BUFFER) == -1)
-			throw std::runtime_error("Error on reading");
-		std::cout << "READ->" << buf << std::endl;
-		exit(0);
-		fileFd.setBuffer(buf);
-		// fileFd.closeAllOwnedFileFd();
-		int fd = fileFd.getClientFd();
-		epoll.epoll_update_event(fd, EPOLLOUT);
-		VClientIt it = findFdInClient(handler.getVectClient(), fileFd.getClientFd());
+		while ((bytesRead = read(fileFd.getFileFd(), buf, _BUFFER)) > 0)
+			buffer.append(buf, bytesRead);
+		if (!buffer.size())
+			throw std::runtime_error("Error on reading, no buffer");
+		fileFd.setBuffer(buffer);
+		fileFd.restoreFd();
+		fd = fileFd.getFileFd();
+		std::cout << "Fd = " << fd << std::endl;
+		/*Change client to EPOLLOUT*/
+		fdClient = fileFd.getClientFd();
+		VClientIt it = findFdInClient(handler.getVectClient(), fdClient);
+		epoll.epoll_update_event(fdClient, EPOLLOUT);
 		(*it).setFileFD(fileFd);
-		
-		// std::cout << "Read \n" << fileFd.getBuffer() << std::endl << std::endl;
-		// std::string type = Mime::getFileType(fileFd.getFilePath());
-		// Response response(200, type);
-		// std::string	responseString;
-		// response.generateStandardResponse(fileFd.getBuffer());
-		// responseString = response.getFullResponse();
-		// //Send value and epoll ???
-		// send_value(fileFd.getClientFd(), responseString);
-		// handler.removeFileFd(index);
+		/**************************** */
+		epoll.epoll_clean(fd);
+		fileFd.closeAllOwnedFileFd();
+		handler.removeFileFd(index);
+		std::cout << "HANDLE FILE IO DONE \n";
 	}
 	else if (epoll.getEvent(evIndex) & EPOLLOUT)
 	{

@@ -6,11 +6,37 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 08:04:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:16:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AConfig.hpp"
+
+AConfig::AConfig(){}
+
+AConfig::AConfig(AConfig const &other) : 
+	_port(other._port),
+	_maxSize(other._maxSize),
+	_host(other._host),
+	_serverName(other._serverName),
+	_errPage(other._errPage),
+	_hasErrPage(other._hasErrPage),
+	_location(other._location){}
+
+AConfig &AConfig::operator=(AConfig const &other)
+{
+    if (this != &other)
+    {
+        _port       = other._port;
+        _maxSize    = other._maxSize;
+        _host       = other._host;
+        _serverName = other._serverName;
+        _errPage    = other._errPage;
+        _hasErrPage = other._hasErrPage;
+        _location   = other._location;
+    }
+    return *this;
+}
 
 int AConfig::getServPort() const
 {

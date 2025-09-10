@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 10:38:04 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:14:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Handler.hpp"
 
-Handler::Handler(vectServer & vectServer) : _vectServer(vectServer){}
+Handler::Handler(){}
+
+Handler::Handler(vectServer &vectServer) : _vectServer(vectServer){}
 
 Handler::Handler(Handler const & other)
 {

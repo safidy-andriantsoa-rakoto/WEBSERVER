@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/27 10:19:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:09:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,13 @@ MyConf::MyConf()
 	_hasErrPage = false;
 }
 
-MyConf::MyConf(MyConf const & other)
-{
-	*this = other;
-}
+MyConf::MyConf(MyConf const & other) : AConfig(other){}
 
 MyConf &MyConf::operator=(MyConf const &other)
 {
     if (this != & other)
 	{
-		_port = other._port;
-		_host = other._host;
-		_serverName = other._serverName;
-		_errPage = other._errPage;
-		_hasErrPage = other._hasErrPage;
-		_location = other._location;
+		AConfig::operator=(other);
 	}
 	return *this;
 }
