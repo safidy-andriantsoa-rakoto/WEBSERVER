@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 14:09:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 10:09:50 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,7 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-int Server:: processRequest(std::string const & clientRequest, int const & fd_cli, int & opt, std::string & filePath)
+int Server:: processRequest(std::string const & clientRequest, int const & fd_cli, uint32_t & opt, std::string & filePath)
 {
 	Request		request;
 	int			fileFd;

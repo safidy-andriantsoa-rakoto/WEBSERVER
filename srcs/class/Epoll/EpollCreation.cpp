@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/10 11:07:59 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/11 10:08:28 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ EpollCreation::~EpollCreation()
         close(this->efds);
 }
 
-void EpollCreation::epoll_control(int _opt, int &clientFD)
+void EpollCreation::epoll_control(uint32_t _opt, int &clientFD)
 {
     struct epoll_event client;
     client.events = _opt;
@@ -82,7 +82,7 @@ SEpollEvent& EpollCreation::getEvent_struct(int index)
     return (this->max_event[index]);
 }
 
-void EpollCreation::epoll_update_event(int &fd, int event)
+void EpollCreation::epoll_update_event(int &fd, uint32_t event)
 {
     epoll_event up;
     up.data.fd = fd;
@@ -94,15 +94,15 @@ void EpollCreation::epoll_update_event(int &fd, int event)
     }
 }
 
-void EpollCreation::no_blocking_fd(int fd)
-{
-    int flags = fcntl(fd, F_GETFL, 0);
-	if (flags < 0 || fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0)
-    {
-        std::string error(strerror(errno));
-        throw std::runtime_error("\033[31m[ERROR]~fcntl:" + error + "\033[0m");
-    }
-}
+// void EpollCreation::no_blocking_fd(int fd)
+// {
+//     int flags = fcntl(fd, F_GETFL, 0);
+// 	if (flags < 0 || fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0)
+//     {
+//         std::string error(strerror(errno));
+//         throw std::runtime_error("\033[31m[ERROR]~fcntl:" + error + "\033[0m");
+//     }
+// }
 
 uint32_t EpollCreation::getEvent(int const &index)
 {

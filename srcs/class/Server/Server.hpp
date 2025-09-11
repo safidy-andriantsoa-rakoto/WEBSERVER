@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 14:07:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 10:10:07 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ class Server
         std::string get_client_request();
 
 		//Server main functionnality
-		int processRequest(std::string const & clientRequest, int const & fd_cli, int & opt, std::string & filePath);
+		int processRequest(std::string const & clientRequest, int const & fd_cli, uint32_t & opt, std::string & filePath);
 
 		//Server utils
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);

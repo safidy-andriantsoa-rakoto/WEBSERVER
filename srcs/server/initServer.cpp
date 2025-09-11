@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initServer.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 09:29:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:51:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 13:19:13 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ void	launchEpoll(vectServer & vectServer, EpollCreation &epoll)
 	for(vectServerIt it = vectServer.begin(); it != vectServer.end(); it++)
 	{
 		int fd = ((*it).get_fdSocket());
-		epoll.no_blocking_fd(fd);
 		std::cout << "\033[046mSERVER FD= " << fd << "\033[0m" << std::endl;
-		epoll.epoll_control(EPOLLIN | EPOLLET, fd);
+		epoll.epoll_control(EPOLLIN, fd);
 		(*it).configure_sockaddrin((*it).getConfig().getServPort());
 		if (!(*it).link_socket_adress())
 			throw std::runtime_error("Failed to load server");

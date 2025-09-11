@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/08 14:34:51 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/11 13:31:58 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,14 @@ void Request::setRequestLine(std::string const & replacement)
 	if (splitted.size() != 3)
 		throw std::runtime_error("Error on request line");
 	_method = splitted[0];
-	_requestTarget = splitted[1];
-	int f = _requestTarget.find('?');
-	if (f > -1)
-		_requestTarget =  _requestTarget.substr(0, f);
+	size_t f = splitted[1].find_first_of('?');
+	if (f != std::string::npos)
+	{
+		_requestTarget =  splitted[1].substr(0, f);
+		std::cout << "			ATY eee->["<< _requestTarget <<"]" << std::endl;
+	}
+	else
+		_requestTarget = splitted[1];
 	_clientHttp = splitted[2];
 }
 

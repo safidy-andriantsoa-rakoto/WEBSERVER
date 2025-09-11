@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 08:41:22 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/11 13:03:47 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,9 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 	int fdc;
 
 	fdc = handler.getVectServer()[i].accept_client_connexion();
-	while (fdc > -1)
-	{
-		std::cout << "		fdc = " << fdc << std::endl;
-		epoll.no_blocking_fd(fdc);
-		epoll.epoll_control(EPOLLIN , fdc);
-		handler.addToVectClient(handler.getVectServer()[i], fdc);
-		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[i].get_fdSocket() << "\033[0m" << std::endl;	
-		fdc = handler.getVectServer()[i].accept_client_connexion();
-	}
+	epoll.epoll_control(EPOLLIN, fdc);
+	handler.addToVectClient(handler.getVectServer()[i], fdc);
+	std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[i].get_fdSocket() << "\033[0m" << std::endl;
 }
 
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
@@ -34,16 +28,18 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	int			fd = client.get_clientFD();
 	uint32_t	event = epoll.getEvent(eventIdx);
 
+	std::cout << "aty ee" << std::endl;
 	if ((event & EPOLLIN) && client.getConnexionStat() == true)
 	{
 		std::string client_request;
 		int	fdServer = client.get_fdparent();
 		int	fdFile;
-		int	opt;
-		Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
+		uint32_t	opt;
 
+		Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
 		client.ClientRequest();
 		client_request = client.getClientRequest();
+		std::cout << "REQUEST:["<< client_request<< "]" << std::endl;
 		std::string filePath;
 		std::cout << "-->> \033[40m	" << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
 		if (client_request.size() == 0)
