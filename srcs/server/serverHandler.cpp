@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 10:29:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 13:12:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		std::cout << "-->> \033[40m	" << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
 		if (client_request.size() == 0)
 		{
-			// throw std::runtime_error("Remove client");
-			return ;
+			throw std::runtime_error("Remove client");
+			// return ;
 		}
 		try
 		{
