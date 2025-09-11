@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 13:05:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 14:52:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,27 @@ vectFileFd &Handler::getVectFileFd()
     return _vectFileFd;
 }
 
+vectServerIt Handler::getServer(int const & i)
+{
+	vectServerIt it = _vectServer.begin() + i;
+
+    return it;
+}
+
+VClientIt Handler::getClient(int const & i)
+{
+	VClientIt	it = _vectClient.begin() + i;
+
+    return it;
+}
+
+vectFileFdIt Handler::getFileFd(int const &i)
+{
+	vectFileFdIt it = _vectFileFd.begin() + i;
+
+    return it;
+}
+
 void Handler::addToVectClient(Server const & server, int const & fd)
 {
 	_vectClient.push_back(Client(server, fd));
@@ -103,18 +124,21 @@ void Handler::removeFileFd(int const & index)
 void Handler::displayHandlerStat()
 {
 	std::cout << "========================================== \n";
-	std::cout << "HANDLER STATS \n";
-	std::cout << "Nb Server = " << _vectServer.size() << std::endl;
+	std::cout << "		HANDLER STATS \n";
+	std::cout << "Nb Server = " << _vectServer.size() << " [";
 	for(size_t i = 0; i < _vectServer.size(); i++)
 		std::cout << _vectServer[i].get_fdSocket() << " ";
+	std::cout << "]" << std::endl;
 	std::cout << std::endl;
-	std::cout << "Nb Client = " << _vectClient.size() << std::endl;
+	std::cout << "Nb Client = " << _vectClient.size() << " [";
 	for(size_t i = 0; i < _vectClient.size(); i++)
 		std::cout << _vectClient[i].get_clientFD() << " ";
+	std::cout << "]" << std::endl;
 	std::cout << std::endl;
-	std::cout << "Nb FileFd = " << _vectFileFd.size() << std::endl;
+	std::cout << "Nb FileFd = " << _vectFileFd.size() << " [";
 	for(size_t i = 0; i < _vectFileFd.size(); i++)
 		std::cout << _vectFileFd[i].getFileFd() << " ";
+	std::cout << "]" << std::endl;
 	std::cout << std::endl;
 	std::cout << "========================================== \n";
 }

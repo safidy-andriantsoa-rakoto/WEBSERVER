@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 14:20:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 14:47:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,31 @@
 
 void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 {
-	int fdc;
+	int 			fdc;
+	vectServerIt	it = handler.getServer(i);
 
-	fdc = handler.getVectServer()[i].accept_client_connexion();
+	fdc = (*it).accept_client_connexion();
 	epoll.epoll_control(EPOLLIN, fdc);
 	handler.addToVectClient(handler.getVectServer()[i], fdc);
-	std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[i].get_fdSocket() << "\033[0m" << std::endl;
+	std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << (*it).get_fdSocket() << "\033[0m" << std::endl;
 }
 
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
-	Client		client = handler.getVectClient()[i];
-	int			fd = client.get_clientFD();
+	VClientIt	it = handler.getClient(i);
+	int			fd = (*it).get_clientFD();
 	uint32_t	event = epoll.getEvent(eventIdx);
 
-	std::cout << "aty ee" << std::endl;
-	if ((event & EPOLLIN) && client.getConnexionStat() == true)
+	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
 	{
-		std::string client_request;
-		int	fdServer = client.get_fdparent();
-		int	fdFile;
+		int			fdFile;
+		int			fdServer = (*it).get_fdparent();
 		uint32_t	opt;
-
+		std::string client_request;
 		Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
-		client.ClientRequest();
-		client_request = client.getClientRequest();
-		std::cout << "REQUEST:["<< client_request<< "]" << std::endl;
+	
+		(*it).ClientRequest();
+		client_request = (*it).getClientRequest();
 		std::string filePath;
 		std::cout << "-->> \033[40m	" << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
 		if (client_request.size() == 0)
@@ -56,27 +55,26 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 			t_errPage	errPage;
 			std::cerr << "Process Request exception catched : " << e._errMsg << std::endl; //Fafana
 			errPage = server.getConfig().getErrPage();
-			client.setCatchedResponse(e, errPage);
-			handler.getVectClient()[i] = client;
+			(*it).setCatchedResponse(e, errPage);
 			epoll.epoll_update_event(fd, EPOLLOUT);
 			return;
 		}
 		handler.addToVectFileFd(fdFile, fd, filePath);
 		epoll.epoll_control(opt, fdFile);
 	}
-	else if ((event & EPOLLOUT) && client.getConnexionStat() == true)
+	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
 	{
 		std::cout << "-->> \033[43mSending Response to client" << "\033[0m" << std::endl;
 		std::string	responseString;
 
-		if (client.getResponse().getRespCategory() == STD_RSP)
+		if ((*it).getResponse().getRespCategory() == STD_RSP)
 		{
-			client.setStandardResponse(200);
-			std::cout << "Sending standard response" << std::endl;
+			(*it).setStandardResponse(200);
+			// std::cout << "Sending standard response" << std::endl;
 		}
-		responseString = client.getResponse().getFullResponse();
-		if (client.getResponse().getRespCategory() != STD_RSP)
-			std::cout << "Sending redir or error response" << std::endl;
+		responseString = (*it).getResponse().getFullResponse();
+		// if (client.getResponse().getRespCategory() != STD_RSP)
+		// 	std::cout << "Sending redir or error response" << std::endl;
 		send_value(fd, responseString);
 		epoll.epoll_update_event(fd, EPOLLIN);
 	}
@@ -89,8 +87,8 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
-	FileFd 		fileFd = handler.getVectFileFd()[i];
-	uint32_t	event = epoll.getEvent(eventIdx);
+	vectFileFdIt	it = handler.getFileFd(i);
+	uint32_t		event = epoll.getEvent(eventIdx);
 
 	if (event & EPOLLIN) //Get request response
 	{
@@ -101,21 +99,21 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		int fd;
 		int	fdClient;
 
-		fileFd.manageFd();
-		while ((bytesRead = read(fileFd.getFileFd(), buf, _BUFFER)) > 0)
+		(*it).manageFd();
+		while ((bytesRead = read((*it).getFileFd(), buf, _BUFFER)) > 0)
 			buffer.append(buf, bytesRead);
-		fileFd.setBuffer(buffer);
-		fileFd.restoreFd();
-		fd = fileFd.getFileFd();
+		(*it).setBuffer(buffer);
+		(*it).restoreFd();
+		fd = (*it).getFileFd();
 		std::cout << "Fd = " << fd << std::endl;
 		/*Change client to EPOLLOUT*/
-		fdClient = fileFd.getClientFd();
-		VClientIt it = findFdInClient(handler.getVectClient(), fdClient);
+		fdClient = (*it).getClientFd();
+		VClientIt itCli = findFdInClient(handler.getVectClient(), fdClient);
 		epoll.epoll_update_event(fdClient, EPOLLOUT);
-		(*it).setFileFD(fileFd);
+		(*itCli).setFileFD((*it));
 		/**************************** */
 		epoll.epoll_clean(fd);
-		fileFd.closeAllOwnedFileFd();
+		(*it).closeAllOwnedFileFd();
 		handler.removeFileFd(i);
 		// std::cout << "HANDLE FILE IO DONE \n";
 	}
