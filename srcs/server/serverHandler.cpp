@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 15:45:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 07:53:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	handleClient(Handler & handler, int const & index, EpollCreation & epoll)
 {
-	// Server	server = handler.getVectServer()[index];
 	int fdc;
 
 	while (1)
@@ -38,13 +37,13 @@ void	handleClient(Handler & handler, int const & index, EpollCreation & epoll)
 	}
 }
 
-void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, int const & eventIndex)
+void	handleRequest(Handler & handler, int const & clientIndex, EpollCreation & epoll, int const & eventIndex)
 {
-	Client client = handler.getVectClient()[index];
-	int fd = client.get_clientFD();
+	Client		client = handler.getVectClient()[clientIndex];
+	int			fd = client.get_clientFD();
+	uint32_t	event = epoll.getEvent(eventIndex);
 
-	// std::cout << "\033[45mFd = :" << fd << " ; connect : " << client.getConnexionStat() << "\033[0m" << std::endl;
-	if ((epoll.getEvent(eventIndex) & EPOLLIN) && client.getConnexionStat() == true)
+	if ((event & EPOLLIN) && client.getConnexionStat() == true)
 	{
 		std::string client_request;
 		int	fdServer = client.get_fdparent();
@@ -57,15 +56,12 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 		std::string filePath;
 		std::cout << "-->> \033[40m	" << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
 		if (client_request.size() == 0)
-		{
-			// throw std::runtime_error("Close the connection to the client");
 			return ;
-		}
 		fdFile = server.processRequest(client_request, fd, opt, filePath);
 		handler.addToVectFileFd(fdFile, fd, filePath);
 		epoll.epoll_control(opt, fdFile);
 	}
-	else if ((epoll.getEvent(eventIndex) & EPOLLOUT) && client.getConnexionStat() == true)
+	else if ((event & EPOLLOUT) && client.getConnexionStat() == true)
 	{
 		std::string type = Mime::getFileType(client.getFileFD().getFilePath());
 		Response response(200, type);
@@ -78,9 +74,8 @@ void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, 
 	else
 	{
 		epoll.epoll_clean(fd);
-		handler.removeClient(index);
+		handler.removeClient(clientIndex);
 	}
-	// std::cout << "			End of handle request \n";
 }
 
 void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, int const & evIndex)
@@ -112,7 +107,7 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 		epoll.epoll_clean(fd);
 		fileFd.closeAllOwnedFileFd();
 		handler.removeFileFd(index);
-		std::cout << "HANDLE FILE IO DONE \n";
+		// std::cout << "HANDLE FILE IO DONE \n";
 	}
 	else if (epoll.getEvent(evIndex) & EPOLLOUT)
 	{

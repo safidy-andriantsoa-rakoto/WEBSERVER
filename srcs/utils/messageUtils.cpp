@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 15:23:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 07:47:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,6 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
 {
     size_t total_sent = 0;
     size_t to_send = _send_content.size();
-
-    // std::cout << "\n\n[" << _send_content.size() << "]\n\n" << std::endl;
-
-
-    //     ssize_t sent = send(
-    //         _acceptStatus,
-    //         _send_content.c_str(),
-    //         to_send,
-    //         0
-    //     );
-    //     if (sent < 0)
-    //     {
-    //         perror("send failed");
-    //     }
-    //     else if (sent == 0)
-    //     {
-    //         std::cerr << "Connection closed by peer\n";
-    //     }
 
     std::cout << "\033[048mSIZE=" << to_send << std::endl;
     if (_acceptStatus < 0)

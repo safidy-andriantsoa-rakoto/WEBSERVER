@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 12:40:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 07:47:20 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,6 @@ void FileFd::restoreFd()
 void FileFd::closeAllOwnedFileFd()
 {
 	close(_stockFd);
-	// close(_fileFd);
 	close(_sockFd[0]);
 	close(_sockFd[1]);
 }
