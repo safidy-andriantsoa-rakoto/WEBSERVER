@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 13:30:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/11 09:58:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,21 @@ Client &Client::operator=(const Client &client)
     this->_configSockAddrIn = client._configSockAddrIn;
     this->_connect = client._connect;
     this->_fileFD = client._fileFD;
+    this->_response = client._response;
     this->_clientRequest = client.getClientRequest();
     return (*this);
+}
+
+void Client::setCatchedResponse(AExcept & e, t_errPage & errPage)
+{
+    _response.generateCatchedResponse(e, errPage);
+}
+
+void Client::setStandardResponse(int const & statusCode)
+{
+    _response.setType(_fileFD.getFileType());
+    _response.setStatusCode(statusCode);
+    _response.generateStandardResponse(_fileFD.getBuffer());
 }
 
 void Client::ClientRequest()
@@ -80,7 +93,12 @@ void Client::setFileFD(const FileFd &fileFd)
     this->_fileFD = fileFd;
 }
 
-FileFd Client::getFileFD()
+Response Client::getResponse() const
+{
+    return _response;
+}
+
+FileFd Client::getFileFD() const
 {
     return (this->_fileFD);
 }

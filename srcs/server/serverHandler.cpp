@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 08:03:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 10:29:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,18 +56,40 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		std::string filePath;
 		std::cout << "-->> \033[40m	" << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
 		if (client_request.size() == 0)
+		{
+			// throw std::runtime_error("Remove client");
 			return ;
-		fdFile = server.processRequest(client_request, fd, opt, filePath);
+		}
+		try
+		{
+			fdFile = server.processRequest(client_request, opt, filePath);
+		}
+		catch(AExcept & e)
+		{
+			t_errPage	errPage;
+			std::cerr << "Process Request exception catched : " << e._errMsg << std::endl; //Fafana
+			errPage = server.getConfig().getErrPage();
+			client.setCatchedResponse(e, errPage);
+			handler.getVectClient()[i] = client;
+			epoll.epoll_update_event(fd, EPOLLOUT);
+			return;
+		}
 		handler.addToVectFileFd(fdFile, fd, filePath);
 		epoll.epoll_control(opt, fdFile);
 	}
 	else if ((event & EPOLLOUT) && client.getConnexionStat() == true)
 	{
-		std::string type = Mime::getFileType(client.getFileFD().getFilePath());
-		Response response(200, type);
+		std::cout << "-->> \033[43mSending Response to client" << "\033[0m" << std::endl;
 		std::string	responseString;
-		response.generateStandardResponse(client.getFileFD().getBuffer());
-		responseString = response.getFullResponse();
+
+		if (client.getResponse().getRespCategory() == STD_RSP)
+		{
+			client.setStandardResponse(200);
+			std::cout << "Sending standard response" << std::endl;
+		}
+		responseString = client.getResponse().getFullResponse();
+		if (client.getResponse().getRespCategory() != STD_RSP)
+			std::cout << "Sending redir or error response" << std::endl;
 		send_value(fd, responseString);
 		epoll.epoll_update_event(fd, EPOLLIN);
 	}

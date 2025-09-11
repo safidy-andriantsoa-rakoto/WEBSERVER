@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 14:23:20 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 09:53:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,20 @@
 stringMap	Response::_allStatusCode;
 std::string	Response::_defaultErrPage;
 
-Response::Response(){}
+Response::Response() : _respCategory(STD_RSP){}
 
 Response::Response(int const & statusCode) : _statusCode(statusCode){}
 
 Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type){}
 
-Response::Response(Response const & other)
-{
-	*this = other;
-}
+Response::Response(Response const & other) :
+	_statusCode(other._statusCode),
+	_type(other._type),
+	_body(other._body),
+	_statusLine(other._statusLine),
+	_header(other._header),
+	_fullResponse(other._fullResponse),
+	_respCategory(other._respCategory){}
 
 Response &Response::operator=(Response const & other)
 {
@@ -36,11 +40,32 @@ Response &Response::operator=(Response const & other)
 		_statusLine = other._statusLine;
 		_header = other._header;
 		_fullResponse = other._fullResponse;
+		_respCategory = other._respCategory;
 	}
 	return *this;
 }
 
 Response::~Response(){}
+
+void Response::setType(std::string const &type)
+{
+	_type = type;
+}
+
+void Response::setStatusCode(int const &statusCode)
+{
+	_statusCode = statusCode;
+}
+
+void Response::setRespCategory(int const &category)
+{
+	_respCategory = category;
+}
+
+int Response::getRespCategory() const
+{
+    return _respCategory;
+}
 
 std::string Response::getFullResponse()
 {
@@ -98,6 +123,7 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage)
 	{
 		ErrorExcept & err = dynamic_cast<ErrorExcept & >(e);
 		generateErrorResponse(err, errPage);
+		_respCategory = ERR_RSP;
 		return;
 	}
 	catch(const std::exception & e){}
@@ -105,6 +131,7 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage)
 	{
 		RedirExcept & redir = dynamic_cast<RedirExcept & >(e);
 		generateRedirectResponse(redir);
+		_respCategory = REDIR_RSP;
 	}
 	catch(const std::exception& e){}
 }

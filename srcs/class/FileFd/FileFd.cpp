@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 07:47:20 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 09:07:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,13 @@
 
 FileFd::FileFd(){}
 
-FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath) : _fileFd(fileFd), _clientFd(clientFd), _filePath(filePath) {}
+FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath) : 
+	_fileFd(fileFd),
+	_clientFd(clientFd),
+	_filePath(filePath) 
+{
+	_fileType = Mime::getFileType(_filePath);
+}
 
 FileFd::FileFd(FileFd const & other)
 {

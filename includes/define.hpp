@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 07:38:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 08:51:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,12 @@
 #endif
 
 #define MAX_EVENT 2042
+
+enum   e_resp
+{
+    STD_RSP,
+    REDIR_RSP,
+    ERR_RSP
+};
 
 #endif
