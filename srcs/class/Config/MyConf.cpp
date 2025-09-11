@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 09:31:43 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/11 11:10:11 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,25 +170,44 @@ void MyConf::parseConfig(stringVect file)
 		// // }
 	}
 	std::cout << "size = " << _errPage.strError.size() << std::endl;
-	for (size_t i = 0; i < _errPage.strError.size(); ++i)
+	size_t i(0);
+	while(i < _errPage.strError.size())
 	{
 		std::string str = _errPage.strError[i];
 		size_t j(0);
-		while (str[j] && isdigit(str[j]))
+		while (str[j] != '\0' && isdigit(str[j]))
 			j++;
-		_errPage.listError.push_back(str);
+	 	_errPage.listError.push_back(str);
+		
+		i++;
 	}
-	std::cout << _port << std::endl;
-	for (size_t i = 0; i < _serverName.size(); i++)
-	{
-		std::cout <<  i << " = "<< _serverName[i] << " ";
-	}
-	std::cout << "error page list = " << _errPage.listError.size() <<std::endl;
-	for (size_t i = 0; i < _errPage.listError.size(); i++)
-	{
-		std::cout << " list de server(" << i  << ")"<<_errPage.listError[i] << " " << std::endl;
-	}
-	std::cout << std::endl;
+	// for (size_t i = 0; i < _errPage.strError.size(); ++i)
+	// {
+	// 	std::string str = _errPage.strError[i];
+	// 	size_t j(0);
+	// 	while (str[j] != '\0')
+	// 	{
+	// 		std::cout << "C= " << str[j] << " " << std::endl;
+	// 		j++;
+	// 	}
+	// 	// while (str[j] && isdigit(str[j]))
+	// 	// {
+	// 	// 	std::cout << "aaaa= " <<  str[j] << " " << std::endl;
+	// 	// 	j++;
+	// 	// }
+	// 	// _errPage.listError.push_back(str);
+	// }
+	// std::cout << _port << std::endl;
+	// for (size_t i = 0; i < _serverName.size(); i++)
+	// {
+	// 	std::cout <<  i << " = "<< _serverName[i] << " ";
+	// }
+	// std::cout << "error page list = " << _errPage.listError.size() <<std::endl;
+	// for (size_t i = 0; i < _errPage.listError.size(); i++)
+	// {
+	// 	std::cout << " list de server(" << i  << ")"<<_errPage.listError[i] << " " << std::endl;
+	// }
+	// std::cout << std::endl;
 
 	_checkStats = true;
 	currentBlock++;
