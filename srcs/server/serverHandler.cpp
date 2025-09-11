@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverHandler.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 08:03:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 08:41:22 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,15 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 {
 	int fdc;
 
-	while (1)
+	fdc = handler.getVectServer()[i].accept_client_connexion();
+	while (fdc > -1)
 	{
-		fdc = handler.getVectServer()[i].accept_client_connexion();
 		std::cout << "		fdc = " << fdc << std::endl;
-		if (fdc < 0)
-		{
-			if (errno == EAGAIN || errno == EWOULDBLOCK)
-				break;
-			else
-			{
-				perror("accept");
-				break;
-			}
-		}
 		epoll.no_blocking_fd(fdc);
 		epoll.epoll_control(EPOLLIN , fdc);
 		handler.addToVectClient(handler.getVectServer()[i], fdc);
-		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[i].get_fdSocket() << "\033[0m" << std::endl;
+		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[i].get_fdSocket() << "\033[0m" << std::endl;	
+		fdc = handler.getVectServer()[i].accept_client_connexion();
 	}
 }
 
