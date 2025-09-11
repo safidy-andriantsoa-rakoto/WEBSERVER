@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:58:42 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/11 08:00:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ void	server_create(Server & server);
 void	initServer(vectServer & allServer);
 void	launchEpoll(vectServer & allServer, EpollCreation &epoll);
 
-void	handleClient(Handler & handler, int const & index, EpollCreation & epoll);
-void	handleRequest(Handler & handler, int const & index, EpollCreation & epoll, int const & indexEvent);
-void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, int const & evIndex);
+void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll);
+void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
+void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
 
 vectServerIt	findFdInServer(vectServer & allServer, int const & fd);
 VClientIt		findFdInClient(VClient & allClient, int const & fd);

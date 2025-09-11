@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/10 14:31:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 07:59:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,17 @@ void    launchServer(Handler & handler)
 				if (identifier == "SERVER")
 				{
 					std::cout << "\033[42mSERVER" << "\033[0m" << std::endl;
-					handleClient(handler, index, epoll);
+					handleServerEvent(handler, index, epoll);
 				}
 				else if (identifier == "CLIENT")
 				{
 					std::cout << "\033[43mCLIENT" << "\033[0m" << std::endl;
-					handleRequest(handler, index, epoll, i);
+					handleClientEvent(handler, index, epoll, i);
 				}
 				else if (identifier == "FILEFD")
 				{
 					std::cout << "\033[43mFILEFD" << "\033[0m" << std::endl;
-					handleFileIO(handler, index, epoll, i);
+					handleFileEvent(handler, index, epoll, i);
 				}
 			}
 			catch(const std::exception& e)

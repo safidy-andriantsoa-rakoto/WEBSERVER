@@ -6,42 +6,42 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 07:53:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 08:03:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-void	handleClient(Handler & handler, int const & index, EpollCreation & epoll)
+void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 {
 	int fdc;
 
 	while (1)
 	{
-		fdc = handler.getVectServer()[index].accept_client_connexion();
+		fdc = handler.getVectServer()[i].accept_client_connexion();
 		std::cout << "		fdc = " << fdc << std::endl;
 		if (fdc < 0)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
-				return;
+				break;
 			else
 			{
 				perror("accept");
-				return;
+				break;
 			}
 		}
 		epoll.no_blocking_fd(fdc);
 		epoll.epoll_control(EPOLLIN , fdc);
-		handler.addToVectClient(handler.getVectServer()[index], fdc);
-		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[index].get_fdSocket() << "\033[0m" << std::endl;
+		handler.addToVectClient(handler.getVectServer()[i], fdc);
+		std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << handler.getVectServer()[i].get_fdSocket() << "\033[0m" << std::endl;
 	}
 }
 
-void	handleRequest(Handler & handler, int const & clientIndex, EpollCreation & epoll, int const & eventIndex)
+void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
-	Client		client = handler.getVectClient()[clientIndex];
+	Client		client = handler.getVectClient()[i];
 	int			fd = client.get_clientFD();
-	uint32_t	event = epoll.getEvent(eventIndex);
+	uint32_t	event = epoll.getEvent(eventIdx);
 
 	if ((event & EPOLLIN) && client.getConnexionStat() == true)
 	{
@@ -74,15 +74,16 @@ void	handleRequest(Handler & handler, int const & clientIndex, EpollCreation & e
 	else
 	{
 		epoll.epoll_clean(fd);
-		handler.removeClient(clientIndex);
+		handler.removeClient(i);
 	}
 }
 
-void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, int const & evIndex)
+void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
-	FileFd fileFd = handler.getVectFileFd()[index];
+	FileFd 		fileFd = handler.getVectFileFd()[i];
+	uint32_t	event = epoll.getEvent(eventIdx);
 
-	if (epoll.getEvent(evIndex) & EPOLLIN) //Get request response
+	if (event & EPOLLIN) //Get request response
 	{
 		std::cout << "\033[43mFD EPOLLIN FOR FILE IO" << "\033[0m" << std::endl;
 		char buf[_BUFFER];
@@ -106,10 +107,10 @@ void	handleFileIO(Handler & handler, int const & index, EpollCreation & epoll, i
 		/**************************** */
 		epoll.epoll_clean(fd);
 		fileFd.closeAllOwnedFileFd();
-		handler.removeFileFd(index);
+		handler.removeFileFd(i);
 		// std::cout << "HANDLE FILE IO DONE \n";
 	}
-	else if (epoll.getEvent(evIndex) & EPOLLOUT)
+	else if (event & EPOLLOUT)
 	{
 		std::cout << "\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
 	}
