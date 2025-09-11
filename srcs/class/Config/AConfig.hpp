@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AConfig.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 08:04:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 08:55:33 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 struct s_errPage
 {
+	stringVect strError;
 	stringVect	listError;
 	std::string	fileContent;
 	std::string	filePath;
@@ -36,6 +37,7 @@ class AConfig
 	protected:
 
 		int				_port;
+		stringVect		_size;
 		float			_maxSize;
 		std::string		_host;
 		stringVect		_serverName;

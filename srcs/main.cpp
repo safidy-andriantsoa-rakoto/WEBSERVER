@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 15:12:56 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/11 07:30:13 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int main()
 	std::vector<std::string> file;
 	std::vector<std::vector<std::string> > test;
 	vectServer server;
+	Server s;
 	file = getContentFile("srcs/utils/webser.conf");
 
 		// if (!checkBraceClose(file))
@@ -29,6 +30,7 @@ int main()
 	// if(!checkNumberAllContent(file))
 	// 	return (1);
 	server = getServer(file);
+	s.getParsAllServer(server, file);
 	// try
 	// {
 	// 	Response::initResponseUtils(STAT_PATH, ERR_PATH);

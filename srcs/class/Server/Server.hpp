@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 16:12:50 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/11 07:29:39 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ class Server
         std::string get_client_request();
 
 		//Server parsing
-		void getParsAllServer(vectServer &allServer, stringVect file);
+		void getParsAllServer(std::vector<Server> &allServer, stringVect file);
 		//Server main functionnality
 		int processRequest(std::string const & clientRequest, int const & fd_cli, int & opt, std::string & filePath);
 

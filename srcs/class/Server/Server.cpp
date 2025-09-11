@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 11:40:37 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/11 07:43:44 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -347,13 +347,13 @@ vectLocationIt Server::findLongestMatch(std::string const &text, vectLocation &l
 	return itFinal;
 }
 
-void Server::getParsAllServer(vectServer &server, stringVect file)
+void Server::getParsAllServer(vectServer &allServer, stringVect file)
 {
 	size_t i(0);
-	while(i < server.size())
+	while(i < allServer.size())
 	{
-		server[i]._config.parseConfig(file);
-		if(server[i]._config.getSatuts() == true)
+		allServer[i]._config.parseConfig(file);
+		if(allServer[i]._config.getSatuts() == true)
 			i++;
 	}
 }

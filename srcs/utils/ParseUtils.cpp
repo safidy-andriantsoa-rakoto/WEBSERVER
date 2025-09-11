@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 09:16:15 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/10 12:55:10 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/11 08:06:18 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ vectServer getServer(stringVect file)
                 }
             }
         }
-       std::cout << tabServer.size();
-
     return (tabServer);
 }
 

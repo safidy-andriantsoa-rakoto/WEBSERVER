@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 13:27:23 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/11 09:31:43 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,69 +63,43 @@ bool MyConf::getSatuts()
 	return (_checkStats);
 }
 
-// void MyConf::parseConfig(std::string const &servPath, std::string const &locPath)
-// {
-// 	std::ifstream	file;
-// 	std::string		line;
-// 	stringVect		vect;
+void MyConf::parseConfig(std::string const &servPath, std::string const &locPath)
+{
+	std::ifstream file;
+	std::string line;
+	stringVect vect;
 
-// 	file.open(servPath.c_str());
-// 	if (!file.is_open())
-// 		throw std::runtime_error("Error on parsing config 1");
-// 	while (std::getline(file, line))
-// 	{
-// 		vect = splitString(line, " ");
-// 		if (vect[0] == "host")
-// 			_host = vect[1];
-// 		else if (vect[0] == "port")
-// 			_port = convertStringToInt(vect[1]);
-// 		else if (vect[0] == "server_names")
-// 		{
-// 			vect.erase(vect.begin());
-// 			_serverName = vect;
-// 		}
-// 		else if (vect[0] == "error_page")
-// 		{
-// 			_hasErrPage = true;
-// 			_errPage.filePath = *(vect.end() - 1);
-// 			vect.erase((vect.end() - 1));
-// 			vect.erase(vect.begin());
-// 			_errPage.listError = vect;
-// 			_errPage.fileContent = readFileToString(_errPage.filePath);
-// 		}
-// 		else if (vect[0] == "size")
-// 			_maxSize = convertStringToFLoat(vect[1]);
-// 		vect.clear();
-// 		line.clear();
-// 	}
-// 	parseConfig(locPath);
-// }
-
-// void MyConf::parseConfig(stringVect file)
-// {
-// 	intVect index = containsExactWordInVector(file, "server");
-// 	int test(0), j(1), k(0);
-// 	for (size_t i = 0; i < file.size(); i++)
-// 	{
-// 		std::string word;
-// 		_checkStats = false;
-// 		while (j < index.size())
-// 		{
-// 			while (k != index[j + 1])
-// 			{
-// 				std::istringstream iss(file[j]);
-// 				if (iss >> word)
-// 				{
-// 					if (word == "host")
-// 						_host = word;
-// 				}
-
-// 				_checkStats = true;
-// 			}
-// 			j = index[j + 1];
-// 		}
-// 	}
-// }
+	file.open(servPath.c_str());
+	if (!file.is_open())
+		throw std::runtime_error("Error on parsing config 1");
+	while (std::getline(file, line))
+	{
+		vect = splitString(line, " ");
+		if (vect[0] == "host")
+			_host = vect[1];
+		else if (vect[0] == "port")
+			_port = convertStringToInt(vect[1]);
+		else if (vect[0] == "server_names")
+		{
+			vect.erase(vect.begin());
+			_serverName = vect;
+		}
+		else if (vect[0] == "error_page")
+		{
+			_hasErrPage = true;
+			_errPage.filePath = *(vect.end() - 1);
+			vect.erase((vect.end() - 1));
+			vect.erase(vect.begin());
+			_errPage.listError = vect;
+			_errPage.fileContent = readFileToString(_errPage.filePath);
+		}
+		else if (vect[0] == "size")
+			_maxSize = convertStringToFLoat(vect[1]);
+		vect.clear();
+		line.clear();
+	}
+	parseConfig(locPath);
+}
 
 void MyConf::displayConfig() const
 {
@@ -163,9 +137,58 @@ void MyConf::parseConfig(stringVect file)
 	for (size_t i = start; i < end; ++i)
 	{
 		std::istringstream iss(file[i]);
-		std::string key, value;
-		iss >> key >> value;
+		std::string name, value;
+		iss >> name;
+		while (std::getline(iss, value))
+		{
+			std::string word;
+			std::istringstream s(value);
+			while (s >> word)
+			{
+				if (name == "port")
+					_port = atoi(value.c_str());
+				if (name == "host")
+					_host = value;
+				if (name == "server_names")
+					_serverName.push_back(value);
+				if (name == "size")
+					_size.push_back(value);
+				if (name == "error_page")
+					_errPage.strError.push_back(value);
+			}
+		}
+
+		// std::cout << _errPage.strError.size() <<std::endl;
+		// if(_size[1] != "MB")
+
+		// // while(iss >> name >> value)
+		// // {
+		// // 	if(name == "port")
+		// // 		_port = atoi(value.c_str());
+		// // 	// if(name == "host")
+		// // 	// 	_host = value;
+		// // }
 	}
+	std::cout << "size = " << _errPage.strError.size() << std::endl;
+	for (size_t i = 0; i < _errPage.strError.size(); ++i)
+	{
+		std::string str = _errPage.strError[i];
+		size_t j(0);
+		while (str[j] && isdigit(str[j]))
+			j++;
+		_errPage.listError.push_back(str);
+	}
+	std::cout << _port << std::endl;
+	for (size_t i = 0; i < _serverName.size(); i++)
+	{
+		std::cout <<  i << " = "<< _serverName[i] << " ";
+	}
+	std::cout << "error page list = " << _errPage.listError.size() <<std::endl;
+	for (size_t i = 0; i < _errPage.listError.size(); i++)
+	{
+		std::cout << " list de server(" << i  << ")"<<_errPage.listError[i] << " " << std::endl;
+	}
+	std::cout << std::endl;
 
 	_checkStats = true;
 	currentBlock++;
