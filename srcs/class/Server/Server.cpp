@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 13:10:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 14:19:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,7 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-int Server:: processRequest(std::string const & clientRequest, int & opt, std::string & filePath)
+int Server:: processRequest(std::string const & clientRequest, int const & fd_cli, uint32_t & opt, std::string & filePath)
 {
 	Request		request;
 	int			fileFd;

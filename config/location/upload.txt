@@ -1,0 +1,1 @@
+location / | root ./site/upload_file | method GET POST
