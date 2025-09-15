@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/15 10:00:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:20:52 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 class Client : public Server
 {
 	private:
+		int			_receivedSize;
 		int			_client_stat;
 		int 		_clientFD;
 		bool        _connect;
@@ -27,6 +28,8 @@ class Client : public Server
 
 		Response	_response;
 		FileFd		_fileFD;
+		size_t		_to_send;
+		size_t		_total_send;
 
 		Client();
 
@@ -36,9 +39,18 @@ class Client : public Server
 		Client& operator=(const Client& client);
 		~Client();
 
+		void		setToSendSize(size_t to_send);
+		void		IncrementTotalSendSize(size_t to_send);
+		size_t		getToSendSize();
+		size_t		getTotalSendSize();
+		bool		is_finishedSendContent();	
+		
+		
+		
 		int         get_clientFD() const;
 		std::string getClientRequest() const;
 		bool        getConnexionStat();
+
 
 		FileFd      getFileFD() const;
 		void        setFileFD(const FileFd &fileFd);

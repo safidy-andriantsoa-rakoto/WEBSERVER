@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 08:00:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:33:55 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ void	launchEpoll(vectServer & allServer, EpollCreation &epoll);
 void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll);
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
+
+// void        send_value(int const & _acceptStatus, std::string & _send_content, VClientIt itCli);
 
 vectServerIt	findFdInServer(vectServer & allServer, int const & fd);
 VClientIt		findFdInClient(VClient & allClient, int const & fd);

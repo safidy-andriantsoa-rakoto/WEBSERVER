@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 10:24:44 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:35:13 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		std::string filePath;
 		std::cout << "-->> \033[40m	" << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
 		if (client_request.size() == 0)
-		{
 			throw std::runtime_error("Remove client");
-			// return ;
-		}
 		try
 		{
 			fdFile = (*it).processRequest(client_request, opt, filePath);
@@ -61,7 +58,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	}
 	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
 	{
-		std::cout << "-->> \033[43mSending Response to client" << "\033[0m" << std::endl;
+		std::cout << "-->> \033[44mSending Response to client" << "\033[0m" << std::endl;
 		std::string	responseString;
 
 		if ((*it).getResponse().getRespCategory() == STD_RSP)
@@ -115,6 +112,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	}
 	else if (event & EPOLLOUT)
 	{
+		
 		std::cout << "\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
 	}
 	else
