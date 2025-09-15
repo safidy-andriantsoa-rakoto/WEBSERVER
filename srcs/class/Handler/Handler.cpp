@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 08:08:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 09:50:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void Handler::setVectServer(vectServer &vectServer)
 
 void Handler::addToVectClient(Server const & server, int const & fd)
 {
-	_vectClient.push_back(Client(server, fd));
+	_vectClient.push_back(Client(server, fd, true));
 }
 
 void Handler::addToVectFileFd(int const & fd, int const & fdCli, std::string const & filePath)

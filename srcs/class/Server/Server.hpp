@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 08:22:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 08:31:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,20 @@
 
 class Server
 {
-	protected:
+	protected :
 	// From Config file (need to review attributes)
 		MyConf				_config;
 
 	// For socket
 	    int     			_fdSocket;
+        int     			_fdClient;
         socklen_t  			_size_sockaddrin;
         SockAddrIn			_sockaddrIn;
 
 		//HTTP Method
-		int			get_request(Request & request);
-		int			post_request(Request & request);
-		void		delete_request(Request & request);
+		int		get_request(Request & request);
+		int		post_request(Request & request);
+		void	delete_request(Request & request);
 
 		//Server utils functionnality
 		void		processRequestWithConfig(Request & request);
@@ -61,6 +62,7 @@ class Server
 		MyConf		getConfig() const;
 
 		//Server connection
+		int 		get_fdClient() const;
 		int 		get_fdSocket() const;
 		SockAddrIn	get_confSockAddrIn() const;
         int 		create_socket();
@@ -71,7 +73,7 @@ class Server
         std::string get_client_request();
 
 		//Server main functionnality
-		int 		processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath);
+		int processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath);
 
 		//Server utils
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);

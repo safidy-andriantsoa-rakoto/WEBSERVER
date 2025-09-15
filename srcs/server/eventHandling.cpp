@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   serverHandler.cpp                                  :+:      :+:    :+:   */
+/*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 08:17:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 10:07:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,8 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
 	{
 		int			fdFile;
-		int			fdServer = (*it).get_fdparent();
 		uint32_t	opt;
 		std::string client_request;
-		Server	server = *(findFdInServer(handler.getVectServer(), fdServer));
 	
 		(*it).ClientRequest();
 		client_request = (*it).getClientRequest();
@@ -48,14 +46,13 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		}
 		try
 		{
-			fdFile = server.processRequest(client_request, opt, filePath);
+			fdFile = (*it).processRequest(client_request, opt, filePath);
+			(*it).updateResponseStatus(STD_RSP);
 		}
 		catch(AExcept & e)
 		{
-			t_errPage	errPage;
 			std::cerr << "Process Request exception catched : " << e._errMsg << std::endl;
-			errPage = server.getConfig().getErrPage();
-			(*it).setCatchedResponse(e, errPage);
+			(*it).setCatchedResponse(e);
 			epoll.epoll_update_event(fd, EPOLLOUT);
 			return;
 		}
@@ -70,11 +67,11 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		if ((*it).getResponse().getRespCategory() == STD_RSP)
 		{
 			(*it).setStandardResponse(200);
-			// std::cout << "Sending standard response" << std::endl;
+			std::cout << "Sending standard response" << std::endl;
 		}
 		responseString = (*it).getResponse().getFullResponse();
-		// if (client.getResponse().getRespCategory() != STD_RSP)
-		// 	std::cout << "Sending redir or error response" << std::endl;
+		if ((*it).getResponse().getRespCategory() != STD_RSP)
+			std::cout << "Sending redir or error response" << std::endl;
 		send_value(fd, responseString);
 		epoll.epoll_update_event(fd, EPOLLIN);
 	}
@@ -108,14 +105,13 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		std::cout << "Fd = " << fd << std::endl;
 		/*Change client to EPOLLOUT*/
 		fdClient = (*it).getClientFd();
-		VClientIt itCli = findFdInClient(handler.getVectClient(), fdClient);
 		epoll.epoll_update_event(fdClient, EPOLLOUT);
+		VClientIt itCli = findFdInClient(handler.getVectClient(), fdClient);
 		(*itCli).setFileFD((*it));
 		/**************************** */
 		epoll.epoll_clean(fd);
 		close((*it).getStockFd());
 		handler.removeFileFd(i);
-		// std::cout << "HANDLE FILE IO DONE \n";
 	}
 	else if (event & EPOLLOUT)
 	{

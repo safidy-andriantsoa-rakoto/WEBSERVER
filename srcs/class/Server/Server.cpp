@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 08:15:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 09:02:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,13 +139,7 @@ Server &Server::operator=(Server const & other)
 	return *this;
 }
 
-Server::~Server()
-{
-	// if (_fdClient != -1)
-	// 	close(_fdClient);
-	// if (_fdSocket != -1)
-	// 	close(_fdSocket);
-}
+Server::~Server(){}
 
 MyConf Server::getConfig() const
 {
@@ -283,7 +277,10 @@ int Server::get_request(Request & request)
 	fd = open(filePath.c_str(), O_RDONLY);
 	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
 	if (fd == -1)
+	{
+		perror("Open");
 		throw ErrorExcept(404, "File can't be opened");
+	}
 	return fd;
 }
 

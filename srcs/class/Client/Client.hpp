@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/15 08:23:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 10:00:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,8 @@ class Client : public Server
 	private:
 		int			_client_stat;
 		int 		_clientFD;
-
-		std::string _clientRequest;
 		bool        _connect;
+		std::string _clientRequest;
 
 		Response	_response;
 		FileFd		_fileFD;
@@ -33,9 +32,8 @@ class Client : public Server
 
 	public:
 		Client(const Client& client);
-		Client(const int &_parentfd, const int &_clientFD, const SockAddrIn& _configSockAddrIn, bool is_socketDF);
+		Client(Server const & server, const int &_clientFD, bool is_connect);
 		Client& operator=(const Client& client);
-		Client(Server const & server, int const & fdCli);
 		~Client();
 
 		int         get_clientFD() const;
@@ -44,9 +42,13 @@ class Client : public Server
 
 		FileFd      getFileFD() const;
 		void        setFileFD(const FileFd &fileFd);
-		Response	getResponse() const;
 
-		void		setCatchedResponse(AExcept & e, t_errPage & errPage);
+		void		linkClientAndFileFd(int const &fd, int const &fdCli, std::string const &filePath);
+
+		Response	getResponse() const;
+		void		updateResponseStatus(int const & stat);
+
+		void		setCatchedResponse(AExcept & e);
 		void		setStandardResponse(int const & statusCode);
 
 		void        ClientRequest();
