@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 15:20:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:59:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ FileFd &FileFd::operator=(FileFd const & other)
 		_stockFd = other._stockFd;
 		_clientFd = other._clientFd;
 		_fileFd = other._fileFd;
-		_sockFd[0] = other._sockFd[0];
-		_sockFd[1] = other._sockFd[1];
 		_buffer = other._buffer;
 		_filePath = other._filePath;
 		_fileType = other._fileType;
