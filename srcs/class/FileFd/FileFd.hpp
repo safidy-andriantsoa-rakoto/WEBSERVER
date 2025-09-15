@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 15:10:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 07:56:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,16 @@ class FileFd
 	private:
 		int			_stockFd;
 		int			_fileFd;
-		int			_sockFd[2];
 		int			_clientFd;
 		std::string	_buffer;
 		std::string	_filePath;
 		std::string	_fileType;
 		std::string	_method;
 
+
 	public:
+		static int			_sockFd[2];
+
 		FileFd();
 		FileFd(int const & fileFd, int const & clientFd, std::string const & filePath);
 		FileFd(FileFd const & other);
@@ -37,7 +39,6 @@ class FileFd
 
 		int			getStockFd() const;
 		int			getFileFd() const;
-		int*		getSockFd();
 		int			getClientFd() const;
 		std::string	getBuffer() const;
 		std::string	getFilePath() const;
@@ -51,7 +52,9 @@ class FileFd
 		void		setupFd();
 		void		manageFd();
 		void		restoreFd();
-		void		closeAllOwnedFileFd();
+
+		static void	initSockFd();
+		static void	closeSockFd();
 };
 
 #endif

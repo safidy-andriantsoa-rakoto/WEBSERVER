@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 14:47:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 08:17:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
+	uint32_t	event = epoll.getEvent(eventIdx);
 	VClientIt	it = handler.getClient(i);
 	int			fd = (*it).get_clientFD();
-	uint32_t	event = epoll.getEvent(eventIdx);
 
 	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
 	{
@@ -53,7 +53,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		catch(AExcept & e)
 		{
 			t_errPage	errPage;
-			std::cerr << "Process Request exception catched : " << e._errMsg << std::endl; //Fafana
+			std::cerr << "Process Request exception catched : " << e._errMsg << std::endl;
 			errPage = server.getConfig().getErrPage();
 			(*it).setCatchedResponse(e, errPage);
 			epoll.epoll_update_event(fd, EPOLLOUT);
@@ -113,7 +113,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		(*itCli).setFileFD((*it));
 		/**************************** */
 		epoll.epoll_clean(fd);
-		(*it).closeAllOwnedFileFd();
+		close((*it).getStockFd());
 		handler.removeFileFd(i);
 		// std::cout << "HANDLE FILE IO DONE \n";
 	}

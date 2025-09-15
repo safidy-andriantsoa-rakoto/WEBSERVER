@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/11 14:19:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 08:23:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,12 @@
 #include "../Server/Server.hpp"
 #include "../Response/Response.hpp"
 
-class Client
+class Client : public Server
 {
 	private:
 		int			_client_stat;
-		int 		_parentFD;
 		int 		_clientFD;
 
-		SockAddrIn  _configSockAddrIn;
 		std::string _clientRequest;
 		bool        _connect;
 
@@ -41,9 +39,9 @@ class Client
 		~Client();
 
 		int         get_clientFD() const;
-		int         get_fdparent() const;
 		std::string getClientRequest() const;
 		bool        getConnexionStat();
+
 		FileFd      getFileFD() const;
 		void        setFileFD(const FileFd &fileFd);
 		Response	getResponse() const;

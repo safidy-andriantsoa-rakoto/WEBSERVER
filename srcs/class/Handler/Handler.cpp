@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 14:52:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 08:08:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,11 @@ vectFileFdIt Handler::getFileFd(int const &i)
     return it;
 }
 
+void Handler::setVectServer(vectServer &vectServer)
+{
+	_vectServer = vectServer;
+}
+
 void Handler::addToVectClient(Server const & server, int const & fd)
 {
 	_vectClient.push_back(Client(server, fd));
@@ -119,6 +124,17 @@ void Handler::removeClient(int const & index)
 void Handler::removeFileFd(int const & index)
 {
 	_vectFileFd.erase(_vectFileFd.begin() + index);
+}
+
+void	Handler::closeAllFd()
+{
+	FileFd::closeSockFd();
+	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
+		close((*itVect).get_fdSocket());
+	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
+		close((*itCli).get_clientFD());
+	for (vectFileFdIt itFile = _vectFileFd.begin(); itFile != _vectFileFd.end(); itFile++)
+		close((*itFile).getFileFd());
 }
 
 void Handler::displayHandlerStat()
