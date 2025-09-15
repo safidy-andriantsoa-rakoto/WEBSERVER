@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 10:23:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:19:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,13 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage)
 		_respCategory = REDIR_RSP;
 	}
 	catch(const std::exception& e){}
+	try
+	{
+		DirExcept & dir = dynamic_cast<DirExcept & >(e);
+		generateDirResponse(dir);
+	}
+	catch(const std::exception& e){}
+	
 }
 
 void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage)
@@ -152,6 +159,13 @@ void Response::generateRedirectResponse(RedirExcept & r)
 	_statusCode = r._statusCode;
 	setStatusLine();
 	_header["Location"] = r._uri;
+	_header["Connection"] = "keep-alive";
+}
+
+void Response::generateDirResponse(DirExcept &d)
+{
+	_statusCode = d._statusCode;
+	setStatusLine();
 	_header["Connection"] = "keep-alive";
 }
 

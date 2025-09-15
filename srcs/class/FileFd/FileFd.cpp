@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 08:13:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:20:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ FileFd::FileFd(){}
 FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath) : 
 	_fileFd(fileFd),
 	_clientFd(clientFd),
-	_filePath(filePath) 
+	_filePath(filePath),
+	_status(OP_OPEN)
 {
 	_fileType = Mime::getFileType(_filePath);
 }
@@ -42,6 +43,7 @@ FileFd &FileFd::operator=(FileFd const & other)
 		_filePath = other._filePath;
 		_fileType = other._fileType;
 		_method = other._method;
+		_status = other._status;
 	}
 	return *this;
 }
@@ -81,6 +83,16 @@ std::string FileFd::getFileType() const
 std::string FileFd::getOriginMethod() const
 {
     return _method;
+}
+
+int FileFd::getStatus() const
+{
+    return _status;
+}
+
+void FileFd::setStatus(int const &status)
+{
+	_status = status;
 }
 
 void FileFd::setFileType()

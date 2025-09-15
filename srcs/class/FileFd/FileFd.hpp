@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 07:56:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:12:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class FileFd
 		std::string	_fileType;
 		std::string	_method;
 
+		int			_status;
 
 	public:
 		static int			_sockFd[2];
@@ -44,6 +45,9 @@ class FileFd
 		std::string	getFilePath() const;
 		std::string	getFileType() const;
 		std::string	getOriginMethod() const;
+
+		int			getStatus() const;
+		void		setStatus(int const & status);
 
 		void		setFileType();
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 14:55:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 15:01:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class Response
 		void				generateCatchedResponse(AExcept & e, t_errPage & errPage);
 		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage);
 		void				generateRedirectResponse(RedirExcept & r);
+		void				generateDirResponse(DirExcept & d);
 
 		static void			initResponseUtils(std::string const & statPath, std::string const & errPath);
 		static stringMap	getAllStatusCode();
