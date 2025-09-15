@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 09:02:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 11:40:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void Server::buildRequestTarget(Request & request)
 	vectLocationIt	it;
 	std::string		target;
 	vectLocation	loc;
+	std::string		autoIndex;
 
 	target = request.getRequestTarget();
 	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
@@ -59,6 +60,9 @@ void Server::buildRequestTarget(Request & request)
 		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 	else
 		target = (*it).getRootDirectory() + target;
+	autoIndex = (*it).getAutoindex();
+	if (autoIndex == "true")
+		request.setAutoIdx(true);
 	request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
 }
@@ -239,21 +243,18 @@ std::string Server::get_client_request()
 
 int Server:: processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
 {
-	Request		request;
 	int			fileFd;
+	Request		request;
 	Response	response;
-    std::string responseString;
-	t_errPage	errPage;
-	std::string	type;
 
 	fileFd = -1;
 	request.parseRequest(clientRequest);
 	processRequestWithConfig(request);
 	if (request.getMethod() == "GET")
 	{
+		//Check for autoindex
 		fileFd = get_request(request);
 		filePath = request.getRequestTarget();
-		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
 		opt = EPOLLIN;
 	}
 	else if (request.getMethod() == "POST")
@@ -267,7 +268,7 @@ int Server:: processRequest(std::string const & clientRequest, uint32_t & opt, s
 }
 
 //Work on variouse file opening error
-//Case of directory
+//Case of directory : search for index.html, use default html page to put all the directory listing if auto index is on
 int Server::get_request(Request & request)
 {
 	int			fd;
