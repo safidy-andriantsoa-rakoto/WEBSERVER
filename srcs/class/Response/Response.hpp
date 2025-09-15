@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/08 13:06:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 09:52:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ class Response
 		stringMap			_header;
 		std::string			_fullResponse;
 
+		int					_respCategory;
+
 		static stringMap	_allStatusCode;
 		static std::string	_defaultErrPage;
 
@@ -42,12 +44,17 @@ class Response
 		Response & operator=(Response const & other);
 		~Response();
 
-		std::string	getFullResponse();
+		void				setType(std::string const & type);
+		void				setStatusCode(int const & statusCode);
+		void				setRespCategory(int const & category);
+	
+		int					getRespCategory() const;
+		std::string			getFullResponse();
 
-        void		generateStandardResponse(std::string const & body);
-		void		generateCatchedResponse(AExcept & e, t_errPage & errPage);
-		void		generateErrorResponse(ErrorExcept & e, t_errPage & errPage);
-		void		generateRedirectResponse(RedirExcept & r);
+        void				generateStandardResponse(std::string const & body);
+		void				generateCatchedResponse(AExcept & e, t_errPage & errPage);
+		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage);
+		void				generateRedirectResponse(RedirExcept & r);
 
 		static void			initResponseUtils(std::string const & statPath, std::string const & errPath);
 		static stringMap	getAllStatusCode();

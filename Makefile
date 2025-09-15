@@ -68,7 +68,7 @@ UTILS_DIR = utils/
 UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp units.cpp conversion.cpp searchingUtils.cpp
 
 SERV_DIR = server/
-SERV = launchServer.cpp parseConfig.cpp serverHandler.cpp initServer.cpp
+SERV = launchServer.cpp parseConfig.cpp eventHandling.cpp initServer.cpp
 
 SRC_DIR = srcs/
 SRC = $(addprefix $(SRC_DIR), $(MAIN)) \

@@ -3,101 +3,125 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/09 13:30:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/15 10:07:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(const int &_parentFD, const int &_clientFD,const SockAddrIn& _configSockAddrIn, bool is_connect) : _parentFD(_parentFD),
-_clientFD(_clientFD), _configSockAddrIn(_configSockAddrIn), _connect(is_connect)
+Client::Client(Server const & server, const int &_clientFD, bool is_connect) : 
+	Server(server),
+	_clientFD(_clientFD),
+	_connect(is_connect)
 {
-    this->_clientRequest= "";
-    if (_clientFD < 0 || _parentFD < 0)
-    {
-        std::cout << "Error\nInvalid input FD" << std::endl; 
-        return ;
-    }
+	this->_clientRequest= "";
+	if (_clientFD < 0)
+	{
+		std::cout << "Error\nInvalid input FD" << std::endl; 
+		return ;
+	}
 }
 
-Client::Client(Server const &server, int const &fdCli)
+Client::Client(const Client &client) : Server(client)
 {
-    _parentFD = server.get_fdSocket();
-    _clientFD = fdCli;
-    _configSockAddrIn = server.get_confSockAddrIn();
-    _connect = true;
-}
-
-int Client::get_clientFD() const
-{
-    return (this->_clientFD);
-}
-
-int Client::get_fdparent() const
-{
-    return (this->_parentFD);
+	*this = client;
 }
 
 Client &Client::operator=(const Client &client)
 {
-    this->_clientFD = client._clientFD;
-    this->_parentFD = client._parentFD;
-    this->_configSockAddrIn = client._configSockAddrIn;
-    this->_connect = client._connect;
-    this->_fileFD = client._fileFD;
-    this->_clientRequest = client.getClientRequest();
-    return (*this);
+	if (this != &client)
+	{
+		this->Server::operator=(client);
+		this->_clientFD = client._clientFD;
+		this->_connect = client._connect;
+		this->_clientRequest = client._clientRequest;
+		this->_client_stat = client._client_stat;
+		this->_fileFD = client._fileFD;
+		this->_response = client._response;
+	}
+	return (*this);
+}
+
+Client::~Client(){}
+
+int Client::get_clientFD() const
+{
+	return (this->_clientFD);
+}
+
+void Client::setCatchedResponse(AExcept & e)
+{
+	t_errPage	errPage = _config.getErrPage();
+	_response.generateCatchedResponse(e, errPage);
+}
+
+void Client::setStandardResponse(int const & statusCode)
+{
+	_response.setType(_fileFD.getFileType());
+	_response.setStatusCode(statusCode);
+	_response.generateStandardResponse(_fileFD.getBuffer());
 }
 
 void Client::ClientRequest()
 {
-    char response[_BUFFER];
-    int _respStatus = recv(this->get_clientFD(), response, sizeof(response), 0);
-    if (_respStatus == 0)
-        this->_connect = false;
-    if (_respStatus == -1)
-        throw RecvError();
-    this->_clientRequest = response;
+	char response[_BUFFER];
+	int _respStatus = recv(this->get_clientFD(), response, sizeof(response), 0);
+	if (_respStatus == 0)
+		this->_connect = false;
+	if (_respStatus == -1)
+		throw RecvError();
+	this->_clientRequest = response;
 }
 
 std::string Client::getClientRequest() const
 {
-    if (this->_clientRequest.size())
-        return (this->_clientRequest);
-    return ("");
+	if (this->_clientRequest.size())
+		return (this->_clientRequest);
+	return ("");
 }
 
 bool Client::getConnexionStat()
 {
-    return (this->_connect);
+	return (this->_connect);
 }
 
 void Client::setFileFD(const FileFd &fileFd)
 {
-    this->_fileFD = fileFd;
+	_fileFD = fileFd;
 }
 
-FileFd Client::getFileFD()
+void Client::linkClientAndFileFd(int const &fd, int const &fdCli, std::string const &filePath)
 {
-    return (this->_fileFD);
+	FileFd _fileFD(fd, fdCli, filePath);
+
+	_fileFD.setFileType();
+	_fileFD.setupFd();
 }
 
-Client::Client(const Client &client)
+Response Client::getResponse() const
 {
-    *this = client;
+	return (this->_response);
 }
 
-Client::~Client() {}
+void Client::updateResponseStatus(int const &stat)
+{
+	_response.setRespCategory(stat);
+}
+
+FileFd Client::getFileFD() const
+{
+	return (this->_fileFD);
+}
 
 const char *Client::Deconnect::what() const throw()
 {
-    return ("disconnected!");
+	return ("disconnected!");
 }
 
 const char *Client::RecvError::what() const throw()
 {
-    return ("Error RECV\nget Request from client");
+	return ("Error RECV\nget Request from client");
 }

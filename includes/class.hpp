@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   class.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 10:25:14 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 11:36:48 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/11 14:36:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,8 @@ typedef VClient::iterator       VClientIt;
 
 typedef std::vector<Server>		vectServer;
 typedef vectServer::iterator	vectServerIt;
+
+typedef std::vector<FileFd>		vectFileFd;
+typedef vectFileFd::iterator	vectFileFdIt;
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/11 09:09:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/15 10:00:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,40 +15,52 @@
 #include "general.hpp"
 #include "../FileFd/FileFd.hpp"
 #include "../Server/Server.hpp"
+#include "../Response/Response.hpp"
 
-class Client
+class Client : public Server
 {
-    private:
-        int _client_stat;
-        int _parentFD;
-        int _clientFD;
-        FileFd  _fileFD;
-        SockAddrIn  _configSockAddrIn;
-        std::string _clientRequest;
-        bool        _connect;
-        Client();
+	private:
+		int			_client_stat;
+		int 		_clientFD;
+		bool        _connect;
+		std::string _clientRequest;
 
-    public:
-        Client& operator=(const Client& client);
-        Client(const Client& client);
-        Client(Server const & server, int const & fdCli);
-        ~Client();
-        Client(const int &_parentfd, const int &_clientFD, const SockAddrIn& _configSockAddrIn, bool is_socketDF);
-        int         get_clientFD() const;
-        int         get_fdparent() const;
-        void        ClientRequest();
-        std::string getClientRequest() const;
-        bool        getConnexionStat();
-        void        setFileFD(const FileFd &fileFd);
-        FileFd      getFileFD();
-        class Deconnect: public std::exception
-        {
-            public:
-                const char *what() const throw();
-        };
-        class RecvError: public std::exception
-        {
-            public:
-                const char *what() const throw();
-        };
+		Response	_response;
+		FileFd		_fileFD;
+
+		Client();
+
+	public:
+		Client(const Client& client);
+		Client(Server const & server, const int &_clientFD, bool is_connect);
+		Client& operator=(const Client& client);
+		~Client();
+
+		int         get_clientFD() const;
+		std::string getClientRequest() const;
+		bool        getConnexionStat();
+
+		FileFd      getFileFD() const;
+		void        setFileFD(const FileFd &fileFd);
+
+		void		linkClientAndFileFd(int const &fd, int const &fdCli, std::string const &filePath);
+
+		Response	getResponse() const;
+		void		updateResponseStatus(int const & stat);
+
+		void		setCatchedResponse(AExcept & e);
+		void		setStandardResponse(int const & statusCode);
+
+		void        ClientRequest();
+
+		class Deconnect: public std::exception
+		{
+			public:
+				const char *what() const throw();
+		};
+		class RecvError: public std::exception
+		{
+			public:
+				const char *what() const throw();
+		};
 };

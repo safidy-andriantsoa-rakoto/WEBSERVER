@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 10:09:50 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/15 09:02:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,13 +139,7 @@ Server &Server::operator=(Server const & other)
 	return *this;
 }
 
-Server::~Server()
-{
-	// if (_fdClient != -1)
-	// 	close(_fdClient);
-	// if (_fdSocket != -1)
-	// 	close(_fdSocket);
-}
+Server::~Server(){}
 
 MyConf Server::getConfig() const
 {
@@ -243,7 +237,7 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-int Server:: processRequest(std::string const & clientRequest, int const & fd_cli, uint32_t & opt, std::string & filePath)
+int Server:: processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
 {
 	Request		request;
 	int			fileFd;
@@ -254,36 +248,26 @@ int Server:: processRequest(std::string const & clientRequest, int const & fd_cl
 
 	fileFd = -1;
 	request.parseRequest(clientRequest);
-	try
+	processRequestWithConfig(request);
+	if (request.getMethod() == "GET")
 	{
-		processRequestWithConfig(request);
-		if (request.getMethod() == "GET")
-		{
-			fileFd = get_request(request);
-			filePath = request.getRequestTarget();
-			type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
-			opt = EPOLLIN;
-		}
-		else if (request.getMethod() == "POST")
-		{
-			std::cout << request.getMethod() << std::endl; // Calling post_request
-			opt = EPOLLOUT;
-		}
-		else if (request.getMethod() == "DELETE")
-			std::cout << request.getMethod() << std::endl; // Calling delete_request
+		fileFd = get_request(request);
+		filePath = request.getRequestTarget();
+		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
+		opt = EPOLLIN;
 	}
-	catch(AExcept & e)
+	else if (request.getMethod() == "POST")
 	{
-		std::cerr << "Process Request exception catched : " << e._errMsg << std::endl; //Fafana
-		errPage = _config.getErrPage();
-		response.generateCatchedResponse(e, errPage);
-		responseString = response.getFullResponse();
-		send_value(fd_cli, responseString);
-		throw std::runtime_error("Error sent");
+		std::cout << request.getMethod() << std::endl; // Calling post_request
+		opt = EPOLLOUT;
 	}
+	else if (request.getMethod() == "DELETE")
+		std::cout << request.getMethod() << std::endl; // Calling delete_request
 	return fileFd;
 }
 
+//Work on variouse file opening error
+//Case of directory
 int Server::get_request(Request & request)
 {
 	int			fd;
@@ -293,7 +277,10 @@ int Server::get_request(Request & request)
 	fd = open(filePath.c_str(), O_RDONLY);
 	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
 	if (fd == -1)
+	{
+		perror("Open");
 		throw ErrorExcept(404, "File can't be opened");
+	}
 	return fd;
 }
 

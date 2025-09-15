@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/12 08:24:54 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/15 10:25:10 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void send_value(int const & _acceptStatus, std::string & _send_content)
 {
-    size_t total_sent = 0;
+    // size_t total_sent = 0;
     size_t to_send = _send_content.size();
 
     std::cout << "\033[048mSIZE=" << to_send << std::endl;

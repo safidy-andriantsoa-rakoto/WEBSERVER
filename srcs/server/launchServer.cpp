@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/11 09:10:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/15 08:05:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,21 +41,21 @@ void    launchServer(Handler & handler)
 			try
 			{
 				fdEvent = epoll.get_fdEvent(i);
-				std::cout << "\033[47;30mFD EVENT = " << fdEvent << "\033[0m" << std::endl;
+				std::cout << "\033[47;30m		FD EVENT = " << fdEvent << "\033[0m" << std::endl;
 				identifier = handler.identifyFd(fdEvent, index);
 				if (identifier == "SERVER")
 				{
-					std::cout << "\033[42mSERVER" << "\033[0m" << std::endl;
+					std::cout << "\033[42m	SERVER" << "\033[0m" << std::endl;
 					handleServerEvent(handler, index, epoll);
 				}
 				else if (identifier == "CLIENT")
 				{
-					std::cout << "\033[43mCLIENT" << "\033[0m" << std::endl;
+					std::cout << "\033[43m	CLIENT" << "\033[0m" << std::endl;
 					handleClientEvent(handler, index, epoll, i);
 				}
 				else if (identifier == "FILEFD")
 				{
-					std::cout << "\033[43mFILEFD" << "\033[0m" << std::endl;
+					std::cout << "\033[43m	FILEFD" << "\033[0m" << std::endl;
 					handleFileEvent(handler, index, epoll, i);
 				}
 			}

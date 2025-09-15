@@ -6,15 +6,23 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 07:47:20 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 08:13:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FileFd.hpp"
 
+int	FileFd::_sockFd[2];
+
 FileFd::FileFd(){}
 
-FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath) : _fileFd(fileFd), _clientFd(clientFd), _filePath(filePath) {}
+FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath) : 
+	_fileFd(fileFd),
+	_clientFd(clientFd),
+	_filePath(filePath) 
+{
+	_fileType = Mime::getFileType(_filePath);
+}
 
 FileFd::FileFd(FileFd const & other)
 {
@@ -48,11 +56,6 @@ int FileFd::getStockFd() const
 int FileFd::getFileFd() const
 {
     return _fileFd;
-}
-
-int *FileFd::getSockFd()
-{
-    return _sockFd;
 }
 
 int FileFd::getClientFd() const
@@ -92,12 +95,6 @@ void FileFd::setBuffer(std::string const &content)
 
 void FileFd::setupFd()
 {
-	int	returnVal;
-
-	returnVal = socketpair(AF_UNIX, SOCK_STREAM, 0, _sockFd);
-	if (returnVal == -1)
-		throw std::runtime_error("Error on socketpair creation");
-	write(_sockFd[1], "*", 1);
 	_stockFd = dup(_fileFd);
 	dup2(_sockFd[0], _fileFd);
 }
@@ -112,9 +109,15 @@ void FileFd::restoreFd()
 	dup2(_sockFd[0], _fileFd);
 }
 
-void FileFd::closeAllOwnedFileFd()
+void FileFd::initSockFd()
 {
-	close(_stockFd);
+	if (socketpair(AF_UNIX, SOCK_STREAM, 0, _sockFd) == -1)
+		throw std::runtime_error("Error on socketpair creation");
+	write(_sockFd[1], "*", 1);
+}
+
+void FileFd::closeSockFd()
+{
 	close(_sockFd[0]);
 	close(_sockFd[1]);
 }

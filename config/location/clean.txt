@@ -2,5 +2,6 @@ location / | root ./site/clean | method GET POST DELETE
 location /css | root ./site/clean/css | method GET POST DELETE
 location /fonts/Metropolis | root ./site/clean/fonts/Metropolis | method GET POST DELETE
 location /fonts | root ./site/clean/fonts | method GET POST DELETE
+location /fonts/Metropolis | root ./site/clean/fonts/Metropolis | method GET POST DELETE
 location /images | root ./site/clean/images | method GET POST DELETE
 location /js | root ./site/clean/js | method GET POST DELETE
