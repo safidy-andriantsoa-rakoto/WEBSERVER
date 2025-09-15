@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 11:40:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 14:55:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,19 +267,30 @@ int Server:: processRequest(std::string const & clientRequest, uint32_t & opt, s
 	return fileFd;
 }
 
-//Work on variouse file opening error
-//Case of directory : search for index.html, use default html page to put all the directory listing if auto index is on
 int Server::get_request(Request & request)
 {
 	int			fd;
 	std::string	filePath;
+	DIR*		dir;
 
 	filePath = request.getRequestTarget();
+	dir = opendir(filePath.c_str());
+	if (!dir && errno == EACCES)
+		throw ErrorExcept(403, "Directory forbidden");
+	if (dir && request.getAutoIdx() == true)
+		throw DirExcept(404, dir, filePath, "Listing directory");
+	if (dir && request.getAutoIdx() == false)
+	{
+		filePath += "/index.html";
+		closedir(dir);
+	}		
 	fd = open(filePath.c_str(), O_RDONLY);
 	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
 	if (fd == -1)
 	{
-		perror("Open");
+		perror("Open file");
+		if (errno == EACCES)
+			throw ErrorExcept(403, "No permission for file");
 		throw ErrorExcept(404, "File can't be opened");
 	}
 	return fd;
@@ -308,12 +319,12 @@ void Server::simpleInit(std::string const & servPath, std::string const & locati
 
 vectLocationIt	Server::findLongestMatch(std::string const & text, vectLocation & location)
 {
-	std::string		compare;
-	vectLocationIt	itFinal;
-	stringVect		vect1;
-	stringVect		vect2;
 	int				nbMatch = 0;
 	int				nbMatchMax = 0;
+	std::string		compare;
+	stringVect		vect1;
+	stringVect		vect2;
+	vectLocationIt	itFinal;
 
 	vect1 = splitString(text, "/");
 	itFinal = location.begin();

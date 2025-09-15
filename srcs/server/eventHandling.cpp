@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 10:24:44 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/15 11:58:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		if ((*it).getResponse().getRespCategory() != STD_RSP)
 			std::cout << "Sending redir or error response" << std::endl;
 		send_value(fd, responseString);
-		epoll.epoll_update_event(fd, EPOLLIN);
+		epoll.epoll_update_event(fd, EPOLLIN); //Do not change if sending get_request is still ongoing
 	}
 	else
 	{
@@ -97,7 +97,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		int	fdClient;
 
 		(*it).manageFd();
-		while ((bytesRead = read((*it).getFileFd(), buf, _BUFFER)) > 0)
+		while ((bytesRead = read((*it).getFileFd(), buf, _BUFFER)) > 0) //Replace
 			buffer.append(buf, bytesRead);
 		(*it).setBuffer(buffer);
 		(*it).restoreFd();
@@ -106,9 +106,10 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		/*Change client to EPOLLOUT*/
 		fdClient = (*it).getClientFd();
 		epoll.epoll_update_event(fdClient, EPOLLOUT);
-		VClientIt itCli = findFdInClient(handler.getVectClient(), fdClient);
+		VClientIt itCli = findFdInClient(handler.getVectClient(), fdClient); //When sending the first chunk for get
 		(*itCli).setFileFD((*it));
 		/**************************** */
+		//Close when everything is done for get request
 		epoll.epoll_clean(fd);
 		close((*it).getStockFd());
 		handler.removeFileFd(i);

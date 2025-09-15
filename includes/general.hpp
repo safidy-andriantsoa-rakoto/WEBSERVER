@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 10:07:14 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/15 14:35:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,3 +94,6 @@ bool        checkWriteConfig(const std::vector<std::string>& lines, const std::s
 bool        checkNumberAllContent(std::vector<std::string> &file);
 
 std::vector<std::string> getContentFile(std::string _path);
+
+// dirListing
+stringVect	listingDirectory(DIR* dir, std::string const & path);

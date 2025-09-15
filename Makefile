@@ -14,7 +14,7 @@ REQ_DIR = Request/
 REQ = Request.cpp
 
 RESP_DIR = Response/
-RESP = Response.cpp AExcept.cpp ErrorExcept.cpp RedirExcept.cpp
+RESP = Response.cpp AExcept.cpp ErrorExcept.cpp RedirExcept.cpp DirExcept.cpp
 
 EPOL_DIR = Epoll/
 EPOL = EpollCreation.cpp
@@ -65,7 +65,8 @@ CGI_DIR = cgi/
 CGI = cgi.cpp
 
 UTILS_DIR = utils/
-UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp units.cpp conversion.cpp searchingUtils.cpp
+UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp \
+		units.cpp conversion.cpp searchingUtils.cpp dirListing.cpp
 
 SERV_DIR = server/
 SERV = launchServer.cpp parseConfig.cpp eventHandling.cpp initServer.cpp

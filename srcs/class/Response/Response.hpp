@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 09:52:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 14:55:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "general.hpp"
 #include "ErrorExcept.hpp"
 #include "RedirExcept.hpp"
+#include "DirExcept.hpp"
 
 class Response
 {
