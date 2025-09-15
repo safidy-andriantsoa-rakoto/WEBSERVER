@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 15:19:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 20:03:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,6 @@ void	Response::generateStandardResponse(std::string const &  body)
 	setStatusLine();
 	_body = body;
 	_header["Content-Length"] = convertIntToString(_body.size() + 2);
-	std::cout << "\n\033[040m aty["<< _type <<"]\033[0m\n" << std::endl;
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
 }

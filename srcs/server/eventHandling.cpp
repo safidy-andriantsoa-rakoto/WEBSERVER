@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 15:56:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/15 20:08:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,12 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 
 		if ((*it).getResponse().getRespCategory() == STD_RSP)
 		{
-			if ((*it).getFileFD().getStatus() == OP_ONGOING)
-			{
-				statusCode = 206;
-				//Add new header for sending content in chunk;
-			}
-			else
+			// if ((*it).getFileFD().getStatus() == OP_ONGOING)
+			// {
+			// 	statusCode = 206;
+			// 	//Add new header for sending content in chunk;
+			// }
+			// else
 				statusCode = 200;
 			(*it).setStandardResponse(statusCode);
 			std::cout << "Sending standard response" << std::endl;
@@ -105,6 +105,9 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		bytesRead = read((*it).getFileFd(), buf, _BUFFER);
 		if (bytesRead <= 0)
 		{
+			std::cout << "Nothing to read\n";
+			(*it).restoreFd();
+			fd = (*it).getFileFd();
 			epoll.epoll_clean(fd);
 			close((*it).getStockFd());
 			handler.removeFileFd(i);
