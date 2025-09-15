@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 13:03:47 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/12 08:25:40 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		std::string	responseString;
 		response.generateStandardResponse(client.getFileFD().getBuffer());
 		responseString = response.getFullResponse();
-		send_value(fd, responseString);
+		send_value(fd, responseString, );
+		
 		epoll.epoll_update_event(fd, EPOLLIN);
 	}
 	else

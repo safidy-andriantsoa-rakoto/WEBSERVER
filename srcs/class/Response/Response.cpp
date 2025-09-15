@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 14:23:20 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/11 14:19:17 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void	Response::generateStandardResponse(std::string const &  body)
 	setStatusLine();
 	_body = body;
 	_header["Content-Length"] = convertIntToString(_body.size() + 2);
+	std::cout << "\n\033[040m aty["<< _type <<"]\033[0m\n" << std::endl;
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
 }
