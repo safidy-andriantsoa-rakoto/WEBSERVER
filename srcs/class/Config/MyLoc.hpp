@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyLoc.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 15:54:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 22:33:14 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ class MyLoc : public ALocation
 		~MyLoc();
 
 		virtual void	parseLocation(std::string const & filePath);
+		virtual void	parseLocation(const stringVect &file);
+		bool getStatus();
 };
 
 #endif

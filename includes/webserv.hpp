@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 13:31:08 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/16 21:47:37 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,6 @@ void launchServer(Handler &handler);
 vectServer parseConfigFile();
 
 vectServer getServer(stringVect file);
+vectLocation getLocation(size_t countLocation);
 
 #endif

@@ -6,12 +6,13 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 11:10:11 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/16 22:35:13 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MyConf.hpp"
 #include "AConfig.hpp"
+#include "webserv.hpp"
 
 MyConf::MyConf()
 {
@@ -122,6 +123,8 @@ void MyConf::displayConfig() const
 
 void MyConf::parseConfig(stringVect file)
 {
+	s_errPage _errPage;
+	int countLoc(0);
 	static size_t currentBlock = 0;
 	static intVect index = containsExactWordInVector(file, "server");
 
@@ -139,6 +142,8 @@ void MyConf::parseConfig(stringVect file)
 		std::istringstream iss(file[i]);
 		std::string name, value;
 		iss >> name;
+		if (name == "host")
+			_host = value;
 		while (std::getline(iss, value))
 		{
 			std::string word;
@@ -146,69 +151,100 @@ void MyConf::parseConfig(stringVect file)
 			while (s >> word)
 			{
 				if (name == "port")
-					_port = atoi(value.c_str());
-				if (name == "host")
-					_host = value;
+					_port = atoi(word.c_str());
 				if (name == "server_names")
-					_serverName.push_back(value);
+					_serverName.push_back(word);
 				if (name == "size")
-					_size.push_back(value);
+					_size.push_back(word);
 				if (name == "error_page")
-					_errPage.strError.push_back(value);
+					_errPage.strError.push_back(word);
 			}
+			if(name == "location")
+					countLoc++;
 		}
 
-		// std::cout << _errPage.strError.size() <<std::endl;
 		// if(_size[1] != "MB")
 
-		// // while(iss >> name >> value)
-		// // {
-		// // 	if(name == "port")
-		// // 		_port = atoi(value.c_str());
-		// // 	// if(name == "host")
-		// // 	// 	_host = value;
-		// // }
+		// while(iss >> name >> value)
+		// {
+		// 	if(name == "port")
+		// 		_port = atoi(value.c_str());
+		// 	// if(name == "host")
+		// 	// 	_host = value;
+		// }
 	}
+	std::cout << "count location " << countLoc << std::endl;
+	int checkIndex (0);
+	// std::cout << _errPage.strError.size() << std::endl;
 	std::cout << "size = " << _errPage.strError.size() << std::endl;
 	size_t i(0);
-	while(i < _errPage.strError.size())
+	for (size_t i = 0; i < _errPage.strError.size(); i++)
+	{
+		std::cout << "str error = " << _errPage.strError[i] << std::endl;
+	}
+	while (i < _errPage.strError.size())
 	{
 		std::string str = _errPage.strError[i];
-		size_t j(0);
-		while (str[j] != '\0' && isdigit(str[j]))
-			j++;
-	 	_errPage.listError.push_back(str);
-		
+		bool isAllDigit = true;
+		for (size_t j = 0; j < str.size(); j++)
+		{
+			if (!isdigit(str[j]))
+			{
+				isAllDigit = false;
+				break;
+			}
+		}
+		std::cout << "all digit = " << isAllDigit << std::endl;
+		if (isAllDigit && !str.empty())
+		{
+			_errPage.listError.push_back(str);
+			std::cout << _errPage.listError[i] << std::endl;
+		}
+		else if (!isAllDigit)
+		{
+			checkIndex = i;
+			break;
+		}
 		i++;
 	}
-	// for (size_t i = 0; i < _errPage.strError.size(); ++i)
+	i = checkIndex;
+	std::cout << "size the error = " << _errPage.strError.size() << std::endl;
+	std::cout << "index the = " << i << std::endl;
+	if (i > 0 && ((_errPage.strError.size() - i) > 1))
+	{
+		std::cout << "error of config " << std::endl;
+		_checkStats = false;
+		return;
+	}
+	else if ( i > 0 && i < _errPage.strError.size())
+	{
+		_errPage.filePath = _errPage.strError[i];
+		std::cout << "file = " << _errPage.filePath << std::endl;
+	}
+	// for (size_t i = 0; i < _errPage.listError.size(); i++)
 	// {
-	// 	std::string str = _errPage.strError[i];
-	// 	size_t j(0);
-	// 	while (str[j] != '\0')
-	// 	{
-	// 		std::cout << "C= " << str[j] << " " << std::endl;
-	// 		j++;
-	// 	}
-	// 	// while (str[j] && isdigit(str[j]))
-	// 	// {
-	// 	// 	std::cout << "aaaa= " <<  str[j] << " " << std::endl;
-	// 	// 	j++;
-	// 	// }
-	// 	// _errPage.listError.push_back(str);
+	// 	std::cout << " list de server(" << i  << ")"<< _errPage.listError[i] << " " << std::endl;
 	// }
+	// std::cout << "liste error 1 = " << _errPage.listError[0] << std::endl;
 	// std::cout << _port << std::endl;
 	// for (size_t i = 0; i < _serverName.size(); i++)
 	// {
 	// 	std::cout <<  i << " = "<< _serverName[i] << " ";
 	// }
 	// std::cout << "error page list = " << _errPage.listError.size() <<std::endl;
-	// for (size_t i = 0; i < _errPage.listError.size(); i++)
-	// {
-	// 	std::cout << " list de server(" << i  << ")"<<_errPage.listError[i] << " " << std::endl;
-	// }
 	// std::cout << std::endl;
 
+	_location = getLocation(countLoc);
+	size_t k(0);
+	while(i < _location.size())
+	{
+		_location[i].parseLocation(file);
+		if(_location[i].getStatus())
+			i++;
+		else
+			return ;
+	}
 	_checkStats = true;
 	currentBlock++;
+	std::cout << "--------------------------------------" << std::endl;
 }

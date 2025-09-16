@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyLoc.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 15:56:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 22:50:04 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,27 @@ void MyLoc::parseLocation(std::string const & line)
             _index = elt;
     }
 }
+
+bool MyLoc::getStatus()
+{
+	return (_checkStats);
+}
+
+void MyLoc::parseLocation(const stringVect & file)
+{
+    static intVect index = containsExactWordInVector(file, "location");
+    static size_t currentBlock = 0;
+    if (currentBlock >= index.size())
+		return;
+    size_t start = index[currentBlock];
+	size_t end;
+    if (currentBlock + 1 < index.size())
+		end = index[currentBlock + 1];
+	else
+		end = file.size();
+        _checkStats = true;
+	currentBlock++;
+}
+
+
 
