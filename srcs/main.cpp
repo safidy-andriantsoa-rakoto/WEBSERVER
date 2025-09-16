@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 11:41:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 15:38:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,22 @@
 
 int main()
 {
-	// Handler handler;
+	Handler handler;
 
-	// try
-	// {
-	// 	Response::initResponseUtils(STAT_PATH, ERR_PATH);
-	// 	Mime::initMapMime(MIME_PATH);
-	// 	FileFd::initSockFd();
-	// 	vectServer	allServer = parseConfigFile();
-	// 	handler.setVectServer(allServer);
-	// 	launchServer(handler);
-	// }
-	// catch(const std::exception & e)
-	// {
-	// 	std::cerr << e.what() << std::endl;
-	// 	handler.closeAllFd();
-	// }
+	try
+	{
+		Response::initResponseUtils(STAT_PATH, ERR_PATH);
+		Mime::initMapMime(MIME_PATH);
+		FileFd::initSockFd();
+		vectServer	allServer = parseConfigFile();
+		handler.setVectServer(allServer);
+		launchServer(handler);
+	}
+	catch(const std::exception & e)
+	{
+		std::cerr << e.what() << std::endl;
+		handler.closeAllFd();
+	}
 	// DIR *dir = opendir("./srcs/class");
 	// if (!dir)
 	// {
@@ -37,15 +37,5 @@ int main()
 	// 	return 0;
 	// }
 	// stringVect	vect = listingDirectory(dir, "./srcs/class");
-	try
-	{
-		std::string test = readFileToString("./test.txt");
-		chunkingString(test);
-		std::cout << test << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
 	return 0;
 }

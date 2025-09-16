@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 10:48:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 16:00:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,11 +125,11 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		(*it).setBuffer(buffer);
 		(*it).restoreFd();
 		fd = (*it).getFileFd();
-		std::cout << "Fd = " << fd << std::endl;
 		fdClient = (*it).getClientFd();
+		std::cout << "Fd = " << fd  << "fd client = " << fdClient << std::endl;
 		VClientIt itCli = findFdInClient(handler.getVectClient(), fdClient);
 		(*itCli).setFileFD((*it));
-		if ((*it).getStatus() == OP_OPEN || (*it).getStatus() == OP_ONCE)
+		if ((*it).getStatus() != OP_CLOSE)
 		{
 			epoll.epoll_update_event(fdClient, EPOLLOUT);
 			if ((*it).getStatus() == OP_OPEN)

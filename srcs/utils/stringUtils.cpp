@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 11:49:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 15:44:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,19 +82,20 @@ void	chunkingString(std::string & text)
 	std::string	sizeHead;
 	std::string	crlf = "\r\n";
 
-	while(pos != std::string::npos)
+	while(1)
 	{
 		startPos = pos;
 		pos = text.find("\n", pos);
-		std::cout << "start = [" << text[startPos] << "] at " << startPos << std::endl;
-		std::cout << "pos = [" << text[pos] << "] at " << pos << std::endl;
-		size = pos - startPos + 1;
+		if (pos == std::string::npos)
+			break;
+		size = pos - startPos;
 		sizeHead = convertIntToString(size) + crlf;
 		text.insert(startPos, sizeHead);
 		pos += sizeHead.size();
 		text.insert(pos, "\r");
-		pos++;
+		pos += 2;
 	}
+	text.insert(text.size() - 1, "0\r\n");
 }
 
 

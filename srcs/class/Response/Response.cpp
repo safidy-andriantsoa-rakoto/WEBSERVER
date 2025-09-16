@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 09:18:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 15:40:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,10 +122,11 @@ void	Response::generateStandardResponse(std::string const &  body)
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::generateChunkedResponse(std::string const &body)
+void Response::generateChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;
+	chunkingString(_body);
 	_header["Content-Type"] = "application/octet-stream";
 	_header["Transfer-Encoding"] = "chunked";
 	_header["Connection"] = "keep-alive";

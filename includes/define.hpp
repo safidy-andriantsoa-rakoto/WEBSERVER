@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 11:16:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 15:42:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 #endif
 
 #ifndef _BUFFER
-#define _BUFFER 500 
+#define _BUFFER 700 
 #endif
 
 #define MAX_EVENT 2042
