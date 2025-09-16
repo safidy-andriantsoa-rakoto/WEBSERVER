@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 08:00:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 10:24:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,9 @@ void    launchServer(Handler & handler);
 
 //Waiting for real parser
 vectServer	parseConfigFile();
+
+//HandleUtils
+size_t	getFileSize(std::string const & path);
+void	closeFileEvent(Handler & handler, int const & i, EpollCreation & epoll);
 
 #endif

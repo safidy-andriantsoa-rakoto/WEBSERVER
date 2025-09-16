@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/15 10:07:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 11:05:54 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,12 @@ void Client::setStandardResponse(int const & statusCode)
 	_response.generateStandardResponse(_fileFD.getBuffer());
 }
 
+void Client::setChunkedResponse(int const &statusCode)
+{	
+	_response.setStatusCode(statusCode);
+	_response.generateChunkedResponse(_fileFD.getBuffer());
+}
+
 void Client::ClientRequest()
 {
 	char response[_BUFFER];
@@ -73,7 +79,7 @@ void Client::ClientRequest()
 		this->_connect = false;
 	if (_respStatus == -1)
 		throw RecvError();
-	this->_clientRequest = response;
+	this->_clientRequest = std::string(response, _respStatus);
 }
 
 std::string Client::getClientRequest() const
@@ -101,7 +107,7 @@ void Client::linkClientAndFileFd(int const &fd, int const &fdCli, std::string co
 	_fileFD.setupFd();
 }
 
-Response Client::getResponse() const
+Response & Client::getResponse()
 {
 	return (this->_response);
 }
@@ -111,7 +117,7 @@ void Client::updateResponseStatus(int const &stat)
 	_response.setRespCategory(stat);
 }
 
-FileFd Client::getFileFD() const
+FileFd & Client::getFileFD()
 {
 	return (this->_fileFD);
 }

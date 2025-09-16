@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 11:36:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 11:49:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,29 @@ void	replaceString(std::string & text, std::string const & replaceText, std::str
 	pos = text.find(findText);
 	text.erase(pos, findText.size());
 	text.insert(pos, replaceText);
+}
+
+void	chunkingString(std::string & text)
+{
+	size_t		pos = 0;
+	size_t		startPos;
+	size_t		size;
+	std::string	sizeHead;
+	std::string	crlf = "\r\n";
+
+	while(pos != std::string::npos)
+	{
+		startPos = pos;
+		pos = text.find("\n", pos);
+		std::cout << "start = [" << text[startPos] << "] at " << startPos << std::endl;
+		std::cout << "pos = [" << text[pos] << "] at " << pos << std::endl;
+		size = pos - startPos + 1;
+		sizeHead = convertIntToString(size) + crlf;
+		text.insert(startPos, sizeHead);
+		pos += sizeHead.size();
+		text.insert(pos, "\r");
+		pos++;
+	}
 }
 
 

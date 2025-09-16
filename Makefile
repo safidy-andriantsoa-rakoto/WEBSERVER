@@ -66,7 +66,7 @@ CGI = cgi.cpp
 
 UTILS_DIR = utils/
 UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp \
-		units.cpp conversion.cpp searchingUtils.cpp dirListing.cpp
+		units.cpp conversion.cpp searchingUtils.cpp dirListing.cpp handleUtils.cpp
 
 SERV_DIR = server/
 SERV = launchServer.cpp parseConfig.cpp eventHandling.cpp initServer.cpp

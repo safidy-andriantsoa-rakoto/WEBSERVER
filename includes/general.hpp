@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 14:35:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 11:39:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,6 @@
 #include "typedef.hpp"
 #include "define.hpp"
 
-// Error handling
-void	generateErrorResponse(int & fd, int const & statusCode);
-
 //CGI
 void        execCgi(std::string const & path, char **envp, int & pid, int & status, int & fd);
 int         callCgi(char const **argv, char **envp);
@@ -68,6 +65,7 @@ stringVect	splitString(std::string const & target, std::string const & sep);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
 std::string	checkLimitSize(std::string const & a, std::string const & b);
+void	    chunkingString(std::string & text);
 
     //Conversion
 std::string convertIntToString(ssize_t const & n);

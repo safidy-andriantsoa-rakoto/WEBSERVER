@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/15 10:00:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 09:20:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,17 @@ class Client : public Server
 		std::string getClientRequest() const;
 		bool        getConnexionStat();
 
-		FileFd      getFileFD() const;
+		FileFd &    getFileFD();
 		void        setFileFD(const FileFd &fileFd);
 
 		void		linkClientAndFileFd(int const &fd, int const &fdCli, std::string const &filePath);
 
-		Response	getResponse() const;
+		Response &	getResponse();
 		void		updateResponseStatus(int const & stat);
 
 		void		setCatchedResponse(AExcept & e);
 		void		setStandardResponse(int const & statusCode);
+		void		setChunkedResponse(int const & statusCode);
 
 		void        ClientRequest();
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 20:03:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/16 09:18:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,11 @@ void Response::setRespCategory(int const &category)
 	_respCategory = category;
 }
 
+void Response::addHeader(std::string const &header, std::string const &content)
+{
+	_header[header] = content;
+}
+
 int Response::getRespCategory() const
 {
     return _respCategory;
@@ -114,6 +119,15 @@ void	Response::generateStandardResponse(std::string const &  body)
 	_body = body;
 	_header["Content-Length"] = convertIntToString(_body.size() + 2);
 	_header["Content-Type"] = _type;
+	_header["Connection"] = "keep-alive";
+}
+
+void Response::generateChunkedResponse(std::string const &body)
+{
+	setStatusLine();
+	_body = body;
+	_header["Content-Type"] = "application/octet-stream";
+	_header["Transfer-Encoding"] = "chunked";
 	_header["Connection"] = "keep-alive";
 }
 
