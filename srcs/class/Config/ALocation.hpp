@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 22:33:52 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/17 10:00:15 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,16 @@ class ALocation
 
 		stringVect _autoindex;
 		stringVect _location;
+		std::string _locations;
 		stringVect _root;
 		stringVect _method;
 		stringVect _redirect;
 		stringVect _index;
+		// std::string _srciptFileName a voir
 		bool _checkStats;
 
 	public:
-		virtual	~ALocation(){};
+		virtual	~ALocation();
 
 		std::string	getAutoindex() const;
 		std::string	getLocation() const;
@@ -38,7 +40,7 @@ class ALocation
 		stringVect  getIndex() const;
 
         virtual void	parseLocation(std::string const & locationString) = 0;
-		  virtual void	parseLocation(const stringVect &file);
+		virtual void	parseLocation(const stringVect &file) = 0;
 
 		void			displayLocation() const;
 	

@@ -6,14 +6,14 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 22:50:04 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/17 10:00:22 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MyLoc.hpp"
 #include "ALocation.hpp"
 
-MyLoc::MyLoc(){}
+MyLoc::MyLoc() {}
 
 MyLoc::MyLoc(MyLoc const &other)
 {
@@ -34,16 +34,16 @@ MyLoc &MyLoc::operator=(MyLoc const &other)
     return *this;
 }
 
-MyLoc::~MyLoc(){}
+MyLoc::~MyLoc() {}
 
-void MyLoc::parseLocation(std::string const & line)
+void MyLoc::parseLocation(std::string const &line)
 {
-    stringVect  attr;
-    stringVect  elt;
+    stringVect attr;
+    stringVect elt;
     std::string topic;
 
     attr = splitString(line, " | ");
-    for(stringVectIt it = attr.begin(); it != attr.end(); it++)
+    for (stringVectIt it = attr.begin(); it != attr.end(); it++)
     {
         elt = splitString(*it, " ");
         topic = elt[0];
@@ -65,24 +65,58 @@ void MyLoc::parseLocation(std::string const & line)
 
 bool MyLoc::getStatus()
 {
-	return (_checkStats);
+    return (_checkStats);
 }
 
-void MyLoc::parseLocation(const stringVect & file)
+void MyLoc::parseLocation(const stringVect &file)
 {
     static intVect index = containsExactWordInVector(file, "location");
     static size_t currentBlock = 0;
     if (currentBlock >= index.size())
-		return;
+        return;
     size_t start = index[currentBlock];
-	size_t end;
+    size_t end;
     if (currentBlock + 1 < index.size())
-		end = index[currentBlock + 1];
-	else
-		end = file.size();
-        _checkStats = true;
-	currentBlock++;
+        end = index[currentBlock + 1];
+    else
+        end = file.size();
+    std::cout << "file[start] = " << file[start] << std::endl;
+    for (size_t i = start; i < end; ++i)
+    {
+        std::istringstream iss(file[i]);
+        std::string name, value;
+        iss >> name;
+        while (std::getline(iss, value))
+        {
+            if (name == "location")
+            {
+                stringVect tab = splitString(value, " ");
+                _locations = tab[0];
+            }
+            if(name == "root")
+                _root.push_back(value);
+            if(name == "autoindex")
+                _autoindex.push_back(value);
+            std::istringstream s(value);
+            std::string word;
+            while(s >> word)
+            {
+                if(name == "method")
+                    _method.push_back(word);
+                if(name == "redirect")
+                    _redirect.push_back(word);
+                // if(name == "SCRIPT_FILENAME")
+            }
+        }
+    }
+    std::cout << "location =  " << _locations << " size = " << _location.size() << std::endl;
+    // // for(size_t i = 0; i < _root.size(); i++)
+    // // {
+    //     if(!_root.empty())
+    //          std::cout << "root the = " << _root[0] << std::endl;
+    //     std::cout << "is empty " << std::endl;
+    // // }
+    std::cout << "root = " << _root.size() << std::endl;
+    currentBlock++;
+    _checkStats = true;
 }
-
-
-

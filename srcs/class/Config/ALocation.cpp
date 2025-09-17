@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ALocation.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 11:23:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 07:16:00 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,3 +55,5 @@ void ALocation::displayLocation() const
         displayStringVect(_index, " index : ");
     std::cout << "} \n";
 }
+
+ALocation::~ALocation(){}

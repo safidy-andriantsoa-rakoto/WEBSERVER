@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stringUtils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/25 11:36:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 08:28:56 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

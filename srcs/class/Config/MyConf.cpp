@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 22:35:13 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/17 07:27:32 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,16 +234,17 @@ void MyConf::parseConfig(stringVect file)
 	// std::cout << "error page list = " << _errPage.listError.size() <<std::endl;
 	// std::cout << std::endl;
 
-	_location = getLocation(countLoc);
 	size_t k(0);
-	while(i < _location.size())
+	_location = getLocation(countLoc);
+	while(k < _location.size())
 	{
-		_location[i].parseLocation(file);
-		if(_location[i].getStatus())
-			i++;
+		_location[k].parseLocation(file);
+		if(_location[k].getStatus())
+			k++;
 		else
 			return ;
 	}
+	std::cout << "size of pars location = "  << _location.size() << std::endl;
 	_checkStats = true;
 	currentBlock++;
 	std::cout << "--------------------------------------" << std::endl;
