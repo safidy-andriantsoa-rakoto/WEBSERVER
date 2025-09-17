@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/17 10:28:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/17 11:26:40 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 class Client : public Server
 {
 	private:
+		Request		request;
+	
 		int			_receivedSize;
 		int			_client_stat;
 		int 		_clientFD;
@@ -34,9 +36,12 @@ class Client : public Server
 		
 		Client();
 
-		void		processRequestWithConfig(Request & request);
-		void		checkContentLength(Request & request);
-		void		buildRequestTarget(Request & request);
+		// void		processRequestWithConfig(Request & request);
+		void		processRequestWithConfig();
+		// void		checkContentLength(Request & request);
+		void		checkContentLength();
+		// void		buildRequestTarget(Request & request);
+		void		buildRequestTarget();
 		
 		void		processLocationOption(MyLoc const & location, Request & request);
 		void		checkMethodInLocation(stringVect & locationMethod, std::string const & method);

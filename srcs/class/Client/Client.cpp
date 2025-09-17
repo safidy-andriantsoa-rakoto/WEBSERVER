@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/17 10:27:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/17 11:27:28 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,13 +160,15 @@ const char *Client::RecvError::what() const throw()
 }
 
 
-void Client::processRequestWithConfig(Request & request)
+// void Client::processRequestWithConfig(Request & request)
+void Client::processRequestWithConfig()
 {
-	checkContentLength(request);
-	buildRequestTarget(request);
+	checkContentLength();
+	buildRequestTarget();
 }
 
-void Client::checkContentLength(Request &request)
+// void Client::checkContentLength(Request &request)
+void Client::checkContentLength()
 {
 	float		maxSize;
 	float		requestSize;
@@ -181,7 +183,8 @@ void Client::checkContentLength(Request &request)
 		throw ErrorExcept(413, "Size limit not respected");
 }
 
-void Client::buildRequestTarget(Request & request)
+// void Client::buildRequestTarget(Request & request)
+void Client::buildRequestTarget()
 {
 	vectLocationIt	it;
 	std::string		target;
@@ -261,7 +264,7 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 
 int Client::processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
 {
-	Request		request;
+	// Request		request;
 	int			fileFd;
 	Response	response;
     std::string responseString;
@@ -270,7 +273,8 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 
 	fileFd = -1;
 	request.parseRequest(clientRequest);
-	processRequestWithConfig(request);
+	// processRequestWithConfig(request);
+	processRequestWithConfig();
 	if (request.getMethod() == "GET")
 	{
 		fileFd = get_request(request);
@@ -280,7 +284,6 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	}
 	else if (request.getMethod() == "POST")
 	{
-		
 		std::cout << "		[POST]" << request.getMethod() << std::endl; // Calling post_request
 		// opt = EPOLLOUT;
 	}
