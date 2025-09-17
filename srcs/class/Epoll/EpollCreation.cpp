@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/16 15:53:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 08:23:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void EpollCreation::epoll_clean(int &clientFD)
         std::string error(strerror(errno));
         throw std::runtime_error("\033[31m[ERROR]~Epoll_ctl(clean):" + error + "\033[0m");
     }
+    std::cout << "\e[1;33mEpoll_clean : " << clientFD << "\e[0m" << std::endl;
     if (clientFD > -1)
         close(clientFD);
 }

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/16 11:05:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 10:09:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,12 @@ void Client::setStandardResponse(int const & statusCode)
 void Client::setChunkedResponse(int const &statusCode)
 {	
 	_response.setStatusCode(statusCode);
-	_response.generateChunkedResponse(_fileFD.getBuffer());
+	_response.generateChunkedResponse(_fileFD.getBuffer(), _fileFD.getStatus());
 }
 
 void Client::ClientRequest()
 {
-	char response[_BUFFER];
+	char response[_BUFFER_RECV];
 	int _respStatus = recv(this->get_clientFD(), response, sizeof(response), 0);
 	if (_respStatus == 0)
 		this->_connect = false;

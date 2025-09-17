@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 15:44:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 11:28:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,28 +74,39 @@ void	replaceString(std::string & text, std::string const & replaceText, std::str
 	text.insert(pos, replaceText);
 }
 
-void	chunkingString(std::string & text)
+// void	chunkingString(std::string & text)
+// {
+// 	size_t		pos = 0;
+// 	size_t		startPos;
+// 	size_t		size;
+// 	std::string	sizeHead;
+// 	std::string	crlf = "\r\n";
+
+// 	while(1)
+// 	{
+// 		startPos = pos;
+// 		pos = text.find("\n", pos);
+// 		if (pos == std::string::npos)
+// 			break;
+// 		size = pos - startPos;
+// 		sizeHead = convertIntToString(size) + crlf;
+// 		text.insert(startPos, sizeHead);
+// 		pos += sizeHead.size();
+// 		text.insert(pos, "\r");
+// 		pos += 2;
+// 	}
+// 	text.insert(text.size() - 1, "\r\n0\r\n\r\n");
+// }
+
+void	chunkingString(std::string & text, int const & status)
 {
-	size_t		pos = 0;
-	size_t		startPos;
-	size_t		size;
-	std::string	sizeHead;
-	std::string	crlf = "\r\n";
+	std::string			add;
+	std::stringstream	ss;
+	size_t				size = text.size();
 
-	while(1)
-	{
-		startPos = pos;
-		pos = text.find("\n", pos);
-		if (pos == std::string::npos)
-			break;
-		size = pos - startPos;
-		sizeHead = convertIntToString(size) + crlf;
-		text.insert(startPos, sizeHead);
-		pos += sizeHead.size();
-		text.insert(pos, "\r");
-		pos += 2;
-	}
-	text.insert(text.size() - 1, "0\r\n");
+	ss << std::hex << size;
+	ss >> add;
+	text.insert(0, add + "\r\n");
+	if (status == OP_CLOSE)
+		text += "\r\n0\r\n";
 }
-
-

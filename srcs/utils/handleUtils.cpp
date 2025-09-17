@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 10:23:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 09:38:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,4 @@ void	closeFileEvent(Handler & handler, int const & i, EpollCreation & epoll)
 	epoll.epoll_clean(fd);
 	close((*it).getStockFd());
 	handler.removeFileFd(i);
-	(*it).setStatus(OP_CLOSE);
 }

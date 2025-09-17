@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 15:38:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 10:53:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,16 @@ int main()
 	// 	return 0;
 	// }
 	// stringVect	vect = listingDirectory(dir, "./srcs/class");
+	// try
+	// {
+	// 	std::string test = readFileToString("./site/sample/favicon.ico");
+	// 	// chunkingString(test);
+	// 	std::cout << test << std::endl;
+	// }
+	// catch(const std::exception& e)
+	// {
+	// 	std::cerr << e.what() << '\n';
+	// }
+	
 	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 11:39:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 09:43:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ stringVect	splitString(std::string const & target, std::string const & sep);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
 std::string	checkLimitSize(std::string const & a, std::string const & b);
-void	    chunkingString(std::string & text);
+void	    chunkingString(std::string & text, int const & status);
 
     //Conversion
 std::string convertIntToString(ssize_t const & n);

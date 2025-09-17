@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 15:42:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 12:00:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,10 @@
 #endif
 
 #ifndef _BUFFER
-#define _BUFFER 700 
+#define _BUFFER 500 
 #endif
+
+#define _BUFFER_RECV 1024
 
 #define MAX_EVENT 2042
 
@@ -51,6 +53,7 @@ enum    e_operation
 {
     OP_ONCE,
     OP_OPEN,
+    OP_START,
     OP_ONGOING,
     OP_CLOSE
 };

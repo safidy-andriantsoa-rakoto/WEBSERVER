@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 15:40:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 10:59:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,11 @@ std::string Response::getFullResponse()
 	return _fullResponse;
 }
 
+std::string Response::getBody() const
+{
+    return _body;
+}
+
 void Response::setToDefaultErrorPage()
 {
 	std::string	replace;
@@ -117,19 +122,21 @@ void	Response::generateStandardResponse(std::string const &  body)
 {
 	setStatusLine();
 	_body = body;
+	_header.clear();
 	_header["Content-Length"] = convertIntToString(_body.size() + 2);
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::generateChunkedResponse(std::string const & body)
+void Response::generateChunkedResponse(std::string const & body, int const & status)
 {
 	setStatusLine();
 	_body = body;
-	chunkingString(_body);
-	_header["Content-Type"] = "application/octet-stream";
-	_header["Transfer-Encoding"] = "chunked";
+	chunkingString(_body, status);
+	_header.clear();
 	_header["Connection"] = "keep-alive";
+	_header["Content-Type"] = "image/x-icon";
+	_header["Transfer-Encoding"] = "chunked";
 }
 
 void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage)
