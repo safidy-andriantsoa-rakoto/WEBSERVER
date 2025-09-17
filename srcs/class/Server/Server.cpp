@@ -3,116 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 09:02:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 10:29:22 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
-//Process request data vs config file and throw exception if needed, redirection
-void Server::processRequestWithConfig(Request & request)
-{
-	checkContentLength(request);
-	buildRequestTarget(request);
-}
-
-void Server::checkContentLength(Request &request)
-{
-	float		maxSize;
-	float		requestSize;
-	stringMapIt	itFind;
-
-	itFind = request.getHeader().find("Content-Length");
-	if (itFind == request.getHeader().end())
-		return ;
-	maxSize = _config.getMaxSize();
-	requestSize = convertStringToFLoat(request.getHeader()["Content-Length"]);
-	if (requestSize > maxSize)
-		throw ErrorExcept(413, "Size limit not respected");
-}
-
-//From config file, build Request Target from the request URI
-//Index? Default file if directory
-void Server::buildRequestTarget(Request & request)
-{
-	vectLocationIt	it;
-	std::string		target;
-	vectLocation	loc;
-
-	target = request.getRequestTarget();
-	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
-	if (target == "/")
-	{
-		processLocationOption(_config.getClassLocation()[0], request);
-		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
-		std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
-		return ;
-	}
-	loc = _config.getClassLocation();
-	it = findLongestMatch(target, loc);
-	processLocationOption(*it, request);
-	std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
-	if ((*it).getLocation() != "/")
-		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
-	else
-		target = (*it).getRootDirectory() + target;
-	request.setRequestTarget(target);
-	std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
-}
-
-void Server::processLocationOption(MyLoc const & location, Request & request)
-{
-	stringVect	locationMethod;
-
-	locationMethod = location.getAvailableMethod();
-	processRedirection(location, request);
-	checkMethodInLocation(locationMethod, request.getMethod());
-}
-
-void Server::checkMethodInLocation(stringVect & locationMethod, std::string const & method)
-{
-	stringVectIt	it;
-
-	it = std::find(locationMethod.begin(), locationMethod.end(), method);
-	if (it == locationMethod.end())
-	{
-		if (method != "GET" && method != "POST" && method != "DELETE")
-			throw ErrorExcept(501, "Method not implemented");
-		else
-			throw ErrorExcept(405, "Method not allowed");
-	}
-}
-
-// Review redirection function
-void Server::processRedirection(MyLoc const & location, Request & request)
-{
-	std::string	oldUri;
-	std::string	newUri;
-	stringVect	redirect;
-	int			statusRedirect;
-
-	redirect = location.getRedirect();
-	if (!redirect.size())
-	{
-		// std::cout << "\033[31m<<<<<<NOOOO REDIRECTION>>>>>>\033[0m" << std::endl;
-		return ;
-	}
-	std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
-	redirect = location.getRedirect();
-	statusRedirect = convertStringToInt(redirect[0]);
-	newUri = redirect[1];
-	if (newUri.find("$uri") != std::string::npos)
-	{
-		oldUri = request.getRequestTarget();
-		oldUri.erase(oldUri.find(location.getLocation()), location.getLocation().size() + 1);
-		replaceString(newUri, oldUri, "$uri");
-	}
-	// std::cout << "Old = " << oldUri << " => " << newUri << std::endl;
-	throw RedirExcept(statusRedirect, "Redirection", newUri);
-}
 
 Server::Server(){}
 
@@ -237,35 +135,6 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-int Server:: processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
-{
-	Request		request;
-	int			fileFd;
-	Response	response;
-    std::string responseString;
-	t_errPage	errPage;
-	std::string	type;
-
-	fileFd = -1;
-	request.parseRequest(clientRequest);
-	processRequestWithConfig(request);
-	if (request.getMethod() == "GET")
-	{
-		fileFd = get_request(request);
-		filePath = request.getRequestTarget();
-		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
-		opt = EPOLLIN;
-	}
-	else if (request.getMethod() == "POST")
-	{
-		std::cout << request.getMethod() << std::endl; // Calling post_request
-		opt = EPOLLOUT;
-	}
-	else if (request.getMethod() == "DELETE")
-		std::cout << request.getMethod() << std::endl; // Calling delete_request
-	return fileFd;
-}
-
 //Work on variouse file opening error
 //Case of directory
 int Server::get_request(Request & request)
@@ -303,39 +172,4 @@ void Server::simpleInit(std::string const & servPath, std::string const & locati
 	conf.parseConfig(servPath, locationPath);
 	_config = conf;
 	// _config.displayConfig();
-}
-
-vectLocationIt	Server::findLongestMatch(std::string const & text, vectLocation & location)
-{
-	std::string		compare;
-	vectLocationIt	itFinal;
-	stringVect		vect1;
-	stringVect		vect2;
-	int				nbMatch = 0;
-	int				nbMatchMax = 0;
-
-	vect1 = splitString(text, "/");
-	itFinal = location.begin();
-	for(vectLocationIt it = location.begin(); it != location.end(); it++)
-	{
-		compare = (*it).getLocation();
-		if (text == compare)
-			return it;
-		vect2 = splitString(compare, "/");
-		nbMatch = 0;
-		for(size_t i = 0; i < vect1.size() && i < vect2.size(); i++)
-		{
-			// std::cout << "Compare " << vect1[i] << " | " << vect2[i] << std::endl;
-			if (vect1[i] != vect2[i])
-				break;
-			nbMatch++;
-		}
-		if (nbMatch > nbMatchMax)
-		{
-			nbMatchMax = nbMatch;
-			itFinal = it;
-		}
-	}
-	// std::cout << "++++++++++++++++++ nbMatchMax = " << nbMatchMax << std::endl;
-	return itFinal;
 }

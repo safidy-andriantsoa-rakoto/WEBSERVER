@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 09:50:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 10:27:33 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include "../Server/Server.hpp"
 #include "../Client/Client.hpp"
 #include "../FileFd/FileFd.hpp"
+
+class Client;
 
 typedef std::vector<Client>     VClient;
 typedef VClient::iterator       VClientIt;

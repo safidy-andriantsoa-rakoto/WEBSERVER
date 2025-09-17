@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 08:31:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/17 10:28:53 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include "general.hpp"
 #include "typedef.hpp"
 #include "../Mime/Mime.hpp"
+// #include "Handler.hpp"
 
 class Server
 {
@@ -39,18 +40,6 @@ class Server
 		int		get_request(Request & request);
 		int		post_request(Request & request);
 		void	delete_request(Request & request);
-
-		//Server utils functionnality
-		void		processRequestWithConfig(Request & request);
-		void		checkContentLength(Request & request);
-
-		void		buildRequestTarget(Request & request);
-	
-		//Location requirements
-		void		processLocationOption(MyLoc const & location, Request & request);
-		void		checkMethodInLocation(stringVect & locationMethod, std::string const & method);
-		void		processRedirection(MyLoc const & location, Request & request);
-	
 
 	public:
 		Server();
@@ -71,13 +60,6 @@ class Server
         int 		wait_connexion_from_client();
         int 		accept_client_connexion();
         std::string get_client_request();
-
-		//Server main functionnality
-		int processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath);
-
-		//Server utils
-		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
-
 		//For testing only !!!!
 		void simpleInit(std::string const & servPath, std::string const & locationPath);
 

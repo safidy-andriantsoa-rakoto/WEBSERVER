@@ -167,11 +167,14 @@
 
   <script>
     // Configuration
-    const MAX_SIZE = 25 * 1024 * 1024; // 25 MB
+    const MAX_SIZE = 1024 * 1024 * 1024 * 1024; // 1 TB
     const ACCEPTED = [
       'image/jpeg','image/png','image/gif','image/webp','image/svg+xml',
       'application/pdf','application/zip','application/x-zip-compressed'
     ];
+    //   const ACCEPTED = [
+    //     '*/*'
+    // ];
     const ENDPOINT = '/upload'; // adaptez selon votre backend
 
     const $ = (s, p=document) => p.querySelector(s);
