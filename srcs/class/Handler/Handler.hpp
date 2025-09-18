@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 11:38:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:06:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ class Handler
 		void	removeClient(int const & index);
 		void	removeFileFd(int const & index);
 
-		void	closeAllFd();
+		void	cleanFdAndAlloc();
 
 		void	displayHandlerStat();
 };

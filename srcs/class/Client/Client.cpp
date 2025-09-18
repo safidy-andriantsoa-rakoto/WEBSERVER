@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/18 11:39:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:10:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 Client::Client(Server const & server, const int &_clientFD, bool is_connect) : 
 	Server(server),
 	_clientFD(_clientFD),
-	_connect(is_connect)
+	_connect(is_connect),
+	_fileFD(NULL)
 {
 	this->_clientRequest= "";
 	if (_clientFD < 0)
@@ -39,13 +40,17 @@ Client &Client::operator=(const Client &client)
 		this->_connect = client._connect;
 		this->_clientRequest = client._clientRequest;
 		this->_client_stat = client._client_stat;
-		this->_fileFD = client._fileFD;
 		this->_response = client._response;
+		this->_fileFD = client._fileFD;
 	}
 	return (*this);
 }
 
-Client::~Client(){}
+Client::~Client()
+{
+	if (_fileFD)
+		delete _fileFD;
+}
 
 int Client::get_clientFD() const
 {
@@ -68,7 +73,8 @@ void Client::setStandardResponse(int const & statusCode)
 void Client::setChunkedResponse(int const &statusCode)
 {	
 	_response.setStatusCode(statusCode);
-	_response.generateChunkedResponse(_fileFD->getBuffer(), _fileFD->getStatus());
+	if (_fileFD)
+		_response.generateChunkedResponse(_fileFD->getBuffer(), _fileFD->getStatus());
 }
 
 void Client::ClientRequest()
@@ -141,7 +147,7 @@ FileFd *Client::getFileFD()
 
 int Client::getFileStatus()
 {
-    return _fileFD->getStatus();
+	return _fileFD->getStatus();
 }
 
 const char *Client::Deconnect::what() const throw()

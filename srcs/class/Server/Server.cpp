@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 19:58:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 14:54:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,13 @@ void Server::checkContentLength(Request &request)
 	float		maxSize;
 	float		requestSize;
 	stringMapIt	itFind;
+	stringMap	header = request.getHeader();
 
-	itFind = request.getHeader().find("Content-Length");
-	if (itFind == request.getHeader().end())
+	itFind = header.find("Content-Length");
+	if (itFind == header.end())
 		return ;
 	maxSize = _config.getMaxSize();
-	requestSize = convertStringToFLoat(request.getHeader()["Content-Length"]);
+	requestSize = convertStringToFLoat((*itFind).second);
 	if (requestSize > maxSize)
 		throw ErrorExcept(413, "Size limit not respected");
 }

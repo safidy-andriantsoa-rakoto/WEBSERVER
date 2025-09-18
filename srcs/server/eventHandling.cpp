@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 11:37:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:30:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,15 +86,15 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		// 	std::cout << "Sending redir or error response" << std::endl;
 		// if (fileStatus != OP_ONCE)
 		// {
-				std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
+				// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
 		// }
 		send_value(fd, responseString);
 		if (fileStatus != OP_ONGOING && fileStatus != OP_START)
 			epoll.epoll_update_event(fd, EPOLLIN);
 		if (fileStatus == OP_START)
-		{
 			(*it).updateFileStatus(OP_ONGOING);
-		}
+		if (fileStatus == OP_ONCE)
+			delete (*it).getFileFD();
 	}
 	else
 	{
@@ -110,7 +110,6 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 
 	if (event & EPOLLIN) //Get request response
 	{
-		std::cout << "{HandleFileEvent : i = " << i << "} " << std::endl;
 		std::cout << "\033[43m FD EPOLLIN : " << (*it)->getClientFd() << "\033[0m" << std::endl;
 		int			fdClient;
 		int			bytesRead;
@@ -119,11 +118,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 
 		(*it)->manageFd();
 		if ((*it)->getStatus() == OP_START)
-		{
-			std::cout << "START => ONGOING\n";
-			return ;
-			(*it)->setStatus(OP_ONGOING);
-		}
+			return;
 		bytesRead = read((*it)->getFileFd(), buffer, _BUFFER);
 		std::cout << "BytesRead = " << bytesRead << std::endl;
 		if (bytesRead <= 0)

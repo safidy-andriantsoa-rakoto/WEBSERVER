@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 10:53:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:06:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int main()
 	catch(const std::exception & e)
 	{
 		std::cerr << e.what() << std::endl;
-		handler.closeAllFd();
+		handler.cleanFdAndAlloc();
 	}
 	// DIR *dir = opendir("./srcs/class");
 	// if (!dir)

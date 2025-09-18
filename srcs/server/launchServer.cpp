@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/18 10:43:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 14:24:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ void    launchServer(Handler & handler)
 	{
 		nb_event = epoll.epoll_wait_event();
 		index = 0;
+		handler.displayHandlerStat();
 		for (int i = 0; i < nb_event; i++)
 		{
-			handler.displayHandlerStat();
 			try
 			{
 				fdEvent = epoll.get_fdEvent(i);

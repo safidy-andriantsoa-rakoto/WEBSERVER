@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 11:38:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:29:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ std::string Handler::identifyFd(int const & fd, int & index)
 	index = 0;
 	for (vectFileFdIt itFile = _vectFileFd.begin(); itFile != _vectFileFd.end(); itFile++)
 	{
-		if ((*itFile)->getFileFd() == fd)
+		if ((*itFile) && (*itFile)->getFileFd() == fd)
 			return ("FILEFD");
 		index++;
 	}
@@ -119,34 +119,39 @@ void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli,
 
 // void Handler::addToVectFileFd(FileFd *fileFd)
 // {
-// 	fileFd->setFileType();
-// 	fileFd->setupFd();
-// 	std::cout << "Address = " << fileFd << std::endl;
-// 	_vectFileFd.push_back(fileFd);
+	// 	fileFd->setFileType();
+	// 	fileFd->setupFd();
+	// 	std::cout << "Address = " << fileFd << std::endl;
+	// 	_vectFileFd.push_back(fileFd);
 // }
 
 void Handler::removeClient(int const & index)
 {
 	std::cout << "REMOVING CLIENT " << index << std::endl;
-	_vectClient.erase(_vectClient.begin() + index);
+	VClientIt	it = _vectClient.begin() + index;
+	if ((*it).getFileFD())
+		delete (*it).getFileFD();
+	(*it).setFileFD(NULL);
+	_vectClient.erase(it);
 }
 
 void Handler::removeFileFd(int const & index)
 {
 	std::cout << "REMOVING FILE FD " << index << std::endl;
-	vectFileFdIt	it = _vectFileFd.begin() + index;
-	if (*it)
-		delete (*it);
-	_vectFileFd.erase(it);
+	_vectFileFd.erase(_vectFileFd.begin() + index);
 }
 
-void	Handler::closeAllFd()
+void	Handler::cleanFdAndAlloc()
 {
 	FileFd::closeSockFd();
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
 		close((*itVect).get_fdSocket());
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
+	{
 		close((*itCli).get_clientFD());
+		if ((*itCli).getFileFD())
+			delete (*itCli).getFileFD();
+	}
 	for (vectFileFdIt itFile = _vectFileFd.begin(); itFile != _vectFileFd.end(); itFile++)
 		close((*itFile)->getFileFd());
 }
@@ -167,7 +172,10 @@ void Handler::displayHandlerStat()
 	std::cout << std::endl;
 	std::cout << "Nb FileFd = " << _vectFileFd.size() << " [";
 	for(size_t i = 0; i < _vectFileFd.size(); i++)
-		std::cout << _vectFileFd[i]->getFileFd() << ":" << _vectFileFd[i] << " ";
+	{
+		if (_vectFileFd[i])
+			std::cout << _vectFileFd[i]->getFileFd() << ":" << _vectFileFd[i] << " ";
+	}
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;
 	std::cout << "========================================== \n";
