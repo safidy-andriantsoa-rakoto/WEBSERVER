@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 08:47:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 11:38:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ class Handler
 		void			setVectServer(vectServer & vectServer);
 
 		void	addToVectClient(Server const & server, int const & fd);
-		// void	addToVectFileFd(int const & fd, int const & fdCli, std::string const & filePath);
-		void	addToVectFileFd(FileFd *fileFd);
+		void	addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath);
+		// void	addToVectFileFd(FileFd *fileFd);
 
 		void	removeClient(int const & index);
 		void	removeFileFd(int const & index);

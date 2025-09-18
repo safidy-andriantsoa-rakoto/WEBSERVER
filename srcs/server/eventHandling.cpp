@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 08:49:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 11:37:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		(*it).ClientRequest();
 		client_request = (*it).getClientRequest();
 		std::string filePath;
-		std::cout << "-->> \033[40m	" << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
+		std::cout << "-->> \033[40m	{HandleClientEvent : i = " << i << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
 		if (client_request.size() == 0)
 			throw std::runtime_error("Remove client");
 		try
@@ -53,15 +53,15 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 			epoll.epoll_update_event(fd, EPOLLOUT);
 			return;
 		}
-		handler.addToVectFileFd(&(*it).getFileFD());
+		handler.addToVectFileFd(it, fdFile, fd, filePath);
 		epoll.epoll_control(opt, fdFile);
 	}
 	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
 	{
 		std::string	responseString;
 		int			statusCode;
-		int			responseCategory = (*it).getResponse().getRespCategory();
-		int			fileStatus = (*it).getFileFD().getStatus();
+		int			responseCategory = (*it).getCategoryResponse();
+		int			fileStatus = (*it).getFileStatus();
 		std::cout << "-->> \033[43mSending Response to client " << convertIntToString(fileStatus) << "\033[0m" << std::endl;
 
 		if (responseCategory == STD_RSP)
@@ -79,9 +79,9 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 			}
 		}
 		if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
-			responseString = (*it).getResponse().getBody() + "\r\n";
+			responseString = (*it).getBodyResponse() + "\r\n";
 		else
-			responseString = (*it).getResponse().getFullResponse();
+			responseString = (*it).getFullResponse();
 		// if (responseCategory != STD_RSP)
 		// 	std::cout << "Sending redir or error response" << std::endl;
 		// if (fileStatus != OP_ONCE)
@@ -91,6 +91,10 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		send_value(fd, responseString);
 		if (fileStatus != OP_ONGOING && fileStatus != OP_START)
 			epoll.epoll_update_event(fd, EPOLLIN);
+		if (fileStatus == OP_START)
+		{
+			(*it).updateFileStatus(OP_ONGOING);
+		}
 	}
 	else
 	{
@@ -106,53 +110,47 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 
 	if (event & EPOLLIN) //Get request response
 	{
-		std::cout << "\033[43mFD EPOLLIN FOR FILE IO : " << (*it).getFilePath() << "\033[0m" << std::endl;
-		int			fd;
+		std::cout << "{HandleFileEvent : i = " << i << "} " << std::endl;
+		std::cout << "\033[43m FD EPOLLIN : " << (*it)->getClientFd() << "\033[0m" << std::endl;
 		int			fdClient;
 		int			bytesRead;
 		char		buffer[_BUFFER];
 		std::string	bufferString;
 
-		(*it).manageFd();
-		bytesRead = read((*it).getFileFd(), buffer, _BUFFER);
+		(*it)->manageFd();
+		if ((*it)->getStatus() == OP_START)
+		{
+			std::cout << "START => ONGOING\n";
+			return ;
+			(*it)->setStatus(OP_ONGOING);
+		}
+		bytesRead = read((*it)->getFileFd(), buffer, _BUFFER);
 		std::cout << "BytesRead = " << bytesRead << std::endl;
 		if (bytesRead <= 0)
 		{
 			std::cout << "Nothing left to read from the file\n";
-			fd = (*it).getFileFd();
-			fdClient = (*it).getClientFd();
-			VClientIt itCli = findFdInClient(handler.getVectClient(), fdClient);
-			(*it).setStatus(OP_CLOSE);
-			(*it).clearBuffer();
-			(*itCli).setFileFD((*it));
+			(*it)->setStatus(OP_CLOSE);
+			(*it)->clearBuffer();
 			closeFileEvent(handler, i, epoll);
 			return ;
 		}
-		if ((*it).getStatus() == OP_OPEN && getFileSize((*it).getFilePath()) <= static_cast<size_t>(bytesRead))
+		if ((*it)->getStatus() == OP_OPEN && getFileSize((*it)->getFilePath()) <= static_cast<size_t>(bytesRead))
 		{
 			std::cout << "File to OP_ONCE" << std::endl;
-			(*it).setStatus(OP_ONCE);
+			(*it)->setStatus(OP_ONCE);
 		}
 		bufferString.append(buffer, bytesRead);
-		(*it).setBuffer(bufferString);
-		(*it).restoreFd();
-		fd = (*it).getFileFd();
-		fdClient = (*it).getClientFd();
-		std::cout << "Fd = " << fd  << " from fd client = " << fdClient << std::endl;
-		VClientIt itCli = findFdInClient(handler.getVectClient(), fdClient);
-		if ((*it).getStatus() == OP_START)
+		(*it)->setBuffer(bufferString);
+		(*it)->restoreFd();
+		fdClient = (*it)->getClientFd();
+		std::cout << "Fd = " << (*it)->getFileFd() << " from fd client = " << fdClient << std::endl;
+		if ((*it)->getStatus() == OP_ONCE || (*it)->getStatus() == OP_OPEN)
 		{
-			std::cout << "START => ONGOING\n";
-			(*it).setStatus(OP_ONGOING);
-		}
-		if ((*it).getStatus() == OP_ONCE || (*it).getStatus() == OP_OPEN)
-		{
-			if ((*it).getStatus() == OP_OPEN)
-				(*it).setStatus(OP_START);
+			if ((*it)->getStatus() == OP_OPEN)
+				(*it)->setStatus(OP_START);
 			epoll.epoll_update_event(fdClient, EPOLLOUT);
 		}
-		(*itCli).setFileFD((*it));
-		if ((*it).getStatus() == OP_ONCE)
+		if ((*it)->getStatus() == OP_ONCE)
 			closeFileEvent(handler, i, epoll);
 	}
 	else if (event & EPOLLOUT)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 08:48:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 11:38:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,30 +107,37 @@ void Handler::addToVectClient(Server const & server, int const & fd)
 	_vectClient.push_back(Client(server, fd, true));
 }
 
-// void Handler::addToVectFileFd(int const & fd, int const & fdCli, std::string const & filePath)
-// {
-// 	FileFd fileFd(fd, fdCli, filePath);
-
-// 	fileFd.setFileType();
-// 	fileFd.setupFd();
-// 	_vectFileFd.push_back(fileFd);
-// }
-
-void Handler::addToVectFileFd(FileFd *fileFd)
+void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath)
 {
+	FileFd *fileFd = new FileFd(fd, fdCli, filePath);
+
 	fileFd->setFileType();
 	fileFd->setupFd();
+	(*it).setFileFD(fileFd);
 	_vectFileFd.push_back(fileFd);
 }
 
+// void Handler::addToVectFileFd(FileFd *fileFd)
+// {
+// 	fileFd->setFileType();
+// 	fileFd->setupFd();
+// 	std::cout << "Address = " << fileFd << std::endl;
+// 	_vectFileFd.push_back(fileFd);
+// }
+
 void Handler::removeClient(int const & index)
 {
+	std::cout << "REMOVING CLIENT " << index << std::endl;
 	_vectClient.erase(_vectClient.begin() + index);
 }
 
 void Handler::removeFileFd(int const & index)
 {
-	_vectFileFd.erase(_vectFileFd.begin() + index);
+	std::cout << "REMOVING FILE FD " << index << std::endl;
+	vectFileFdIt	it = _vectFileFd.begin() + index;
+	if (*it)
+		delete (*it);
+	_vectFileFd.erase(it);
 }
 
 void	Handler::closeAllFd()
@@ -155,12 +162,12 @@ void Handler::displayHandlerStat()
 	std::cout << std::endl;
 	std::cout << "Nb Client = " << _vectClient.size() << " [";
 	for(size_t i = 0; i < _vectClient.size(); i++)
-		std::cout << _vectClient[i].get_clientFD() << " ";
+		std::cout << _vectClient[i].get_clientFD() << ":" << _vectClient[i].getFileFD() << " ";
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;
 	std::cout << "Nb FileFd = " << _vectFileFd.size() << " [";
 	for(size_t i = 0; i < _vectFileFd.size(); i++)
-		std::cout << _vectFileFd[i]->getFileFd() << " ";
+		std::cout << _vectFileFd[i]->getFileFd() << ":" << _vectFileFd[i] << " ";
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;
 	std::cout << "========================================== \n";

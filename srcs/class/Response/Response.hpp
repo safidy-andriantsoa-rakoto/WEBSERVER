@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 10:09:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 09:24:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ class Response
 		int					getRespCategory() const;
 		std::string			getFullResponse();
 		std::string			getBody() const;
+
+		void				clearResponse();
 
         void				generateStandardResponse(std::string const & body);
 		void				generateChunkedResponse(std::string const & body, int const & status);

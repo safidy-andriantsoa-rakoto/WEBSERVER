@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/18 08:17:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 11:39:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,15 +60,15 @@ void Client::setCatchedResponse(AExcept & e)
 
 void Client::setStandardResponse(int const & statusCode)
 {
-	_response.setType(_fileFD.getFileType());
+	_response.setType(_fileFD->getFileType());
 	_response.setStatusCode(statusCode);
-	_response.generateStandardResponse(_fileFD.getBuffer());
+	_response.generateStandardResponse(_fileFD->getBuffer());
 }
 
 void Client::setChunkedResponse(int const &statusCode)
 {	
 	_response.setStatusCode(statusCode);
-	_response.generateChunkedResponse(_fileFD.getBuffer(), _fileFD.getStatus());
+	_response.generateChunkedResponse(_fileFD->getBuffer(), _fileFD->getStatus());
 }
 
 void Client::ClientRequest()
@@ -94,18 +94,14 @@ bool Client::getConnexionStat()
 	return (this->_connect);
 }
 
-void Client::setFileFD(const FileFd &fileFd)
+void Client::setFileFD(FileFd *fileFd)
 {
 	_fileFD = fileFd;
-	std::cout << "SET FILE FD\n";
 }
 
-void Client::linkClientAndFileFd(int const &fd, int const &fdCli, std::string const &filePath)
+void Client::updateFileStatus(int const &status)
 {
-	FileFd _fileFD(fd, fdCli, filePath);
-
-	_fileFD.setFileType();
-	_fileFD.setupFd();
+	_fileFD->setStatus(status);
 }
 
 Response & Client::getResponse()
@@ -113,14 +109,39 @@ Response & Client::getResponse()
 	return (this->_response);
 }
 
+std::string Client::getFullResponse()
+{
+	return _response.getFullResponse();
+}
+
+std::string Client::getBodyResponse()
+{
+    return _response.getBody();
+}
+
+int Client::getCategoryResponse()
+{
+    return _response.getRespCategory();
+}
+
+void Client::clearResponse()
+{
+	_response.clearResponse();
+}
+
 void Client::updateResponseStatus(int const &stat)
 {
 	_response.setRespCategory(stat);
 }
 
-FileFd & Client::getFileFD()
+FileFd *Client::getFileFD()
 {
-	return (this->_fileFD);
+	return (_fileFD);
+}
+
+int Client::getFileStatus()
+{
+    return _fileFD->getStatus();
 }
 
 const char *Client::Deconnect::what() const throw()

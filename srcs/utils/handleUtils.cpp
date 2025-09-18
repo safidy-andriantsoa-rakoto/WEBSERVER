@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 07:56:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 09:04:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ void	closeFileEvent(Handler & handler, int const & i, EpollCreation & epoll)
 	vectFileFdIt	it = handler.getFileFd(i);
 	int				fd;
 
-	(*it).restoreFd();
-	fd = (*it).getFileFd();
+	(*it)->restoreFd();
+	fd = (*it)->getFileFd();
 	epoll.epoll_clean(fd);
-	close((*it).getStockFd());
+	close((*it)->getStockFd());
 	handler.removeFileFd(i);
 }

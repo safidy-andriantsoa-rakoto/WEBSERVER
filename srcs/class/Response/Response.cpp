@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 12:04:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 09:25:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,11 @@ std::string Response::getFullResponse()
 std::string Response::getBody() const
 {
     return _body;
+}
+
+void	Response::clearResponse()
+{
+	_fullResponse.clear();
 }
 
 void Response::setToDefaultErrorPage()
