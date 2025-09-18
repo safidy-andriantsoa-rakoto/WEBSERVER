@@ -23,3 +23,12 @@ footer {
     bottom: 0;
     width: 100%;
 }
+
+#form
+{
+    padding: 15px;
+    width: 600px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}

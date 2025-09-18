@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/18 11:53:31 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/18 15:53:04 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,9 +275,15 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
     std::string responseString;
 	t_errPage	errPage;
 	std::string	type;
+	stringMap	header;
+	std::string md;
+	std::string boundary;
 
 	fileFd = -1;
+	md = "multipart/form-data";
+	boundary = "boundary=";
 	request.parseRequest(clientRequest);
+	header = request.getHeader();
 	request.displayRequest();
 	processRequestWithConfig();
 	if (request.getMethod() == "GET")
@@ -294,15 +300,28 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 			perror("open file in POST");
 			throw ErrorExcept(404, "File can't be opened");
 		}
-		// stringMap postInfo = request.getpostInfo();
-		// std::cout << "		[POST]		" << request.getMethod() << std::endl; // Calling post_request
+		size_t is_exist =  header.find("Content-Type")->second.find(md);
+		if (is_exist != std::string::npos)
+		{
+			std::string	getboundary = header.find("Content-Type")->second;
+			size_t pos = getboundary.find(boundary);
+			if (pos != std::string::npos)
+			{
+				getboundary = getboundary.substr(pos + boundary.size());
+			}
+			std::cout << "<" << getboundary << ">" << std::endl;
+			std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
+		}
+		else
+		{
+			std::cout << "\nNORMAL DATA" << std::endl;
+		}
 		opt = EPOLLOUT;
 	}
 	else if (request.getMethod() == "DELETE")
 		std::cout << request.getMethod() << std::endl; // Calling delete_request
 	return fileFd;
 }
-
 
 vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation & location)
 {

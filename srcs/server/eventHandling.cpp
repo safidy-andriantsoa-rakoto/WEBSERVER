@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 11:49:11 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/18 14:56:04 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,8 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		{
 			std::cerr << "Process Request exception catched : " << e._errMsg << std::endl;
 			(*it).setCatchedResponse(e);
-			epoll.epoll_update_event(fd, EPOLLOUT);
+			epoll.epoll_control(opt, fdFile);
+			// epoll.epoll_update_event(fd, EPOLLOUT);
 			return;
 		}
 		handler.addToVectFileFd(fdFile, fd, filePath);
@@ -125,7 +126,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	}
 	else if (event & EPOLLOUT)
 	{
-		std::cout << "		\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
+		std::cout << "ATY QQQQQQQQQQQQQQQQQQQQQQQQ		\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
 	}
 	else
 		std::cout << "ERROR ON EPOLL FILE IO\n";
