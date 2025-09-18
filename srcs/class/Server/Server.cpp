@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 14:54:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 21:37:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -273,7 +273,6 @@ int Server::get_request(Request & request)
 	std::string	filePath;
 	DIR*		dir;
 
-	std::cout << "GET REQUEST ON GOING\n";
 	filePath = request.getRequestTarget();
 	dir = opendir(filePath.c_str());
 	if (!dir && errno == EACCES)

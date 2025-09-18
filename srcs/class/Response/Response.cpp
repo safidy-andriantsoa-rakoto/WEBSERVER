@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 09:25:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 21:45:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage)
 {
 	_statusCode = e._statusCode;
 	setStatusLine();
-	buildErrorPage(_statusCode, errPage);
+	buildErrorPage(_statusCode, errPage); //Take out building error page
 	_header["Content-Length"] = convertIntToString(_body.size() + 2);
 	_header["Content-Type"] = "text/html";
 	_header["Connection"] = "keep-alive";

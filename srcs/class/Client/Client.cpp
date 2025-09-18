@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/18 15:10:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 20:45:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,7 @@ Client &Client::operator=(const Client &client)
 	return (*this);
 }
 
-Client::~Client()
-{
-	if (_fileFD)
-		delete _fileFD;
-}
+Client::~Client(){}
 
 int Client::get_clientFD() const
 {
