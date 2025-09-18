@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 09:50:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 08:47:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ typedef VClient::iterator       VClientIt;
 typedef std::vector<Server>		vectServer;
 typedef vectServer::iterator	vectServerIt;
 
-typedef std::vector<FileFd>		vectFileFd;
+typedef std::vector<FileFd *>	vectFileFd;
 typedef vectFileFd::iterator	vectFileFdIt;
 
 class Handler
@@ -54,7 +54,8 @@ class Handler
 		void			setVectServer(vectServer & vectServer);
 
 		void	addToVectClient(Server const & server, int const & fd);
-		void	addToVectFileFd(int const & fd, int const & fdCli, std::string const & filePath);
+		// void	addToVectFileFd(int const & fd, int const & fdCli, std::string const & filePath);
+		void	addToVectFileFd(FileFd *fileFd);
 
 		void	removeClient(int const & index);
 		void	removeFileFd(int const & index);

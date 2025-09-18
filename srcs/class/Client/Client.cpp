@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/17 10:09:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 08:17:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ bool Client::getConnexionStat()
 void Client::setFileFD(const FileFd &fileFd)
 {
 	_fileFD = fileFd;
+	std::cout << "SET FILE FD\n";
 }
 
 void Client::linkClientAndFileFd(int const &fd, int const &fdCli, std::string const &filePath)

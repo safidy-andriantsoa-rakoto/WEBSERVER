@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 15:59:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 08:38:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,11 @@ void FileFd::setFileType()
 void FileFd::setBuffer(std::string const &content)
 {
 	_buffer = content;
+}
+
+void FileFd::clearBuffer()
+{
+	_buffer.clear();
 }
 
 void FileFd::setupFd()
