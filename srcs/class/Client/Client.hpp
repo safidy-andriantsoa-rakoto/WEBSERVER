@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/17 11:26:40 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/18 11:37:41 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ class Client : public Server
 		size_t		getTotalSendSize();
 		bool		is_finishedSendContent();	
 		
+		Request&	getobjREquest();
 		
 		
 		int         get_clientFD() const;
@@ -94,4 +95,6 @@ class Client : public Server
 
 		//Server utils
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
+		
+
 };

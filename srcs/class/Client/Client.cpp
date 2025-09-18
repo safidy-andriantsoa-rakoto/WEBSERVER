@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/17 11:27:28 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/18 11:53:31 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,11 @@ bool Client::is_finishedSendContent()
 	if (this->_total_send == this->_to_send)
 		return (true);
     return (false);
+}
+
+Request &Client::getobjREquest()
+{
+    return (request);
 }
 
 void Client::setToSendSize(size_t to_send)
@@ -273,7 +278,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 
 	fileFd = -1;
 	request.parseRequest(clientRequest);
-	// processRequestWithConfig(request);
+	request.displayRequest();
 	processRequestWithConfig();
 	if (request.getMethod() == "GET")
 	{
@@ -284,8 +289,14 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	}
 	else if (request.getMethod() == "POST")
 	{
-		std::cout << "		[POST]" << request.getMethod() << std::endl; // Calling post_request
-		// opt = EPOLLOUT;
+		fileFd = open("storage", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fileFd== -1) {
+			perror("open file in POST");
+			throw ErrorExcept(404, "File can't be opened");
+		}
+		// stringMap postInfo = request.getpostInfo();
+		// std::cout << "		[POST]		" << request.getMethod() << std::endl; // Calling post_request
+		opt = EPOLLOUT;
 	}
 	else if (request.getMethod() == "DELETE")
 		std::cout << request.getMethod() << std::endl; // Calling delete_request

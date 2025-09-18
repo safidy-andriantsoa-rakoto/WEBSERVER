@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 10:19:05 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/18 10:58:00 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ class Request
 		stringMap	_header;
 		stringMap	_postInfo;
 		std::string	_body;
-		ssize_t		_request_length;
+		stringVect 	_mulipart_body;
+		size_t		_request_length;
 
 		void    	setRequestLine(std::string const & set);
 		void		setRequestBody(std::string const & requeststring, size_t const & pos);
@@ -43,6 +44,7 @@ class Request
 		std::string	getRequestLine() const;
 		std::string	getBody() const;
 		stringMap	getHeader() const;
+		stringMap	getpostInfo() const;
 
 		void 		Del_space(std::string &data);
 

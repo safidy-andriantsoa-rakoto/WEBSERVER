@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 11:19:13 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/18 11:49:11 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,22 +29,35 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	VClientIt	it = handler.getClient(i);
 	int			fd = (*it).get_clientFD();
 
-	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
+	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)// verification si le client reste en EPOLLIN
 	{
 		int			fdFile;
 		uint32_t	opt;
 		std::string client_request;
-	
+		std::string limit = "\r\n\r\n";
+		std::string body;
+		std::string filePath;
+		Request		tmpRequest;
+		
+		tmpRequest = (*it).getobjREquest();
 		(*it).ClientRequest();
 		client_request = (*it).getClientRequest();
-		std::string filePath;
-		std::cout << "-->> \033[40m	" << "Request, size = " << client_request.size() << "\033[0m" << std::endl;
 		if (client_request.size() == 0)
 			throw std::runtime_error("Remove client");
 		try
 		{
-			fdFile = (*it).processRequest(client_request, opt, filePath);
-			(*it).updateResponseStatus(STD_RSP);
+			size_t pos = client_request.find(limit);
+			if (pos != std::string::npos)
+			{
+				std::string header = client_request.substr(0, pos);
+				std::cout << "HEADER====>" << header << "]" << std::endl;
+				fdFile = (*it).processRequest(client_request, opt, filePath);
+				body = client_request.substr(pos + limit.size(), client_request.size());
+				std::cout << "BODY=====>[" << body << "]" << std::endl;
+				(*it).updateResponseStatus(STD_RSP);
+			}
+			else
+				std::cout << "RIEN A TROOUVE! OOPS" << std::endl;
 		}
 		catch(AExcept & e)
 		{
@@ -112,8 +125,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	}
 	else if (event & EPOLLOUT)
 	{
-		
-		std::cout << "\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
+		std::cout << "		\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
 	}
 	else
 		std::cout << "ERROR ON EPOLL FILE IO\n";

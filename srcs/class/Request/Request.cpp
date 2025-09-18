@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/16 14:20:55 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/18 10:35:15 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ std::string Request::getHttp() const
 stringMap Request::getHeader() const
 {
 	return _header;
+}
+
+stringMap Request::getpostInfo() const
+{
+    return (_postInfo);
 }
 
 void Request::Del_space(std::string &data)
@@ -126,12 +131,12 @@ void	Request::parseRequest(std::string const & requeststring)
 	std::string	sep = "\r\n";
 	std::string	line;
 	// std::string key = "Content-Disposition";
-	std::string type = "name=\"";
-	std::string name = "filename=\"";
+	// std::string type = "name=\"";
+	// std::string name = "filename=\"";
 	stringVect	headerVect;
 //Transfer-Encoding
 
-	std::cout << "REQUEST["<< requeststring <<"]" << std::endl;
+	// std::cout << "REQUEST["<< requeststring <<"]" << std::endl;
 	startPos = 0;
 	pos = requeststring.find(sep, startPos);
 	if (pos == std::string::npos)
@@ -150,46 +155,42 @@ void	Request::parseRequest(std::string const & requeststring)
 		startPos = pos + sep.size();
 		headerVect.clear();
 	}
-	// stringMapIt it = _header.find("Transfer-Encoding");
-	// if (it != _header.end())
-	// {
-	// 	std::cout << "MISY->" << (*it).first << " | " << (*it).second << std::endl;
-	// }
 	setRequestBody(requeststring, pos + sep.size());
 	// displayRequest();
 	// std::cout << "[ "<< _body <<" ]" << std::endl;
-	pos = _body.find("\n" + sep);
-	if (pos != std::string::npos)
-	{
-		std::string _postNextHead = _body.substr(0, pos);
-		this->Del_space(_postNextHead);
-		pos = _postNextHead.find(type);
-		if (pos != std::string::npos)
-		{
-			std::string tmp = _postNextHead.substr(pos + type.size(), _postNextHead.size());
-			size_t end = tmp.find_first_of('"');
-			if (end != std::string::npos)
-				std::cout << tmp.substr(0, end) << std::endl;
-			_postInfo["type"] =  _postNextHead.erase(0, pos);
-		}
-		pos = _postNextHead.find(name);
-		if (pos != std::string::npos)
-		{
-			std::string tmp = _postNextHead.substr(pos + name.size(), _postNextHead.size());
-			size_t end = tmp.find_first_of('"');
-			if (end != std::string::npos)
-				std::cout << tmp.substr(0, end) << std::endl;
-			_postInfo["name"] = _postNextHead.erase(0, pos);
-		}
-		pos = _body.find_first_of("\n\r\n");
-		if (pos != std::string::npos)
-		{
-			_body = _body.erase(0, pos);
-			std::cout << "BODY>>[" << _body << std::endl;
-		}
-	}
-	else
-		std::cout << "FORMULAIRE REQUEST POST" << std::endl;
+	// pos = _body.find("\n" + sep);
+	// if (pos != std::string::npos)
+	// {
+	// 	std::cout << "POST FILE" << std::endl;
+		// std::string _postNextHead = _body.substr(0, pos);
+		// this->Del_space(_postNextHead);
+		// pos = _postNextHead.find(type);
+		// if (pos != std::string::npos)
+		// {
+		// 	std::string tmp = _postNextHead.substr(pos + type.size(), _postNextHead.size());
+		// 	size_t end = tmp.find_first_of('"');
+		// 	if (end != std::string::npos)
+		// 		std::cout << tmp.substr(0, end) << std::endl;
+		// 	_postInfo["type"] =  _postNextHead.erase(0, pos);
+		// }
+		// pos = _postNextHead.find(name);
+		// if (pos != std::string::npos)
+		// {
+		// 	std::string tmp = _postNextHead.substr(pos + name.size(), _postNextHead.size());
+		// 	size_t end = tmp.find_first_of('"');
+		// 	if (end != std::string::npos)
+		// 		std::cout << tmp.substr(0, end) << std::endl;
+		// 	_postInfo["name"] = _postNextHead.erase(0, pos);
+		// }
+		// pos = _body.find_first_of("\n\r\n");
+		// if (pos != std::string::npos)
+		// {
+		// 	_body = _body.erase(0, pos);
+		// 	// std::cout << "BODY>>[" << _body << std::endl;
+		// }
+	// }
+	// else
+		// std::cout << "FORMULAIRE REQUEST POST" << std::endl;
 }
 
 void Request::displayRequest() const
