@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   DirExcept.hpp                                      :+:      :+:    :+:   */
+/*   LDirExcept.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,19 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef  DIREXCEPT_HPP
-# define DIREXCEPT_HPP
+#ifndef  LDIREXCEPT_HPP
+# define LDIREXCEPT_HPP
 
 #include "AExcept.hpp"
 #include "../Config/AConfig.hpp"
 
-class DirExcept : public AExcept
+class LDirExcept : public AExcept
 {
 	public:
 		stringVect	_dirTree;
 
-		DirExcept(int const & status, DIR *dir, std::string const & path, std::string const & errMsg);
-		virtual ~DirExcept() throw();
+		LDirExcept(int const & status, DIR *dir, std::string const & path, std::string const & errMsg);
+		virtual ~LDirExcept() throw();
 };
 
 #endif

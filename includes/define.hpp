@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 12:00:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/19 09:19:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #define RESPONSE_FILE_NAME "response.txt"
 
 //Response
-#define ERR_PATH "errorPage/default/index.html"
+#define ERR_PATH "./errorPage/default/index.html"
 #define STAT_PATH "ext/statcode/statusCode.txt"
 
 // #define POST "POST "
@@ -46,7 +46,8 @@ enum   e_resp
 {
     STD_RSP,
     REDIR_RSP,
-    ERR_RSP
+    ERR_RSP,
+    LDIR_RSP
 };
 
 enum    e_operation

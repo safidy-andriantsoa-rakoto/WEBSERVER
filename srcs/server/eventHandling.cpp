@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 21:48:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/19 09:30:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Handler & handler)
 {
 	int			fdFile;
-	uint32_t	opt;
+	uint32_t	fileFdOpt;
 	std::string client_request;
 	
 	(*it).ClientRequest();
@@ -37,22 +37,22 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 		throw std::runtime_error("Remove client");
 	try
 	{
-		fdFile = (*it).processRequest(client_request, opt, filePath);
-		(*it).updateResponseStatus(STD_RSP);
+		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);
+		(*it).updateResponseCategory(STD_RSP);
 	}
 	catch(AExcept & e)
 	{
 		std::cerr << "Process Request exception catched : " << e._errMsg << std::endl;
-		(*it).setCatchedResponse(e);
+		(*it).setCatchedResponse(e, fdFile, filePath);
+		fileFdOpt = EPOLLIN;
 		if ((*it).getCategoryResponse() == REDIR_RSP)
 		{
-			epoll.epoll_update_event(fd, EPOLLOUT); //Send to Error FileFd index.html, epollout only for redir
-			return; //No return for error but for redirection yes, use flag instead of cast
+			epoll.epoll_update_event(fd, EPOLLOUT);
+			return;
 		}
-		fdFile = openFile(ERR_PATH); // Check with building error page
 	}
 	handler.addToVectFileFd(it, fdFile, fd, filePath);
-	epoll.epoll_control(opt, fdFile);
+	epoll.epoll_control(fileFdOpt, fdFile);
 }
 
 void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
@@ -60,33 +60,35 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 	std::cout << "-->> \033[43mSendingResponseToClient " << "\033[0m" << std::endl;
 	std::string	responseString;
 	int			statusCode;
+	int			fileStatus;
 	int			responseCategory = (*it).getCategoryResponse();
-	int			fileStatus = (*it).getFileStatus();
-
-	if (responseCategory == STD_RSP)
+	
+	if (responseCategory == REDIR_RSP)
 	{
+		responseString = (*it).getFullResponse();
+		send_value(fd, responseString);
+		return ;
+	}
+	fileStatus = (*it).getFileStatus();
+	if (responseCategory == STD_RSP)
 		statusCode = 200;
-		if (fileStatus == OP_ONCE)
-		{
-			// std::cout << "Sending standard response" << std::endl;
-			(*it).setStandardResponse(statusCode);
-		}
-		else
-		{
-			// std::cout << "Sending chunked response" << std::endl;
-			(*it).setChunkedResponse(statusCode); // ++ Add chunked response header for error !!!
-		}
+	else
+		statusCode = (*it).getStatusCodeResponse();
+	if (fileStatus == OP_ONCE)
+	{
+		// std::cout << "Sending standard response" << std::endl;
+		(*it).setStandardResponse(statusCode);
+	}
+	else
+	{
+		// std::cout << "Sending chunked response" << std::endl;
+		(*it).setChunkedResponse(statusCode); // ++ Add chunked response header for error !!!
 	}
 	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
 		responseString = (*it).getBodyResponse() + "\r\n";
 	else
 		responseString = (*it).getFullResponse();
-	// if (responseCategory != STD_RSP)
-	// 	std::cout << "Sending redir or error response" << std::endl;
-	// if (fileStatus != OP_ONCE)
-	// {
-			// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
-	// }
+	// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
 	send_value(fd, responseString);
 	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
 		epoll.epoll_update_event(fd, EPOLLIN);

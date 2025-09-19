@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 21:45:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/19 09:24:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,11 @@ Response &Response::operator=(Response const & other)
 
 Response::~Response(){}
 
+int Response::getStatusCode() const
+{
+    return _statusCode;
+}
+
 void Response::setType(std::string const &type)
 {
 	_type = type;
@@ -57,7 +62,7 @@ void Response::setStatusCode(int const &statusCode)
 	_statusCode = statusCode;
 }
 
-void Response::setRespCategory(int const &category)
+void Response::setCategory(int const &category)
 {
 	_respCategory = category;
 }
@@ -92,30 +97,37 @@ void	Response::clearResponse()
 	_fullResponse.clear();
 }
 
-void Response::setToDefaultErrorPage()
-{
-	std::string	replace;
+// void Response::setToDefaultErrorPage()
+// {
+// 	std::string	replace;
 
-	_body = _defaultErrPage;
-	replace = convertIntToString(_statusCode);
-	replace += " : " + (*_allStatusCode.find(replace)).second;
-	replaceString(_body, replace, "$status");
-}
+// 	_body = _defaultErrPage;
+// 	replace = convertIntToString(_statusCode);
+// 	replace += " : " + (*_allStatusCode.find(replace)).second;
+// 	replaceString(_body, replace, "$status");
+// }
 
-void Response::buildErrorPage(int const & status, t_errPage & errPage)
+void Response::buildErrorPage(int const & status, t_errPage & errPage, int & fd, std::string & filePath)
 {
 	stringVectIt it;
 
+	std::cout << "Build error page\n";
+	filePath = ERR_PATH;
 	if (!errPage.listError.size())
 	{
-		setToDefaultErrorPage();
+		fd = openFile(filePath);
+		std::cout << "Default Error page fd = " << fd << std::endl;
 		return;
 	}
 	it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
 	if (it != errPage.listError.end())
-		_body = errPage.fileContent;
+	{
+		filePath = errPage.filePath;
+		fd = openFile(errPage.filePath);
+	}
 	else
-		setToDefaultErrorPage();
+		fd = openFile(filePath);
+	std::cout << "Error page fd = " << fd << std::endl;
 }
 
 void Response::setStatusLine()
@@ -144,51 +156,56 @@ void Response::generateChunkedResponse(std::string const & body, int const & sta
 	_header["Transfer-Encoding"] = "chunked";
 }
 
-void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage)
+void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int & fd, std::string & filePath)
 {
+	std::cout << "Generate catched response\n";
 	try
 	{
-		ErrorExcept & err = dynamic_cast<ErrorExcept & >(e);
-		generateErrorResponse(err, errPage);
-		_respCategory = ERR_RSP;
-		return;
+		if (e._type == ERR_RSP)
+		{
+			ErrorExcept & err = dynamic_cast<ErrorExcept & >(e);
+			generateErrorResponse(err, errPage, fd, filePath);
+		}
+		else if (e._type == LDIR_RSP)
+		{
+			LDirExcept & dir = dynamic_cast<LDirExcept & >(e);
+			generateLDirResponse(dir);
+		}
+		else if (e._type == REDIR_RSP)
+		{
+			RedirExcept & redir = dynamic_cast<RedirExcept & >(e);
+			generateRedirectResponse(redir);
+		}
 	}
-	catch(const std::exception & e){}
-	try
+	catch(const std::exception& e)
 	{
-		RedirExcept & redir = dynamic_cast<RedirExcept & >(e);
-		generateRedirectResponse(redir);
-		_respCategory = REDIR_RSP;
+		std::cerr << "AExcept casting error : " << e.what() << std::endl;
 	}
-	catch(const std::exception& e){}
-	try
-	{
-		DirExcept & dir = dynamic_cast<DirExcept & >(e);
-		generateDirResponse(dir);
-	}
-	catch(const std::exception& e){}
-	
+	_respCategory = e._type;
 }
 
-void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage)
+void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int & fd, std::string & filePath)
 {
+	std::cout << "Generate error response\n";
+
 	_statusCode = e._statusCode;
 	setStatusLine();
-	buildErrorPage(_statusCode, errPage); //Take out building error page
-	_header["Content-Length"] = convertIntToString(_body.size() + 2);
-	_header["Content-Type"] = "text/html";
-	_header["Connection"] = "keep-alive";
+	buildErrorPage(_statusCode, errPage, fd, filePath);
+	// _header["Content-Length"] = convertIntToString(_body.size() + 2);
+	// _header["Content-Type"] = "text/html";
+	// _header["Connection"] = "keep-alive";
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)
 {
 	_statusCode = r._statusCode;
+	_type = "text/html"; //A voir
 	setStatusLine();
 	_header["Location"] = r._uri;
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::generateDirResponse(DirExcept &d)
+void Response::generateLDirResponse(LDirExcept &d)
 {
 	_statusCode = d._statusCode;
 	setStatusLine();

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 21:37:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/19 08:27:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,7 @@ int Server::get_request(Request & request)
 	if (!dir && errno == EACCES)
 		throw ErrorExcept(403, "Directory forbidden");
 	if (dir && request.getAutoIdx() == true)
-		throw DirExcept(300, dir, filePath, "Listing directory");
+		throw LDirExcept(300, dir, filePath, "Listing directory");
 	if (dir && request.getAutoIdx() == false)
 	{
 		filePath += "/index.html";

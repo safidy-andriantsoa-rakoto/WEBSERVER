@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/18 11:39:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/19 09:29:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,10 @@ class Client : public Server
 		std::string	getFullResponse();
 		std::string	getBodyResponse();
 		int			getCategoryResponse();
+		int			getStatusCodeResponse();
 		void		clearResponse();
-		void		updateResponseStatus(int const & stat);
-		void		setCatchedResponse(AExcept & e);
+		void		updateResponseCategory(int const & stat);
+		void		setCatchedResponse(AExcept & e, int & fd, std::string & filePath);
 		void		setStandardResponse(int const & statusCode);
 		void		setChunkedResponse(int const & statusCode);
 

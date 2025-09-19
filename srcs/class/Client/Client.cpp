@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/18 20:45:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/19 09:29:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ int Client::get_clientFD() const
 	return (this->_clientFD);
 }
 
-void Client::setCatchedResponse(AExcept & e)
+void Client::setCatchedResponse(AExcept & e, int & fd, std::string & filePath)
 {
 	t_errPage	errPage = _config.getErrPage();
-	_response.generateCatchedResponse(e, errPage);
+	_response.generateCatchedResponse(e, errPage, fd, filePath);
 }
 
 void Client::setStandardResponse(int const & statusCode)
@@ -126,14 +126,19 @@ int Client::getCategoryResponse()
     return _response.getRespCategory();
 }
 
+int Client::getStatusCodeResponse()
+{
+    return _response.getStatusCode();
+}
+
 void Client::clearResponse()
 {
 	_response.clearResponse();
 }
 
-void Client::updateResponseStatus(int const &stat)
+void Client::updateResponseCategory(int const &stat)
 {
-	_response.setRespCategory(stat);
+	_response.setCategory(stat);
 }
 
 FileFd *Client::getFileFD()

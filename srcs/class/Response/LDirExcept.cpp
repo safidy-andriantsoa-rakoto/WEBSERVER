@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   DirExcept.cpp                                      :+:      :+:    :+:   */
+/*   LDirExcept.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,13 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "DirExcept.hpp"
+#include "LDirExcept.hpp"
 
-DirExcept::DirExcept(int const &status, DIR *dir, std::string const & path, std::string const & errMsg)
+LDirExcept::LDirExcept(int const &status, DIR *dir, std::string const & path, std::string const & errMsg)
 {
+    _type = LDIR_RSP;
     _statusCode = status;
     _errMsg = errMsg;
     _dirTree = listingDirectory(dir, path);
 }
 
-DirExcept::~DirExcept() throw() {}
+LDirExcept::~LDirExcept() throw() {}
