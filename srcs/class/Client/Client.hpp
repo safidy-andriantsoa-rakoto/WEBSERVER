@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/18 11:37:41 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/19 14:04:53 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ class Client : public Server
 		int 		_clientFD;
 		bool        _connect;
 		std::string _clientRequest;
-
+		std::string _boundary_sep;
+		
+		
 		Response	_response;
 		FileFd		_fileFD;
 		size_t		_to_send;
@@ -65,7 +67,8 @@ class Client : public Server
 		int         get_clientFD() const;
 		std::string getClientRequest() const;
 		bool        getConnexionStat();
-
+		std::string getBoundaryLimit() const;
+	
 
 		FileFd      getFileFD() const;
 		void        setFileFD(const FileFd &fileFd);

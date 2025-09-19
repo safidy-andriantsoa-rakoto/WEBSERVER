@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/18 15:53:04 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/19 14:15:12 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ Client &Client::operator=(const Client &client)
 		this->_response = client._response;
 		this->_to_send = client._to_send;
 		this->_total_send = client._total_send;
+		this->_boundary_sep = client._boundary_sep;
 	}
 	return (*this);
 }
@@ -124,6 +125,11 @@ std::string Client::getClientRequest() const
 bool Client::getConnexionStat()
 {
 	return (this->_connect);
+}
+
+std::string Client::getBoundaryLimit() const
+{
+    return (this->_boundary_sep);
 }
 
 void Client::setFileFD(const FileFd &fileFd)
@@ -307,9 +313,11 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 			size_t pos = getboundary.find(boundary);
 			if (pos != std::string::npos)
 			{
-				getboundary = getboundary.substr(pos + boundary.size());
+				this->_boundary_sep = getboundary.substr(pos + boundary.size());
 			}
-			std::cout << "<" << getboundary << ">" << std::endl;
+			std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
+			
+			
 			std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
 		}
 		else
