@@ -2,4 +2,4 @@ host localhost
 port 2003
 server_names localhost login1.fr
 error_page 404 ./errorPage/custom/index.html
-size 200000000000000000000
+size 20

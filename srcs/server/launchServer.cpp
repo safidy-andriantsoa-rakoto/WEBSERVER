@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/22 11:44:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:20:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,7 @@ void    launchServer(Handler & handler)
 	while (SIGINT != sign.getSigNum())
 	{
 		nb_event = epoll.epoll_wait_event();
-		index = 0;
-		handler.displayHandlerStat();
+		// handler.displayHandlerStat();
 		for (int i = 0; i < nb_event; i++)
 		{
 			try
@@ -45,12 +44,12 @@ void    launchServer(Handler & handler)
 				identifier = handler.identifyFd(fdEvent, index);
 				if (identifier == "SERVER")
 				{
-					std::cout << "\033[42m	SERVER" << "\033[0m" << std::endl;
+					std::cout << "\033[46m	SERVER" << "\033[0m" << std::endl;
 					handleServerEvent(handler, index, epoll);
 				}
 				else if (identifier == "CLIENT")
 				{
-					std::cout << "\033[43m	CLIENT" << "\033[0m" << std::endl;
+					std::cout << "\033[42m	CLIENT" << "\033[0m" << std::endl;
 					handleClientEvent(handler, index, epoll, i);
 				}
 				else if (identifier == "FILEFD")

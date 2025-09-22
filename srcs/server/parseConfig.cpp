@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 10:19:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 11:48:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:40:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ vectServer parseConfigFile()
 	// Server		server3;
 	// Server		server4;
 
-	server1.simpleInit("./config/server/server1.txt", "./config/location/redirect.txt");
+	server1.simpleInit("./config/server/server1.txt", "./config/location/clean.txt");
 	// server2.simpleInit("./config/server/server2.txt", "./config/location/dim.txt");
 	// server3.simpleInit("./config/server/server3.txt", "./config/location/agency.txt");
 	// server4.simpleInit("./config/server/server1.txt", "./config/location/sample.txt");
