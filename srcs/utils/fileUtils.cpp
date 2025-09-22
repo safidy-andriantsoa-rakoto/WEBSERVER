@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 13:27:27 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/22 10:38:39 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,12 @@ bool checkNumberAllContent(std::vector<std::string> &file)
 		|| !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2)
 		|| !checkCountWord(file, "SRCIPT_FILENAME", 2) || !checkCountWord(file, "autoindex", 2))
 		return (false);
+	return (true);
+}
+
+bool checkDuplicate(stringVect file, std::string name)
+{
+	
 	return (true);
 }
 

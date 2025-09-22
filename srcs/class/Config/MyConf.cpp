@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 07:27:32 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/22 10:27:50 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,17 +162,9 @@ void MyConf::parseConfig(stringVect file)
 			if(name == "location")
 					countLoc++;
 		}
-
-		// if(_size[1] != "MB")
-
-		// while(iss >> name >> value)
-		// {
-		// 	if(name == "port")
-		// 		_port = atoi(value.c_str());
-		// 	// if(name == "host")
-		// 	// 	_host = value;
-		// }
 	}
+	std::cout << "******** " ;
+	std::cout << "Port = " << _port << std::endl;
 	std::cout << "count location " << countLoc << std::endl;
 	int checkIndex (0);
 	// std::cout << _errPage.strError.size() << std::endl;
@@ -208,8 +200,8 @@ void MyConf::parseConfig(stringVect file)
 		i++;
 	}
 	i = checkIndex;
-	std::cout << "size the error = " << _errPage.strError.size() << std::endl;
-	std::cout << "index the = " << i << std::endl;
+	// std::cout << "size the error = " << _errPage.strError.size() << std::endl;
+	// std::cout << "index the = " << i << std::endl;
 	if (i > 0 && ((_errPage.strError.size() - i) > 1))
 	{
 		std::cout << "error of config " << std::endl;
@@ -219,21 +211,8 @@ void MyConf::parseConfig(stringVect file)
 	else if ( i > 0 && i < _errPage.strError.size())
 	{
 		_errPage.filePath = _errPage.strError[i];
-		std::cout << "file = " << _errPage.filePath << std::endl;
+		// std::cout << "file = " << _errPage.filePath << std::endl;
 	}
-	// for (size_t i = 0; i < _errPage.listError.size(); i++)
-	// {
-	// 	std::cout << " list de server(" << i  << ")"<< _errPage.listError[i] << " " << std::endl;
-	// }
-	// std::cout << "liste error 1 = " << _errPage.listError[0] << std::endl;
-	// std::cout << _port << std::endl;
-	// for (size_t i = 0; i < _serverName.size(); i++)
-	// {
-	// 	std::cout <<  i << " = "<< _serverName[i] << " ";
-	// }
-	// std::cout << "error page list = " << _errPage.listError.size() <<std::endl;
-	// std::cout << std::endl;
-
 	size_t k(0);
 	_location = getLocation(countLoc);
 	while(k < _location.size())
@@ -244,7 +223,7 @@ void MyConf::parseConfig(stringVect file)
 		else
 			return ;
 	}
-	std::cout << "size of pars location = "  << _location.size() << std::endl;
+	// std::cout << "size of pars location = "  << _location.size() << std::endl;
 	_checkStats = true;
 	currentBlock++;
 	std::cout << "--------------------------------------" << std::endl;
