@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 08:31:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 10:57:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,20 +25,21 @@
 
 class Server
 {
+	private:
+	// For socket
+	    int     	_fdSocket;
+        int     	_fdClient;
+        socklen_t  	_size_sockaddrin;
+        SockAddrIn	_sockaddrIn;
+
 	protected :
 	// From Config file (need to review attributes)
-		MyConf				_config;
-
-	// For socket
-	    int     			_fdSocket;
-        int     			_fdClient;
-        socklen_t  			_size_sockaddrin;
-        SockAddrIn			_sockaddrIn;
+		MyConf		_config;
 
 		//HTTP Method
-		int		get_request(Request & request);
-		int		post_request(Request & request);
-		void	delete_request(Request & request);
+		int			get_request(Request & request);
+		int			post_request(Request & request);
+		void		delete_request(Request & request);
 
 		//Server utils functionnality
 		void		processRequestWithConfig(Request & request);
@@ -64,7 +65,7 @@ class Server
 		//Server connection
 		int 		get_fdClient() const;
 		int 		get_fdSocket() const;
-		SockAddrIn	get_confSockAddrIn() const;
+		SockAddrIn	& get_confSockAddrIn();
         int 		create_socket();
         void 		configure_sockaddrin(int port);
         int 		link_socket_adress();

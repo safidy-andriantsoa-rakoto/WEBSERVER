@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/19 09:25:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 11:45:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ Handler::~Handler(){}
 
 std::string Handler::identifyFd(int const & fd, int & index)
 {
+	index = 0;
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
 	{
 		if ((*itVect).get_fdSocket() == fd)
@@ -115,7 +116,7 @@ void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli,
 	fileFd->setupFd();
 	(*it).setFileFD(fileFd);
 	_vectFileFd.push_back(fileFd);
-	std::cout << "Fd " << fd << "added to vectFileFd\n";
+	std::cout << "Fd " << fd << " added to vectFileFd\n";
 }
 
 void Handler::removeClient(int const & index)
@@ -138,7 +139,12 @@ void	Handler::cleanFdAndAlloc()
 {
 	FileFd::closeSockFd();
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
-		close((*itVect).get_fdSocket());
+	{
+		if ((*itVect).get_fdSocket() != -1)
+			close((*itVect).get_fdSocket());
+		if ((*itVect).get_fdClient() != -1)
+			close((*itVect).get_fdClient());
+	}	
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
 	{
 		close((*itCli).get_clientFD());

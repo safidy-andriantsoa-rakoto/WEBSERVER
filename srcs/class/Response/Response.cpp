@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/19 09:24:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 08:36:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,11 +198,13 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int &
 
 void Response::generateRedirectResponse(RedirExcept & r)
 {
+	std::cout << "Generate redirection response\n";
 	_statusCode = r._statusCode;
 	_type = "text/html"; //A voir
 	setStatusLine();
 	_header["Location"] = r._uri;
 	_header["Connection"] = "keep-alive";
+	_header["Content-Length"] = "0";
 }
 
 void Response::generateLDirResponse(LDirExcept &d)

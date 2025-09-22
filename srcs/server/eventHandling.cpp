@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/19 09:30:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 11:47:54 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,15 +57,16 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 
 void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 {
-	std::cout << "-->> \033[43mSendingResponseToClient " << "\033[0m" << std::endl;
 	std::string	responseString;
 	int			statusCode;
 	int			fileStatus;
 	int			responseCategory = (*it).getCategoryResponse();
-	
+	std::cout << "-->> \033[43mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
+
 	if (responseCategory == REDIR_RSP)
 	{
 		responseString = (*it).getFullResponse();
+		std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
 		send_value(fd, responseString);
 		return ;
 	}
@@ -76,13 +77,13 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 		statusCode = (*it).getStatusCodeResponse();
 	if (fileStatus == OP_ONCE)
 	{
-		// std::cout << "Sending standard response" << std::endl;
+		std::cout << "Sending standard response" << std::endl;
 		(*it).setStandardResponse(statusCode);
 	}
 	else
 	{
-		// std::cout << "Sending chunked response" << std::endl;
-		(*it).setChunkedResponse(statusCode); // ++ Add chunked response header for error !!!
+		std::cout << "Sending chunked response" << std::endl;
+		(*it).setChunkedResponse(statusCode);
 	}
 	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
 		responseString = (*it).getBodyResponse() + "\r\n";

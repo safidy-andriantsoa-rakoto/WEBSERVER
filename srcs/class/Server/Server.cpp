@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/19 08:27:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 11:50:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,16 +119,17 @@ void Server::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
-Server::Server(){}
-
-Server::Server(Server const & other) :
-	_config(other._config),
-	_fdSocket(other._fdSocket),
-	_fdClient(other._fdClient),
-	_size_sockaddrin(other._size_sockaddrin),
-	_sockaddrIn(other._sockaddrIn)
+Server::Server()
 {
-	// *this = other;
+	_fdClient = -1;
+	_fdSocket = -1;
+}
+
+Server::Server(Server const & other)
+{
+	_fdClient = -1;
+	_fdSocket = -1;
+	*this = other;
 }
 
 Server &Server::operator=(Server const & other) 
@@ -161,9 +162,9 @@ int Server::get_fdSocket() const
     return _fdSocket;
 }
 
-SockAddrIn Server::get_confSockAddrIn() const
+SockAddrIn & Server::get_confSockAddrIn()
 {
-    return (this->_sockaddrIn);
+    return (_sockaddrIn);
 }
 
 //Afaka atao throw
@@ -224,8 +225,8 @@ int Server::accept_client_connexion()
 	int fd = accept(_fdSocket, (sockaddr *)&(this->_sockaddrIn), &(this->_size_sockaddrin));
 	if (fd == -1)
 	{
-		std::cout << "Error\naccept a connection on a socket" << std::endl;
-		return (-1);
+		perror("Accept");
+		throw std::runtime_error("Fd error");
 	}
 	return (fd);
 }
