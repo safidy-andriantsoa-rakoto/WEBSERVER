@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 11:41:45 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/22 16:03:50 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,25 +56,39 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 				body = client_request.substr(pos + limit.size(), client_request.size());
 				if ((*it).getBoundaryLimit().size() && body.size())
 				{
-					limiter += (*it).getBoundaryLimit();
+					limiter += (*it).getBoundaryLimit() + "\r\n";
 					size_t is_boundary = body.find(limiter);
-					body.erase(0, is_boundary);// deletena ny any aloha
+					body.erase(0, is_boundary);
 					while (is_boundary != std::string::npos)
 					{
-						// std::cout << "POS LIMITER->" << is_boundary << std::endl;
 						body.erase(0, is_boundary + limiter.size());
 						is_boundary = body.find(limiter);
 						if (is_boundary != std::string::npos)
 						{
-							std::string tmp = body.substr(0, is_boundary);
+							std::string tmp = body.substr(0, is_boundary - 2);
+							stringVect separate = strictSplit(tmp, "\r\n");
+							if (separate.size() == 2)
+							{
+								stringVect var = strictSplit(*(separate.begin()), ": ");
+								if (var.size())
+									(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+							}
 							std::cout << "BODY=====>[" << tmp << "]" << std::endl;
 						}
 						else
 						{
 							std::cout << "BODY==END===>[" << body << "]" << std::endl;
+							stringVect separate = strictSplit(body, "\r\n");
+							if (separate.size() == 2)
+							{
+								stringVect var = strictSplit(*(separate.begin()), ": ");
+								if (var.size())
+									(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+							}
 						}
 					}
 				}
+				(*it).getobjREquest().displayRequestMultipartData();
 				(*it).updateResponseStatus(STD_RSP);
 			}
 			else

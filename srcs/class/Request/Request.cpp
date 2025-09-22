@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 10:35:15 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/22 16:03:20 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,9 @@ stringMap Request::getHeader() const
 	return _header;
 }
 
-stringMap Request::getpostInfo() const
+const MapSVectStr& Request::getpostMultipartData() const
 {
-    return (_postInfo);
+    return (this->_multipart_body);
 }
 
 void Request::Del_space(std::string &data)
@@ -76,6 +76,12 @@ void Request::setRequestSize(ssize_t size)
 ssize_t Request::getRequestSize()
 {
 	return (this->_request_length);
+}
+
+void Request::set_post_body(stringVect var, std::string content)
+{
+	if (var.size())
+		_multipart_body[var] = content;
 }
 
 std::string Request::getBody() const
@@ -205,4 +211,23 @@ void Request::displayRequest() const
 	if (_body.size())
 		std::cout << std::endl << "==== Body ===" << std::endl << _body << std::endl;
 	std::cout << "==============END OF REQUEST PARSING=============\033[0m" << std::endl;
+}
+
+void Request::displayRequestMultipartData()
+{
+
+	std::cout << "==============================MULTIPARTDATA================================" << std::endl;
+	for (MapSVectStrIt it = _multipart_body.begin(); it != _multipart_body.end(); it++)
+	{
+		stringVect tmp = it->first;
+		for (stringVectIt its = tmp.begin(); its != tmp.end(); its++)
+		{
+			std::cout << "[" << *its << "]" << std::endl;
+		}
+		std::cout << "----------------------------------------------------------------------------" << std::endl;
+		std::cout << "{" << it->second << "}" << std::endl;
+		
+	}
+	std::cout << "==============================MULTIPARTDATA END================================" << std::endl;
+	
 }
