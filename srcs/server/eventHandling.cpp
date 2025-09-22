@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/19 15:02:09 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/22 11:41:45 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,25 +54,25 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 				std::cout << "HEADER====>" << header << "]" << std::endl;
 				fdFile = (*it).processRequest(client_request, opt, filePath);
 				body = client_request.substr(pos + limit.size(), client_request.size());
-				if ((*it).getBoundaryLimit().size())
+				if ((*it).getBoundaryLimit().size() && body.size())
 				{
-					limiter += (*it).getBoundaryLimit() + "\r\n";
+					limiter += (*it).getBoundaryLimit();
 					size_t is_boundary = body.find(limiter);
-					body.erase(0, is_boundary);
-					// std::cout << "BODY=====>[" << body << "]" << std::endl;
+					body.erase(0, is_boundary);// deletena ny any aloha
 					while (is_boundary != std::string::npos)
 					{
-						std::cout << "POS LIMITER->" << is_boundary << std::endl;
-						body = body.erase(0, is_boundary + limiter.size());
+						// std::cout << "POS LIMITER->" << is_boundary << std::endl;
+						body.erase(0, is_boundary + limiter.size());
 						is_boundary = body.find(limiter);
 						if (is_boundary != std::string::npos)
 						{
 							std::string tmp = body.substr(0, is_boundary);
 							std::cout << "BODY=====>[" << tmp << "]" << std::endl;
-							body.erase(0, is_boundary);
 						}
 						else
-							std::cout << "BODY=====>[" << body << "]" << std::endl;
+						{
+							std::cout << "BODY==END===>[" << body << "]" << std::endl;
+						}
 					}
 				}
 				(*it).updateResponseStatus(STD_RSP);
