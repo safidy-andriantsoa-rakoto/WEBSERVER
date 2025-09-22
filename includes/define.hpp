@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/19 09:19:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:50:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,13 @@ enum    e_operation
     OP_START,
     OP_ONGOING,
     OP_CLOSE
+};
+
+enum    e_identifier
+{
+    SERVER,
+    CLIENT,
+    FILE_FD
 };
 
 #endif

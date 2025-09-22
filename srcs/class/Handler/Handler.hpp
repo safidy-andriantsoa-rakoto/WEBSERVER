@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 15:06:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:47:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ class Handler
 		Handler & operator=(Handler const & other);
 		~Handler();
 
-		std::string	identifyFd(int const & fd, int & index);
+		int				identifyFd(int const & fd, int & index);
 
 		vectServer & 	getVectServer();
 		VClient &		getVectClient();

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 11:45:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 15:50:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,32 +34,30 @@ Handler &Handler::operator=(Handler const & other)
 
 Handler::~Handler(){}
 
-std::string Handler::identifyFd(int const & fd, int & index)
+int Handler::identifyFd(int const & fd, int & index)
 {
 	index = 0;
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
 	{
 		if ((*itVect).get_fdSocket() == fd)
-			return ("SERVER");
+			return SERVER;
 		index++;
 	}
 	index = 0;
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
 	{
 		if ((*itCli).get_clientFD() == fd)
-			return ("CLIENT");
+			return CLIENT;
 		index++;
 	}
 	index = 0;
 	for (vectFileFdIt itFile = _vectFileFd.begin(); itFile != _vectFileFd.end(); itFile++)
 	{
 		if ((*itFile) && (*itFile)->getFileFd() == fd)
-			return ("FILEFD");
+			return FILE_FD;
 		index++;
 	}
-	throw std::runtime_error("Unknown fd");
-	index = 0;
-	return ("Unknown");
+	return -1;
 }
 
 vectServer &Handler::getVectServer()
