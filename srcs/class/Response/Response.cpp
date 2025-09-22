@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 15:26:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 20:04:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,7 @@ void Response::generateRedirectResponse(RedirExcept & r)
 	_statusCode = r._statusCode;
 	_type = "text/html";
 	setStatusLine();
+	_header.clear();
 	_header["Location"] = r._uri;
 	_header["Connection"] = "keep-alive";
 	_header["Content-Length"] = "0";
@@ -191,6 +192,7 @@ void Response::generateLDirResponse(LDirExcept &d)
 {
 	_statusCode = d._statusCode;
 	setStatusLine();
+	_header.clear();
 	_header["Connection"] = "keep-alive";
 }
 

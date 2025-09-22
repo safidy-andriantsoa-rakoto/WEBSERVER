@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 11:50:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 20:06:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,10 @@ void Server::checkContentLength(Request &request)
 		throw ErrorExcept(413, "Size limit not respected");
 }
 
-//From config file, build Request Target from the request URI
-//Index? Default file if directory
+/*
+	autoIndex ? get bool from config (Tsiky)
+	make / stay or not?
+*/
 void Server::buildRequestTarget(Request & request)
 {
 	vectLocationIt	it;
@@ -45,18 +47,18 @@ void Server::buildRequestTarget(Request & request)
 	std::string		autoIndex;
 
 	target = request.getRequestTarget();
-	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
+	// std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
 	if (target == "/")
 	{
 		processLocationOption(_config.getClassLocation()[0], request);
 		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
-		std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
+		// std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
 		return ;
 	}
 	loc = _config.getClassLocation();
 	it = findLongestMatch(target, loc);
 	processLocationOption(*it, request);
-	std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
+	// std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
 	if ((*it).getLocation() != "/")
 		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 	else
@@ -65,7 +67,7 @@ void Server::buildRequestTarget(Request & request)
 	if (autoIndex == "true")
 		request.setAutoIdx(true);
 	request.setRequestTarget(target);
-	std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
+	// std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
 }
 
 void Server::processLocationOption(MyLoc const & location, Request & request)
@@ -91,7 +93,9 @@ void Server::checkMethodInLocation(stringVect & locationMethod, std::string cons
 	}
 }
 
-// Review redirection function
+/*
+	Maintain $uri for redirection?
+*/
 void Server::processRedirection(MyLoc const & location, Request & request)
 {
 	std::string	oldUri;
@@ -101,11 +105,8 @@ void Server::processRedirection(MyLoc const & location, Request & request)
 
 	redirect = location.getRedirect();
 	if (!redirect.size())
-	{
-		// std::cout << "\033[31m<<<<<<NOOOO REDIRECTION>>>>>>\033[0m" << std::endl;
 		return ;
-	}
-	std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
+	// std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
 	redirect = location.getRedirect();
 	statusRedirect = convertStringToInt(redirect[0]);
 	newUri = redirect[1];
@@ -268,6 +269,10 @@ int Server:: processRequest(std::string const & clientRequest, uint32_t & opt, s
 	return fileFd;
 }
 
+/*
+	Check for additionnal errors ?
+	See how to do the listing directory
+*/
 int Server::get_request(Request & request)
 {
 	int			fd;

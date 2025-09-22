@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 15:38:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 20:13:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,9 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	epoll.epoll_control(fileFdOpt, fdFile);
 }
 
+/*
+	See other cases of response, for successfull response
+*/
 void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 {
 	std::string	responseString;
@@ -66,7 +69,7 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 	if (responseCategory == REDIR_RSP)
 	{
 		responseString = (*it).getFullResponse();
-		std::cout <<"\033[35mResponse: \n" << responseString << "\033[0m" << std::endl;
+		std::cout <<"\033[35mSending redirectory response" << "\033[0m" << std::endl;
 		send_value(fd, responseString);
 		epoll.epoll_update_event(fd, EPOLLIN);
 		return ;
@@ -100,6 +103,9 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 		delete (*it).getFileFD();
 }
 
+/*
+	Error management : When does the connexion become false?
+*/
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
 	uint32_t	event = epoll.getEvent(eventIdx);
@@ -119,12 +125,12 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 
 void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler, int const & i)
 {
-	std::cout << "\033[43mFileFd EPOLLIN : " << (*it)->getClientFd() << "\033[0m" << std::endl;
 	int			fdClient;
 	int			bytesRead;
 	char		buffer[_BUFFER];
 	std::string	bufferString;
 	
+	std::cout << "\033[43mFileFd EPOLLIN : " << (*it)->getClientFd() << "\033[0m" << std::endl;
 	(*it)->manageFd();
 	if ((*it)->getStatus() == OP_START)
 		return;
@@ -152,6 +158,9 @@ void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler,
 		closeFileEvent(handler, i, epoll);
 }
 
+/*
+	else option necessary?
+*/
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
 	vectFileFdIt	it = handler.getFileFd(i);
@@ -163,6 +172,6 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	{
 		std::cout << "\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
 	}
-	else
-		std::cout << "ERROR ON EPOLL FILE IO\n";
+	// else
+	// 	std::cout << "ERROR ON EPOLL FILE IO\n";
 }
