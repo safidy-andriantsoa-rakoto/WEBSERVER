@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/23 09:25:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:07:55 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,6 +229,8 @@ void Client::checkContentLength()
 	float		requestSize;
 	stringMapIt	itFind;
 
+	maxSize = 0;
+	requestSize = 0;
 	itFind = request.getHeader().find("Content-Length");
 	if (itFind == request.getHeader().end())
 		return ;
@@ -319,7 +321,6 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 
 int Client::processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
 {
-	// Request		request;
 	int			fileFd;
 	Response	response;
     std::string responseString;
@@ -335,6 +336,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	request.parseRequest(clientRequest);
 	header = request.getHeader();
 	request.displayRequest();
+	std::cout << "METHODE-->" << request.getMethod() << std::endl;
 	processRequestWithConfig();
 	if (request.getMethod() == "GET")
 	{
@@ -345,6 +347,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	}
 	else if (request.getMethod() == "POST")
 	{
+		std::cout << "\n\n\033[5,42m\e[5m			Aty eeeeeeeee\e[0m\033[0m\n\n" << std::endl;
 		fileFd = open("storage", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fileFd== -1) {
 			perror("open file in POST");

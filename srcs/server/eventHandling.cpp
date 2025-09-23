@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:49:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:14:41 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	int			fdFile;
 	uint32_t	fileFdOpt;
 	std::string client_request;
-	// std::string limit = "\r\n\r\n";
+	std::string limit = "\r\n\r\n";
 	std::string body;
 	std::string filePath;
 	Request		tmpRequest;
-	// std::string limiter = "--";
-	// std::string limiterEnd = "--";
+	std::string limiter = "--";
+	std::string limiterEnd = "--";
 		
 	tmpRequest = (*it).getobjREquest();
 	(*it).ClientRequest();
@@ -44,51 +44,52 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	try
 	{
 		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);
-		// size_t pos = client_request.find(limit);
-		// 	if (pos != std::string::npos)
-		// 	{
-		// 		std::string header = client_request.substr(0, pos);
-		// 		std::cout << "HEADER====>" << header << "]" << std::endl;
-		// 		body = client_request.substr(pos + limit.size(), client_request.size());
-		// 		if ((*it).getBoundaryLimit().size() && body.size())
-		// 		{
-		// 			limiter += (*it).getBoundaryLimit() + "\r\n";
-		// 			size_t is_boundary = body.find(limiter);
-		// 			body.erase(0, is_boundary);
-		// 			while (is_boundary != std::string::npos)
-		// 			{
-		// 				body.erase(0, is_boundary + limiter.size());
-		// 				is_boundary = body.find(limiter);
-		// 				if (is_boundary != std::string::npos)
-		// 				{
-		// 					std::string tmp = body.substr(0, is_boundary - 2);
-		// 					stringVect separate = strictSplit(tmp, limit);
-		// 					if (separate.size() == 2)
-		// 					{
-		// 						stringVect var = strictSplit(*(separate.begin()), ": ");
-		// 						if (var.size())
-		// 							(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
-		// 					}
-		// 					std::cout << "BODY=====>[" << tmp << "]" << std::endl;
-		// 				}
-		// 				else
-		// 				{
-		// 					std::cout << "BODY==END===>[" << body << "]" << std::endl;
-		// 					stringVect separate = strictSplit(body, limit);
-		// 					if (separate.size() == 2)
-		// 					{
-		// 						stringVect var = strictSplit(*(separate.begin()), ": ");
-		// 						if (var.size())
-		// 							(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-			// (*it).getobjREques().displayRequestMultipartData();
+		size_t pos = client_request.find(limit);
+		if (pos != std::string::npos)
+		{
+			std::string header = client_request.substr(0, pos);
+			std::cout << "HEADER====>" << header << "]" << std::endl;
+			body = client_request.substr(pos + limit.size(), client_request.size());
+			if ((*it).getBoundaryLimit().size() && body.size())
+			{
+				limiter += (*it).getBoundaryLimit() + "\r\n";
+				size_t is_boundary = body.find(limiter);
+				body.erase(0, is_boundary);
+				while (is_boundary != std::string::npos)
+				{
+					body.erase(0, is_boundary + limiter.size());
+					is_boundary = body.find(limiter);
+					if (is_boundary != std::string::npos)
+					{
+						std::string tmp = body.substr(0, is_boundary - 2);
+						stringVect separate = strictSplit(tmp, limit);
+						if (separate.size() == 2)
+						{
+							stringVect var = strictSplit(*(separate.begin()), ": ");
+							if (var.size())
+								(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+						}
+						std::cout << "BODY=====>[" << tmp << "]" << std::endl;
+					}
+					else
+					{
+						std::cout << "BODY==END===>[" << body << "]" << std::endl;
+						stringVect separate = strictSplit(body, limit);
+						if (separate.size() == 2)
+						{
+							stringVect var = strictSplit(*(separate.begin()), ": ");
+							if (var.size())
+								(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+						}
+					}
+				}
+			}
+		}
+		(*it).getobjREquest().displayRequestMultipartData();
 		
 		// int fdCli = (*it).get_clientFD();
 		// epoll.epoll_update_event(fdCli, EPOLLOUT);
-			(*it).updateResponseCategory(STD_RSP);
+		(*it).updateResponseCategory(STD_RSP);
 		// }
 	}
 	catch(AExcept & e)

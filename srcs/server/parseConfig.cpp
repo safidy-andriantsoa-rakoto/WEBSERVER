@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parseConfig.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 10:19:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:41:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 14:36:22 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ vectServer parseConfigFile()
 	// Server		server3;
 	// Server		server4;
 
-	server2.simpleInit("./config/server/server1.txt", "./config/location/minimal.txt");
+	server2.simpleInit("./config/server/server1.txt", "./config/location/sample.txt");
 	// server2.simpleInit("./config/server/server2.txt", "./config/location/dim.txt");
 	// server3.simpleInit("./config/server/server3.txt", "./config/location/agency.txt");
 	// server4.simpleInit("./config/server/server1.txt", "./config/location/sample.txt");
