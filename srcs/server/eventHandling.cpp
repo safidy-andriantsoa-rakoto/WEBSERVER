@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:47:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:49:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,9 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 			epoll.epoll_update_event(fd, EPOLLOUT);
 			return;
 		}
-		handler.addToVectFileFd(it, fdFile, fd, filePath);
-		epoll.epoll_control(fileFdOpt, fdFile);
 	}
+	handler.addToVectFileFd(it, fdFile, fd, filePath);
+	epoll.epoll_control(fileFdOpt, fdFile);
 }
 
 /*
