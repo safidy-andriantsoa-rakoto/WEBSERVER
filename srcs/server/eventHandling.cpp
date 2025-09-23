@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:36:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:47:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,66 +28,68 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	int			fdFile;
 	uint32_t	fileFdOpt;
 	std::string client_request;
-	std::string limit = "\r\n\r\n";
+	// std::string limit = "\r\n\r\n";
 	std::string body;
 	std::string filePath;
 	Request		tmpRequest;
-	std::string limiter = "--";
-	std::string limiterEnd = "--";
+	// std::string limiter = "--";
+	// std::string limiterEnd = "--";
 		
 	tmpRequest = (*it).getobjREquest();
 	(*it).ClientRequest();
 	client_request = (*it).getClientRequest();
-	std::string filePath;
 	std::cout << "-->> \033[042mHandleClientEvent : request_size = " << client_request.size() << "\033[0m" << std::endl;
 	if (client_request.size() == 0)
 		throw std::runtime_error("Remove client");
 	try
 	{
-		size_t pos = client_request.find(limit);
-			if (pos != std::string::npos)
-			{
-				std::string header = client_request.substr(0, pos);
-				std::cout << "HEADER====>" << header << "]" << std::endl;
-				fdFile = (*it).processRequest(client_request, opt, filePath);
-				body = client_request.substr(pos + limit.size(), client_request.size());
-				if ((*it).getBoundaryLimit().size() && body.size())
-				{
-					limiter += (*it).getBoundaryLimit() + "\r\n";
-					size_t is_boundary = body.find(limiter);
-					body.erase(0, is_boundary);
-					while (is_boundary != std::string::npos)
-					{
-						body.erase(0, is_boundary + limiter.size());
-						is_boundary = body.find(limiter);
-						if (is_boundary != std::string::npos)
-						{
-							std::string tmp = body.substr(0, is_boundary - 2);
-							stringVect separate = strictSplit(tmp, limit);
-							if (separate.size() == 2)
-							{
-								stringVect var = strictSplit(*(separate.begin()), ": ");
-								if (var.size())
-									(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
-							}
-							std::cout << "BODY=====>[" << tmp << "]" << std::endl;
-						}
-						else
-						{
-							std::cout << "BODY==END===>[" << body << "]" << std::endl;
-							stringVect separate = strictSplit(body, limit);
-							if (separate.size() == 2)
-							{
-								stringVect var = strictSplit(*(separate.begin()), ": ");
-								if (var.size())
-									(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
-							}
-						}
-					}
-				}
-			(*it).getobjREquest().displayRequestMultipartData();
+		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);
+		// size_t pos = client_request.find(limit);
+		// 	if (pos != std::string::npos)
+		// 	{
+		// 		std::string header = client_request.substr(0, pos);
+		// 		std::cout << "HEADER====>" << header << "]" << std::endl;
+		// 		body = client_request.substr(pos + limit.size(), client_request.size());
+		// 		if ((*it).getBoundaryLimit().size() && body.size())
+		// 		{
+		// 			limiter += (*it).getBoundaryLimit() + "\r\n";
+		// 			size_t is_boundary = body.find(limiter);
+		// 			body.erase(0, is_boundary);
+		// 			while (is_boundary != std::string::npos)
+		// 			{
+		// 				body.erase(0, is_boundary + limiter.size());
+		// 				is_boundary = body.find(limiter);
+		// 				if (is_boundary != std::string::npos)
+		// 				{
+		// 					std::string tmp = body.substr(0, is_boundary - 2);
+		// 					stringVect separate = strictSplit(tmp, limit);
+		// 					if (separate.size() == 2)
+		// 					{
+		// 						stringVect var = strictSplit(*(separate.begin()), ": ");
+		// 						if (var.size())
+		// 							(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+		// 					}
+		// 					std::cout << "BODY=====>[" << tmp << "]" << std::endl;
+		// 				}
+		// 				else
+		// 				{
+		// 					std::cout << "BODY==END===>[" << body << "]" << std::endl;
+		// 					stringVect separate = strictSplit(body, limit);
+		// 					if (separate.size() == 2)
+		// 					{
+		// 						stringVect var = strictSplit(*(separate.begin()), ": ");
+		// 						if (var.size())
+		// 							(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+		// 					}
+		// 				}
+		// 			}
+		// 		}
+			// (*it).getobjREques().displayRequestMultipartData();
+		
+		// int fdCli = (*it).get_clientFD();
+		// epoll.epoll_update_event(fdCli, EPOLLOUT);
 			(*it).updateResponseCategory(STD_RSP);
-			}
+		// }
 	}
 	catch(AExcept & e)
 	{
@@ -99,55 +101,10 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 			epoll.epoll_update_event(fd, EPOLLOUT);
 			return;
 		}
-		handler.addToVectFileFd(fdFile, fd, filePath);
-		epoll.epoll_control(opt, fdFile);
+		handler.addToVectFileFd(it, fdFile, fd, filePath);
+		epoll.epoll_control(fileFdOpt, fdFile);
 	}
-// 	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
-// 	{
-// 		std::cout << "-->> \033[43mSending Response to client" << "\033[0m" << std::endl;
-// 		std::string	responseString;
-
-// 		if ((*it).getResponse().getRespCategory() == STD_RSP)
-// 		{
-// 			(*it).setStandardResponse(200);
-// 			std::cout << "Sending standard response" << std::endl;
-// 		}
-// 		responseString = (*it).getResponse().getFullResponse();
-// 		if ((*it).getResponse().getRespCategory() != STD_RSP)
-// 			std::cout << "Sending redir or error response" << std::endl;
-// 		send_value(fd, responseString);
-// 		epoll.epoll_update_event(fd, EPOLLIN);
-// 		return ;
-// 	}
-// 	fileStatus = (*it).getFileStatus();
-// 	if (responseCategory == STD_RSP)
-// 		statusCode = 200;
-// 	else
-// 		statusCode = (*it).getStatusCodeResponse();
-// 	if (fileStatus == OP_ONCE)
-// 	{
-// 		std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
-// 		(*it).setStandardResponse(statusCode);
-// 	}
-// 	else
-// 	{
-// 		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
-// 		(*it).setChunkedResponse(statusCode);
-// 	}
-// 	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
-// 		responseString = (*it).getBodyResponse() + "\r\n";
-// 	else
-// 		responseString = (*it).getFullResponse();
-// 	// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
-// 	send_value(fd, responseString);
-// 	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
-// 		epoll.epoll_update_event(fd, EPOLLIN);
-// 	if (fileStatus == OP_START)
-// 		(*it).updateFileStatus(OP_ONGOING);
-// 	(*it).increaseFileSent(_BUFFER);
-// 	if (fileStatus == OP_ONCE)
-// 		delete (*it).getFileFD();
-// }
+}
 
 /*
 	See other cases of response, for successfull response
