@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:27:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 10:38:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,45 +140,44 @@ std::string Server::get_client_request()
 	Check for additionnal errors ?
 	See how to do the listing directory
 */
-int Server::get_request(Request & request)
-{
-	int			fd;
-	std::string	filePath;
-	DIR*		dir;
+// int Server::get_request(Request & request)
+// {
+// 	int			fd;
+// 	std::string	filePath;
+// 	DIR*		dir;
 
-	filePath = request.getRequestTarget();
-	dir = opendir(filePath.c_str());
-	if (!dir && errno == EACCES)
-		throw ErrorExcept(403, "Directory forbidden");
-	if (dir && request.getAutoIdx() == true)
-		throw LDirExcept(300, dir, filePath, "Listing directory");
-	if (dir && request.getAutoIdx() == false)
-	{
-		filePath += "/index.html";
-		closedir(dir);
-	}		
-	fd = open(filePath.c_str(), O_RDONLY);
-	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
-	if (fd == -1)
-	{
-		perror("Open file");
-		if (errno == EACCES)
-			throw ErrorExcept(403, "No permission for file");
-		throw ErrorExcept(404, "File can't be opened");
-	}
-	return fd;
-}
+// 	filePath = request.getRequestTarget();
+// 	dir = opendir(filePath.c_str());
+// 	if (!dir && errno == EACCES)
+// 		throw ErrorExcept(403, "Directory forbidden");
+// 	if (dir && request.getAutoIdx() == true)
+// 		throw LDirExcept(300, dir, filePath, "Listing directory");
+// 	if (dir && request.getAutoIdx() == false)
+// 	{
+// 		filePath += "/index.html";
+// 		closedir(dir);
+// 	}		
+// 	fd = open(filePath.c_str(), O_RDONLY);
+// 	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
+// 	if (fd == -1)
+// 	{
+// 		perror("Open file");
+// 		if (errno == EACCES)
+// 			throw ErrorExcept(403, "No permission for file");
+// 		throw ErrorExcept(404, "File can't be opened");
+// 	}
+// 	return fd;
+// }
 
-int Server::post_request(Request &request)
-{
-	(void) request;
-	return 0;
-}
+// int Server::post_request(Request &request)
+// {
 
-void Server::delete_request(Request &request)
-{
-	(void) request;
-}
+// }
+
+// void Server::delete_request(Request &request)
+// {
+// 	(void) request;
+// }
 
 
 void Server::simpleInit(std::string const & servPath, std::string const & locationPath)

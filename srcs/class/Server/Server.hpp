@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:27:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 10:39:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,7 @@ class Server
         SockAddrIn	_sockaddrIn;
 
 	protected :
-	// From Config file (need to review attributes)
 		MyConf		_config;
-
-		//HTTP Method
-		int		get_request(Request & request);
-		int		post_request(Request & request);
-		void	delete_request(Request & request);
 
 	public:
 		Server();

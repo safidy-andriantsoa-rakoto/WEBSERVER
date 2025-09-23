@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:49:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 11:15:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,8 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 		epoll.epoll_update_event(fd, EPOLLIN);
 		return ;
 	}
+	// if ((*it).getFileFD() == NULL)
+	// 	return;
 	fileStatus = (*it).getFileStatus();
 	if (responseCategory == STD_RSP)
 		statusCode = 200;
@@ -182,7 +184,7 @@ void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler,
 	char		buffer[_BUFFER];
 	std::string	bufferString;
 	
-	std::cout << "\033[43mFileFd EPOLLIN : " << (*it)->getClientFd() << "\033[0m" << std::endl;
+	std::cout << "\033[43mFileFd EPOLLIN : " << (*it)->getClientFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
 	(*it)->manageFd();
 	if ((*it)->getStatus() == OP_START)
 		return;

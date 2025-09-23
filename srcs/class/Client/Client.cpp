@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/23 09:25:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 11:39:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 
 Client::Client(const Client &client) : Server(client)
 {
+	_fileFD = NULL;
 	*this = client;
 }
 
@@ -46,6 +47,11 @@ Client &Client::operator=(const Client &client)
 		this->_to_send = client._to_send;
 		this->_total_send = client._total_send;
 		this->_boundary_sep = client._boundary_sep;
+		this->_receivedSize = client._receivedSize;
+		this->_client_stat = client._client_stat;
+		this->_boundary_sep = client._boundary_sep;
+		this->_request = client._request;
+		this->_fileFD = client._fileFD;
 	}
 	return (*this);
 }
@@ -71,7 +77,7 @@ bool Client::is_finishedSendContent()
 
 Request &Client::getobjREquest()
 {
-    return (request);
+    return (_request);
 }
 
 void Client::setToSendSize(size_t to_send)
@@ -229,41 +235,40 @@ void Client::checkContentLength()
 	float		requestSize;
 	stringMapIt	itFind;
 
-	itFind = request.getHeader().find("Content-Length");
-	if (itFind == request.getHeader().end())
+	itFind = _request.getHeader().find("Content-Length");
+	if (itFind == _request.getHeader().end())
 		return ;
 	maxSize = _config.getMaxSize();
-	requestSize = convertStringToFLoat(request.getHeader()["Content-Length"]);
+	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
 	if (requestSize > maxSize)
 		throw ErrorExcept(413, "Size limit not respected");
 }
 
-// void Client::buildRequestTarget(Request & request)
 void Client::buildRequestTarget()
 {
 	vectLocationIt	it;
 	std::string		target;
 	vectLocation	loc;
 
-	target = request.getRequestTarget();
+	target = _request.getRequestTarget();
 	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
 	if (target == "/")
 	{
-		processLocationOption(_config.getClassLocation()[0], request);
-		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
-		std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
+		processLocationOption(_config.getClassLocation()[0], _request);
+		_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
+		std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
 		return ;
 	}
 	loc = _config.getClassLocation();
 	it = findLongestMatch(target, loc);
-	processLocationOption(*it, request);
+	processLocationOption(*it, _request);
 	std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
 	if ((*it).getLocation() != "/")
 		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 	else
 		target = (*it).getRootDirectory() + target;
-	request.setRequestTarget(target);
-	std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
+	_request.setRequestTarget(target);
+	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
 }
 
 void Client::processLocationOption(MyLoc const & location, Request & request)
@@ -317,9 +322,69 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
+int Client::get_request()
+{
+	int			fd;
+	std::string	filePath;
+	DIR*		dir;
+
+	filePath = _request.getRequestTarget();
+	dir = opendir(filePath.c_str());
+	if (!dir && errno == EACCES)
+		throw ErrorExcept(403, "Directory forbidden");
+	if (dir && _request.getAutoIdx() == true)
+		throw LDirExcept(300, dir, filePath, "Listing directory");
+	if (dir && _request.getAutoIdx() == false)
+	{
+		filePath += "/index.html";
+		closedir(dir);
+	}		
+	fd = open(filePath.c_str(), O_RDONLY);
+	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
+	if (fd == -1)
+	{
+		perror("Open file");
+		if (errno == EACCES)
+			throw ErrorExcept(403, "No permission for file");
+		throw ErrorExcept(404, "File can't be opened");
+	}
+	return fd;
+}
+
+int Client::post_request(stringMap & header, std::string & md, std::string & boundary)
+{
+	int	fileFd;
+
+	fileFd = open("storage", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fileFd== -1) {
+		perror("open file in POST");
+		throw ErrorExcept(404, "File can't be opened");
+	}
+	size_t is_exist =  header.find("Content-Type")->second.find(md);
+	if (is_exist != std::string::npos)
+	{
+		std::string	getboundary = header.find("Content-Type")->second;
+		size_t pos = getboundary.find(boundary);
+		if (pos != std::string::npos)
+		{
+			this->_boundary_sep = getboundary.substr(pos + boundary.size());
+		}
+		std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
+		
+		
+		std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
+	}
+	else
+	{
+		std::cout << "\nNORMAL DATA" << std::endl;
+	}
+	return fileFd;
+}
+
+void Client::delete_request(){}
+
 int Client::processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
 {
-	// Request		request;
 	int			fileFd;
 	Response	response;
     std::string responseString;
@@ -332,46 +397,24 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	fileFd = -1;
 	md = "multipart/form-data";
 	boundary = "boundary=";
-	request.parseRequest(clientRequest);
-	header = request.getHeader();
-	request.displayRequest();
+	_request.parseRequest(clientRequest);
+	header = _request.getHeader();
+	_request.displayRequest();
 	processRequestWithConfig();
-	if (request.getMethod() == "GET")
+	if (_request.getMethod() == "GET")
 	{
-		fileFd = get_request(request);
-		filePath = request.getRequestTarget();
+		fileFd = get_request();
+		filePath = _request.getRequestTarget();
 		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
 		opt = EPOLLIN;
 	}
-	else if (request.getMethod() == "POST")
+	else if (_request.getMethod() == "POST")
 	{
-		fileFd = open("storage", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fileFd== -1) {
-			perror("open file in POST");
-			throw ErrorExcept(404, "File can't be opened");
-		}
-		size_t is_exist =  header.find("Content-Type")->second.find(md);
-		if (is_exist != std::string::npos)
-		{
-			std::string	getboundary = header.find("Content-Type")->second;
-			size_t pos = getboundary.find(boundary);
-			if (pos != std::string::npos)
-			{
-				this->_boundary_sep = getboundary.substr(pos + boundary.size());
-			}
-			std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
-			
-			
-			std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
-		}
-		else
-		{
-			std::cout << "\nNORMAL DATA" << std::endl;
-		}
+		fileFd = post_request(header, md, boundary);
 		opt = EPOLLOUT;
 	}
-	else if (request.getMethod() == "DELETE")
-		std::cout << request.getMethod() << std::endl; // Calling delete_request
+	else if (_request.getMethod() == "DELETE")
+		std::cout << _request.getMethod() << std::endl; // Calling delete_request
 	return fileFd;
 }
 
