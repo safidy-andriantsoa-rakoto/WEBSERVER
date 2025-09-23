@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 15:14:41 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:53:17 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,15 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 			if ((*it).getBoundaryLimit().size() && body.size())
 			{
 				limiter += (*it).getBoundaryLimit() + "\r\n";
+				limiterEnd += (*it).getBoundaryLimit() + "--\r\n";
 				size_t is_boundary = body.find(limiter);
+				size_t is_boundaryEnd;
 				body.erase(0, is_boundary);
 				while (is_boundary != std::string::npos)
 				{
 					body.erase(0, is_boundary + limiter.size());
 					is_boundary = body.find(limiter);
+					is_boundaryEnd = body.find(limiterEnd);
 					if (is_boundary != std::string::npos)
 					{
 						std::string tmp = body.substr(0, is_boundary - 2);
@@ -70,6 +73,10 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 								(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
 						}
 						std::cout << "BODY=====>[" << tmp << "]" << std::endl;
+					}
+					else if (is_boundaryEnd != std::string::npos)
+					{
+						std::cout << "\e[5m		TAPITRA       \e[0m" << std::endl;
 					}
 					else
 					{
