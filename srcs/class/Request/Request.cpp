@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 16:03:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:25:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0) {}
+Request::Request(): _request_length(0), _autoIdx(false) {}
 
 Request::Request(Request const & other)
 {
@@ -26,6 +26,8 @@ Request &Request::operator=(Request const & other)
 		_requestLine = other._requestLine;
 		_header = other._header;
 		_body = other._body;
+		_request_length = other._request_length;
+		_autoIdx = other._autoIdx;
 	}
 	return *this;
 }
@@ -68,6 +70,16 @@ void Request::Del_space(std::string &data)
         data.erase(data.find(' '), 1);
 }
 
+bool Request::getAutoIdx() const
+{
+    return _autoIdx;
+}
+
+void Request::setAutoIdx(bool const &autoIdx)
+{
+	_autoIdx = autoIdx;
+}
+
 void Request::setRequestSize(ssize_t size)
 {
 	this->_request_length = size;
@@ -101,14 +113,14 @@ void Request::setRequestLine(std::string const & replacement)
 	_requestLine = replacement;
 	splitted = splitString(replacement, " ");
 	if (splitted.size() != 3)
+	{
+		std::cout << "\033[42mRequest = \n" << _requestLine << "\033[0m" << std::endl;
 		throw std::runtime_error("Error on request line");
+	}
 	_method = splitted[0];
 	size_t f = splitted[1].find_first_of('?');
 	if (f != std::string::npos)
-	{
 		_requestTarget =  splitted[1].substr(0, f);
-		std::cout << "			ATY eee->["<< _requestTarget <<"]" << std::endl;
-	}
 	else
 		_requestTarget = splitted[1];
 	_clientHttp = splitted[2];

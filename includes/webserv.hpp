@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 11:20:44 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:20:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,5 +35,8 @@ void    launchServer(Handler & handler);
 
 //Waiting for real parser
 vectServer	parseConfigFile();
+
+//HandleUtils
+void	closeFileEvent(Handler & handler, int const & i, EpollCreation & epoll);
 
 #endif

@@ -3,16 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   messageUtils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 15:35:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:37:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
 // void send_value(int const & _acceptStatus, std::string & _send_content, VClientIt itCli)
+/*
+    Need to throw exception if error on sending? because some connexion stopped from the client
+    Other amelioration?
+*/
 void send_value(int const & _acceptStatus, std::string & _send_content)
 {
 // {    if (!(*itCli).getToSendSize())
@@ -24,7 +28,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
     size_t total_sent = 0;
     size_t to_send = _send_content.size();
 
-    std::cout << "\033[048mSIZE=" << to_send << std::endl;
+    std::cout << "SIZE = " << _send_content.size() << std::endl;
     if (_acceptStatus < 0)
     {
         std::cerr << "INVALID FD TO SEND\n";

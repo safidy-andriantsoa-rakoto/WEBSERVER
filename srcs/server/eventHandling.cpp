@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:05:57 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:36:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,35 +20,31 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 	fdc = (*it).accept_client_connexion();
 	epoll.epoll_control(EPOLLIN, fdc);
 	handler.addToVectClient(handler.getVectServer()[i], fdc);
-	std::cout << "\033[42mNEW CLIENT JOIN=\033[0m" << fdc << "-->\033[046mSERVER=" << (*it).get_fdSocket() << "\033[0m" << std::endl;
+	std::cout << "\033[42mNEW CLIENT JOIN = " << fdc << "--> SERVER=" << (*it).get_fdSocket() << "\033[0m" << std::endl;
 }
 
-void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
+void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Handler & handler)
 {
-	uint32_t	event = epoll.getEvent(eventIdx);
-	VClientIt	it = handler.getClient(i);
-	int			fd = (*it).get_clientFD();
-
-	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)// verification si le client reste en EPOLLIN
-	{
-		int			fdFile;
-		uint32_t	opt;
-		std::string client_request;
-		std::string limit = "\r\n\r\n";
-		std::string body;
-		std::string filePath;
-		Request		tmpRequest;
-		std::string limiter = "--";
-		std::string limiterEnd = "--";
+	int			fdFile;
+	uint32_t	fileFdOpt;
+	std::string client_request;
+	std::string limit = "\r\n\r\n";
+	std::string body;
+	std::string filePath;
+	Request		tmpRequest;
+	std::string limiter = "--";
+	std::string limiterEnd = "--";
 		
-		tmpRequest = (*it).getobjREquest();
-		(*it).ClientRequest();
-		client_request = (*it).getClientRequest();
-		if (client_request.size() == 0)
-			throw std::runtime_error("Remove client");
-		try
-		{
-			size_t pos = client_request.find(limit);
+	tmpRequest = (*it).getobjREquest();
+	(*it).ClientRequest();
+	client_request = (*it).getClientRequest();
+	std::string filePath;
+	std::cout << "-->> \033[042mHandleClientEvent : request_size = " << client_request.size() << "\033[0m" << std::endl;
+	if (client_request.size() == 0)
+		throw std::runtime_error("Remove client");
+	try
+	{
+		size_t pos = client_request.find(limit);
 			if (pos != std::string::npos)
 			{
 				std::string header = client_request.substr(0, pos);
@@ -89,39 +85,132 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 						}
 					}
 				}
-				(*it).getobjREquest().displayRequestMultipartData();
-				(*it).updateResponseStatus(STD_RSP);
+			(*it).getobjREquest().displayRequestMultipartData();
+			(*it).updateResponseCategory(STD_RSP);
 			}
-			else
-				std::cout << "RIEN A TROOUVE! OOPS" << std::endl;
-		}
-		catch(AExcept & e)
+	}
+	catch(AExcept & e)
+	{
+		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
+		(*it).setCatchedResponse(e, fdFile, filePath);
+		fileFdOpt = EPOLLIN;
+		if ((*it).getCategoryResponse() == REDIR_RSP)
 		{
-			std::cerr << "Process Request exception catched : " << e._errMsg << std::endl;
-			(*it).setCatchedResponse(e);
-			epoll.epoll_control(opt, fdFile);
-			// epoll.epoll_update_event(fd, EPOLLOUT);
+			epoll.epoll_update_event(fd, EPOLLOUT);
 			return;
 		}
 		handler.addToVectFileFd(fdFile, fd, filePath);
 		epoll.epoll_control(opt, fdFile);
 	}
-	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
-	{
-		std::cout << "-->> \033[44mSending Response to client" << "\033[0m" << std::endl;
-		std::string	responseString;
+// 	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
+// 	{
+// 		std::cout << "-->> \033[43mSending Response to client" << "\033[0m" << std::endl;
+// 		std::string	responseString;
 
-		if ((*it).getResponse().getRespCategory() == STD_RSP)
-		{
-			(*it).setStandardResponse(200);
-			std::cout << "Sending standard response" << std::endl;
-		}
-		responseString = (*it).getResponse().getFullResponse();
-		if ((*it).getResponse().getRespCategory() != STD_RSP)
-			std::cout << "Sending redir or error response" << std::endl;
+// 		if ((*it).getResponse().getRespCategory() == STD_RSP)
+// 		{
+// 			(*it).setStandardResponse(200);
+// 			std::cout << "Sending standard response" << std::endl;
+// 		}
+// 		responseString = (*it).getResponse().getFullResponse();
+// 		if ((*it).getResponse().getRespCategory() != STD_RSP)
+// 			std::cout << "Sending redir or error response" << std::endl;
+// 		send_value(fd, responseString);
+// 		epoll.epoll_update_event(fd, EPOLLIN);
+// 		return ;
+// 	}
+// 	fileStatus = (*it).getFileStatus();
+// 	if (responseCategory == STD_RSP)
+// 		statusCode = 200;
+// 	else
+// 		statusCode = (*it).getStatusCodeResponse();
+// 	if (fileStatus == OP_ONCE)
+// 	{
+// 		std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
+// 		(*it).setStandardResponse(statusCode);
+// 	}
+// 	else
+// 	{
+// 		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
+// 		(*it).setChunkedResponse(statusCode);
+// 	}
+// 	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
+// 		responseString = (*it).getBodyResponse() + "\r\n";
+// 	else
+// 		responseString = (*it).getFullResponse();
+// 	// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
+// 	send_value(fd, responseString);
+// 	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
+// 		epoll.epoll_update_event(fd, EPOLLIN);
+// 	if (fileStatus == OP_START)
+// 		(*it).updateFileStatus(OP_ONGOING);
+// 	(*it).increaseFileSent(_BUFFER);
+// 	if (fileStatus == OP_ONCE)
+// 		delete (*it).getFileFD();
+// }
+
+/*
+	See other cases of response, for successfull response
+*/
+void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
+{
+	std::string	responseString;
+	int			statusCode;
+	int			fileStatus;
+	int			responseCategory = (*it).getCategoryResponse();
+	std::cout << "-->> \033[45mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
+
+	if (responseCategory == REDIR_RSP)
+	{
+		responseString = (*it).getFullResponse();
+		std::cout <<"\033[35mSending redirectory response" << "\033[0m" << std::endl;
 		send_value(fd, responseString);
 		epoll.epoll_update_event(fd, EPOLLIN);
+		return ;
 	}
+	fileStatus = (*it).getFileStatus();
+	if (responseCategory == STD_RSP)
+		statusCode = 200;
+	else
+		statusCode = (*it).getStatusCodeResponse();
+	if (fileStatus == OP_ONCE)
+	{
+		std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
+		(*it).setStandardResponse(statusCode);
+	}
+	else
+	{
+		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
+		(*it).setChunkedResponse(statusCode);
+	}
+	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
+		responseString = (*it).getBodyResponse() + "\r\n";
+	else
+		responseString = (*it).getFullResponse();
+	// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
+	send_value(fd, responseString);
+	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
+		epoll.epoll_update_event(fd, EPOLLIN);
+	if (fileStatus == OP_START)
+		(*it).updateFileStatus(OP_ONGOING);
+	(*it).increaseFileSent(_BUFFER);
+	if (fileStatus == OP_ONCE)
+		delete (*it).getFileFD();
+}
+
+/*
+	Error management : When does the connexion become false?
+*/
+void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
+{
+	uint32_t	event = epoll.getEvent(eventIdx);
+	VClientIt	it = handler.getClient(i);
+	int			fd = (*it).get_clientFD();
+	
+	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
+		manageRequestFromClient(it, fd, epoll, handler);
+	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
+		sendingResponseToClient(it, fd, epoll);
 	else
 	{
 		epoll.epoll_clean(fd);
@@ -129,41 +218,57 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	}
 }
 
+void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler, int const & i)
+{
+	int			fdClient;
+	int			bytesRead;
+	char		buffer[_BUFFER];
+	std::string	bufferString;
+	
+	std::cout << "\033[43mFileFd EPOLLIN : " << (*it)->getClientFd() << "\033[0m" << std::endl;
+	(*it)->manageFd();
+	if ((*it)->getStatus() == OP_START)
+		return;
+	bytesRead = read((*it)->getFileFd(), buffer, _BUFFER);
+	if (bytesRead <= 0)
+	{
+		(*it)->setStatus(OP_CLOSE);
+		(*it)->clearBuffer();
+		closeFileEvent(handler, i, epoll);
+		return ;
+	}
+	if ((*it)->getStatus() == OP_OPEN && (*it)->getFileTotalSize() <= static_cast<size_t>(bytesRead))
+		(*it)->setStatus(OP_ONCE);
+	bufferString.append(buffer, bytesRead);
+	(*it)->setBuffer(bufferString);
+	(*it)->restoreFd();
+	if ((*it)->getStatus() == OP_ONGOING && ((*it)->getFileTotalSize() == (*it)->getFileSentSize() + static_cast<size_t>(bytesRead)))
+		(*it)->setStatus(OP_CLOSE);
+	if ((*it)->getStatus() == OP_ONCE || (*it)->getStatus() == OP_OPEN)
+	{
+		fdClient = (*it)->getClientFd();
+		if ((*it)->getStatus() == OP_OPEN)
+			(*it)->setStatus(OP_START);
+		epoll.epoll_update_event(fdClient, EPOLLOUT);
+	}
+	if ((*it)->getStatus() == OP_ONCE || (*it)->getStatus() == OP_CLOSE)
+		closeFileEvent(handler, i, epoll);
+}
+
+/*
+	else option necessary?
+*/
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
 	vectFileFdIt	it = handler.getFileFd(i);
 	uint32_t		event = epoll.getEvent(eventIdx);
 
-	if (event & EPOLLIN) //Get request response
-	{
-		std::cout << "\033[43mFD EPOLLIN FOR FILE IO" << "\033[0m" << std::endl;
-		char buf[_BUFFER];
-		std::string buffer;
-		size_t bytesRead;
-		int fd;
-		int	fdClient;
-
-		(*it).manageFd();
-		while ((bytesRead = read((*it).getFileFd(), buf, _BUFFER)) > 0)
-			buffer.append(buf, bytesRead);
-		(*it).setBuffer(buffer);
-		(*it).restoreFd();
-		fd = (*it).getFileFd();
-		std::cout << "Fd = " << fd << std::endl;
-		/*Change client to EPOLLOUT*/
-		fdClient = (*it).getClientFd();
-		epoll.epoll_update_event(fdClient, EPOLLOUT);
-		VClientIt itCli = findFdInClient(handler.getVectClient(), fdClient);
-		(*itCli).setFileFD((*it));
-		/**************************** */
-		epoll.epoll_clean(fd);
-		close((*it).getStockFd());
-		handler.removeFileFd(i);
-	}
+	if (event & EPOLLIN)
+		readFromFileFd(it, epoll, handler, i);
 	else if (event & EPOLLOUT)
 	{
 		std::cout << "ATY QQQQQQQQQQQQQQQQQQQQQQQQ		\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
 	}
-	else
-		std::cout << "ERROR ON EPOLL FILE IO\n";
+	// else
+	// 	std::cout << "ERROR ON EPOLL FILE IO\n";
 }

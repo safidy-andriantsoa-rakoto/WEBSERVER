@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/22 11:41:39 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:25:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 Client::Client(Server const & server, const int &_clientFD, bool is_connect) : 
 	Server(server),
 	_clientFD(_clientFD),
-	_connect(is_connect)
+	_connect(is_connect),
+	_fileFD(NULL)
 {
 	this->_clientRequest= "";
 	this->_to_send = 0;
@@ -41,7 +42,6 @@ Client &Client::operator=(const Client &client)
 		this->_connect = client._connect;
 		this->_clientRequest = client._clientRequest;
 		this->_client_stat = client._client_stat;
-		this->_fileFD = client._fileFD;
 		this->_response = client._response;
 		this->_to_send = client._to_send;
 		this->_total_send = client._total_send;
@@ -90,29 +90,39 @@ int Client::get_clientFD() const
 	return (this->_clientFD);
 }
 
-void Client::setCatchedResponse(AExcept & e)
+void Client::setCatchedResponse(AExcept & e, int & fd, std::string & filePath)
 {
 	t_errPage	errPage = _config.getErrPage();
-	_response.generateCatchedResponse(e, errPage);
+	_response.generateCatchedResponse(e, errPage, fd, filePath);
 }
 
 void Client::setStandardResponse(int const & statusCode)
 {
-	_response.setType(_fileFD.getFileType());
+	_response.setType(_fileFD->getFileType());
 	_response.setStatusCode(statusCode);
-	_response.generateStandardResponse(_fileFD.getBuffer());
+	_response.generateStandardResponse(_fileFD->getBuffer());
+}
+
+void Client::setChunkedResponse(int const &statusCode)
+{	
+	_response.setStatusCode(statusCode);
+	if (_fileFD)
+	{
+		_response.setType(_fileFD->getFileType());
+		_response.generateChunkedResponse(_fileFD->getBuffer(), _fileFD->getStatus());
+	}
 }
 
 void Client::ClientRequest()
 {
 	std::cout << "\033[045m			GET REQUEST " << this->_clientFD << "\033[0m" << std::endl;
-	char response[_BUFFER];
+	char response[_BUFFER_RECV];
 	this->_receivedSize = recv(this->get_clientFD(), response, sizeof(response), 0);
 	if (_receivedSize == 0)
 		this->_connect = false;
 	if (_receivedSize == -1)
 		throw RecvError();
-	this->_clientRequest = response;
+	this->_clientRequest = std::string(response, _receivedSize);
 }
 
 std::string Client::getClientRequest() const
@@ -132,32 +142,66 @@ std::string Client::getBoundaryLimit() const
     return (this->_boundary_sep);
 }
 
-void Client::setFileFD(const FileFd &fileFd)
+void Client::setFileFD(FileFd *fileFd)
 {
+	if (_fileFD)
+		delete _fileFD;
 	_fileFD = fileFd;
 }
 
-void Client::linkClientAndFileFd(int const &fd, int const &fdCli, std::string const &filePath)
+void Client::updateFileStatus(int const &status)
 {
-	FileFd _fileFD(fd, fdCli, filePath);
-
-	_fileFD.setFileType();
-	_fileFD.setupFd();
+	_fileFD->setStatus(status);
 }
 
-Response Client::getResponse() const
+void Client::increaseFileSent(size_t const &add)
+{
+	_fileFD->increaseFileSent(add);
+}
+
+Response & Client::getResponse()
 {
 	return (this->_response);
 }
 
-void Client::updateResponseStatus(int const &stat)
+std::string Client::getFullResponse()
 {
-	_response.setRespCategory(stat);
+	return _response.getFullResponse();
 }
 
-FileFd Client::getFileFD() const
+std::string Client::getBodyResponse()
 {
-	return (this->_fileFD);
+    return _response.getBody();
+}
+
+int Client::getCategoryResponse()
+{
+    return _response.getRespCategory();
+}
+
+int Client::getStatusCodeResponse()
+{
+    return _response.getStatusCode();
+}
+
+void Client::clearResponse()
+{
+	_response.clearResponse();
+}
+
+void Client::updateResponseCategory(int const &stat)
+{
+	_response.setCategory(stat);
+}
+
+FileFd *Client::getFileFD()
+{
+	return (_fileFD);
+}
+
+int Client::getFileStatus()
+{
+	return _fileFD->getStatus();
 }
 
 const char *Client::Deconnect::what() const throw()

@@ -1,0 +1,2 @@
+location / | root ./site/minimal | method GET
+location /custom | root ./errorPage/custom | method GET

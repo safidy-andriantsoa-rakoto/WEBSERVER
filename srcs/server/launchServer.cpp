@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/22 15:07:22 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:36:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,16 @@ void    launchServer(Handler & handler)
 	int				fdEvent;
 	int				index;
 	int 			nb_event;
-	std::string		identifier;
-	EpollCreation	epoll;
+	int				identifier;
 	Signal			sign;
+	EpollCreation	epoll;
 
 	initServer(handler.getVectServer());
 	launchEpoll(handler.getVectServer(), epoll);
 	while (SIGINT != sign.getSigNum())
 	{
 		nb_event = epoll.epoll_wait_event();
-		index = 0;
-		handler.displayHandlerStat();
+		// handler.displayHandlerStat();
 		for (int i = 0; i < nb_event; i++)
 		{
 			try
@@ -43,26 +42,29 @@ void    launchServer(Handler & handler)
 				fdEvent = epoll.get_fdEvent(i);
 				std::cout << "\033[47;30m		FD EVENT = " << fdEvent << "\033[0m" << std::endl;
 				identifier = handler.identifyFd(fdEvent, index);
-				if (identifier == "SERVER")
+				switch (identifier)
 				{
-					std::cout << "\033[42m	SERVER" << "\033[0m" << std::endl;
-					handleServerEvent(handler, index, epoll);
-				}
-				else if (identifier == "CLIENT")
-				{
-					std::cout << "\033[43m	CLIENT" << "\033[0m" << std::endl;
-					handleClientEvent(handler, index, epoll, i);
-				}
-				else if (identifier == "FILEFD")
-				{
-					std::cout << "\033[43m	FILEFD" << "\033[0m" << std::endl;
-					handleFileEvent(handler, index, epoll, i);
+					case SERVER:
+						std::cout << "\033[46m	SERVER" << "\033[0m" << std::endl;
+						handleServerEvent(handler, index, epoll);
+						break;
+					case CLIENT:
+						std::cout << "\033[42m	CLIENT" << "\033[0m" << std::endl;
+						handleClientEvent(handler, index, epoll, i);
+						break;
+					case FILE_FD:
+						std::cout << "\033[43m	FILEFD" << "\033[0m" << std::endl;
+						handleFileEvent(handler, index, epoll, i);
+						break;
+					default:
+						throw std::runtime_error("Unknown fd");
+						break;
 				}
 			}
 			catch(const std::exception& e)
 			{
-				std::cerr << "Error on main loop \n" << e.what() << '\n';
-				if (identifier == "CLIENT")
+				std::cerr << "\e[41mError on main loop : " << e.what() << "\e[0m" << std::endl;
+				if (identifier == CLIENT)
 				{
 					epoll.epoll_clean(fdEvent);
 					handler.removeClient(index);

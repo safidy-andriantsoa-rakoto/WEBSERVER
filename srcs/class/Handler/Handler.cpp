@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 09:50:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:58:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,31 +34,30 @@ Handler &Handler::operator=(Handler const & other)
 
 Handler::~Handler(){}
 
-std::string Handler::identifyFd(int const & fd, int & index)
+int Handler::identifyFd(int const & fd, int & index)
 {
+	index = 0;
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
 	{
 		if ((*itVect).get_fdSocket() == fd)
-			return ("SERVER");
+			return SERVER;
 		index++;
 	}
 	index = 0;
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
 	{
 		if ((*itCli).get_clientFD() == fd)
-			return ("CLIENT");
+			return CLIENT;
 		index++;
 	}
 	index = 0;
 	for (vectFileFdIt itFile = _vectFileFd.begin(); itFile != _vectFileFd.end(); itFile++)
 	{
-		if ((*itFile).getFileFd() == fd)
-			return ("FILEFD");
+		if ((*itFile) && (*itFile)->getFileFd() == fd)
+			return FILE_FD;
 		index++;
 	}
-	throw std::runtime_error("Unknown fd");
-	index = 0;
-	return ("Unknown");
+	return -1;
 }
 
 vectServer &Handler::getVectServer()
@@ -107,34 +106,49 @@ void Handler::addToVectClient(Server const & server, int const & fd)
 	_vectClient.push_back(Client(server, fd, true));
 }
 
-void Handler::addToVectFileFd(int const & fd, int const & fdCli, std::string const & filePath)
+void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath)
 {
-	FileFd fileFd(fd, fdCli, filePath);
+	FileFd *fileFd = new FileFd(fd, fdCli, filePath);
 
-	fileFd.setFileType();
-	fileFd.setupFd();
+	fileFd->setFileType();
+	fileFd->setupFd();
+	(*it).setFileFD(fileFd);
 	_vectFileFd.push_back(fileFd);
+	std::cout << "Fd : " << fd << " ; type : " << fileFd->getFileType() << " added to vectFileFd\n";
 }
 
 void Handler::removeClient(int const & index)
 {
-	_vectClient.erase(_vectClient.begin() + index);
+	std::cout << "REMOVING CLIENT " << index << std::endl;
+	VClientIt	it = _vectClient.begin() + index;
+	(*it).setFileFD(NULL);
+	_vectClient.erase(it);
 }
 
 void Handler::removeFileFd(int const & index)
 {
+	std::cout << "REMOVING FILE FD " << index << std::endl;
 	_vectFileFd.erase(_vectFileFd.begin() + index);
 }
 
-void	Handler::closeAllFd()
+void	Handler::cleanFdAndAlloc()
 {
 	FileFd::closeSockFd();
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
-		close((*itVect).get_fdSocket());
+	{
+		if ((*itVect).get_fdSocket() != -1)
+			close((*itVect).get_fdSocket());
+		if ((*itVect).get_fdClient() != -1)
+			close((*itVect).get_fdClient());
+	}	
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
+	{
 		close((*itCli).get_clientFD());
+		if ((*itCli).getFileFD())
+			delete (*itCli).getFileFD();
+	}
 	for (vectFileFdIt itFile = _vectFileFd.begin(); itFile != _vectFileFd.end(); itFile++)
-		close((*itFile).getFileFd());
+		close((*itFile)->getFileFd());
 }
 
 void Handler::displayHandlerStat()
@@ -148,12 +162,15 @@ void Handler::displayHandlerStat()
 	std::cout << std::endl;
 	std::cout << "Nb Client = " << _vectClient.size() << " [";
 	for(size_t i = 0; i < _vectClient.size(); i++)
-		std::cout << _vectClient[i].get_clientFD() << " ";
+		std::cout << _vectClient[i].get_clientFD() << ":" << _vectClient[i].getFileFD() << " ";
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;
 	std::cout << "Nb FileFd = " << _vectFileFd.size() << " [";
 	for(size_t i = 0; i < _vectFileFd.size(); i++)
-		std::cout << _vectFileFd[i].getFileFd() << " ";
+	{
+		if (_vectFileFd[i])
+			std::cout << _vectFileFd[i]->getFileFd() << ":" << _vectFileFd[i] << " ";
+	}
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;
 	std::cout << "========================================== \n";

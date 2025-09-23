@@ -3,25 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 10:29:22 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:27:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server(){}
-
-Server::Server(Server const & other) :
-	_config(other._config),
-	_fdSocket(other._fdSocket),
-	_fdClient(other._fdClient),
-	_size_sockaddrin(other._size_sockaddrin),
-	_sockaddrIn(other._sockaddrIn)
+Server::Server()
 {
-	// *this = other;
+	_fdClient = -1;
+	_fdSocket = -1;
+}
+
+Server::Server(Server const & other)
+{
+	_fdClient = -1;
+	_fdSocket = -1;
+	*this = other;
 }
 
 Server &Server::operator=(Server const & other) 
@@ -54,9 +55,9 @@ int Server::get_fdSocket() const
     return _fdSocket;
 }
 
-SockAddrIn Server::get_confSockAddrIn() const
+SockAddrIn & Server::get_confSockAddrIn()
 {
-    return (this->_sockaddrIn);
+    return (_sockaddrIn);
 }
 
 //Afaka atao throw
@@ -117,8 +118,8 @@ int Server::accept_client_connexion()
 	int fd = accept(_fdSocket, (sockaddr *)&(this->_sockaddrIn), &(this->_size_sockaddrin));
 	if (fd == -1)
 	{
-		std::cout << "Error\naccept a connection on a socket" << std::endl;
-		return (-1);
+		perror("Accept");
+		throw std::runtime_error("Fd error");
 	}
 	return (fd);
 }
@@ -135,19 +136,34 @@ std::string Server::get_client_request()
 	return (response);
 }
 
-//Work on variouse file opening error
-//Case of directory
+/*
+	Check for additionnal errors ?
+	See how to do the listing directory
+*/
 int Server::get_request(Request & request)
 {
 	int			fd;
 	std::string	filePath;
+	DIR*		dir;
 
 	filePath = request.getRequestTarget();
+	dir = opendir(filePath.c_str());
+	if (!dir && errno == EACCES)
+		throw ErrorExcept(403, "Directory forbidden");
+	if (dir && request.getAutoIdx() == true)
+		throw LDirExcept(300, dir, filePath, "Listing directory");
+	if (dir && request.getAutoIdx() == false)
+	{
+		filePath += "/index.html";
+		closedir(dir);
+	}		
 	fd = open(filePath.c_str(), O_RDONLY);
 	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
 	if (fd == -1)
 	{
-		perror("Open");
+		perror("Open file");
+		if (errno == EACCES)
+			throw ErrorExcept(403, "No permission for file");
 		throw ErrorExcept(404, "File can't be opened");
 	}
 	return fd;

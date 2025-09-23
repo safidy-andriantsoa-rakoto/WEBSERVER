@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mime.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/17 10:56:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:25:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

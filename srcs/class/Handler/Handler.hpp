@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 10:27:33 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:25:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ typedef VClient::iterator       VClientIt;
 typedef std::vector<Server>		vectServer;
 typedef vectServer::iterator	vectServerIt;
 
-typedef std::vector<FileFd>		vectFileFd;
+typedef std::vector<FileFd *>	vectFileFd;
 typedef vectFileFd::iterator	vectFileFdIt;
 
 class Handler
@@ -43,7 +43,7 @@ class Handler
 		Handler & operator=(Handler const & other);
 		~Handler();
 
-		std::string	identifyFd(int const & fd, int & index);
+		int				identifyFd(int const & fd, int & index);
 
 		vectServer & 	getVectServer();
 		VClient &		getVectClient();
@@ -56,12 +56,13 @@ class Handler
 		void			setVectServer(vectServer & vectServer);
 
 		void	addToVectClient(Server const & server, int const & fd);
-		void	addToVectFileFd(int const & fd, int const & fdCli, std::string const & filePath);
+		void	addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath);
+		// void	addToVectFileFd(FileFd *fileFd);
 
 		void	removeClient(int const & index);
 		void	removeFileFd(int const & index);
 
-		void	closeAllFd();
+		void	cleanFdAndAlloc();
 
 		void	displayHandlerStat();
 };

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 09:52:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:08:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "general.hpp"
 #include "ErrorExcept.hpp"
 #include "RedirExcept.hpp"
+#include "LDirExcept.hpp"
 
 class Response
 {
@@ -33,8 +34,8 @@ class Response
 		static std::string	_defaultErrPage;
 
 		void				setStatusLine();
-        void 				setToDefaultErrorPage();
-		void				buildErrorPage(int const & statusCode, t_errPage & errPage);
+        // void 				setToDefaultErrorPage();
+		void				buildErrorPage(int const & statusCode, t_errPage & errPage, int & fd, std::string & filePath);
 
 	public:
 		Response();
@@ -44,17 +45,25 @@ class Response
 		Response & operator=(Response const & other);
 		~Response();
 
+		int					getStatusCode() const;
 		void				setType(std::string const & type);
 		void				setStatusCode(int const & statusCode);
-		void				setRespCategory(int const & category);
+		void				setCategory(int const & category);
+
+		void				addHeader(std::string const & header, std::string const & content);
 	
 		int					getRespCategory() const;
 		std::string			getFullResponse();
+		std::string			getBody() const;
+
+		void				clearResponse();
 
         void				generateStandardResponse(std::string const & body);
-		void				generateCatchedResponse(AExcept & e, t_errPage & errPage);
-		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage);
+		void				generateChunkedResponse(std::string const & body, int const & status);
+		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, int & fd, std::string & filePath);
+		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int & fd, std::string & filePath);
 		void				generateRedirectResponse(RedirExcept & r);
+		void				generateLDirResponse(LDirExcept & d);
 
 		static void			initResponseUtils(std::string const & statPath, std::string const & errPath);
 		static stringMap	getAllStatusCode();

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 10:25:14 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 14:36:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/18 08:54:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ typedef VClient::iterator       VClientIt;
 typedef std::vector<Server>		vectServer;
 typedef vectServer::iterator	vectServerIt;
 
-typedef std::vector<FileFd>		vectFileFd;
+typedef std::vector<FileFd *>		vectFileFd;
 typedef vectFileFd::iterator	vectFileFdIt;
 
 #endif

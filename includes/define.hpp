@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   define.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 10:55:10 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:20:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #define RESPONSE_FILE_NAME "response.txt"
 
 //Response
-#define ERR_PATH "errorPage/default/index.html"
+#define ERR_PATH "./errorPage/default/index.html"
 #define STAT_PATH "ext/statcode/statusCode.txt"
 
 // #define POST "POST "
@@ -35,8 +35,10 @@
 #endif
 
 #ifndef _BUFFER
-#define _BUFFER 1024
+#define _BUFFER 500 
 #endif
+
+#define _BUFFER_RECV 1024
 
 #define MAX_EVENT 2042
 
@@ -44,7 +46,24 @@ enum   e_resp
 {
     STD_RSP,
     REDIR_RSP,
-    ERR_RSP
+    ERR_RSP,
+    LDIR_RSP
+};
+
+enum    e_operation
+{
+    OP_ONCE,
+    OP_OPEN,
+    OP_START,
+    OP_ONGOING,
+    OP_CLOSE
+};
+
+enum    e_identifier
+{
+    SERVER,
+    CLIENT,
+    FILE_FD
 };
 
 #endif

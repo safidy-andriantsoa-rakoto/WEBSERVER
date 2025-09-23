@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/19 14:04:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:22:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class Client : public Server
 		
 		
 		Response	_response;
-		FileFd		_fileFD;
+		FileFd		*_fileFD;
 		size_t		_to_send;
 		size_t		_total_send;
 		
@@ -70,16 +70,22 @@ class Client : public Server
 		std::string getBoundaryLimit() const;
 	
 
-		FileFd      getFileFD() const;
-		void        setFileFD(const FileFd &fileFd);
+		FileFd		*getFileFD();
+		int			getFileStatus();
+		void        setFileFD(FileFd *fileFd);
+		void		updateFileStatus(int const & status);
+		void		increaseFileSent(size_t const & add);
 
-		void		linkClientAndFileFd(int const &fd, int const &fdCli, std::string const &filePath);
-
-		Response	getResponse() const;
-		void		updateResponseStatus(int const & stat);
-
-		void		setCatchedResponse(AExcept & e);
+		Response &	getResponse();
+		std::string	getFullResponse();
+		std::string	getBodyResponse();
+		int			getCategoryResponse();
+		int			getStatusCodeResponse();
+		void		clearResponse();
+		void		updateResponseCategory(int const & stat);
+		void		setCatchedResponse(AExcept & e, int & fd, std::string & filePath);
 		void		setStandardResponse(int const & statusCode);
+		void		setChunkedResponse(int const & statusCode);
 
 		void        ClientRequest();
 

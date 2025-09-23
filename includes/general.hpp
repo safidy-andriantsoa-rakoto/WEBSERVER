@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 15:34:29 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:20:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,6 @@
 #include "typedef.hpp"
 #include "define.hpp"
 
-// Error handling
-void	generateErrorResponse(int & fd, int const & statusCode);
-
 //CGI
 void        execCgi(std::string const & path, char **envp, int & pid, int & status, int & fd);
 int         callCgi(char const **argv, char **envp);
@@ -60,6 +57,8 @@ void	    printFileContent(std::string const & path);
 std::string	readFileToString(std::string _path);
 stringMap	splitFileToMapString(std::string const & filePath, std::string const & sep);
 std::string	getFileExtension(std::string const & fileName);
+int         openFile(std::string const & filePath);
+size_t	    getFileSize(std::string const & path);
 
     //stringUtils
 stringVect	strictSplit(std::string const & target, std::string const & sep);
@@ -68,6 +67,7 @@ stringVect	splitString(std::string const & target, std::string const & sep);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
 std::string	checkLimitSize(std::string const & a, std::string const & b);
+void	    chunkingString(std::string & text, int const & status);
 
     //Conversion
 std::string convertIntToString(ssize_t const & n);
@@ -94,3 +94,6 @@ bool        checkWriteConfig(const std::vector<std::string>& lines, const std::s
 bool        checkNumberAllContent(std::vector<std::string> &file);
 
 std::vector<std::string> getContentFile(std::string _path);
+
+// dirListing
+stringVect	listingDirectory(DIR* dir, std::string const & path);
