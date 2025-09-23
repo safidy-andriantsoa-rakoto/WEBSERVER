@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/23 11:39:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:28:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,6 +329,7 @@ int Client::get_request()
 	DIR*		dir;
 
 	filePath = _request.getRequestTarget();
+	std::cout << "Autoindex = " << _request.getAutoIdx();
 	dir = opendir(filePath.c_str());
 	if (!dir && errno == EACCES)
 		throw ErrorExcept(403, "Directory forbidden");

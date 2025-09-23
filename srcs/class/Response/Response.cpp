@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 08:05:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:20:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,9 +190,14 @@ void Response::generateRedirectResponse(RedirExcept & r)
 
 void Response::generateLDirResponse(LDirExcept &d)
 {
+	std::string	list = convertListing(d._dirList);
+
 	_statusCode = d._statusCode;
+	_type = "text/html";
 	setStatusLine();
 	_header.clear();
+	_body = LDirExcept::_component[0] + list + LDirExcept::_component[1];
+	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Connection"] = "keep-alive";
 }
 

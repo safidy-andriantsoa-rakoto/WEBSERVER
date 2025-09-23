@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:20:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:16:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 #endif
 
 #ifndef _BUFFER
-#define _BUFFER 500 
+#define _BUFFER 1000 
 #endif
 
 #define _BUFFER_RECV 1024

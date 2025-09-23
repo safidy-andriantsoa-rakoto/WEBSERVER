@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 15:06:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:27:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,23 +30,27 @@ int main()
 		std::cerr << e.what() << std::endl;
 		handler.cleanFdAndAlloc();
 	}
-	// DIR *dir = opendir("./srcs/class");
-	// if (!dir)
-	// {
-	// 	perror("Test");
-	// 	return 0;
-	// }
-	// stringVect	vect = listingDirectory(dir, "./srcs/class");
 	// try
 	// {
-	// 	std::string test = readFileToString("./site/sample/favicon.ico");
-	// 	// chunkingString(test);
-	// 	std::cout << test << std::endl;
+	// 	LDirExcept::initComponent();
+	// 	std::string	path = "./site/agency/assets/";
+	// 	DIR *dir = opendir(path.c_str());
+	// 	if (!dir)
+	// 	{
+	// 		perror("Test");
+	// 		return 0;
+	// 	}
+	// 	stringMap	map = listingDirectory(dir, path);
+	// 	displayStringMap(map);
+	// 	std::string list = convertListing(map);
+	// 	std::cout << LDirExcept::_component[0] << list << LDirExcept::_component[1] << std::endl;
+	// 	list.clear();
+	// 	path.clear();
+	// 	map.clear();
 	// }
 	// catch(const std::exception& e)
 	// {
 	// 	std::cerr << e.what() << '\n';
 	// }
-	
 	return 0;
 }

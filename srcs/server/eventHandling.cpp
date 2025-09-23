@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 11:15:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:25:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
 		(*it).setCatchedResponse(e, fdFile, filePath);
 		fileFdOpt = EPOLLIN;
-		if ((*it).getCategoryResponse() == REDIR_RSP)
+		if ((*it).getCategoryResponse() == REDIR_RSP || (*it).getCategoryResponse() == LDIR_RSP)
 		{
 			epoll.epoll_update_event(fd, EPOLLOUT);
 			return;
@@ -117,16 +117,14 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 	int			responseCategory = (*it).getCategoryResponse();
 	std::cout << "-->> \033[45mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
 
-	if (responseCategory == REDIR_RSP)
+	if (responseCategory == REDIR_RSP || responseCategory == LDIR_RSP)
 	{
 		responseString = (*it).getFullResponse();
-		std::cout <<"\033[35mSending redirectory response" << "\033[0m" << std::endl;
+		std::cout <<"\033[35mSending redirectory/listing directory response" << "\033[0m" << std::endl;
 		send_value(fd, responseString);
 		epoll.epoll_update_event(fd, EPOLLIN);
 		return ;
 	}
-	// if ((*it).getFileFD() == NULL)
-	// 	return;
 	fileStatus = (*it).getFileStatus();
 	if (responseCategory == STD_RSP)
 		statusCode = 200;
