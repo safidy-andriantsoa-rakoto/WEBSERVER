@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 16:03:50 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:05:57 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		std::string filePath;
 		Request		tmpRequest;
 		std::string limiter = "--";
+		std::string limiterEnd = "--";
 		
 		tmpRequest = (*it).getobjREquest();
 		(*it).ClientRequest();
@@ -66,7 +67,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 						if (is_boundary != std::string::npos)
 						{
 							std::string tmp = body.substr(0, is_boundary - 2);
-							stringVect separate = strictSplit(tmp, "\r\n");
+							stringVect separate = strictSplit(tmp, limit);
 							if (separate.size() == 2)
 							{
 								stringVect var = strictSplit(*(separate.begin()), ": ");
@@ -78,7 +79,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 						else
 						{
 							std::cout << "BODY==END===>[" << body << "]" << std::endl;
-							stringVect separate = strictSplit(body, "\r\n");
+							stringVect separate = strictSplit(body, limit);
 							if (separate.size() == 2)
 							{
 								stringVect var = strictSplit(*(separate.begin()), ": ");
