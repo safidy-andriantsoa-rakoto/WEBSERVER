@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 15:20:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:47:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,6 +191,9 @@ void Response::generateRedirectResponse(RedirExcept & r)
 void Response::generateLDirResponse(LDirExcept &d)
 {
 	std::string	list = convertListing(d._dirList);
+	std::cout << LDirExcept::_component[0] << std::endl;
+	std::cout << list << std::endl;
+	std::cout << LDirExcept::_component[1] << std::endl;
 
 	_statusCode = d._statusCode;
 	_type = "text/html";

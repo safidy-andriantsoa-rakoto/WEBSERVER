@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 15:27:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:47:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int main()
 		Response::initResponseUtils(STAT_PATH, ERR_PATH);
 		Mime::initMapMime(MIME_PATH);
 		FileFd::initSockFd();
+		LDirExcept::initComponent();
 		vectServer	allServer = parseConfigFile();
 		handler.setVectServer(allServer);
 		launchServer(handler);

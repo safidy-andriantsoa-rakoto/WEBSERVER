@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/23 15:28:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 15:46:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,6 +278,10 @@ void Client::processLocationOption(MyLoc const & location, Request & request)
 	locationMethod = location.getAvailableMethod();
 	processRedirection(location, request);
 	checkMethodInLocation(locationMethod, request.getMethod());
+	if (location.getAutoindex() == "ON")
+		request.setAutoIdx(true);
+	else
+		request.setAutoIdx(false);
 }
 
 void Client::checkMethodInLocation(stringVect & locationMethod, std::string const & method)
@@ -329,7 +333,7 @@ int Client::get_request()
 	DIR*		dir;
 
 	filePath = _request.getRequestTarget();
-	std::cout << "Autoindex = " << _request.getAutoIdx();
+	std::cout << "Autoindex = " << _request.getAutoIdx() << std::endl;
 	dir = opendir(filePath.c_str());
 	if (!dir && errno == EACCES)
 		throw ErrorExcept(403, "Directory forbidden");
