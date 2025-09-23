@@ -6,14 +6,14 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 20:11:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 09:04:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
 /*
-    Need to throw exception if error on sending?
+    Need to throw exception if error on sending? because some connexion stopped from the client
     Other amelioration?
 */
 void send_value(int const & _acceptStatus, std::string & _send_content)
@@ -30,5 +30,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
         perror("Send failed");
     else if (sent == 0)
         std::cerr << "Connection closed by peer\n";
+    if (sent <= 0)
+        throw std::runtime_error("Sending error");
     _send_content.clear();
 }

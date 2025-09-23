@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/19 09:29:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:30:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Client : public Server
 		int			getFileStatus();
 		void        setFileFD(FileFd *fileFd);
 		void		updateFileStatus(int const & status);
+		void		increaseFileSent(size_t const & add);
 
 		Response &	getResponse();
 		std::string	getFullResponse();

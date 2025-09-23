@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 15:50:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:58:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,15 +114,13 @@ void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli,
 	fileFd->setupFd();
 	(*it).setFileFD(fileFd);
 	_vectFileFd.push_back(fileFd);
-	std::cout << "Fd " << fd << " added to vectFileFd\n";
+	std::cout << "Fd : " << fd << " ; type : " << fileFd->getFileType() << " added to vectFileFd\n";
 }
 
 void Handler::removeClient(int const & index)
 {
 	std::cout << "REMOVING CLIENT " << index << std::endl;
 	VClientIt	it = _vectClient.begin() + index;
-	if ((*it).getFileFD())
-		delete (*it).getFileFD();
 	(*it).setFileFD(NULL);
 	_vectClient.erase(it);
 }

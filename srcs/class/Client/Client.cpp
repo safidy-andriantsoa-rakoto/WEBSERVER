@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/19 09:29:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:54:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,10 @@ void Client::setChunkedResponse(int const &statusCode)
 {	
 	_response.setStatusCode(statusCode);
 	if (_fileFD)
+	{
+		_response.setType(_fileFD->getFileType());
 		_response.generateChunkedResponse(_fileFD->getBuffer(), _fileFD->getStatus());
+	}
 }
 
 void Client::ClientRequest()
@@ -98,12 +101,19 @@ bool Client::getConnexionStat()
 
 void Client::setFileFD(FileFd *fileFd)
 {
+	if (_fileFD)
+		delete _fileFD;
 	_fileFD = fileFd;
 }
 
 void Client::updateFileStatus(int const &status)
 {
 	_fileFD->setStatus(status);
+}
+
+void Client::increaseFileSent(size_t const &add)
+{
+	_fileFD->increaseFileSent(add);
 }
 
 Response & Client::getResponse()

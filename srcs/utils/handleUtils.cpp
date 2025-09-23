@@ -6,21 +6,11 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 15:31:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:34:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-
-size_t	getFileSize(std::string const & path)
-{
-	struct stat	sf;
-
-	if (stat(path.c_str(), &sf) == -1)
-		throw std::runtime_error("Stat function error");
-	std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
-	return sf.st_size;
-}
 
 void	closeFileEvent(Handler & handler, int const & i, EpollCreation & epoll)
 {

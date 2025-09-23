@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 20:13:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:48:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 		epoll.epoll_update_event(fd, EPOLLIN);
 	if (fileStatus == OP_START)
 		(*it).updateFileStatus(OP_ONGOING);
+	(*it).increaseFileSent(_BUFFER);
 	if (fileStatus == OP_ONCE)
 		delete (*it).getFileFD();
 }
@@ -142,19 +143,21 @@ void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler,
 		closeFileEvent(handler, i, epoll);
 		return ;
 	}
-	if ((*it)->getStatus() == OP_OPEN && getFileSize((*it)->getFilePath()) <= static_cast<size_t>(bytesRead))
+	if ((*it)->getStatus() == OP_OPEN && (*it)->getFileTotalSize() <= static_cast<size_t>(bytesRead))
 		(*it)->setStatus(OP_ONCE);
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBuffer(bufferString);
 	(*it)->restoreFd();
-	fdClient = (*it)->getClientFd();
+	if ((*it)->getStatus() == OP_ONGOING && ((*it)->getFileTotalSize() == (*it)->getFileSentSize() + static_cast<size_t>(bytesRead)))
+		(*it)->setStatus(OP_CLOSE);
 	if ((*it)->getStatus() == OP_ONCE || (*it)->getStatus() == OP_OPEN)
 	{
+		fdClient = (*it)->getClientFd();
 		if ((*it)->getStatus() == OP_OPEN)
 			(*it)->setStatus(OP_START);
 		epoll.epoll_update_event(fdClient, EPOLLOUT);
 	}
-	if ((*it)->getStatus() == OP_ONCE)
+	if ((*it)->getStatus() == OP_ONCE || (*it)->getStatus() == OP_CLOSE)
 		closeFileEvent(handler, i, epoll);
 }
 

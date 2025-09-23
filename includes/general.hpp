@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 21:41:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:33:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ std::string	readFileToString(std::string _path);
 stringMap	splitFileToMapString(std::string const & filePath, std::string const & sep);
 std::string	getFileExtension(std::string const & fileName);
 int         openFile(std::string const & filePath);
+size_t	    getFileSize(std::string const & path);
 
     //stringUtils
 stringVect	strictSplit(std::string const & target, std::string const & sep);

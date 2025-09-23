@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 15:21:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:52:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePa
 	_status(OP_OPEN)
 {
 	_fileType = Mime::getFileType(_filePath);
+	_fileTotalSize = getFileSize(_filePath);
+	_fileSent = 0;
 }
 
 FileFd::FileFd(FileFd const & other)
@@ -42,6 +44,8 @@ FileFd &FileFd::operator=(FileFd const & other)
 		_fileType = other._fileType;
 		_method = other._method;
 		_status = other._status;
+		_fileTotalSize = other._fileTotalSize;
+		_fileSent = other._fileSent;
 	}
 	return *this;
 }
@@ -81,6 +85,21 @@ std::string FileFd::getFileType() const
 std::string FileFd::getOriginMethod() const
 {
     return _method;
+}
+
+size_t FileFd::getFileTotalSize() const
+{
+    return _fileTotalSize;
+}
+
+size_t FileFd::getFileSentSize() const
+{
+    return _fileSent;
+}
+
+void FileFd::increaseFileSent(size_t const &add)
+{
+	_fileSent += add;
 }
 
 int FileFd::getStatus() const

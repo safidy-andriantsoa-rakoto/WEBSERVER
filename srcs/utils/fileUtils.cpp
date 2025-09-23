@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 21:41:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/23 08:33:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,5 +245,15 @@ int	openFile(std::string const & filePath)
 		throw std::runtime_error("File opening error");
 	}
 	return fd;
+}
+
+size_t	getFileSize(std::string const & path)
+{
+	struct stat	sf;
+
+	if (stat(path.c_str(), &sf) == -1)
+		throw std::runtime_error("Stat function error");
+	std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
+	return sf.st_size;
 }
 
