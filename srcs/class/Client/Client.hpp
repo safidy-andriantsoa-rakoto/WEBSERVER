@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/23 11:39:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:23:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,17 @@ class Client : public Server
 		bool        _connect;
 		std::string _clientRequest;
 		std::string _boundary_sep;
+		size_t		_to_send;
+		size_t		_total_send;
 
 		Request		_request;
 		Response	_response;
 		FileFd		*_fileFD;
-		size_t		_to_send;
-		size_t		_total_send;
-		
+
 		Client();
 
-		// void		processRequestWithConfig(Request & request);
 		void		processRequestWithConfig();
-		// void		checkContentLength(Request & request);
 		void		checkContentLength();
-		// void		buildRequestTarget(Request & request);
 		void		buildRequestTarget();
 		
 		void		processLocationOption(MyLoc const & location, Request & request);
@@ -76,6 +73,7 @@ class Client : public Server
 		FileFd		*getFileFD();
 		int			getFileStatus();
 		void        setFileFD(FileFd *fileFd);
+		void		clearFileFd();
 		void		updateFileStatus(int const & status);
 		void		increaseFileSent(size_t const & add);
 

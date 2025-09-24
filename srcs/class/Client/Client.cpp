@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/24 08:30:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:23:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ Client &Client::operator=(const Client &client)
 		this->_client_stat = client._client_stat;
 		this->_boundary_sep = client._boundary_sep;
 		this->_request = client._request;
-		this->_fileFD = client._fileFD;
+		setFileFD(client._fileFD);
 	}
 	return (*this);
 }
@@ -150,9 +150,15 @@ std::string Client::getBoundaryLimit() const
 
 void Client::setFileFD(FileFd *fileFd)
 {
+	clearFileFd();
+	_fileFD = fileFd;
+}
+
+void Client::clearFileFd()
+{
 	if (_fileFD)
 		delete _fileFD;
-	_fileFD = fileFd;
+	_fileFD = NULL;
 }
 
 void Client::updateFileStatus(int const &status)
@@ -220,15 +226,12 @@ const char *Client::RecvError::what() const throw()
 	return ("Error RECV\nget Request from client");
 }
 
-
-// void Client::processRequestWithConfig(Request & request)
 void Client::processRequestWithConfig()
 {
 	checkContentLength();
 	buildRequestTarget();
 }
 
-// void Client::checkContentLength(Request &request)
 void Client::checkContentLength()
 {
 	float		maxSize;
@@ -333,7 +336,7 @@ int Client::get_request()
 	DIR*		dir;
 
 	filePath = _request.getRequestTarget();
-	std::cout << "Autoindex = " << _request.getAutoIdx() << std::endl;
+	// std::cout << "Autoindex = " << _request.getAutoIdx() << std::endl;
 	dir = opendir(filePath.c_str());
 	if (!dir && errno == EACCES)
 		throw ErrorExcept(403, "Directory forbidden");

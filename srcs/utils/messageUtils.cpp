@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 07:59:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:15:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
 
     size_t to_send = _send_content.size();
 
-    std::cout << "Size to send = " << _send_content.size() << std::endl;
+    // std::cout << "Size to send = " << _send_content.size() << std::endl;
     if (_acceptStatus < 0)
         throw std::runtime_error("Invalid fd to send");
     const char *resp =  _send_content.c_str();

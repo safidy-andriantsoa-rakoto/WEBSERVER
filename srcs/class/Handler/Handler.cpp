@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 08:58:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:24:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void Handler::removeClient(int const & index)
 {
 	std::cout << "REMOVING CLIENT " << index << std::endl;
 	VClientIt	it = _vectClient.begin() + index;
-	(*it).setFileFD(NULL);
+	(*it).clearFileFd();
 	_vectClient.erase(it);
 }
 

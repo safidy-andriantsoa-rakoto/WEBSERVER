@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 08:15:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:24:09 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 		(*it).updateFileStatus(OP_ONGOING);
 	(*it).increaseFileSent(_BUFFER);
 	if (fileStatus == OP_ONCE)
-		delete (*it).getFileFD();
+		(*it).clearFileFd();
 }
 
 /*
