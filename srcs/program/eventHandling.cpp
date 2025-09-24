@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 11:06:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:59:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,10 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	client_request = (*it).getClientRequest();
 	std::cout << "-->> \033[042mHandleClientEvent : request_size = " << client_request.size() << "\033[0m" << std::endl;
 	if (client_request.size() == 0)
+	{
+		(*it).clearFileFd();
 		throw std::runtime_error("Remove client");
+	}
 	try
 	{
 		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);

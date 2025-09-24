@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/24 10:45:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:48:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,8 @@ void    launchServer(Handler & handler)
 				std::cerr << "\e[41mError on main loop : " << e.what() << "\e[0m" << std::endl;
 				if (identifier == CLIENT)
 				{
-					epoll.epoll_clean(fdEvent);
 					handler.removeClient(index, epoll);
+					epoll.epoll_clean(fdEvent);
 				}
 			}
 		}

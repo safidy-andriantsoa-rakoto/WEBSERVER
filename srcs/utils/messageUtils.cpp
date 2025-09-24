@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 09:15:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:54:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
     if (sent < 0)
     {
         perror("Send failed");
-        throw std::runtime_error("Send_value error");
+        // throw std::runtime_error("Send_value error");
     }
     else if (sent == 0)
         throw std::runtime_error("Connection closed by peer");
