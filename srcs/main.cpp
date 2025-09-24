@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 15:47:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 08:31:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,14 @@ int main()
 	// {
 	// 	LDirExcept::initComponent();
 	// 	std::string	path = "./site/agency/assets/";
+	// 	std::string	relativePath = "agency/assets/";
 	// 	DIR *dir = opendir(path.c_str());
 	// 	if (!dir)
 	// 	{
 	// 		perror("Test");
 	// 		return 0;
 	// 	}
-	// 	stringMap	map = listingDirectory(dir, path);
+	// 	stringMap	map = listingDirectory(dir, relativePath);
 	// 	displayStringMap(map);
 	// 	std::string list = convertListing(map);
 	// 	std::cout << LDirExcept::_component[0] << list << LDirExcept::_component[1] << std::endl;

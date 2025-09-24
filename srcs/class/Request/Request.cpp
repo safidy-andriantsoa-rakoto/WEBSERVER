@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:25:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 08:37:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,16 @@ Request &Request::operator=(Request const & other)
 {
 	if (this != &other)
 	{
+		_method = other._method;
+		_requestTarget = other._requestTarget;
+		_originalRequestTarget = other._originalRequestTarget;
+		_clientHttp = other._clientHttp;
 		_requestLine = other._requestLine;
 		_header = other._header;
 		_body = other._body;
 		_request_length = other._request_length;
 		_autoIdx = other._autoIdx;
+		_multipart_body = other._multipart_body;
 	}
 	return *this;
 }
@@ -47,6 +52,11 @@ std::string Request::getMethod() const
 std::string Request::getRequestTarget() const
 {
     return _requestTarget;
+}
+
+std::string Request::getOriginalRequestTarget() const
+{
+    return _originalRequestTarget;
 }
 
 std::string Request::getHttp() const
@@ -124,6 +134,7 @@ void Request::setRequestLine(std::string const & replacement)
 	else
 		_requestTarget = splitted[1];
 	_clientHttp = splitted[2];
+	_originalRequestTarget = _requestTarget;
 }
 
 void	Request::setRequestBody(std::string const & requeststring, size_t const & pos)

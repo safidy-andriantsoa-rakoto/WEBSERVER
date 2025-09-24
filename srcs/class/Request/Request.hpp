@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:26:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 08:28:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class Request
 		std::string	_requestLine;
 		std::string	_method;
 		std::string	_requestTarget;
+		std::string	_originalRequestTarget;
 		std::string	_clientHttp;
 
 		stringMap	_header;
@@ -43,6 +44,7 @@ class Request
 		std::string	getHttp() const;
 		std::string	getMethod() const;
 		std::string	getRequestTarget() const;
+		std::string	getOriginalRequestTarget() const;
 		std::string	getRequestLine() const;
 		std::string	getBody() const;
 		stringMap	getHeader() const;
