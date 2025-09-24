@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 10:00:22 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:54:21 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,17 +105,10 @@ void MyLoc::parseLocation(const stringVect &file)
                     _method.push_back(word);
                 if(name == "redirect")
                     _redirect.push_back(word);
-                // if(name == "SCRIPT_FILENAME")
             }
         }
     }
     std::cout << "location =  " << _locations << " size = " << _location.size() << std::endl;
-    // // for(size_t i = 0; i < _root.size(); i++)
-    // // {
-    //     if(!_root.empty())
-    //          std::cout << "root the = " << _root[0] << std::endl;
-    //     std::cout << "is empty " << std::endl;
-    // // }
     std::cout << "root = " << _root.size() << std::endl;
     currentBlock++;
     _checkStats = true;
