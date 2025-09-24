@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 11:51:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:09:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,6 @@ void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli,
 	fileFd->setupFd();
 	(*it).setFileFD(fileFd);
 	_vectFileFd.push_back(fileFd);
-	// std::cout << "Fd : " << fd << " ; type : " << fileFd->getFileType() << " added to vectFileFd\n";
 }
 
 vectFileFdIt	Handler::findFdInFileFd(vectFileFd & allFileFd, int const & fd)

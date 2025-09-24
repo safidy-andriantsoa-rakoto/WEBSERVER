@@ -6,12 +6,18 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 09:48:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:45:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
+/*
+	Check for all the default file too : 
+		listDir.html
+		erropage index.html
+		etc...
+*/
 static void	initProgram()
 {
 	Response::initAllStatusCode(STAT_PATH);

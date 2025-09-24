@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 11:59:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:46:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,19 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	tmpRequest = (*it).getobjREquest();
 	(*it).ClientRequest();
 	client_request = (*it).getClientRequest();
-	std::cout << "-->> \033[042mHandleClientEvent : request_size = " << client_request.size() << "\033[0m" << std::endl;
+	// std::cout << "-->> \033[042m ManageRequestFromClient : request_size = " << client_request.size() << "\033[0m" << std::endl;
 	if (client_request.size() == 0)
 	{
 		(*it).clearFileFd();
-		throw std::runtime_error("Remove client");
+		throw std::runtime_error("ManageRequestFromClient - request size = 0");
 	}
 	try
 	{
+		/*
+			Adding FLAG [Safidy]
+			Need to have the complete request before parsing/processing request
+			Client stay at EPOLLIN
+		*/
 		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);
 		// size_t pos = client_request.find(limit);
 		// 	if (pos != std::string::npos)
@@ -159,9 +164,6 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 		(*it).clearFileFd();
 }
 
-/*
-	Error management : When does the connexion become false?
-*/
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
 	uint32_t	event = epoll.getEvent(eventIdx);

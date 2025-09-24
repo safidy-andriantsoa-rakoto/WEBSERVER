@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/24 11:48:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:34:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,9 @@ void    launchServer(Handler & handler)
 			catch(const std::exception& e)
 			{
 				std::cerr << "\e[41mError on main loop : " << e.what() << "\e[0m" << std::endl;
+				std::string eWhat = e.what();
+				if (eWhat == "AExcept error")
+					throw std::runtime_error("Error page corrupted");
 				if (identifier == CLIENT)
 				{
 					handler.removeClient(index, epoll);

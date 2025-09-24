@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/24 11:58:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:59:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,7 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	this->_to_send = 0;
 	this->_total_send = 0;
 	if (_clientFD < 0)
-	{
-		std::cout << "Error\nInvalid input FD" << std::endl; 
-		return ;
-	}
+		throw std::runtime_error("Client constructor error");
 }
 
 Client::Client(const Client &client) : Server(client)
@@ -121,13 +118,18 @@ void Client::setChunkedResponse(int const &statusCode)
 
 void Client::ClientRequest()
 {
-	std::cout << "\033[045m			GET REQUEST " << this->_clientFD << "\033[0m" << std::endl;
 	char response[_BUFFER_RECV];
+
+	std::cout << "\033[045m			GETTING REQUEST FROM FD = " << this->_clientFD << "\033[0m" << std::endl;
 	this->_receivedSize = recv(this->get_clientFD(), response, sizeof(response), 0);
 	if (_receivedSize == 0)
 		this->_connect = false;
 	if (_receivedSize == -1)
+	{
+		perror("ClientRequest - Recv");
+		clearAllFd();
 		throw RecvError();
+	}
 	this->_clientRequest = std::string(response, _receivedSize);
 }
 
@@ -301,7 +303,9 @@ void Client::checkMethodInLocation(stringVect & locationMethod, std::string cons
 	}
 }
 
-// Review redirection function
+/*
+	Review redirection function [Barandri]
+*/
 void Client::processRedirection(MyLoc const & location, Request & request)
 {
 	std::string	oldUri;
