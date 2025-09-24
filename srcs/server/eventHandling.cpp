@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 15:53:17 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/24 10:35:00 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,16 +59,42 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 				body.erase(0, is_boundary);
 				while (is_boundary != std::string::npos)
 				{
+					// std::cout << "			QWERTYUIOP" << std::endl;
 					body.erase(0, is_boundary + limiter.size());
 					is_boundary = body.find(limiter);
 					is_boundaryEnd = body.find(limiterEnd);
+
 					if (is_boundary != std::string::npos)
 					{
 						std::string tmp = body.substr(0, is_boundary - 2);
 						stringVect separate = strictSplit(tmp, limit);
+						if (separate.size())
+							std::cout << "["<< separate[0] << "][" << separate[1] << "]" << std::endl;
 						if (separate.size() == 2)
 						{
-							stringVect var = strictSplit(*(separate.begin()), ": ");
+							stringVect var_line;
+							stringVect var;
+
+							size_t find_rn = separate[0].find("\r\n");
+							if (find_rn != std::string::npos)
+							{
+								while (find_rn != std::string::npos)
+								{
+									stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
+									if (tmp1.size())
+										std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
+									separate[0].erase(0, find_rn + 2);
+									find_rn = separate[0].find("\r\n");
+									if (find_rn == std::string::npos)
+									{
+										stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
+										if (tmp.size())
+											std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
+									}
+								}
+							}
+							else
+								var = strictSplit(separate[0], ": ");
 							if (var.size())
 								(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
 						}
@@ -76,18 +102,100 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 					}
 					else if (is_boundaryEnd != std::string::npos)
 					{
+						// std::cout << "BODY==End===>[" << body << "]" << std::endl;
+						// std::string tmp = body.substr(0, is_boundaryEnd - 2);
+						// std::cout << "TMP==END==>[" << tmp << "]" << std::endl;
+						// stringVect separate = strictSplit(tmp, limit);
+						// // std::cout << "["<< *separate.begin() <<"]" << "["<< *(separate.begin() + 1) << "]" << std::endl;
+						// if (separate.size() == 2)
+						// {
+						// 	stringVect var;
+						// 	stringVect var_line = strictSplit(*(separate.begin()) ,"\r\n");
+						// 	for (stringVectIt it = var_line.begin(); it != var_line.end(); it++)
+						// 		var = strictSplit(*it, ": ");
+						// 	if (var.size())
+						// 		(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));// raha \n\r\n no content dia vide izy
+						// }
+						std::string tmp = body.substr(0, is_boundaryEnd - 2);
+						stringVect separate = strictSplit(tmp, "\r\n\r\n");
+						if (separate.size())
+							std::cout << " END{"<< tmp << "} ["<< separate[0] << "][" << separate[1] << "]" << std::endl;
+						if (separate.size() == 2)
+						{
+							stringVect var_line;
+							stringVect var;
+
+							size_t find_rn = separate[0].find("\r\n");
+							if (find_rn != std::string::npos)
+							{
+								std::cout << "   MISY \\r\\n aty" << std::endl;
+								while (find_rn != std::string::npos)
+								{
+									stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
+									if (tmp1.size())
+										std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
+									separate[0].erase(0, find_rn + 2);
+									find_rn = separate[0].find("\r\n");
+									if (find_rn == std::string::npos)
+									{
+										stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
+										if (tmp.size())
+											std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
+									}
+								}
+							}
+							else
+								var = strictSplit(separate[0], ": ");
+							if (var.size())
+								(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+						}
 						std::cout << "\e[5m		TAPITRA       \e[0m" << std::endl;
 					}
 					else
 					{
-						std::cout << "BODY==END===>[" << body << "]" << std::endl;
+						// std::string tmp = body.substr(0, is_boundaryEnd - 2);
 						stringVect separate = strictSplit(body, limit);
+						if (separate.size())
+							std::cout << "["<< separate[0] << "][" << separate[1] << "]" << std::endl;
 						if (separate.size() == 2)
 						{
-							stringVect var = strictSplit(*(separate.begin()), ": ");
+							stringVect var_line;
+							stringVect var;
+
+							size_t find_rn = separate[0].find("\r\n");
+							if (find_rn != std::string::npos)
+							{
+								while (find_rn != std::string::npos)
+								{
+									stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
+									if (tmp1.size())
+										std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
+									separate[0].erase(0, find_rn + 2);
+									find_rn = separate[0].find("\r\n");
+									if (find_rn == std::string::npos)
+									{
+										stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
+										if (tmp.size())
+											std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
+									}
+								}
+							}
+							else
+								var = strictSplit(separate[0], ": ");
 							if (var.size())
 								(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
 						}
+						std::cout << "BODY==END===>[" << body << "]" << std::endl;
+						// stringVect separate = strictSplit(body, limit);
+						// if (separate.size() == 2)
+						// {
+						// 	stringVect var;
+						// 	stringVect var_line = strictSplit(*(separate.begin()) ,"\r\n");
+						// 	for (stringVectIt it = var_line.begin(); it != var_line.end(); it++)
+						// 		var = strictSplit(*it, ": ");
+						// 	if (var.size())
+						// 		(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+						// }
 					}
 				}
 			}
@@ -97,7 +205,6 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 		// int fdCli = (*it).get_clientFD();
 		// epoll.epoll_update_event(fdCli, EPOLLOUT);
 		(*it).updateResponseCategory(STD_RSP);
-		// }
 	}
 	catch(AExcept & e)
 	{

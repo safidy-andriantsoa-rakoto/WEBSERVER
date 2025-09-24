@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:25:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 08:56:19 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,13 +231,15 @@ void Request::displayRequestMultipartData()
 	std::cout << "==============================MULTIPARTDATA================================" << std::endl;
 	for (MapSVectStrIt it = _multipart_body.begin(); it != _multipart_body.end(); it++)
 	{
+		std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;
 		stringVect tmp = it->first;
 		for (stringVectIt its = tmp.begin(); its != tmp.end(); its++)
 		{
-			std::cout << "[" << *its << "]" << std::endl;
+			std::cout << "	\033[36m[" << *its << "]\033[0m" << std::endl;
 		}
 		std::cout << "----------------------------------------------------------------------------" << std::endl;
-		std::cout << "{" << it->second << "}" << std::endl;
+		std::cout << "			\033[32m->" << it->second << "<-\033[0m" << std::endl;
+		std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
 		
 	}
 	std::cout << "==============================MULTIPARTDATA END================================" << std::endl;
