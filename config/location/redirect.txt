@@ -1,6 +1,3 @@
-location / | root ./site/redirect | method GET POST DELETE
-location /css | root ./site/redirect/css | method GET
-location /fonts | root ./site/redirect/fonts | method GET
-location /images | redirect 301 http://localhost:2003/tmp/$uri
-location /js | root ./site/redirect/js | method GET
+location / | root ./site/minimal | method GET | autoindex ON
+location /tooplate | redirect 301 http://localhost:2003/tmp/$uri
 location /custom | root ./errorPage/custom | method GET

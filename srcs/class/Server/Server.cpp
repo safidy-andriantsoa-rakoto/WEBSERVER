@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 10:38:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:51:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,14 @@ std::string Server::get_client_request()
 		return ("");
 	}
 	return (response);
+}
+
+void Server::clearAllFd()
+{
+	if (_fdClient != -1)
+		close(_fdClient);
+	if (_fdSocket != -1)
+		close(_fdSocket);
 }
 
 /*

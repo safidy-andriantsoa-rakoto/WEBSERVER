@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/23 15:14:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 10:45:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void    launchServer(Handler & handler)
 	while (SIGINT != sign.getSigNum())
 	{
 		nb_event = epoll.epoll_wait_event();
-		// handler.displayHandlerStat();
+		handler.displayHandlerStat();
 		for (int i = 0; i < nb_event; i++)
 		{
 			try
@@ -67,7 +67,7 @@ void    launchServer(Handler & handler)
 				if (identifier == CLIENT)
 				{
 					epoll.epoll_clean(fdEvent);
-					handler.removeClient(index);
+					handler.removeClient(index, epoll);
 				}
 			}
 		}

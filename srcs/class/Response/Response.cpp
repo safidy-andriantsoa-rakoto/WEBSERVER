@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 15:47:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:48:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,23 +191,22 @@ void Response::generateRedirectResponse(RedirExcept & r)
 void Response::generateLDirResponse(LDirExcept &d)
 {
 	std::string	list = convertListing(d._dirList);
-	std::cout << LDirExcept::_component[0] << std::endl;
+	std::cout << LDirExcept::_part[0] << std::endl;
 	std::cout << list << std::endl;
-	std::cout << LDirExcept::_component[1] << std::endl;
+	std::cout << LDirExcept::_part[1] << std::endl;
 
 	_statusCode = d._statusCode;
 	_type = "text/html";
 	setStatusLine();
 	_header.clear();
-	_body = LDirExcept::_component[0] + list + LDirExcept::_component[1];
+	_body = LDirExcept::_part[0] + list + LDirExcept::_part[1];
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::initResponseUtils(std::string const & statPath, std::string const & errPath)
+void Response::initAllStatusCode(std::string const & statPath)
 {
 	_allStatusCode = splitFileToMapString(statPath, " | ");
-	_defaultErrPage = readFileToString(errPath);
 }
 
 stringMap Response::getAllStatusCode()

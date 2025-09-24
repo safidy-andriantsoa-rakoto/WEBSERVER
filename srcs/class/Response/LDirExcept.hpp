@@ -24,8 +24,8 @@ class LDirExcept : public AExcept
 		LDirExcept(int const & status, DIR *dir, std::string const & path, std::string const & errMsg);
 		virtual ~LDirExcept() throw();
 
-		static stringVect	_component;
-		static void			initComponent();
+		static stringVect	_part;
+		static void			initPart(std::string const & path);
 };
 
 #endif

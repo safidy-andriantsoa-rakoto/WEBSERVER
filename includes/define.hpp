@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 15:16:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:35:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 //Response
 #define ERR_PATH "./errorPage/default/index.html"
 #define STAT_PATH "ext/statcode/statusCode.txt"
+#define LDIR_PATH "./listingDirectory/listDir.html"
 
 // #define POST "POST "
 #define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"

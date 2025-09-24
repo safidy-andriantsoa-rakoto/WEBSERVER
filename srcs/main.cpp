@@ -6,11 +6,19 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 08:31:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:48:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
+
+static void	initProgram()
+{
+	Response::initAllStatusCode(STAT_PATH);
+	Mime::initMapMime(MIME_PATH);
+	FileFd::initSockFd();
+	LDirExcept::initPart(LDIR_PATH);
+}
 
 int main()
 {
@@ -18,10 +26,7 @@ int main()
 
 	try
 	{
-		Response::initResponseUtils(STAT_PATH, ERR_PATH);
-		Mime::initMapMime(MIME_PATH);
-		FileFd::initSockFd();
-		LDirExcept::initComponent();
+		initProgram();
 		vectServer	allServer = parseConfigFile();
 		handler.setVectServer(allServer);
 		launchServer(handler);
@@ -33,7 +38,7 @@ int main()
 	}
 	// try
 	// {
-	// 	LDirExcept::initComponent();
+	// 	LDirExcept::initPart();
 	// 	std::string	path = "./site/agency/assets/";
 	// 	std::string	relativePath = "agency/assets/";
 	// 	DIR *dir = opendir(path.c_str());
@@ -45,7 +50,7 @@ int main()
 	// 	stringMap	map = listingDirectory(dir, relativePath);
 	// 	displayStringMap(map);
 	// 	std::string list = convertListing(map);
-	// 	std::cout << LDirExcept::_component[0] << list << LDirExcept::_component[1] << std::endl;
+	// 	std::cout << LDirExcept::_part[0] << list << LDirExcept::_part[1] << std::endl;
 	// 	list.clear();
 	// 	path.clear();
 	// 	map.clear();

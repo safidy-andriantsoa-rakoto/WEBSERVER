@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 09:24:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:06:09 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,12 +115,12 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 	int			statusCode;
 	int			fileStatus;
 	int			responseCategory = (*it).getCategoryResponse();
-	// std::cout << "-->> \033[45mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
+	std::cout << "-->> \033[45mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
 
 	if (responseCategory == REDIR_RSP || responseCategory == LDIR_RSP)
 	{
 		responseString = (*it).getFullResponse();
-		// std::cout <<"\033[35mSending redirectory/listing directory response" << "\033[0m" << std::endl;
+		std::cout <<"\033[35mSending redirectory/listing directory response" << "\033[0m" << std::endl;
 		send_value(fd, responseString);
 		epoll.epoll_update_event(fd, EPOLLIN);
 		return ;
@@ -132,12 +132,12 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 		statusCode = (*it).getStatusCodeResponse();
 	if (fileStatus == OP_ONCE)
 	{
-		// std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
+		std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
 		(*it).setStandardResponse(statusCode);
 	}
 	else
 	{
-		// std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
+		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
 		(*it).setChunkedResponse(statusCode);
 	}
 	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
@@ -145,6 +145,7 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 	else
 		responseString = (*it).getFullResponse();
 	// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
+	std::cout <<"\e[45mResponse from the file : " << (*it).getFileFD()->getFilePath() << "\e[0m" << std::endl;
 	send_value(fd, responseString);
 	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
 		epoll.epoll_update_event(fd, EPOLLIN);
@@ -169,10 +170,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
 		sendingResponseToClient(it, fd, epoll);
 	else
-	{
-		epoll.epoll_clean(fd);
-		handler.removeClient(i);
-	}
+		throw std::runtime_error("HandleClientEvent error");
 }
 
 void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler, int const & i)
@@ -212,9 +210,6 @@ void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler,
 		closeFileEvent(handler, i, epoll);
 }
 
-/*
-	else option necessary?
-*/
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
 	vectFileFdIt	it = handler.getFileFd(i);
@@ -226,6 +221,4 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	{
 		std::cout << "ATY		\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
 	}
-	// else
-	// 	std::cout << "ERROR ON EPOLL FILE IO\n";
 }

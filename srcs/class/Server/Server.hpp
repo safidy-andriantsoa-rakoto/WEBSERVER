@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 10:39:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:50:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,9 @@ class Server
         int 		wait_connexion_from_client();
         int 		accept_client_connexion();
         std::string get_client_request();
+
+		void		clearAllFd();
+
 		//For testing only !!!!
 		void simpleInit(std::string const & servPath, std::string const & locationPath);
 

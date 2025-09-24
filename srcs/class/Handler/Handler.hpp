@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:25:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:05:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "../Server/Server.hpp"
 #include "../Client/Client.hpp"
 #include "../FileFd/FileFd.hpp"
+#include "../Epoll/EpollCreation.hpp"
 
 class Client;
 
@@ -55,16 +56,19 @@ class Handler
 
 		void			setVectServer(vectServer & vectServer);
 
-		void	addToVectClient(Server const & server, int const & fd);
-		void	addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath);
-		// void	addToVectFileFd(FileFd *fileFd);
+		void			addToVectClient(Server const & server, int const & fd);
+		void			addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath);
 
-		void	removeClient(int const & index);
-		void	removeFileFd(int const & index);
+		void			removeClient(int const & index, EpollCreation & epoll);
+		void			removeClient(VClientIt & it, EpollCreation & epoll);
+	
+		void			removeFileFd(int const & index);
+		void			removeFileFd(vectFileFdIt & it);
+		vectFileFdIt	findFdInFileFd(vectFileFd & allFileFd, int const & fd);
 
-		void	cleanFdAndAlloc();
+		void			cleanFdAndAlloc();
 
-		void	displayHandlerStat();
+		void			displayHandlerStat();
 };
 
 #endif
