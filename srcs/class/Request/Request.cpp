@@ -6,13 +6,13 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 08:56:19 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:50:20 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false) {}
+Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false) {}
 
 Request::Request(Request const & other)
 {
@@ -28,6 +28,7 @@ Request &Request::operator=(Request const & other)
 		_body = other._body;
 		_request_length = other._request_length;
 		_autoIdx = other._autoIdx;
+		_is_CRLF_header = other._is_CRLF_header;
 	}
 	return *this;
 }
@@ -70,6 +71,16 @@ void Request::Del_space(std::string &data)
         data.erase(data.find(' '), 1);
 }
 
+void Request::set_is_CRLF_header(bool is_crlf)
+{
+	this->_is_CRLF_header = is_crlf;
+}
+
+bool Request::get_is_CRLF_header()
+{
+    return (this->_is_CRLF_header);
+}
+
 bool Request::getAutoIdx() const
 {
     return _autoIdx;
@@ -88,6 +99,18 @@ void Request::setRequestSize(ssize_t size)
 ssize_t Request::getRequestSize()
 {
 	return (this->_request_length);
+}
+
+void Request::set_Body(const std::string& _body)
+{
+	this->_body.clear();
+	if (!_body.size())
+		this->_body = "";
+}
+
+std::string& Request::get_Body()
+{
+    return (_body);
 }
 
 void Request::set_post_body(stringVect var, std::string content)
@@ -148,14 +171,10 @@ void	Request::parseRequest(std::string const & requeststring)
 	size_t		startPos;
 	std::string	sep = "\r\n";
 	std::string	line;
-	// std::string key = "Content-Disposition";
-	// std::string type = "name=\"";
-	// std::string name = "filename=\"";
 	stringVect	headerVect;
-//Transfer-Encoding
 
-	// std::cout << "REQUEST["<< requeststring <<"]" << std::endl;
 	startPos = 0;
+	std::cout << "REQUEST_STRING--->" << requeststring << "<----" << std::endl;
 	pos = requeststring.find(sep, startPos);
 	if (pos == std::string::npos)
 		throw std::runtime_error("Parsing request : No request line found");
@@ -174,41 +193,8 @@ void	Request::parseRequest(std::string const & requeststring)
 		headerVect.clear();
 	}
 	setRequestBody(requeststring, pos + sep.size());
-	// displayRequest();
-	// std::cout << "[ "<< _body <<" ]" << std::endl;
-	// pos = _body.find("\n" + sep);
-	// if (pos != std::string::npos)
-	// {
-	// 	std::cout << "POST FILE" << std::endl;
-		// std::string _postNextHead = _body.substr(0, pos);
-		// this->Del_space(_postNextHead);
-		// pos = _postNextHead.find(type);
-		// if (pos != std::string::npos)
-		// {
-		// 	std::string tmp = _postNextHead.substr(pos + type.size(), _postNextHead.size());
-		// 	size_t end = tmp.find_first_of('"');
-		// 	if (end != std::string::npos)
-		// 		std::cout << tmp.substr(0, end) << std::endl;
-		// 	_postInfo["type"] =  _postNextHead.erase(0, pos);
-		// }
-		// pos = _postNextHead.find(name);
-		// if (pos != std::string::npos)
-		// {
-		// 	std::string tmp = _postNextHead.substr(pos + name.size(), _postNextHead.size());
-		// 	size_t end = tmp.find_first_of('"');
-		// 	if (end != std::string::npos)
-		// 		std::cout << tmp.substr(0, end) << std::endl;
-		// 	_postInfo["name"] = _postNextHead.erase(0, pos);
-		// }
-		// pos = _body.find_first_of("\n\r\n");
-		// if (pos != std::string::npos)
-		// {
-		// 	_body = _body.erase(0, pos);
-		// 	// std::cout << "BODY>>[" << _body << std::endl;
-		// }
-	// }
-	// else
-		// std::cout << "FORMULAIRE REQUEST POST" << std::endl;
+	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")
+		this->_is_CRLF_header = true;
 }
 
 void Request::displayRequest() const

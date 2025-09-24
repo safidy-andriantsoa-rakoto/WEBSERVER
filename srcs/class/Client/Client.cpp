@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/23 15:07:55 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:57:49 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,17 +327,25 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	t_errPage	errPage;
 	std::string	type;
 	stringMap	header;
-	std::string md;
+	// std::string md;
 	std::string boundary;
 
 	fileFd = -1;
-	md = "multipart/form-data";
+	// md = "";
 	boundary = "boundary=";
-	request.parseRequest(clientRequest);
+	
+	if (!request.get_is_CRLF_header())
+	{
+		request.parseRequest(clientRequest);
+		processRequestWithConfig();
+	}
+	else
+	{
+		request.set_Body(clientRequest);
+	}
 	header = request.getHeader();
+	/////////////////////////////////////
 	request.displayRequest();
-	std::cout << "METHODE-->" << request.getMethod() << std::endl;
-	processRequestWithConfig();
 	if (request.getMethod() == "GET")
 	{
 		fileFd = get_request(request);
@@ -347,30 +355,46 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	}
 	else if (request.getMethod() == "POST")
 	{
-		std::cout << "\n\n\033[5,42m\e[5m			Aty eeeeeeeee\e[0m\033[0m\n\n" << std::endl;
-		fileFd = open("storage", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fileFd== -1) {
-			perror("open file in POST");
-			throw ErrorExcept(404, "File can't be opened");
-		}
-		size_t is_exist =  header.find("Content-Type")->second.find(md);
-		if (is_exist != std::string::npos)
+		if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 		{
+			fileFd = open("storage_multi_form_data", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fileFd== -1) {
+				perror("open file in POST");
+				throw ErrorExcept(404, "File can't be opened");
+			}
 			std::string	getboundary = header.find("Content-Type")->second;
 			size_t pos = getboundary.find(boundary);
 			if (pos != std::string::npos)
-			{
 				this->_boundary_sep = getboundary.substr(pos + boundary.size());
-			}
-			std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
-			
-			
+			// std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
 			std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
 		}
-		else
+		else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 		{
-			std::cout << "\nNORMAL DATA" << std::endl;
+			std::cout << "\napplication/x-www-form-urlencoded\n" << std::endl;
+			fileFd = open("storage_app_xwfurlencoded", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fileFd== -1) {
+				perror("open file in POST");
+				throw ErrorExcept(404, "File can't be opened");
+			}
 		}
+		else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
+		{
+			if (request.get_Body().find("\r\n\r\n") != std::string::npos)
+			{
+				std::cout << "			VITA ZANY EEE" << std::endl;	
+				request.set_is_CRLF_header(false);
+			}
+			std::cout << "\ntext/plain\n" << std::endl;
+			fileFd = open("storage_text_plain", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fileFd== -1) {
+				perror("open file in POST");
+				throw ErrorExcept(404, "File can't be opened");
+			}
+		}
+		else
+			std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+			
 		opt = EPOLLOUT;
 	}
 	else if (request.getMethod() == "DELETE")

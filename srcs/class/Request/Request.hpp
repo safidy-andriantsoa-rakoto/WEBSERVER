@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:26:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:48:34 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Request
 		MapSVectStr	_multipart_body;
 		size_t		_request_length;
 		bool		_autoIdx;
+		bool		_is_CRLF_header;
 
 		void    	setRequestLine(std::string const & set);
 		void		setRequestBody(std::string const & requeststring, size_t const & pos);
@@ -50,12 +51,17 @@ class Request
 
 		void 		Del_space(std::string &data);
 
+		void		set_is_CRLF_header(bool is_crlf);
+		bool		get_is_CRLF_header();
+		
 		bool		getAutoIdx() const;
 		void		setAutoIdx(bool const & autoIdx);
 
 		void		setRequestSize(ssize_t size);
 		ssize_t		getRequestSize();
 
+		void		set_Body(const std::string& _body);
+		std::string&	get_Body();
 		void		set_post_body(stringVect var, std::string content);
 
 		void		setRequestTarget(std::string const & target);
