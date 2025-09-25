@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 08:07:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/25 09:38:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,14 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 		responseString = (*it).getFullResponse();
 	// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
 	std::cout <<"\e[45mResponse from the file : " << (*it).getFileFD()->getFilePath() << "\e[0m" << std::endl;
+	// if (responseCategory == ERR_RSP && responseString.find("$status") != std::string::npos)
+	// {
+	// 	std::string	replace;
+
+	// 	replace = convertIntToString(statusCode);
+	// 	replace += " : " + (*(Response::_allStatusCode).find(replace)).second;
+	// 		replaceString(responseString, replace, "$status");
+	// }
 	send_value(fd, responseString);
 	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
 		epoll.epoll_update_event(fd, EPOLLIN);
