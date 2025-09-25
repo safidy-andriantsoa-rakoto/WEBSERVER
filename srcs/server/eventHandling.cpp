@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/19 15:02:09 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/19 19:26:51 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,51 +34,50 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		int			fdFile;
 		uint32_t	opt;
 		std::string client_request;
-		std::string limit = "\r\n\r\n";
+		// std::string limit = "\r\n\r\n";
 		std::string body;
 		std::string filePath;
-		Request		tmpRequest;
-		std::string limiter = "--";
+		// Request		tmpRequest;
+		// std::string limiter = "--";
 		
-		tmpRequest = (*it).getobjREquest();
+		// tmpRequest = (*it).getobjREquest();
 		(*it).ClientRequest();
 		client_request = (*it).getClientRequest();
 		if (client_request.size() == 0)
 			throw std::runtime_error("Remove client");
 		try
 		{
-			size_t pos = client_request.find(limit);
-			if (pos != std::string::npos)
-			{
-				std::string header = client_request.substr(0, pos);
-				std::cout << "HEADER====>" << header << "]" << std::endl;
+			// size_t pos = client_request.find(limit);
+			// if (pos != std::string::npos)
+			// {
+				// std::string header = client_request.substr(0, pos);
+				// std::cout << "HEADER====>" << header << "]" << std::endl;
 				fdFile = (*it).processRequest(client_request, opt, filePath);
-				body = client_request.substr(pos + limit.size(), client_request.size());
-				if ((*it).getBoundaryLimit().size())
-				{
-					limiter += (*it).getBoundaryLimit() + "\r\n";
-					size_t is_boundary = body.find(limiter);
-					body.erase(0, is_boundary);
-					// std::cout << "BODY=====>[" << body << "]" << std::endl;
-					while (is_boundary != std::string::npos)
-					{
-						std::cout << "POS LIMITER->" << is_boundary << std::endl;
-						body = body.erase(0, is_boundary + limiter.size());
-						is_boundary = body.find(limiter);
-						if (is_boundary != std::string::npos)
-						{
-							std::string tmp = body.substr(0, is_boundary);
-							std::cout << "BODY=====>[" << tmp << "]" << std::endl;
-							body.erase(0, is_boundary);
-						}
-						else
-							std::cout << "BODY=====>[" << body << "]" << std::endl;
-					}
-				}
+				// body = client_request.substr(pos + limit.size(), client_request.size());
+				// if ((*it).getBoundaryLimit().size())
+				// {
+				// 	limiter += (*it).getBoundaryLimit() + "\r\n";
+				// 	size_t is_boundary = body.find(limiter);
+				// 	body.erase(0, is_boundary);
+				// 	while (is_boundary != std::string::npos)
+				// 	{
+				// 		std::cout << "POS LIMITER->" << is_boundary << std::endl;
+				// 		body.erase(0, is_boundary + limiter.size());
+				// 		is_boundary = body.find(limiter);
+				// 		if (is_boundary != std::string::npos)
+				// 		{
+				// 			std::string tmp = body.substr(0, is_boundary);
+				// 			std::cout << "BODY=====>[" << tmp << "]" << std::endl;
+				// 			body.erase(0, is_boundary);
+				// 		}
+				// 		else
+				// 			std::cout << "BODY==2===>[" << body << "]" << std::endl;
+				// 	}
+				// }
 				(*it).updateResponseStatus(STD_RSP);
-			}
-			else
-				std::cout << "RIEN A TROOUVE! OOPS" << std::endl;
+			// }
+			// else
+			// 	std::cout << "RIEN A TROOUVE! OOPS" << std::endl;
 		}
 		catch(AExcept & e)
 		{

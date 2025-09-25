@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/19 14:15:12 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/20 21:46:56 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	this->_clientRequest= "";
 	this->_to_send = 0;
 	this->_total_send = 0;
+	this->_is_body_post = false;
 	if (_clientFD < 0)
 	{
 		std::cout << "Error\nInvalid input FD" << std::endl; 
@@ -46,6 +47,7 @@ Client &Client::operator=(const Client &client)
 		this->_to_send = client._to_send;
 		this->_total_send = client._total_send;
 		this->_boundary_sep = client._boundary_sep;
+		this->_is_body_post = client._is_body_post;
 	}
 	return (*this);
 }
@@ -273,7 +275,7 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
-int Client::processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
+int Client::processRequest(std::string const & clientRequestContent, uint32_t & opt, std::string & filePath)
 {
 	// Request		request;
 	int			fileFd;
@@ -284,50 +286,86 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	stringMap	header;
 	std::string md;
 	std::string boundary;
+	std::string limiter = "\r\n\r";
+	std::string boundary_limit; 
+	size_t		pos;
 
 	fileFd = -1;
+	boundary_limit = "--";
 	md = "multipart/form-data";
 	boundary = "boundary=";
-	request.parseRequest(clientRequest);
+	/*****************************PARSE si header exist******** */
+	pos = clientRequestContent.find(limiter);// header
+	if (pos != std::string::npos && !_is_body_post)
+	{
+		if (!header.size())
+			request.parseRequest(clientRequestContent.substr(0, pos));// parse le header
+		request.setRequestBody(clientRequestContent, pos + limiter.size());// add body dans la classe request
+		if (request.getBody().size())
+			this->_is_body_post = true;
+		std::cout << "BODY CORPS====["<< request.getBody() << "]" << std::endl;
+		// clientRequest.erase(0,p os + limiter.size());
+	}
+	else
+		std::cout << "REST BODY==" << clientRequestContent << std::endl;
+	/******************************************* */
 	header = request.getHeader();
-	request.displayRequest();
 	processRequestWithConfig();
-	if (request.getMethod() == "GET")
+	if (header.size())
 	{
-		fileFd = get_request(request);
-		filePath = request.getRequestTarget();
-		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
-		opt = EPOLLIN;
-	}
-	else if (request.getMethod() == "POST")
-	{
-		fileFd = open("storage", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fileFd== -1) {
-			perror("open file in POST");
-			throw ErrorExcept(404, "File can't be opened");
-		}
-		size_t is_exist =  header.find("Content-Type")->second.find(md);
-		if (is_exist != std::string::npos)
+		if (request.getMethod() == "GET")
 		{
-			std::string	getboundary = header.find("Content-Type")->second;
-			size_t pos = getboundary.find(boundary);
-			if (pos != std::string::npos)
+			fileFd = get_request(request);
+			filePath = request.getRequestTarget();
+			type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
+			opt = EPOLLIN;
+		}
+		else if (request.getMethod() == "POST")
+		{
+			size_t is_exist =  header.find("Content-Type")->second.find(md);
+			if (is_exist != std::string::npos)
 			{
-				this->_boundary_sep = getboundary.substr(pos + boundary.size());
+				fileFd = open("storage", O_WRONLY | O_CREAT | O_APPEND, 0644);
+				if (fileFd == -1) {
+					perror("open file in POST");
+					throw ErrorExcept(404, "File can't be opened");
+				}
+				std::string	getboundary = header.find("Content-Type")->second;
+				size_t pos = getboundary.find(boundary);
+				if (pos != std::string::npos)
+				{
+					this->_boundary_sep = getboundary.substr(pos + boundary.size());
+					boundary_limit += this->_boundary_sep;
+				}
+				// if (request.getBody().size())
+				// {
+				// 	pos = (request.getBody()).find(boundary_limit);
+				// 	while (pos != std::string::npos)
+				// 	{
+				// 		request.getBody().erase(0, pos + boundary_limit.size() + 2);
+				// 		pos = (request.getBody()).find(boundary_limit);
+				// 		if (pos != std::string::npos)
+				// 		{
+				// 			std::cout << "DELETE---[" << request.getBody().substr(0, pos) << "]" << std::endl;
+				// 			request.getBody().erase(0, pos + boundary_limit.size() + 2);
+
+				// 		}
+				// 		// else
+				// 			// std::cout << "DELETE---[" << request.getBody() << "]" << std::endl;
+				// 	}
+				// }
+				std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
+				// std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
 			}
-			std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
-			
-			
-			std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
+			else
+			{
+				std::cout << "\nNORMAL DATA" << std::endl;
+			}
+			opt = EPOLLOUT;
 		}
-		else
-		{
-			std::cout << "\nNORMAL DATA" << std::endl;
-		}
-		opt = EPOLLOUT;
+		else if (request.getMethod() == "DELETE")
+			std::cout << request.getMethod() << std::endl; // Calling delete_request
 	}
-	else if (request.getMethod() == "DELETE")
-		std::cout << request.getMethod() << std::endl; // Calling delete_request
 	return fileFd;
 }
 

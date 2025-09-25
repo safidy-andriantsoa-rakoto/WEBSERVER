@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 10:35:15 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/20 21:08:26 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ ssize_t Request::getRequestSize()
 	return (this->_request_length);
 }
 
-std::string Request::getBody() const
+std::string& Request::getBody()
 {
 	return _body;
 }
@@ -155,7 +155,8 @@ void	Request::parseRequest(std::string const & requeststring)
 		startPos = pos + sep.size();
 		headerVect.clear();
 	}
-	setRequestBody(requeststring, pos + sep.size());
+	// setRequestBody(requeststring, pos + sep.size());
+	// std::cout << this->_body << std::endl;
 	// displayRequest();
 	// std::cout << "[ "<< _body <<" ]" << std::endl;
 	// pos = _body.find("\n" + sep);
