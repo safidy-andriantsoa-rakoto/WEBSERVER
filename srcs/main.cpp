@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 15:45:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/25 08:41:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,8 @@
 
 /*
 	Check for all the default file too : 
-		listDir.html
-		erropage index.html
-		etc...
+		erropage : default/index.html
+		server_conf : default_config.conf
 */
 static void	initProgram()
 {
@@ -24,6 +23,8 @@ static void	initProgram()
 	Mime::initMapMime(MIME_PATH);
 	FileFd::initSockFd();
 	LDirExcept::initPart(LDIR_PATH);
+	int fd = openFile(ERR_PATH);
+	close(fd);
 }
 
 int main()

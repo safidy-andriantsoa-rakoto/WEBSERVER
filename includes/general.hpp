@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 15:01:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/25 08:27:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@
 
 #include "typedef.hpp"
 #include "define.hpp"
+#include "enum.hpp"
 
 //CGI
 void        execCgi(std::string const & path, char **envp, int & pid, int & status, int & fd);
