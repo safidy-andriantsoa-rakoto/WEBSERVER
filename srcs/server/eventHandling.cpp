@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 16:05:12 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 09:38:18 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,7 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 			return;
 		}
 	}
-	if ((*it).getobjREquest().get_is_CRLF_header())
+	if (fdFile != -1)
 	{
 		handler.addToVectFileFd(it, fdFile, fd, filePath);
 		epoll.epoll_control(fileFdOpt, fdFile);
@@ -358,6 +358,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	else if (event & EPOLLOUT)
 	{
 		std::cout << "ATY QQQQQQQQQQQQQQQQQQQQQQQQ		\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
+		delete (*it);
 	}
 	// else
 	// 	std::cout << "ERROR ON EPOLL FILE IO\n";
