@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/25 09:48:25 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 09:59:25 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,8 +242,8 @@ void Client::checkContentLength()
 
 	maxSize = 0;
 	requestSize = 0;
-	itFind = request.getHeader().find("Content-Length");
-	if (itFind == request.getHeader().end())
+	itFind = _request.getHeader().find("Content-Length");
+	if (itFind == _request.getHeader().end())
 		return ;
 	maxSize = _config.getMaxSize();
 	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
@@ -378,33 +378,26 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	// md = "";
 	boundary = "boundary=";
 	
-	if (!request.get_is_CRLF_header())
+	if (!_request.get_is_CRLF_header())
 	{
-		request.parseRequest(clientRequest);
+		_request.parseRequest(clientRequest);
 		processRequestWithConfig();
 	}
 	else
 	{
-		request.set_Body(clientRequest);
+		_request.set_Body(clientRequest);
 	}
-	header = request.getHeader();
+	header = _request.getHeader();
 	/////////////////////////////////////
-	request.displayRequest();
-	if (request.getMethod() == "GET")
+	_request.displayRequest();
+	if (_request.getMethod() == "GET")
 	{
-		filePath += "/index.html";
-		closedir(dir);
-	}		
-	fd = open(filePath.c_str(), O_RDONLY);
-	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
-	if (fd == -1)
-	{
-		perror("Open file");
-		if (errno == EACCES)
-			throw ErrorExcept(403, "No permission for file");
-		throw ErrorExcept(404, "File can't be opened");
+		fileFd = get_request();
+		filePath = _request.getRequestTarget();
+		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
+		opt = EPOLLIN;
 	}
-	else if (request.getMethod() == "POST")
+	else if (_request.getMethod() == "POST")
 	{
 		if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 		{
@@ -445,10 +438,10 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 		}
 		else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 		{
-			if (request.get_Body().find("\r\n\r\n") != std::string::npos)
+			if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
 			{
 				std::cout << "			VITA ZANY EEE" << std::endl;	
-				request.set_is_CRLF_header(false);
+				_request.set_is_CRLF_header(false);
 			}
 			std::cout << "\ntext/plain\n" << std::endl;
 			if (!_fileFD)
