@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 10:09:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 22:11:44 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePa
 	_status(OP_OPEN),
 	_EndFilepost(false)
 {
+	std::cout << "		PATH-->" << _filePath << std::endl;
 	_fileType = Mime::getFileType(_filePath);
+
+	// std::cout << "		BON TRAVAIL EEE" << std::endl;
 	_fileTotalSize = getFileSize(_filePath);
 	_fileSent = 0;
 }

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/25 21:06:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 22:14:08 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,8 @@ std::string Client::getBoundaryLimit() const
 void Client::setFileFD(FileFd *fileFd)
 {
 	clearFileFd();
-	_fileFD = fileFd;
+	if (fileFd)
+		_fileFD = fileFd;
 }
 
 void Client::clearFileFd()
@@ -403,11 +404,12 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 		{
 			if (!this->_fileFD)
 			{
-				fileFd = open("storage_multi_form_data", O_WRONLY | O_CREAT | O_APPEND, 0644);
+				fileFd = open("storage_multi_form_data.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
 				if (fileFd== -1) {
 					perror("open file in POST");
 					throw ErrorExcept(404, "File can't be opened");
 				}
+				filePath = "storage_multi_form_data.txt";
 				opt = EPOLLOUT;
 				std::cout << "FD FILE->POST Multipart/data=" << fileFd << std::endl; 
 			}
@@ -425,11 +427,12 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 			std::cout << "\napplication/x-www-form-urlencoded\n" << std::endl;
 			if (!_fileFD)
 			{
-				fileFd = open("storage_app_xwfurlencoded", O_WRONLY | O_CREAT | O_APPEND, 0644);
+				fileFd = open("storage_app_xwfurlencoded.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
 				if (fileFd== -1) {
 					perror("open file in POST");
 					throw ErrorExcept(404, "File can't be opened");
 				}
+				filePath = "storage_app_xwfurlencoded.txt";
 				opt = EPOLLOUT;
 				std::cout << "FD FILE->POST APP/x-wwwfurlencode=" << fileFd << std::endl; 
 			}
@@ -446,11 +449,12 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 			std::cout << "\ntext/plain\n" << std::endl;
 			if (!_fileFD)
 			{
-				fileFd = open("storage_text_plain", O_WRONLY | O_CREAT | O_APPEND, 0644);
+				fileFd = open("storage_text_plain.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
 				if (fileFd == -1) {
 					perror("open file in POST");
 					throw ErrorExcept(404, "File can't be opened");
 				}
+				filePath = "storage_text_plain.txt";
 				opt = EPOLLOUT;
 				std::cout << "FD FILE->POST text/plain=" << fileFd << std::endl; 
 			}

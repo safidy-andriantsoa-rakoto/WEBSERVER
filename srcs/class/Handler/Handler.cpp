@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 09:48:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 22:01:14 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,8 @@ void Handler::addToVectClient(Server const & server, int const & fd)
 
 void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath)
 {
+	// if ((*it).get_clientFD())
+	// 	std::cout << "		kkiiiiiiiiiiiiiii" << std::endl;
 	FileFd *fileFd = new FileFd(fd, fdCli, filePath);
 
 	fileFd->setFileType();
