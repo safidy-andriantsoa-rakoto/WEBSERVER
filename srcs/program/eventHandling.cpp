@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 09:50:42 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 10:21:12 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,15 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	Request		tmpRequest;
 	std::string limiter = "--";
 	std::string limiterEnd = "--";
-		
+	
+	if ((*it).getFileFD())
+	{
+		if ((*it).getFileFD()->get_endFilePost())
+		{
+			std::cout << "bye bye file fd POST" << std::endl;
+			(*it).clearFileFd();
+		}
+	}
 	tmpRequest = (*it).getobjREquest();
 	(*it).ClientRequest();
 	client_request = (*it).getClientRequest();
@@ -241,10 +249,12 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	}
 	if (fdFile != -1)
 	{
+		std::cout << " 				oadray le"  << std::endl;
 		handler.addToVectFileFd(it, fdFile, fd, filePath);
 		epoll.epoll_control(fileFdOpt, fdFile);
 	}
-	// std::cout << "			NIDINA" << std::endl;
+	else
+		std::cout << "			NIDINA" << std::endl;
 }
 
 /*
@@ -366,6 +376,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	else if (event & EPOLLOUT)
 	{
 		std::cout << "ATY QQQQQQQQQQQQQQQQQQQQQQQQ		\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
-		delete (*it);
+		(*it)->set_endFilePost(true);
+		closeFileEvent(handler, i, epoll);
 	}
 }

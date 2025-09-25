@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 15:49:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/25 10:09:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePa
 	_fileFd(fileFd),
 	_clientFd(clientFd),
 	_filePath(filePath),
-	_status(OP_OPEN)
+	_status(OP_OPEN),
+	_EndFilepost(false)
 {
 	_fileType = Mime::getFileType(_filePath);
 	_fileTotalSize = getFileSize(_filePath);
@@ -46,6 +47,7 @@ FileFd &FileFd::operator=(FileFd const & other)
 		_status = other._status;
 		_fileTotalSize = other._fileTotalSize;
 		_fileSent = other._fileSent;
+		_EndFilepost = other._EndFilepost;
 	}
 	return *this;
 }
@@ -100,6 +102,16 @@ size_t FileFd::getFileSentSize() const
 void FileFd::increaseFileSent(size_t const &add)
 {
 	_fileSent += add;
+}
+
+bool FileFd::get_endFilePost()
+{
+    return (_EndFilepost);
+}
+
+void FileFd::set_endFilePost(bool stat)
+{
+	this->_EndFilepost = stat;
 }
 
 int FileFd::getStatus() const

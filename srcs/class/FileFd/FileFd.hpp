@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 08:35:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/25 10:04:22 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class FileFd
 		std::string	_method;
 
 		int			_status;
+		bool		_EndFilepost;
 
 		FileFd();
 
@@ -52,7 +53,8 @@ class FileFd
 		size_t		getFileSentSize() const;
 
 		void		increaseFileSent(size_t	const & add);
-
+		bool		get_endFilePost();
+		void		set_endFilePost(bool stat);
 		int			getStatus() const;
 		void		setStatus(int const & status);
 
