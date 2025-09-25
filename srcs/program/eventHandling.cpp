@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 10:21:12 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:01:15 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 			Client stay at EPOLLIN
 		*/
 		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);
+		std::cout << "			FD FILE=" << fdFile << std::endl;
 		// size_t pos = client_request.find(limit);
 		// if (pos != std::string::npos)
 		// {
