@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 09:49:26 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 14:28:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,28 +51,28 @@ class Request
 		stringMap	getHeader() const;
 		const	MapSVectStr&	getpostMultipartData() const;
 
-		void 		Del_space(std::string &data);
+		void 			Del_space(std::string &data);
 
-		void		set_is_CRLF_header(bool is_crlf);
-		bool		get_is_CRLF_header();
+		void			set_is_CRLF_header(bool is_crlf);
+		bool			get_is_CRLF_header();
 		
-		bool		getAutoIdx() const;
-		void		setAutoIdx(bool const & autoIdx);
+		bool			getAutoIdx() const;
+		void			setAutoIdx(bool const & autoIdx);
 
-		void		setRequestSize(ssize_t size);
-		ssize_t		getRequestSize();
+		void			setRequestSize(ssize_t size);
+		ssize_t			getRequestSize();
 
-		void		set_Body(const std::string& _body);
+		void			set_Body(const std::string& _body);
 		std::string&	get_Body();
-		void		set_post_body(stringVect var, std::string content);
+		void			set_post_body(stringVect var, std::string content);
 
-		void		setRequestTarget(std::string const & target);
+		void			setRequestTarget(std::string const & target);
 	
-		void		parseRequest(std::string const & requestString);
+		void			parseRequest(std::string const & requestString);
 
-		void		displayRequest() const;
+		void			displayRequest() const;
 
-		void		displayRequestMultipartData();
+		void			displayRequestMultipartData();
 };
 
 #endif

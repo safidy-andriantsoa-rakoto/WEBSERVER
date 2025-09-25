@@ -1,3 +1,4 @@
-location / | root ./site/minimal | method GET | autoindex ON
-location /tooplate | redirect 301 http://localhost:2003/tmp/$uri
+location / | root ./site/minimal_redirect | method GET | autoindex ON
+location /tooplate | redirect 301 http://localhost:2003/tooplate/$uri
 location /custom | root ./config/errorPage/custom | method GET
+location /tmp | root ./site/minimal_redirect/tmp | method GET | autoindex ON

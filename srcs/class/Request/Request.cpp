@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 09:49:14 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 14:33:09 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ void	Request::parseRequest(std::string const & requeststring)
 	stringVect	headerVect;
 
 	startPos = 0;
-	std::cout << "REQUEST_STRING--->" << requeststring << "<----" << std::endl;
+	// std::cout << "REQUEST_STRING--->" << requeststring << "<----" << std::endl;
 	pos = requeststring.find(sep, startPos);
 	if (pos == std::string::npos)
 		throw std::runtime_error("Parsing request : No request line found");
