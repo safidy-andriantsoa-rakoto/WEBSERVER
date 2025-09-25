@@ -12,12 +12,22 @@
 
 #include "LDirExcept.hpp"
 
+stringVect  LDirExcept::_part;
+
 LDirExcept::LDirExcept(int const &status, DIR *dir, std::string const & path, std::string const & errMsg)
 {
     _type = LDIR_RSP;
     _statusCode = status;
     _errMsg = errMsg;
-    _dirTree = listingDirectory(dir, path);
+    _dirList = listingDirectory(dir, path);
 }
 
 LDirExcept::~LDirExcept() throw() {}
+
+void LDirExcept::initPart(std::string const & path)
+{
+    std::string htmlFile;
+
+	htmlFile = readFileToString(path);
+	_part = splitString(htmlFile, "$");
+}

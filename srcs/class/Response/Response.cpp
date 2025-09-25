@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 08:05:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:23:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,10 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int & f
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << "AExcept casting error : " << e.what() << std::endl;
+		/*
+			What to do when an error occurs when errorPage file is corrupted? Stop the program? [barandri]
+		*/
+		throw std::runtime_error("AExcept error");
 	}
 	_respCategory = e._type;
 }
@@ -190,16 +193,20 @@ void Response::generateRedirectResponse(RedirExcept & r)
 
 void Response::generateLDirResponse(LDirExcept &d)
 {
+	std::string	list = convertListing(d._dirList);
+
 	_statusCode = d._statusCode;
+	_type = "text/html";
 	setStatusLine();
 	_header.clear();
+	_body = LDirExcept::_part[0] + list + LDirExcept::_part[1];
+	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::initResponseUtils(std::string const & statPath, std::string const & errPath)
+void Response::initAllStatusCode(std::string const & statPath)
 {
 	_allStatusCode = splitFileToMapString(statPath, " | ");
-	_defaultErrPage = readFileToString(errPath);
 }
 
 stringMap Response::getAllStatusCode()

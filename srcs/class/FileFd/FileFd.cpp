@@ -6,13 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 08:52:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:49:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FileFd.hpp"
 
-int	FileFd::_sockFd[2];
+int	FileFd::_sockFd[2] = {-1, -1};
 
 FileFd::FileFd(){}
 
@@ -130,17 +130,22 @@ void FileFd::clearBuffer()
 void FileFd::setupFd()
 {
 	_stockFd = dup(_fileFd);
-	dup2(_sockFd[0], _fileFd);
+	if (_stockFd == -1)
+		throw std::runtime_error("setupFd() : dup error");
+	if (dup2(_sockFd[0], _fileFd) == -1)
+		throw std::runtime_error("setupFd() : dup2 error");
 }
 
 void FileFd::manageFd()
 {
-	dup2(_stockFd, _fileFd);
+	if (dup2(_stockFd, _fileFd) == -1)
+		throw std::runtime_error("manageFd() : dup2 error");
 }
 
 void FileFd::restoreFd()
 {
-	dup2(_sockFd[0], _fileFd);
+	if (dup2(_sockFd[0], _fileFd) == -1)
+		throw std::runtime_error("restoreFd() : dup2 error");
 }
 
 void FileFd::initSockFd()
@@ -152,6 +157,8 @@ void FileFd::initSockFd()
 
 void FileFd::closeSockFd()
 {
-	close(_sockFd[0]);
-	close(_sockFd[1]);
+	if (_sockFd[0] != -1)
+		close(_sockFd[0]);
+	if (_sockFd[1] != -1)
+		close(_sockFd[1]);
 }

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 15:50:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 09:49:14 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,17 @@ Request &Request::operator=(Request const & other)
 {
 	if (this != &other)
 	{
+		_method = other._method;
+		_requestTarget = other._requestTarget;
+		_originalRequestTarget = other._originalRequestTarget;
+		_clientHttp = other._clientHttp;
 		_requestLine = other._requestLine;
 		_header = other._header;
 		_body = other._body;
 		_request_length = other._request_length;
 		_autoIdx = other._autoIdx;
 		_is_CRLF_header = other._is_CRLF_header;
+		_multipart_body = other._multipart_body;
 	}
 	return *this;
 }
@@ -48,6 +53,11 @@ std::string Request::getMethod() const
 std::string Request::getRequestTarget() const
 {
     return _requestTarget;
+}
+
+std::string Request::getOriginalRequestTarget() const
+{
+    return _originalRequestTarget;
 }
 
 std::string Request::getHttp() const
@@ -147,6 +157,7 @@ void Request::setRequestLine(std::string const & replacement)
 	else
 		_requestTarget = splitted[1];
 	_clientHttp = splitted[2];
+	_originalRequestTarget = _requestTarget;
 }
 
 void	Request::setRequestBody(std::string const & requeststring, size_t const & pos)

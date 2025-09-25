@@ -17,4 +17,5 @@ Custom Error page:
 
         Where $dir = your file directory for custom page
 
-    NB : You need to edit manually all the links inside the error page index.html if you want to use imported files using /custom/....
+    NB : You need to edit manually all the links inside the error page index.html if you want to use imported files using /custom/...
+

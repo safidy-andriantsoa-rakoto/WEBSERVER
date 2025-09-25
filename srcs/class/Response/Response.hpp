@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 08:08:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:36:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class Response
 		void				generateRedirectResponse(RedirExcept & r);
 		void				generateLDirResponse(LDirExcept & d);
 
-		static void			initResponseUtils(std::string const & statPath, std::string const & errPath);
+		static void			initAllStatusCode(std::string const & statPath);
 		static stringMap	getAllStatusCode();
 };
 

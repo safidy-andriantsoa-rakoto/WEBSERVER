@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/23 09:22:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:23:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,33 +21,33 @@
 class Client : public Server
 {
 	private:
-		Request		request;
-	
 		int			_receivedSize;
 		int			_client_stat;
 		int 		_clientFD;
 		bool        _connect;
 		std::string _clientRequest;
 		std::string _boundary_sep;
-		
-		
-		Response	_response;
-		FileFd		*_fileFD;
 		size_t		_to_send;
 		size_t		_total_send;
-		
+
+		Request		_request;
+		Response	_response;
+		FileFd		*_fileFD;
+
 		Client();
 
-		// void		processRequestWithConfig(Request & request);
 		void		processRequestWithConfig();
-		// void		checkContentLength(Request & request);
 		void		checkContentLength();
-		// void		buildRequestTarget(Request & request);
 		void		buildRequestTarget();
 		
 		void		processLocationOption(MyLoc const & location, Request & request);
 		void		checkMethodInLocation(stringVect & locationMethod, std::string const & method);
 		void		processRedirection(MyLoc const & location, Request & request);
+
+				//HTTP Method
+		int			get_request();
+		int			post_request(stringMap & header, std::string & md, std::string & boundary);
+		void		delete_request();
 
 	public:
 		Client(const Client& client);
@@ -73,6 +73,7 @@ class Client : public Server
 		FileFd		*getFileFD();
 		int			getFileStatus();
 		void        setFileFD(FileFd *fileFd);
+		void		clearFileFd();
 		void		updateFileStatus(int const & status);
 		void		increaseFileSent(size_t const & add);
 
@@ -99,11 +100,9 @@ class Client : public Server
 			public:
 				const char *what() const throw();
 		};
-		//Server main functionnality
+
 		int processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath);
 
-		//Server utils
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
-		
 
 };

@@ -19,10 +19,13 @@
 class LDirExcept : public AExcept
 {
 	public:
-		stringVect	_dirTree;
+		stringMap	_dirList;
 
 		LDirExcept(int const & status, DIR *dir, std::string const & path, std::string const & errMsg);
 		virtual ~LDirExcept() throw();
+
+		static stringVect	_part;
+		static void			initPart(std::string const & path);
 };
 
 #endif

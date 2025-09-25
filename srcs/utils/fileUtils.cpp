@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 08:33:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:22:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,7 @@ int	openFile(std::string const & filePath)
 	if (fd == -1)
 	{
 		perror("Open file");
-		throw std::runtime_error("File opening error");
+		throw std::runtime_error("File error");
 	}
 	return fd;
 }

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 16:03:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 09:48:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,14 +114,61 @@ void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli,
 	fileFd->setupFd();
 	(*it).setFileFD(fileFd);
 	_vectFileFd.push_back(fileFd);
-	std::cout << "Fd : " << fd << " ; type : " << fileFd->getFileType() << " added to vectFileFd\n";
 }
 
-void Handler::removeClient(int const & index)
+vectFileFdIt	Handler::findFdInFileFd(vectFileFd & allFileFd, int const & fd)
 {
+	vectFileFdIt it;
+
+	for(it = allFileFd.begin(); it != allFileFd.end(); it++)
+	{
+		if ((*it) && (*it)->getFileFd() == fd)
+			break;
+	}
+	return it;
+}
+
+void Handler::removeClient(int const & index, EpollCreation & epoll)
+{
+	VClientIt		it = _vectClient.begin() + index;
+	vectFileFdIt	itFd;
+	int				fdFile;
+	int				stockFdFile;
+
 	std::cout << "REMOVING CLIENT " << index << std::endl;
-	VClientIt	it = _vectClient.begin() + index;
-	(*it).setFileFD(NULL);
+	if ((*it).getFileFD())
+	{
+		fdFile = (*it).getFileFD()->getFileFd();
+		stockFdFile = (*it).getFileFD()->getStockFd();
+		itFd = findFdInFileFd(_vectFileFd, fdFile);
+		epoll.epoll_clean(fdFile);
+		if (stockFdFile != -1)
+			close (stockFdFile);
+		removeFileFd(itFd);
+	}
+	(*it).clearFileFd();
+	_vectClient.erase(it);
+	std::cout << "Removing client done\n";
+}
+
+void Handler::removeClient(VClientIt & it, EpollCreation & epoll)
+{
+	vectFileFdIt	itFd;
+	int				fdFile;
+	int				stockFdFile;
+
+	std::cout << "REMOVING CLIENT FROM ITERATOR" << std::endl;
+	if ((*it).getFileFD())
+	{
+		fdFile = (*it).getFileFD()->getFileFd();
+		stockFdFile = (*it).getFileFD()->getStockFd();
+		itFd = findFdInFileFd(_vectFileFd, fdFile);
+		epoll.epoll_clean(fdFile);
+		if (stockFdFile != -1)
+			close (stockFdFile);
+		removeFileFd(itFd);
+	}
+	(*it).clearFileFd();
 	_vectClient.erase(it);
 }
 
@@ -131,24 +178,31 @@ void Handler::removeFileFd(int const & index)
 	_vectFileFd.erase(_vectFileFd.begin() + index);
 }
 
+void Handler::removeFileFd(vectFileFdIt & it)
+{
+	std::cout << "REMOVING FILE FD FROM ITERATOR" << std::endl;
+	_vectFileFd.erase(it);
+}
+
 void	Handler::cleanFdAndAlloc()
 {
 	FileFd::closeSockFd();
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
-	{
-		if ((*itVect).get_fdSocket() != -1)
-			close((*itVect).get_fdSocket());
-		if ((*itVect).get_fdClient() != -1)
-			close((*itVect).get_fdClient());
-	}	
+		(*itVect).clearAllFd();
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
 	{
-		close((*itCli).get_clientFD());
-		if ((*itCli).getFileFD())
-			delete (*itCli).getFileFD();
+		if ((*itCli).get_clientFD() != -1)
+			close((*itCli).get_clientFD());
+		(*itCli).clearFileFd();
 	}
 	for (vectFileFdIt itFile = _vectFileFd.begin(); itFile != _vectFileFd.end(); itFile++)
-		close((*itFile)->getFileFd());
+	{
+		if ((*itFile) && (*itFile)->getFileFd() != -1)
+			close((*itFile)->getFileFd());
+		if ((*itFile) && (*itFile)->getStockFd() != -1)
+			close((*itFile)->getStockFd());
+	}
+		
 }
 
 void Handler::displayHandlerStat()

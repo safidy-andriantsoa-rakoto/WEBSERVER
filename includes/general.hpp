@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 09:20:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/25 08:27:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@
 
 #include "typedef.hpp"
 #include "define.hpp"
+#include "enum.hpp"
 
 //CGI
 void        execCgi(std::string const & path, char **envp, int & pid, int & status, int & fd);
@@ -86,7 +87,7 @@ void	    displayStringVect(stringVect const & vect);
     //messageUtils
 void        send_value(int const & _acceptStatus, std::string & _send_content);
 
-//parse
+//Parse
 bool        checkBraceClose(std::vector<std::string> vect);
 bool        checkBracesAfterNewline(const std::vector<std::string> &file);
 bool        checkCountWord(const std::vector<std::string> &lines, const std::string &word, const int &count);
@@ -96,4 +97,5 @@ bool        checkNumberAllContent(std::vector<std::string> &file);
 std::vector<std::string> getContentFile(std::string _path);
 
 // dirListing
-stringVect	listingDirectory(DIR* dir, std::string const & path);
+stringMap	listingDirectory(DIR* dir, std::string const & path);
+std::string	convertListing(stringMap & mapDir);

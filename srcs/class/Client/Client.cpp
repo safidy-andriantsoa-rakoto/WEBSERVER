@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/25 09:35:16 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 09:48:25 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,12 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	this->_to_send = 0;
 	this->_total_send = 0;
 	if (_clientFD < 0)
-	{
-		std::cout << "Error\nInvalid input FD" << std::endl; 
-		return ;
-	}
+		throw std::runtime_error("Client constructor error");
 }
 
 Client::Client(const Client &client) : Server(client)
 {
+	_fileFD = NULL;
 	*this = client;
 }
 
@@ -46,6 +44,11 @@ Client &Client::operator=(const Client &client)
 		this->_to_send = client._to_send;
 		this->_total_send = client._total_send;
 		this->_boundary_sep = client._boundary_sep;
+		this->_receivedSize = client._receivedSize;
+		this->_client_stat = client._client_stat;
+		this->_boundary_sep = client._boundary_sep;
+		this->_request = client._request;
+		setFileFD(client._fileFD);
 	}
 	return (*this);
 }
@@ -71,7 +74,7 @@ bool Client::is_finishedSendContent()
 
 Request &Client::getobjREquest()
 {
-    return (request);
+    return (_request);
 }
 
 void Client::setToSendSize(size_t to_send)
@@ -115,13 +118,18 @@ void Client::setChunkedResponse(int const &statusCode)
 
 void Client::ClientRequest()
 {
-	std::cout << "\033[045m			GET REQUEST " << this->_clientFD << "\033[0m" << std::endl;
 	char response[_BUFFER_RECV];
+
+	std::cout << "\033[045m			GETTING REQUEST FROM FD = " << this->_clientFD << "\033[0m" << std::endl;
 	this->_receivedSize = recv(this->get_clientFD(), response, sizeof(response), 0);
 	if (_receivedSize == 0)
 		this->_connect = false;
 	if (_receivedSize == -1)
+	{
+		perror("ClientRequest - Recv");
+		clearAllFd();
 		throw RecvError();
+	}
 	this->_clientRequest = std::string(response, _receivedSize);
 }
 
@@ -144,9 +152,15 @@ std::string Client::getBoundaryLimit() const
 
 void Client::setFileFD(FileFd *fileFd)
 {
+	clearFileFd();
+	_fileFD = fileFd;
+}
+
+void Client::clearFileFd()
+{
 	if (_fileFD)
 		delete _fileFD;
-	_fileFD = fileFd;
+	_fileFD = NULL;
 }
 
 void Client::updateFileStatus(int const &status)
@@ -214,15 +228,12 @@ const char *Client::RecvError::what() const throw()
 	return ("Error RECV\nget Request from client");
 }
 
-
-// void Client::processRequestWithConfig(Request & request)
 void Client::processRequestWithConfig()
 {
 	checkContentLength();
 	buildRequestTarget();
 }
 
-// void Client::checkContentLength(Request &request)
 void Client::checkContentLength()
 {
 	float		maxSize;
@@ -235,37 +246,36 @@ void Client::checkContentLength()
 	if (itFind == request.getHeader().end())
 		return ;
 	maxSize = _config.getMaxSize();
-	requestSize = convertStringToFLoat(request.getHeader()["Content-Length"]);
+	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
 	if (requestSize > maxSize)
 		throw ErrorExcept(413, "Size limit not respected");
 }
 
-// void Client::buildRequestTarget(Request & request)
 void Client::buildRequestTarget()
 {
 	vectLocationIt	it;
 	std::string		target;
 	vectLocation	loc;
 
-	target = request.getRequestTarget();
+	target = _request.getRequestTarget();
 	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
 	if (target == "/")
 	{
-		processLocationOption(_config.getClassLocation()[0], request);
-		request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
-		std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
+		processLocationOption(_config.getClassLocation()[0], _request);
+		_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
+		std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
 		return ;
 	}
 	loc = _config.getClassLocation();
 	it = findLongestMatch(target, loc);
-	processLocationOption(*it, request);
+	processLocationOption(*it, _request);
 	std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
 	if ((*it).getLocation() != "/")
 		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 	else
 		target = (*it).getRootDirectory() + target;
-	request.setRequestTarget(target);
-	std::cout << "\033[96mREQUEST TARGET = " << request.getRequestTarget() << "\033[0m" << std::endl;
+	_request.setRequestTarget(target);
+	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
 }
 
 void Client::processLocationOption(MyLoc const & location, Request & request)
@@ -275,6 +285,10 @@ void Client::processLocationOption(MyLoc const & location, Request & request)
 	locationMethod = location.getAvailableMethod();
 	processRedirection(location, request);
 	checkMethodInLocation(locationMethod, request.getMethod());
+	if (location.getAutoindex() == "ON")
+		request.setAutoIdx(true);
+	else
+		request.setAutoIdx(false);
 }
 
 void Client::checkMethodInLocation(stringVect & locationMethod, std::string const & method)
@@ -291,7 +305,9 @@ void Client::checkMethodInLocation(stringVect & locationMethod, std::string cons
 	}
 }
 
-// Review redirection function
+/*
+	Review redirection function [Barandri]
+*/
 void Client::processRedirection(MyLoc const & location, Request & request)
 {
 	std::string	oldUri;
@@ -301,10 +317,7 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 
 	redirect = location.getRedirect();
 	if (!redirect.size())
-	{
-		// std::cout << "\033[31m<<<<<<NOOOO REDIRECTION>>>>>>\033[0m" << std::endl;
 		return ;
-	}
 	std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
 	redirect = location.getRedirect();
 	statusRedirect = convertStringToInt(redirect[0]);
@@ -317,6 +330,37 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	}
 	// std::cout << "Old = " << oldUri << " => " << newUri << std::endl;
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
+}
+
+int Client::get_request()
+{
+	int			fd;
+	std::string	filePath;
+	DIR*		dir;
+
+	filePath = _request.getRequestTarget();
+	// std::cout << "Autoindex = " << _request.getAutoIdx() << std::endl;
+	dir = opendir(filePath.c_str());
+	if (!dir && errno == EACCES)
+		throw ErrorExcept(403, "Directory forbidden");
+	if (dir && _request.getAutoIdx() == true)
+		throw LDirExcept(300, dir, _request.getOriginalRequestTarget(), "Listing directory");
+	if (dir && _request.getAutoIdx() == false)
+	if (dir && _request.getAutoIdx() == false)
+	{
+		filePath += "/index.html";
+		closedir(dir);
+	}		
+	fd = open(filePath.c_str(), O_RDONLY);
+	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
+	if (fd == -1)
+	{
+		perror("Open file");
+		if (errno == EACCES)
+			throw ErrorExcept(403, "No permission for file");
+		throw ErrorExcept(404, "File can't be opened");
+	}
+	return fd;
 }
 
 int Client::processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
@@ -348,10 +392,17 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	request.displayRequest();
 	if (request.getMethod() == "GET")
 	{
-		fileFd = get_request(request);
-		filePath = request.getRequestTarget();
-		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
-		opt = EPOLLIN;
+		filePath += "/index.html";
+		closedir(dir);
+	}		
+	fd = open(filePath.c_str(), O_RDONLY);
+	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
+	if (fd == -1)
+	{
+		perror("Open file");
+		if (errno == EACCES)
+			throw ErrorExcept(403, "No permission for file");
+		throw ErrorExcept(404, "File can't be opened");
 	}
 	else if (request.getMethod() == "POST")
 	{
@@ -417,8 +468,8 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 			
 		opt = EPOLLOUT;
 	}
-	else if (request.getMethod() == "DELETE")
-		std::cout << request.getMethod() << std::endl; // Calling delete_request
+	else if (_request.getMethod() == "DELETE")
+		std::cout << _request.getMethod() << std::endl; // Calling delete_request
 	return fileFd;
 }
 
