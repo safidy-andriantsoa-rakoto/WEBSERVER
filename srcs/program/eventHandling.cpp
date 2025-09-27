@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 21:52:26 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/27 21:29:52 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,17 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	
 	if ((*it).getFileFD())
 	{
+		std::cout << "		Mbola mis ka" << std::endl;
 		if ((*it).getFileFD()->get_endFilePost())
 		{
 			std::cout << "bye bye file fd POST" << std::endl;
 			(*it).clearFileFd();
 		}
+		else
+			std::cout << "		tsisy ltia  aa tsisy..." << std::endl;
 	}
+	else
+		std::cout << "		tsy nialloweer eee" << std::endl;
 	tmpRequest = (*it).getobjREquest();
 	(*it).ClientRequest();
 	client_request = (*it).getClientRequest();
@@ -83,6 +88,9 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	}
 	else
 		std::cout << "			NIDINA" << std::endl;
+	if ((*it).getFileFD() && (*it).getobjREquest().getBody().size())
+		(*it).getFileFD()->setBuffer((*it).getobjREquest().getBody());
+	/******set na eto ny body */
 }
 
 /*
@@ -209,7 +217,18 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		readFromFileFd(it, epoll, handler, i);
 	else if (event & EPOLLOUT)
 	{
-		std::cout << "ATY QQQQQQQQQQQQQQQQQQQQQQQQ		\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
+		std::cout << "ATY QQQ		\033[43mFD EPOLLOUT FOR FILE IO->" << "\033[0m" << (*it)->getFileFd() << std::endl;
+		std::cout << " BODY" << (*it)->getBuffer() << std::endl;
+		if ((*it)->getFileFd() != -1 && (*it)->getBuffer().size())
+		{
+			(*it)->manageFd();
+			int len =  write((*it)->getFileFd(), ((*it)->getBuffer()).c_str(), (*it)->getBuffer().size());
+			if (len == -1)
+				std::cout << "BLEM->" << strerror(errno) << std::endl;
+			std::cout << "manoratra->" << (*it)->getBuffer() << std::endl;
+		}
+		else
+
 		(*it)->set_endFilePost(true);
 		closeFileEvent(handler, i, epoll);
 	}

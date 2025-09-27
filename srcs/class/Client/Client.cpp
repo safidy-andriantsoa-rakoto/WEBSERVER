@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/25 22:14:08 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/27 21:15:57 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,6 +386,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	}
 	else
 	{
+		std::cout << "			EFA BODY ZAO Aaa" << std::endl;
 		_request.set_Body(clientRequest);
 	}
 	header = _request.getHeader();
@@ -404,7 +405,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 		{
 			if (!this->_fileFD)
 			{
-				fileFd = open("storage_multi_form_data.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
+				fileFd = open("storage_multi_form_data.txt", O_RDWR | O_CREAT | O_APPEND, 0644);
 				if (fileFd== -1) {
 					perror("open file in POST");
 					throw ErrorExcept(404, "File can't be opened");
@@ -427,7 +428,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 			std::cout << "\napplication/x-www-form-urlencoded\n" << std::endl;
 			if (!_fileFD)
 			{
-				fileFd = open("storage_app_xwfurlencoded.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
+				fileFd = open("storage_app_xwfurlencoded.txt", O_RDWR | O_CREAT | O_APPEND, 0644);
 				if (fileFd== -1) {
 					perror("open file in POST");
 					throw ErrorExcept(404, "File can't be opened");
@@ -449,17 +450,19 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 			std::cout << "\ntext/plain\n" << std::endl;
 			if (!_fileFD)
 			{
-				fileFd = open("storage_text_plain.txt", O_WRONLY | O_CREAT | O_APPEND, 0644);
+				fileFd = open("storage_text_plain.txt", O_RDWR | O_CREAT | O_APPEND, 0644);
 				if (fileFd == -1) {
 					perror("open file in POST");
 					throw ErrorExcept(404, "File can't be opened");
 				}
+				write(fileFd, "letie", 5);
 				filePath = "storage_text_plain.txt";
 				opt = EPOLLOUT;
-				std::cout << "FD FILE->POST text/plain=" << fileFd << std::endl; 
+				std::cout << "FD FILE->POST text/plain=" << fileFd << std::endl;
 			}
 			else
 				fileFd = -1;
+			std::cout << "			OAY le BODY=" << this->_request.get_Body() << std::endl;
 		}
 		else
 			std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
