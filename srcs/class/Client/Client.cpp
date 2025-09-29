@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/25 14:29:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/29 18:26:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -351,7 +351,7 @@ int Client::get_request()
 		filePath += "/index.html";
 		closedir(dir);
 	}		
-	fd = open(filePath.c_str(), O_RDONLY);
+	fd = open(filePath.c_str(), O_RDONLY | O_CLOEXEC);
 	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
 	if (fd == -1)
 	{

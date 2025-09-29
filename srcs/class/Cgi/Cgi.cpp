@@ -21,7 +21,7 @@ char **Cgi::getEnvp()
 	return _envp;
 }
 
-void Cgi::parseCgiEnv()
+void Cgi::parseCgiEnv(std::string const & requestTarget)
 {
 }
 

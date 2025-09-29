@@ -29,6 +29,7 @@ class FileFd
 		std::string	_fileType;
 		std::string	_method;
 
+		int			_fileFdCategory;
 		int			_status;
 		bool		_EndFilepost;
 
@@ -47,17 +48,21 @@ class FileFd
 		int			getClientFd() const;
 		std::string	getBuffer() const;
 		std::string	getFilePath() const;
-		std::string	getFileType() const;
 		std::string	getOriginMethod() const;
 		size_t		getFileTotalSize() const;
 		size_t		getFileSentSize() const;
-
+		
 		void		increaseFileSent(size_t	const & add);
 		bool		get_endFilePost();
 		void		set_endFilePost(bool stat);
+
 		int			getStatus() const;
 		void		setStatus(int const & status);
-
+		
+		int			getFileFdCategory() const;
+		void		setFileFdCategory(int const & category);
+		
+		std::string	getFileType() const;
 		void		setFileType();
 
 		void		setBuffer(std::string const & content);

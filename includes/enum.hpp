@@ -37,5 +37,11 @@ enum    e_identifier
     FILE_FD
 };
 
+enum    e_fileCategory
+{
+    CAT_FILE,
+    CAT_CGI
+}
+
 #endif
 

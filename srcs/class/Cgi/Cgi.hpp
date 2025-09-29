@@ -26,13 +26,16 @@ class Cgi
 
 		char*		_envp[];
 
+		int			_cgiFd;
+		int			_clientFd;
+
 	public:
 		Cgi();
 		~Cgi();
 
 		char	**getEnvp();
 
-		void    parseCgiEnv();
+		void    parseCgiEnv(std::string const & requestTarget);
 		void	configEnvp();
 		void    execCgi();
 };
