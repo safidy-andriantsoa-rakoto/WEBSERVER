@@ -6,11 +6,27 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:57 by barandri          #+#    #+#             */
-/*   Updated: 2025/07/29 08:17:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/29 11:38:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#include "Cgi.hpp"
+
+// char *argv[] = { "php-cgi", NULL };
+// char *envp[] = {
+//     "GATEWAY_INTERFACE=CGI/1.1",
+//     "REQUEST_METHOD=GET",
+//     "QUERY_STRING=username=Alice",
+//     "SCRIPT_FILENAME=/var/www/html/welcome.php",
+//     "SCRIPT_NAME=/welcome.php",
+//     "SERVER_PROTOCOL=HTTP/1.1",
+//     "CONTENT_LENGTH=0",
+//     "REDIRECT_STATUS=200",
+//     NULL
+// };
+
+// execve("/usr/bin/php-cgi", argv, envp);
+// perror("execve");
 
 // File error management + type of file
 // Execute the file

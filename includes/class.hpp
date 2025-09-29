@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 10:25:14 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 08:54:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/29 11:41:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@
 #include "../srcs/class/Mime/Mime.hpp"
 #include "../srcs/class/FileFd/FileFd.hpp"
 #include "../srcs/class/Handler/Handler.hpp"
-#include "../srcs/class/signal/Signal.hpp"
+#include "../srcs/class/Signal/Signal.hpp"
+#include "../srcs/class/Cgi/Cgi.hpp"
 
 // Waiting for official class config and location
 #include "../srcs/class/Config/AConfig.hpp"
