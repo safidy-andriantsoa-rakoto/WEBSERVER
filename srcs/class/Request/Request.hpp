@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 14:28:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 09:29:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define REQUEST_HPP
 
 #include "general.hpp"
+#include "../Cgi/Cgi.hpp"
 
 class Request
 {
@@ -33,6 +34,9 @@ class Request
 		bool		_autoIdx;
 		bool		_is_CRLF_header;
 
+		bool		_isCgi;
+		Cgi			_cgi;
+
 		void    	setRequestLine(std::string const & set);
 		void		setRequestBody(std::string const & requeststring, size_t const & pos);
 
@@ -49,6 +53,14 @@ class Request
 		std::string	getRequestLine() const;
 		std::string	getBody() const;
 		stringMap	getHeader() const;
+
+		bool		getIsCgi() const;
+		void		setIsCgi(bool const & condition);
+
+		Cgi			getCgiClass() const;
+		void		processCgiClass(std::string const & target, std::string const & rootDirectory);
+		void		setCgiClass(Cgi const & cgi);
+
 		const	MapSVectStr&	getpostMultipartData() const;
 
 		void 			Del_space(std::string &data);

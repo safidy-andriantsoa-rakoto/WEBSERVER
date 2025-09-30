@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/29 18:26:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:43:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,7 @@ const char *Client::RecvError::what() const throw()
 
 void Client::processRequestWithConfig()
 {
-	checkContentLength();
+	checkContentLength(); //See with POST method [Safidy]
 	buildRequestTarget();
 }
 
@@ -267,13 +267,25 @@ void Client::buildRequestTarget()
 		return ;
 	}
 	loc = _config.getClassLocation();
-	it = findLongestMatch(target, loc);
-	processLocationOption(*it, _request);
-	std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
-	if ((*it).getLocation() != "/")
-		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
+	if (target.find(".php", 0) != std::string::npos)
+	{
+		std::cout << "CGI ON GOING !!!!" << std::endl;
+		_request.setIsCgi(true);
+		it = _config.findClassLocation(".php");
+		processLocationOption(*it, _request);
+		_request.processCgiClass(target, (*it).getRootDirectory());
+		target = (*it).getRootDirectory() + target; //Review if request target needed ? normally done during parsing Cgi
+	}
 	else
-		target = (*it).getRootDirectory() + target;
+	{
+		it = findLongestMatch(target, loc);
+		processLocationOption(*it, _request);
+		std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
+		if ((*it).getLocation() != "/")
+			target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
+		else
+			target = (*it).getRootDirectory() + target;
+	}
 	_request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
 }

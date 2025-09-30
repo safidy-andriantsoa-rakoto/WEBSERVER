@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 09:15:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:56:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #define STAT_PATH "./config/statcode/statusCode.conf"
 #define LDIR_PATH "./config/listingDirectory/listDir.html"
 #define MIME_PATH "./config/ext"
-#define CONF_PATH "./config/serverConf/"
+#define CGI_PATH  "./config/cgiConf/cgi.conf"
 
 #define DEF_ERR_LOCATION "location /errorPage | root ./config/errorPage/default | method GET POST DELETE"
 

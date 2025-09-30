@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 08:26:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 09:00:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ enum    e_fileCategory
 {
     CAT_FILE,
     CAT_CGI
-}
+};
 
 #endif
 

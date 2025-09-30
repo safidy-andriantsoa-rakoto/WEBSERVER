@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/29 11:56:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:56:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ static void	initProgram()
 	Mime::initMapMime(MIME_PATH);
 	FileFd::initSockFd();
 	LDirExcept::initPart(LDIR_PATH);
+	Cgi::initCgiConfig(CGI_PATH);
 	int fd = openFile(ERR_PATH);
 	close(fd);
 }

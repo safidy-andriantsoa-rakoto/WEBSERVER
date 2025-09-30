@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 08:27:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:42:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,14 @@ void	    addToMapString(stringMap & map, std::string const & first, std::string 
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
 std::string	checkLimitSize(std::string const & a, std::string const & b);
 void	    chunkingString(std::string & text, int const & status);
+void	    clearCharTable(char **tab);
 
     //Conversion
 std::string convertIntToString(ssize_t const & n);
 float       convertStringToFLoat(std::string const & n);
 int         convertStringToInt(std::string const & n);
 std::string	convertStringMapToString(stringMap const & map, std::string const & sep);
+char**	    convertStringMapToTable(stringMap & map);
 
     //DisplayUtils
 void	    displayFormatting(std::string const & text, std::string const & title);
@@ -83,6 +85,7 @@ void	    displayStringMap(stringMap const & map);
 void	    displayString(std::string const & text);
 void	    displayStringVect(stringVect const & vect, std::string const & title);
 void	    displayStringVect(stringVect const & vect);
+void	    displayCharTable(char	**tab, std::string const & title);
 
     //messageUtils
 void        send_value(int const & _acceptStatus, std::string & _send_content);

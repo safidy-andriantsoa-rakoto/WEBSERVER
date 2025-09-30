@@ -6,13 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 14:33:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 11:04:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false) {}
+Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false), _isCgi(false) {}
 
 Request::Request(Request const & other)
 {
@@ -34,6 +34,8 @@ Request &Request::operator=(Request const & other)
 		_autoIdx = other._autoIdx;
 		_is_CRLF_header = other._is_CRLF_header;
 		_multipart_body = other._multipart_body;
+		_isCgi = other._isCgi;
+		_cgi = other._cgi;
 	}
 	return *this;
 }
@@ -68,6 +70,35 @@ std::string Request::getHttp() const
 stringMap Request::getHeader() const
 {
 	return _header;
+}
+
+bool Request::getIsCgi() const
+{
+    return _isCgi;
+}
+
+void Request::setIsCgi(bool const &condition)
+{
+	_isCgi = condition;
+}
+
+Cgi Request::getCgiClass() const
+{
+    return _cgi;
+}
+
+void Request::processCgiClass(std::string const &target, std::string const & rootDirectory)
+{
+	_cgi.parseCgiEnv(target, rootDirectory);
+	_cgi.setReqMethod(_method);
+	_cgi.setContentLength(_request_length);
+	_cgi.displayCgiClass(); //For test only
+	_cgi.configEnvp();
+}
+
+void Request::setCgiClass(Cgi const &cgi)
+{
+	_cgi = cgi;
 }
 
 const MapSVectStr& Request::getpostMultipartData() const
@@ -151,11 +182,7 @@ void Request::setRequestLine(std::string const & replacement)
 		throw std::runtime_error("Error on request line");
 	}
 	_method = splitted[0];
-	size_t f = splitted[1].find_first_of('?');
-	if (f != std::string::npos)
-		_requestTarget =  splitted[1].substr(0, f);
-	else
-		_requestTarget = splitted[1];
+	_requestTarget = splitted[1];
 	_clientHttp = splitted[2];
 	_originalRequestTarget = _requestTarget;
 }
@@ -172,7 +199,7 @@ void	Request::setRequestBody(std::string const & requeststring, size_t const & p
 		return ;
 	length = atoi((*it).second.c_str());
 	content = requeststring.substr(pos, static_cast<size_t>(length));
-	//Length error management to see
+	//Length error management to see with POST method
 	_body = content;
 }
 
