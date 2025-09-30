@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/30 10:43:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:52:15 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,7 @@ void Client::buildRequestTarget()
 	vectLocation	loc;
 
 	target = _request.getRequestTarget();
+	_request.setIsCgi(false);
 	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
 	if (target == "/")
 	{
@@ -269,6 +270,7 @@ void Client::buildRequestTarget()
 	loc = _config.getClassLocation();
 	if (target.find(".php", 0) != std::string::npos)
 	{
+		_request.clearCgiClass();
 		std::cout << "CGI ON GOING !!!!" << std::endl;
 		_request.setIsCgi(true);
 		it = _config.findClassLocation(".php");
@@ -346,12 +348,19 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 
 int Client::get_request()
 {
+	if (_request.getIsCgi() == false)
+		return stdGetRequest();
+	else
+		return cgiGetRequest();
+}
+
+int Client::stdGetRequest()
+{
 	int			fd;
 	std::string	filePath;
 	DIR*		dir;
 
 	filePath = _request.getRequestTarget();
-	// std::cout << "Autoindex = " << _request.getAutoIdx() << std::endl;
 	dir = opendir(filePath.c_str());
 	if (!dir && errno == EACCES)
 		throw ErrorExcept(403, "Directory forbidden");
@@ -364,7 +373,7 @@ int Client::get_request()
 		closedir(dir);
 	}		
 	fd = open(filePath.c_str(), O_RDONLY | O_CLOEXEC);
-	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
+	std::cout << "\033[046mSTD FD=" << fd << "\033[0m" << std::endl;
 	if (fd == -1)
 	{
 		perror("Open file");
@@ -373,6 +382,24 @@ int Client::get_request()
 		throw ErrorExcept(404, "File can't be opened");
 	}
 	return fd;
+}
+
+int Client::cgiGetRequest()
+{
+	int	fd;
+
+	/*
+		create pipe => pipe_fd[2]
+		fork()
+			---child
+				clean every unecessary fd inside epoll and close, or any allocation
+				how to clean envp???
+				execute _cgi from request;
+			---parent
+				return pipe_fd[0] because read with get to add it inside the epoll_event;
+				sSee what happen with child if ctrl+c?
+	*/
+    return fd;
 }
 
 int Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt)

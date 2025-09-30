@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 11:23:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:18:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,30 +87,30 @@ void	chunkingString(std::string & text, int const & status)
 		text += "\r\n0\r\n";
 }
 
-char**	convertStringMapToTable(stringMap & map)
+char**	convertStringVectToTable(stringVect & vect)
 {
 	char	**res;
-	size_t	size = map.size() + 1;
+	size_t	size = vect.size() + 1;
 	size_t	sizeIntern;
-	size_t i;
+	size_t	i;
 
-	std::cout << "CONVERT STRINGMAP TO TABLE : " << size << std::endl;
-	if (!map.size())
+	std::cout << "CONVERT STRINGVECT TO TABLE : " << size << std::endl;
+	if (!vect.size())
 		return NULL;
 	res = static_cast<char **>(calloc(size, sizeof(char *)));
 	if (!res)
 		return NULL;
 	i = 0;
-	for (stringMapIt it = map.begin(); it != map.end(); it++)
+	for (stringVectIt it = vect.begin(); it != vect.end(); it++)
 	{
-		sizeIntern = (*it).second.size() + 1;
-		res[i] = static_cast<char *>(calloc(2, sizeof(char)));
+		sizeIntern = (*it).size() + 1;
+		res[i] = static_cast<char *>(calloc(sizeIntern, sizeof(char)));
 		if (!res[i])
 		{
 			clearCharTable(res);
 			return NULL;
 		}
-		strcpy(res[i], (*it).second.c_str());
+		strcpy(res[i], (*it).c_str());
 		i++;
 	}
 	res[i] = NULL;
@@ -122,6 +122,8 @@ void	clearCharTable(char **tab)
 	char	*tmp;
 	char	**tmpAll = tab;
 
+	if (!tab)
+		return;
 	while (*tab)
 	{
 		tmp = *tab;

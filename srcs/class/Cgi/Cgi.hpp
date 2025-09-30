@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:11:42 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 10:57:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:15:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,6 @@ class Cgi
 
 		char**		_envp;
 
-		int			_cgiFd;
-		int			_clientFd;
-
 	public:
 		Cgi();
 		Cgi(Cgi const & other);
@@ -44,9 +41,11 @@ class Cgi
 		void	setReqMethod(std::string const & method);
 		void	setContentLength(size_t const & length);
 
+		void	clearCgiClass();
+
 		void	displayCgiClass() const;
 
-		static stringMap	_cgiConfig;
+		static std::string	_cgiConfig;
 		static void			initCgiConfig(std::string const & path);
 };
 

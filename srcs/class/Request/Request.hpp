@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 09:29:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:16:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ class Request
 		Cgi			getCgiClass() const;
 		void		processCgiClass(std::string const & target, std::string const & rootDirectory);
 		void		setCgiClass(Cgi const & cgi);
+		void		clearCgiClass();
 
 		const	MapSVectStr&	getpostMultipartData() const;
 

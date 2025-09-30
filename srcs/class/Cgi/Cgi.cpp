@@ -6,15 +6,15 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 11:03:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:18:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Cgi.hpp"
 
-stringMap Cgi::_cgiConfig;
+std::string Cgi::_cgiConfig;
 
-Cgi::Cgi(){}
+Cgi::Cgi() : _envp(NULL){}
 
 Cgi::Cgi(Cgi const &other)
 {
@@ -30,9 +30,7 @@ Cgi &Cgi::operator=(Cgi const &other)
 		_scriptFileName = other._scriptFileName;
 		_scriptName = other._scriptName;
 		_contentLength = other._contentLength;
-		_envp = other._envp;
-		_cgiFd = other._cgiFd;
-		_clientFd = other._clientFd;
+		_envp = other._envp; //Deep copy?
 	}
 	return *this;
 }
@@ -56,17 +54,20 @@ void Cgi::parseCgiEnv(std::string const & requestTarget, std::string const & roo
 
 void Cgi::configEnvp()
 {
-	stringMap	ownedConfig = Cgi::_cgiConfig;
+	std::string	ownedConfig = Cgi::_cgiConfig;
+	stringVect	vect;
 	
-	std::cout << "Config ENVP\n";
-	ownedConfig["REQUEST_METHOD"] = _reqMethod;
-	ownedConfig["QUERY_STRING"] = _query;
-	ownedConfig["SCRIPT_FILENAME"] = _scriptFileName;
-	ownedConfig["SCRIPT_NAME"] = _scriptName;
-	ownedConfig["CONTENT_LENGTH"] = _contentLength;
-	_envp = convertStringMapToTable(ownedConfig);
-	displayCharTable(_envp, "ENVP");
-	clearCharTable(_envp);
+	replaceString(ownedConfig, _reqMethod, "$1");
+	replaceString(ownedConfig, _query, "$2");
+	replaceString(ownedConfig, _scriptFileName, "$3");
+	replaceString(ownedConfig, _scriptName, "$4");
+	replaceString(ownedConfig, convertIntToString(_contentLength), "$5");
+	vect = splitString(ownedConfig, "\n");
+	_envp = convertStringVectToTable(vect);
+	// displayCharTable(_envp, "ENVP");
+	// clearCharTable(_envp);
+	vect.clear();
+	ownedConfig.clear();
 }
 
 void Cgi::execCgi(){}
@@ -79,6 +80,16 @@ void Cgi::setReqMethod(std::string const &method)
 void Cgi::setContentLength(size_t const &length)
 {
 	_contentLength = length;
+}
+
+void Cgi::clearCgiClass()
+{
+	_reqMethod.clear();
+	_query.clear();
+	_scriptFileName.clear();
+	_scriptName.clear();
+	_contentLength = 0;
+	clearCharTable(_envp);
 }
 
 void Cgi::displayCgiClass() const
@@ -94,5 +105,5 @@ void Cgi::displayCgiClass() const
 
 void Cgi::initCgiConfig(std::string const & path)
 {
-	_cgiConfig = splitFileToMapString(path, "=");
+	_cgiConfig = readFileToString(path);
 }

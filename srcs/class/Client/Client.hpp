@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/30 08:05:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:26:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ class Client : public Server
 
 				//HTTP Method
 		int			get_request();
+		int			stdGetRequest();
+		int			cgiGetRequest();
+
 		int			post_request(stringMap & header, std::string & boundary, uint32_t & opt);
 		void		delete_request();
 

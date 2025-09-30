@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 11:04:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/30 14:23:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,11 @@ void Request::processCgiClass(std::string const &target, std::string const & roo
 void Request::setCgiClass(Cgi const &cgi)
 {
 	_cgi = cgi;
+}
+
+void Request::clearCgiClass()
+{
+	_cgi.clearCgiClass();
 }
 
 const MapSVectStr& Request::getpostMultipartData() const
