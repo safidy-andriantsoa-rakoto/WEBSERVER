@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 09:49:26 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:33:37 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,14 @@ class Request
 		// stringMap	_post_body;
 		std::string	_body;
 
+
 		MapSVectStr	_multipart_body;
 		size_t		_request_length;
 		bool		_autoIdx;
 		bool		_is_CRLF_header;
+		//for post
+		size_t		_content_length;
+		size_t		_c_length_received;
 
 		void    	setRequestLine(std::string const & set);
 		void		setRequestBody(std::string const & requeststring, size_t const & pos);
@@ -62,7 +66,7 @@ class Request
 		void		setRequestSize(ssize_t size);
 		ssize_t		getRequestSize();
 
-		void		set_Body(const std::string& _body);
+		void		set_Body(const std::string& body);
 		std::string&	get_Body();
 		void		set_post_body(stringVect var, std::string content);
 
@@ -73,6 +77,11 @@ class Request
 		void		displayRequest() const;
 
 		void		displayRequestMultipartData();
+
+		size_t 		get_c_length_received();
+		void 		set_c_length_received(size_t received);
+
+		size_t 		get_content_length();
 };
 
 #endif

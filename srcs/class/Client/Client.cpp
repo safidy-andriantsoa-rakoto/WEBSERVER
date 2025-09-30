@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/27 21:15:57 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:54:52 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -383,15 +383,31 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	{
 		_request.parseRequest(clientRequest);
 		processRequestWithConfig();
+		if (_fileFD)
+		{
+			std::cout << "			EFA NAPINA BODY NY FILEFD" << std::endl;
+			_fileFD->setBuffer(_request.getBody());
+			// _fileFD->setBuffer(_request.get_Body());
+		}
 	}
 	else
 	{
 		std::cout << "			EFA BODY ZAO Aaa" << std::endl;
+		std::cout << "{" << clientRequest << "}" << std::endl;
 		_request.set_Body(clientRequest);
+		_request.set_c_length_received(clientRequest.size());
+		if (_fileFD)
+		{
+			std::cout << "			EFA NAPINA BODY NY FILEFD" << std::endl;
+			_fileFD->setBuffer(clientRequest);
+			// _fileFD->setBuffer(_request.get_Body());
+		}
+		std::cout << "			EFA BODY ZAO Aaa" << std::endl;
 	}
-	header = _request.getHeader();
+		header = _request.getHeader();
+		_request.displayRequest();
+	
 	/////////////////////////////////////
-	_request.displayRequest();
 	if (_request.getMethod() == "GET")
 	{
 		fileFd = get_request();
@@ -442,11 +458,11 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 		}
 		else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 		{
-			if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
-			{
-				std::cout << "			VITA ZANY EEE" << std::endl;	
-				_request.set_is_CRLF_header(false);
-			}
+			// if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
+			// {
+			// 	std::cout << "			VITA ZANY EEE" << std::endl;	
+			// 	_request.set_is_CRLF_header(false);
+			// }
 			std::cout << "\ntext/plain\n" << std::endl;
 			if (!_fileFD)
 			{
@@ -455,7 +471,6 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 					perror("open file in POST");
 					throw ErrorExcept(404, "File can't be opened");
 				}
-				write(fileFd, "letie", 5);
 				filePath = "storage_text_plain.txt";
 				opt = EPOLLOUT;
 				std::cout << "FD FILE->POST text/plain=" << fileFd << std::endl;

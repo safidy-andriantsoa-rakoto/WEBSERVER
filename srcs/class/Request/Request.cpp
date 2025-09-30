@@ -6,13 +6,14 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 21:07:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/30 10:33:43 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false) {}
+Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false), _content_length(0), _c_length_received(0)
+{}
 
 Request::Request(Request const & other)
 {
@@ -34,6 +35,8 @@ Request &Request::operator=(Request const & other)
 		_autoIdx = other._autoIdx;
 		_is_CRLF_header = other._is_CRLF_header;
 		_multipart_body = other._multipart_body;
+		_content_length = other._content_length;
+		_c_length_received = other._c_length_received;
 	}
 	return *this;
 }
@@ -111,11 +114,13 @@ ssize_t Request::getRequestSize()
 	return (this->_request_length);
 }
 
-void Request::set_Body(const std::string& _body)
+void Request::set_Body(const std::string& body)
 {
 	this->_body.clear();
 	if (!_body.size())
 		this->_body = "";
+	else
+		this->_body = body;
 }
 
 std::string& Request::get_Body()
@@ -174,6 +179,10 @@ void	Request::setRequestBody(std::string const & requeststring, size_t const & p
 	content = requeststring.substr(pos, static_cast<size_t>(length));
 	//Length error management to see
 	_body = content;
+	_c_length_received += content.size();
+	_content_length = length;
+	std::cout << "[" << content << "]" << std::endl;
+	std::cout << "CONTENT_LENGTH=" << _content_length << " received =" << content.size() << std::endl;
 }
 
 void	Request::parseRequest(std::string const & requeststring)
@@ -241,4 +250,20 @@ void Request::displayRequestMultipartData()
 	}
 	std::cout << "==============================MULTIPARTDATA END================================" << std::endl;
 	
+}
+
+size_t Request::get_c_length_received()
+{
+    return (this->_c_length_received);
+}
+
+void Request::set_c_length_received(size_t received)
+{
+	if ((int)received > -1)
+		this->_c_length_received += received;
+}
+
+size_t Request::get_content_length()
+{
+    return (this->_content_length);
 }
