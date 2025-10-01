@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 10:33:43 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 11:58:28 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ ssize_t Request::getRequestSize()
 void Request::set_Body(const std::string& body)
 {
 	this->_body.clear();
-	if (!_body.size())
+	if (!body.size())
 		this->_body = "";
 	else
 		this->_body = body;
@@ -178,10 +178,11 @@ void	Request::setRequestBody(std::string const & requeststring, size_t const & p
 	length = atoi((*it).second.c_str());
 	content = requeststring.substr(pos, static_cast<size_t>(length));
 	//Length error management to see
-	_body = content;
+	// _body = content;//alana @zay eee
+	_body_two.push_back(content);
 	_c_length_received += content.size();
 	_content_length = length;
-	std::cout << "[" << content << "]" << std::endl;
+	// std::cout << "[" << content << "]" << std::endl;
 	std::cout << "CONTENT_LENGTH=" << _content_length << " received =" << content.size() << std::endl;
 }
 
@@ -266,4 +267,22 @@ void Request::set_c_length_received(size_t received)
 size_t Request::get_content_length()
 {
     return (this->_content_length);
+}
+
+void Request::set_v_body_two(std::string body)
+{
+	_body_two.push_back(body);
+}
+
+std::string Request::get_v_body_two(int pos)
+{
+    if (pos && pos > (int)_body_two.size())
+		return (_body_two[0]);
+	return ("");
+}
+
+void Request::remove_from_body_two(int pos)
+{
+    if (pos && pos > (int)_body_two.size())
+		_body_two.erase(_body_two.begin() + pos);
 }

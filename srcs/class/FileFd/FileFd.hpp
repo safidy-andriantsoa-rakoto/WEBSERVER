@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 10:04:22 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 10:27:01 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,12 @@ class FileFd
 		std::string	getFilePath() const;
 		std::string	getFileType() const;
 		std::string	getOriginMethod() const;
+
+		void		setFileTotalSize(size_t size);
+		void		setFileSentSize(size_t size);
 		size_t		getFileTotalSize() const;
 		size_t		getFileSentSize() const;
+		
 
 		void		increaseFileSent(size_t	const & add);
 		bool		get_endFilePost();

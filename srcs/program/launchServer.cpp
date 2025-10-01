@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/24 15:34:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 11:23:06 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void    launchServer(Handler & handler)
 		handler.displayHandlerStat();
 		for (int i = 0; i < nb_event; i++)
 		{
+			std::cout << "\n\n\e[5m		INDEX-->" << i << "\e[0m\n" << std::endl;
 			try
 			{
 				fdEvent = epoll.get_fdEvent(i);
@@ -73,6 +74,7 @@ void    launchServer(Handler & handler)
 					epoll.epoll_clean(fdEvent);
 				}
 			}
+			sleep(2);
 		}
 	}
 }

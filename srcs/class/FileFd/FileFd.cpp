@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 22:11:44 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 11:02:21 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ FileFd::FileFd(){}
 FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath) : 
 	_fileFd(fileFd),
 	_clientFd(clientFd),
+	_fileTotalSize(0),
+	_fileSent(0),
 	_filePath(filePath),
 	_status(OP_OPEN),
 	_EndFilepost(false)
@@ -90,6 +92,18 @@ std::string FileFd::getFileType() const
 std::string FileFd::getOriginMethod() const
 {
     return _method;
+}
+
+void FileFd::setFileTotalSize(size_t size)
+{
+	if ((int)size > -1)
+		this->_fileTotalSize += size;
+}
+
+void FileFd::setFileSentSize(size_t size)
+{
+	if ((int)size > -1)
+		this->_fileSent = size;
 }
 
 size_t FileFd::getFileTotalSize() const

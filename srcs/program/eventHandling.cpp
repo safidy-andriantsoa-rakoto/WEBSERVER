@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 10:45:31 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 11:57:52 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,9 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	std::string limiter = "--";
 	std::string limiterEnd = "--";
 	
-	// if ((*it).getFileFD())
-	// {
-	// 	std::cout << "		Mbola mis ka" << std::endl;
-	// 	if ((*it).getFileFD()->get_endFilePost())
-	// 	{
-	// 		std::cout << "bye bye file fd POST" << std::endl;
-	// 		(*it).clearFileFd();
-	// 	}
-	// 	else
-	// 		std::cout << "		tsisy ltia  aa tsisy..." << std::endl;
-	// }
-	// else
-	// 	std::cout << "		tsy nialloweer eee" << std::endl;
 	tmpRequest = (*it).getobjREquest();
 	(*it).ClientRequest();
 	client_request = (*it).getClientRequest();
-	// std::cout << "-->> \033[042m ManageRequestFromClient : request_size = " << client_request.size() << "\033[0m" << std::endl;
 	if (client_request.size() == 0)
 	{
 		(*it).clearFileFd();
@@ -59,13 +45,7 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	}
 	try
 	{
-		/*
-			Adding FLAG [Safidy]
-			Need to have the complete request before parsing/processing request
-			Client stay at EPOLLIN
-		*/
-		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);
-		std::cout << "			FD FILE=" << fdFile << std::endl;
+		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);// parsing POST process
 		(*it).updateResponseCategory(STD_RSP);
 	}
 	catch(AExcept & e)
@@ -81,16 +61,15 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	}
 	if (fdFile != -1)
 	{
-		std::cout << " 				oadray le"  << std::endl;
 		handler.addToVectFileFd(it, fdFile, fd, filePath);
-	std::cout << "		NISY NTHROW TATO" << std::endl;
 		epoll.epoll_control(fileFdOpt, fdFile);
 	}
-	else
-		std::cout << "			NIDINA" << std::endl;
 	if ((*it).getFileFD() && (*it).getobjREquest().getBody().size())
-		(*it).getFileFD()->setBuffer((*it).getobjREquest().getBody());
-	/******set na eto ny body */
+	{
+		std::cout << "				BODY---["<< (*it).getobjREquest().getBody() << "]" << std::endl;
+		(*it).getFileFD()->setBuffer((*it).getobjREquest().get_v_body_two(0));
+		(*it).getobjREquest().remove_from_body_two(0);
+	}
 }
 
 /*
@@ -156,20 +135,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	uint32_t	event = epoll.getEvent(eventIdx);
 	VClientIt	it = handler.getClient(i);
 	int			fd = (*it).get_clientFD();
-	 
-	// if ((*it).getFileFD())
-	// {
-	// 	std::cout << "		Mbola mis ka" << std::endl;
-	// 	if ((*it).getFileFD()->get_endFilePost())
-	// 	{
-	// 		std::cout << "bye bye file fd POST" << std::endl;
-	// 		(*it).clearFileFd();
-	// 	}
-	// 	else
-	// 		std::cout << "		tsisy ltia  aa tsisy..." << std::endl;
-	// }
-	// else
-	// 	std::cout << "		tsy nialloweer eee" << std::endl;
+
 	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
 	{
 		std::cout << "				EPOLLIN CLIENT" << std::endl;
@@ -226,28 +192,49 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	vectFileFdIt	it = handler.getFileFd(i);
 	uint32_t		event = epoll.getEvent(eventIdx);
 	VClientIt		clIt = handler.getClient(i);
+	int				ClientFD = (*clIt).get_clientFD();
 
 	if (event & EPOLLIN)
 		readFromFileFd(it, epoll, handler, i);
 	else if (event & EPOLLOUT)
 	{
-		std::cout << "ATY QQQ		\033[43mFD EPOLLOUT FOR FILE IO->" << "\033[0m" << (*it)->getFileFd() << std::endl;
-		std::cout << " BODY["<< (*it)->getBuffer() <<"]"  << std::endl;
+		// std::cout << "ATY QQQ		\033[43mFD EPOLLOUT FOR FILE IO->" << "\033[0m" << (*it)->getFileFd() << std::endl;
 		if ((*it)->getFileFd() != -1 && (*it)->getBuffer().size())
 		{
+			std::string body;
 			(*it)->manageFd();
-			int len =  write((*it)->getFileFd(), ((*it)->getBuffer()).c_str(), (*it)->getBuffer().size());
-			if (len == -1)
+			// stringVectIt content = (*clIt).getobjREquest().get_v_body_two(0);
+			// if (content != )
+			// {
+			// 	body = content[0];
+			// 	content.erase(content.begin());
+			// 	std::cout << "			ATY EEE ok ok" << std::endl;
+			// }
+			size_t len =  write((*it)->getFileFd(), ((*it)->getBuffer()).c_str(), (*it)->getBuffer().size());
+			std::cout << " BODY{"<< body <<"}"  << std::endl;
+			// size_t len =  write((*it)->getFileFd(), body.c_str(), body.size());
+			if (len == (size_t)(-1))
 				std::cout << "BLEM->" << strerror(errno) << std::endl;
-			std::cout << "manoratra->" << len << std::endl;
+			else
+				(*it)->setFileTotalSize(len);
+			std::cout << "manoratra->" << (*it)->getFileTotalSize() << std::endl;
 		}
-		if ((*clIt).getobjREquest().get_c_length_received() == (*clIt).getobjREquest().get_content_length())
+		if ((*it)->getFileTotalSize() >= (*clIt).getobjREquest().get_content_length())
 		{
 			std::cout << "			VITA TOMPOKO!" << std::endl;
 			std::cout << "  TOTAL_LENGHT=" << (*clIt).getobjREquest().get_content_length() << "| RECEIVED=" << (*clIt).getobjREquest().get_c_length_received() << std::endl;
 			(*it)->set_endFilePost(true);
+			epoll.epoll_update_event(ClientFD, EPOLLOUT);
 			closeFileEvent(handler, i, epoll);
 		}
+		// if ((*it)->getFileTotalSize() == (*clIt).getobjREquest().get_content_length())
+		// {
+		// 	std::cout << "			VITA TOMPOKO!" << std::endl;
+		// 	std::cout << "  TOTAL_LENGHT=" << (*clIt).getobjREquest().get_content_length() << "| RECEIVED=" << (*clIt).getobjREquest().get_c_length_received() << std::endl;
+		// 	(*it)->set_endFilePost(true);
+		// 	epoll.epoll_update_event(ClientFD, EPOLLOUT);
+		// 	closeFileEvent(handler, i, epoll);
+		// }
 	}
 }
 

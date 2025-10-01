@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/30 10:54:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 11:59:38 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -372,42 +372,34 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	t_errPage	errPage;
 	std::string	type;
 	stringMap	header;
-	// std::string md;
 	std::string boundary;
 
 	fileFd = -1;
-	// md = "";
 	boundary = "boundary=";
-	
 	if (!_request.get_is_CRLF_header())
 	{
 		_request.parseRequest(clientRequest);
 		processRequestWithConfig();
-		if (_fileFD)
-		{
-			std::cout << "			EFA NAPINA BODY NY FILEFD" << std::endl;
-			_fileFD->setBuffer(_request.getBody());
-			// _fileFD->setBuffer(_request.get_Body());
-		}
+		if (_request.get_v_body_two(0).size())
+			std::cout << "			---BUFF_FIRST_BODY[" << _request.get_v_body_two(0) << "]" << std::endl;
 	}
 	else
 	{
-		std::cout << "			EFA BODY ZAO Aaa" << std::endl;
-		std::cout << "{" << clientRequest << "}" << std::endl;
-		_request.set_Body(clientRequest);
-		_request.set_c_length_received(clientRequest.size());
-		if (_fileFD)
-		{
-			std::cout << "			EFA NAPINA BODY NY FILEFD" << std::endl;
-			_fileFD->setBuffer(clientRequest);
-			// _fileFD->setBuffer(_request.get_Body());
-		}
-		std::cout << "			EFA BODY ZAO Aaa" << std::endl;
+		// _request.set_Body(clientRequest);// mila miala ee
+		_request.set_v_body_two(clientRequest);
+		std::cout << "			---BUFF_SECOND_BODY[" << clientRequest << "]" << std::endl;
+
+		// _request.set_c_length_received(clientRequest.size());
 	}
-		header = _request.getHeader();
-		_request.displayRequest();
+	/*********************************** */
+	header = _request.getHeader();//eto aloha ity a
+	std::cout << std::endl;
+	_request.displayRequest();
+	std::cout << std::endl;
+	std::cout << std::endl;
 	
-	/////////////////////////////////////
+	
+	/*********************************** */
 	if (_request.getMethod() == "GET")
 	{
 		fileFd = get_request();
@@ -419,73 +411,30 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	{
 		if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 		{
-			if (!this->_fileFD)
-			{
-				fileFd = open("storage_multi_form_data.txt", O_RDWR | O_CREAT | O_APPEND, 0644);
-				if (fileFd== -1) {
-					perror("open file in POST");
-					throw ErrorExcept(404, "File can't be opened");
-				}
-				filePath = "storage_multi_form_data.txt";
-				opt = EPOLLOUT;
-				std::cout << "FD FILE->POST Multipart/data=" << fileFd << std::endl; 
-			}
-			else
-				fileFd = -1;
+			filePath = "storage_multi_form_data.txt";
+			fileFd = creat_file_for_post(filePath, opt);
 			std::string	getboundary = header.find("Content-Type")->second;
-			size_t pos = getboundary.find(boundary);
+			size_t pos = getboundary.find(boundary);// get boundary
 			if (pos != std::string::npos)
 				this->_boundary_sep = getboundary.substr(pos + boundary.size());
-			// std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
-			std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
 		}
 		else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 		{
-			std::cout << "\napplication/x-www-form-urlencoded\n" << std::endl;
-			if (!_fileFD)
-			{
-				fileFd = open("storage_app_xwfurlencoded.txt", O_RDWR | O_CREAT | O_APPEND, 0644);
-				if (fileFd== -1) {
-					perror("open file in POST");
-					throw ErrorExcept(404, "File can't be opened");
-				}
-				filePath = "storage_app_xwfurlencoded.txt";
-				opt = EPOLLOUT;
-				std::cout << "FD FILE->POST APP/x-wwwfurlencode=" << fileFd << std::endl; 
-			}
-			else
-				fileFd = -1;
+			filePath = "storage_app_xwfurlencoded.txt";
+			fileFd = creat_file_for_post(filePath, opt);
 		}
 		else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 		{
-			// if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
-			// {
-			// 	std::cout << "			VITA ZANY EEE" << std::endl;	
-			// 	_request.set_is_CRLF_header(false);
-			// }
-			std::cout << "\ntext/plain\n" << std::endl;
-			if (!_fileFD)
-			{
-				fileFd = open("storage_text_plain.txt", O_RDWR | O_CREAT | O_APPEND, 0644);
-				if (fileFd == -1) {
-					perror("open file in POST");
-					throw ErrorExcept(404, "File can't be opened");
-				}
-				filePath = "storage_text_plain.txt";
-				opt = EPOLLOUT;
-				std::cout << "FD FILE->POST text/plain=" << fileFd << std::endl;
-			}
-			else
-				fileFd = -1;
-			std::cout << "			OAY le BODY=" << this->_request.get_Body() << std::endl;
+			filePath = "storage_text_plain.txt";
+			fileFd = creat_file_for_post(filePath, opt);
 		}
 		else
-			std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
-			
-		opt = EPOLLOUT;
+			throw ErrorExcept(400, "Client-side error");
 	}
 	else if (_request.getMethod() == "DELETE")
 		std::cout << _request.getMethod() << std::endl; // Calling delete_request
+	else
+		throw ErrorExcept(501, "Not Implemented");
 	return fileFd;
 }
 
@@ -522,4 +471,17 @@ vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation &
 	}
 	// std::cout << "++++++++++++++++++ nbMatchMax = " << nbMatchMax << std::endl;
 	return itFinal;
+}
+
+int Client::creat_file_for_post(std::string path, uint32_t & opt)
+{
+	int fd = -1;
+	if (!this->_fileFD && path.size())
+	{
+		fd = open(path.c_str(), O_RDWR | O_CREAT | O_APPEND, 0644);
+		if (fd == -1)
+			throw ErrorExcept(404, "File can't be opened");
+		opt = EPOLLOUT;
+	}
+	return (fd);
 }
