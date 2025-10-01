@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 10:37:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 19:43:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,8 @@ void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli,
 {
 	FileFd *fileFd = new FileFd(fd, fdCli, filePath, category);
 
-	fileFd->setFileType();
+	if (category == CAT_FILE)
+		fileFd->setFileType();
 	fileFd->setupFd();
 	(*it).setFileFD(fileFd);
 	_vectFileFd.push_back(fileFd);

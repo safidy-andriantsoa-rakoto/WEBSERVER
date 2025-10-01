@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 17:13:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 19:44:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,6 +241,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		handler.addToVectFileFd(it, fdFromFile, fdCli, filePath, fileCategory);
 		epoll.epoll_control(fileFdOpt, fdFromFile);
 	}
+	std::cout << "manageRequest done" << std::endl;
 }
 
 /*
@@ -282,7 +283,7 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	else
 		responseString = (*it).getFullResponse();
 	std::cout <<"\e[45mResponse from the file : " << (*it).getFileFD()->getFilePath() << "\e[0m" << std::endl;
-	// std::cout <<"\e[45m" << responseString << "\e[0m" << std::endl;
+	std::cout <<"\e[45m" << responseString << "\e[0m" << std::endl;
 	// if (responseCategory == ERR_RSP && responseString.find("$status") != std::string::npos)
 	// {
 	// 	std::string	replace;
@@ -313,6 +314,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		sendingResponseToClient(it, fdCli, epoll);
 	else
 		throw std::runtime_error("HandleClientEvent error");
+	std::cout << "HandleClientEvent done" << std::endl;
 }
 
 void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler, int const & i)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 10:36:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 19:37:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,16 @@ FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePa
 	_status(OP_OPEN),
 	_EndFilepost(false)
 {
-	_fileType = Mime::getFileType(_filePath);
-	_fileTotalSize = getFileSize(_filePath);
+	_fileFdCategory = category;
 	_fileSent = 0;
 	_stockFd = -1;
-	_fileFdCategory = category;
+	_fileType = "cgi";
+	_fileTotalSize = 0;
+	if (category == CAT_FILE)
+	{
+		_fileType = Mime::getFileType(_filePath);
+		_fileTotalSize = getFileSize(_filePath);
+	}
 }
 
 FileFd::FileFd(FileFd const & other)
