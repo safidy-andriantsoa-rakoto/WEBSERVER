@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 14:18:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 09:41:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,28 @@ void Cgi::configEnvp()
 	replaceString(ownedConfig, convertIntToString(_contentLength), "$5");
 	vect = splitString(ownedConfig, "\n");
 	_envp = convertStringVectToTable(vect);
-	// displayCharTable(_envp, "ENVP");
+	displayCharTable(_envp, "ENVP");
 	// clearCharTable(_envp);
 	vect.clear();
 	ownedConfig.clear();
 }
 
-void Cgi::execCgi(){}
+void Cgi::execCgi()
+{
+	char		*argv[3];
+	std::string	php;
+
+	php = "/usr/bin/php-cgi";
+	argv[0] = const_cast<char * >(php.c_str());
+	argv[1] = const_cast<char * >(_scriptFileName.c_str());
+	argv[2] = NULL;
+	if (execve(php.c_str(), argv, _envp) == -1)
+	{
+		perror("Execve");
+		clearCgiClass();
+		throw std::runtime_error("Execve error");
+	}
+}
 
 void Cgi::setReqMethod(std::string const &method)
 {

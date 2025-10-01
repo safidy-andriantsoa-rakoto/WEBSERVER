@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/24 11:56:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 10:45:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ EpollCreation::~EpollCreation()
         close(this->efds);
 }
 
-void EpollCreation::epoll_control(uint32_t _opt, int &clientFD)
+void EpollCreation::epoll_control(uint32_t _opt, int const & clientFD)
 {
     struct epoll_event client;
     client.events = _opt;
@@ -44,9 +44,10 @@ void EpollCreation::epoll_control(uint32_t _opt, int &clientFD)
         std::string error(strerror(errno));
         throw std::runtime_error("\033[31m[ERROR]~epoll_ctl:" + error + "\033[0m");
     }
+    std::cout << "Epoll ctrl OK \n";
 }
 
-void EpollCreation::epoll_clean(int &clientFD)
+void EpollCreation::epoll_clean(int const & clientFD)
 {
     if (epoll_ctl(efds, EPOLL_CTL_DEL, clientFD, NULL) < 0)
     {
@@ -112,3 +113,4 @@ uint32_t EpollCreation::getEvent(int const &index)
         throw std::runtime_error("\033[31m[ERROR]getEvent: Invalid index\033[0m");
     return max_event[index].events;
 }
+

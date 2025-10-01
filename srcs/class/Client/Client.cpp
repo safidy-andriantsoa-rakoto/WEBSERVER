@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/30 14:52:15 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 10:58:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -346,12 +346,15 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
-int Client::get_request()
+int Client::get_request(int & category)
 {
 	if (_request.getIsCgi() == false)
 		return stdGetRequest();
 	else
+	{
+		category = CAT_CGI;
 		return cgiGetRequest();
+	}
 }
 
 int Client::stdGetRequest()
@@ -384,22 +387,53 @@ int Client::stdGetRequest()
 	return fd;
 }
 
+/*
+	create pipe => pipe_fd[2]
+	fork()
+		---child
+			clean every unecessary fd inside epoll and close, or any allocation
+			how to clean envp???
+			execute _cgi from request;
+			clean everything if there is an error for execve
+		---parent
+			return pipe_fd[0] because read with get to add it inside the epoll_event;
+			sSee what happen with child if ctrl+c?
+*/
 int Client::cgiGetRequest()
 {
-	int	fd;
+	int	pipeFd[2];
+	int	pid;
+	// int	waitValue;
+	// int	childStatus;
 
-	/*
-		create pipe => pipe_fd[2]
-		fork()
-			---child
-				clean every unecessary fd inside epoll and close, or any allocation
-				how to clean envp???
-				execute _cgi from request;
-			---parent
-				return pipe_fd[0] because read with get to add it inside the epoll_event;
-				sSee what happen with child if ctrl+c?
-	*/
-    return fd;
+	if (pipe(pipeFd) == -1)
+		throw std::runtime_error("Pipe error");
+	std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
+	pid = fork();
+	if (pid == -1)
+		throw std::runtime_error("Fork error");
+	if (pid == 0)
+	{
+		close(pipeFd[0]);
+		dup2(pipeFd[1], STDOUT_FILENO);
+		try
+		{
+			_request.execCgiClass();
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+			close(pipeFd[1]);
+			exit(1); // Throw exception to clean handler and epoll and exit the program
+		}
+	}
+	close(pipeFd[1]);
+	_request.clearCgiClass();
+    // waitValue = waitpid(pid, &childStatus, 0);
+	// std::cout << "Exited status = " << WEXITSTATUS(childStatus) << std::endl;
+	// if (waitValue == -1 || WIFEXITED(childStatus) == false)
+	// 	throw ErrorExcept(500, "Error on child exec");
+    return pipeFd[0];
 }
 
 int Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt)
@@ -471,7 +505,7 @@ int Client::post_request(stringMap &header, std::string &boundary, uint32_t & op
 
 void Client::delete_request(){}
 
-int Client::processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
+int Client::processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath, int & category)
 {
 	int			fileFd;
 	Response	response;
@@ -500,7 +534,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	_request.displayRequest();
 	if (_request.getMethod() == "GET")
 	{
-		fileFd = get_request();
+		fileFd = get_request(category);
 		filePath = _request.getRequestTarget();
 		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
 		opt = EPOLLIN;
@@ -548,3 +582,15 @@ vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation &
 	// std::cout << "++++++++++++++++++ nbMatchMax = " << nbMatchMax << std::endl;
 	return itFinal;
 }
+
+// void Client::epollAndHandlerCleanup(Handler & handler, EpollCreation & epoll)
+// {
+// 	for (vectServerIt itVect = handler.getVectServer().begin(); itVect != handler.getVectServer().end(); itVect++)
+// 		epoll.epoll_clean((*itVect).get_fdSocket());
+// 	for (VClientIt itCli = handler.getVectClient().begin(); itCli != handler.getVectClient().end(); itCli++)
+// 	{
+//         epoll.epoll_clean((*itCli).get_fdClient());
+//         epoll.epoll_clean((*itCli).getFileFD()->getFileFd());
+// 	}
+// 	handler.cleanFdAndAlloc();
+// }

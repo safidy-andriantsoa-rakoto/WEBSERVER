@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 14:18:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 09:11:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,16 +119,15 @@ char**	convertStringVectToTable(stringVect & vect)
 
 void	clearCharTable(char **tab)
 {
-	char	*tmp;
 	char	**tmpAll = tab;
+	int		i = 0;
 
 	if (!tab)
 		return;
-	while (*tab)
+	while (tab[i])
 	{
-		tmp = *tab;
-		tab++;
-		free(tmp);
+		free(tab[i]);
+		i++;
 	}
 	free(tmpAll);
 }

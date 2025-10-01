@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 14:49:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 10:37:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	// Request		tmpRequest;
 	std::string limiter = "--";
 	std::string limiterEnd = "--";
+	int			fileCategory = CAT_FILE;
 	
 	// if ((*it).getobjREquest().getMethod() == "POST" && (*it).getFileFD() && (*it).getFileFD()->get_endFilePost())
 	// 	(*it).clearFileFd();
@@ -48,7 +49,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	try
 	{
-		fdFromFile = (*it).processRequest(client_request, fileFdOpt, filePath);
+		fdFromFile = (*it).processRequest(client_request, fileFdOpt, filePath, fileCategory);
 		// size_t pos = client_request.find(limit);
 		// if (pos != std::string::npos)
 		// {
@@ -237,7 +238,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	if (fdFromFile != -1)
 	{
-		handler.addToVectFileFd(it, fdFromFile, fdCli, filePath);
+		handler.addToVectFileFd(it, fdFromFile, fdCli, filePath, fileCategory);
 		epoll.epoll_control(fileFdOpt, fdFromFile);
 	}
 }

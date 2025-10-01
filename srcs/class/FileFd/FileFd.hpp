@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 10:04:22 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 08:10:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class FileFd
 	public:
 		static int			_sockFd[2];
 
-		FileFd(int const & fileFd, int const & clientFd, std::string const & filePath);
+		FileFd(int const & fileFd, int const & clientFd, std::string const & filePath, int const & category);
 		FileFd(FileFd const & other);
 		FileFd & operator=(FileFd const & other);
 		~FileFd();

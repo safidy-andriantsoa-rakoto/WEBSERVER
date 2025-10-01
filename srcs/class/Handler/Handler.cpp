@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 09:48:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 10:37:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,9 @@ void Handler::addToVectClient(Server const & server, int const & fd)
 	_vectClient.push_back(Client(server, fd, true));
 }
 
-void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath)
+void Handler::addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath, int const & category)
 {
-	FileFd *fileFd = new FileFd(fd, fdCli, filePath);
+	FileFd *fileFd = new FileFd(fd, fdCli, filePath, category);
 
 	fileFd->setFileType();
 	fileFd->setupFd();
@@ -189,20 +189,19 @@ void	Handler::cleanFdAndAlloc()
 	FileFd::closeSockFd();
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
 		(*itVect).clearAllFd();
-	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
-	{
-		if ((*itCli).get_clientFD() != -1)
-			close((*itCli).get_clientFD());
-		(*itCli).clearFileFd();
-	}
 	for (vectFileFdIt itFile = _vectFileFd.begin(); itFile != _vectFileFd.end(); itFile++)
 	{
 		if ((*itFile) && (*itFile)->getFileFd() != -1)
 			close((*itFile)->getFileFd());
 		if ((*itFile) && (*itFile)->getStockFd() != -1)
 			close((*itFile)->getStockFd());
+	}	
+	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
+	{
+		if ((*itCli).get_clientFD() != -1)
+			close((*itCli).get_clientFD());
+		(*itCli).clearFileFd();
 	}
-		
 }
 
 void Handler::displayHandlerStat()

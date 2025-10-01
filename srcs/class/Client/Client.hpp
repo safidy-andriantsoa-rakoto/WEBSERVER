@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/30 14:26:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 08:52:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "../FileFd/FileFd.hpp"
 #include "../Server/Server.hpp"
 #include "../Response/Response.hpp"
-#include "../Handler/Handler.hpp"
+// #include "../Epoll/EpollCreation.hpp"
 
 class Client : public Server
 {
@@ -45,7 +45,7 @@ class Client : public Server
 		void		processRedirection(MyLoc const & location, Request & request);
 
 				//HTTP Method
-		int			get_request();
+		int			get_request(int & category);
 		int			stdGetRequest();
 		int			cgiGetRequest();
 
@@ -104,8 +104,10 @@ class Client : public Server
 				const char *what() const throw();
 		};
 
-		int processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath);
+		int processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath, int & category);
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
+
+		// void	epollAndHandlerCleanup(Handler & handler, EpollCreation & epoll);
 
 };
