@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 10:45:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 17:13:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,12 @@ void EpollCreation::epoll_control(uint32_t _opt, int const & clientFD)
     struct epoll_event client;
     client.events = _opt;
     client.data.fd = clientFD;
+    // std::cout << "Attempting to add fd " << clientFD << " to epoll." << std::endl; // <-- ADD THIS
     if (epoll_ctl(this->efds, EPOLL_CTL_ADD, clientFD, &client) < 0)
     {
         std::string error(strerror(errno));
         throw std::runtime_error("\033[31m[ERROR]~epoll_ctl:" + error + "\033[0m");
     }
-    std::cout << "Epoll ctrl OK \n";
 }
 
 void EpollCreation::epoll_clean(int const & clientFD)

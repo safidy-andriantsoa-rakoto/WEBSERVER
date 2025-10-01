@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 10:58:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 17:12:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,8 +414,9 @@ int Client::cgiGetRequest()
 		throw std::runtime_error("Fork error");
 	if (pid == 0)
 	{
-		close(pipeFd[0]);
 		dup2(pipeFd[1], STDOUT_FILENO);
+		close(pipeFd[0]);
+		close(pipeFd[1]);
 		try
 		{
 			_request.execCgiClass();
@@ -423,7 +424,6 @@ int Client::cgiGetRequest()
 		catch(const std::exception& e)
 		{
 			std::cerr << e.what() << '\n';
-			close(pipeFd[1]);
 			exit(1); // Throw exception to clean handler and epoll and exit the program
 		}
 	}
@@ -536,7 +536,8 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	{
 		fileFd = get_request(category);
 		filePath = _request.getRequestTarget();
-		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
+		if (_request.getIsCgi() == false)
+			type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
 		opt = EPOLLIN;
 	}
 	else if (_request.getMethod() == "POST")
@@ -545,6 +546,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	}
 	else if (_request.getMethod() == "DELETE")
 		std::cout << _request.getMethod() << std::endl; // Calling delete_request
+	// std::cout << "Process request fd = " << fileFd << std::endl;
 	return fileFd;
 }
 
