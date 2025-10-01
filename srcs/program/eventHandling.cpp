@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 11:57:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 15:08:20 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,9 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 		handler.addToVectFileFd(it, fdFile, fd, filePath);
 		epoll.epoll_control(fileFdOpt, fdFile);
 	}
-	if ((*it).getFileFD() && (*it).getobjREquest().getBody().size())
+	if ((*it).getFileFD())
 	{
-		std::cout << "				BODY---["<< (*it).getobjREquest().getBody() << "]" << std::endl;
+		std::cout << "				\e[5mBODY\e[0m---["<< (*it).getobjREquest().get_v_body_two(0) << "]" << std::endl;
 		(*it).getFileFD()->setBuffer((*it).getobjREquest().get_v_body_two(0));
 		(*it).getobjREquest().remove_from_body_two(0);
 	}
@@ -198,8 +198,8 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		readFromFileFd(it, epoll, handler, i);
 	else if (event & EPOLLOUT)
 	{
-		// std::cout << "ATY QQQ		\033[43mFD EPOLLOUT FOR FILE IO->" << "\033[0m" << (*it)->getFileFd() << std::endl;
-		if ((*it)->getFileFd() != -1 && (*it)->getBuffer().size())
+		std::cout << "ATY QQQ		\033[43mFD EPOLLOUT FOR FILE IO-" << "\033[0m" << (*it)->getFileFd() << std::endl;
+		if ((*it)->getFileFd() != -1)
 		{
 			std::string body;
 			(*it)->manageFd();

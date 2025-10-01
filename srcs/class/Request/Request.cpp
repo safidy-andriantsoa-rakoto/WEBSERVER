@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 11:58:28 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 15:24:03 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,6 +272,7 @@ size_t Request::get_content_length()
 void Request::set_v_body_two(std::string body)
 {
 	_body_two.push_back(body);
+	std::cout << "\e[5mLEN_POST_BODY=" << _body_two.size() << "\e[0m" << std::endl;
 }
 
 std::string Request::get_v_body_two(int pos)

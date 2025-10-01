@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 11:59:38 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 15:21:38 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -351,7 +351,7 @@ int Client::get_request()
 	{
 		filePath += "/index.html";
 		closedir(dir);
-	}		
+	}
 	fd = open(filePath.c_str(), O_RDONLY);
 	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
 	if (fd == -1)

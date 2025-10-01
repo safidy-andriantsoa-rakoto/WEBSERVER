@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 11:23:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/01 14:26:29 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void    launchServer(Handler & handler)
 					epoll.epoll_clean(fdEvent);
 				}
 			}
-			sleep(2);
+			// sleep(2);
 		}
 	}
 }
