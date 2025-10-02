@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 10:27:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/02 11:46:55 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,12 @@ class FileFd
 		std::string	_fileType;
 		std::string	_method;
 
+			
 		int			_status;
 		bool		_EndFilepost;
 
+		stringVect	_post_body;
+		
 		FileFd();
 
 	public:
@@ -73,6 +76,10 @@ class FileFd
 
 		static void	initSockFd();
 		static void	closeSockFd();
+
+		void 		set_post_body(std::string content);
+		std::string& get_FI_post_body();
+		void		remove_FI_body();
 };
 
 #endif

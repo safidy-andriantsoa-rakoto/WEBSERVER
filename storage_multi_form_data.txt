@@ -1,0 +1,22 @@
+------WebKitFormBoundaryEZl4kGmPqUC0WZkp
+Content-Disposition: form-data; name="mail"
+
+ok@gmail.com
+------WebKitFormBoundaryEZl4kGmPqUC0WZkp
+Content-Disposition: form-data; name="age1"
+
+Le formulaire n’est pas Le formulaire n’est pas soumis "normalement" (on bloque avec type="button").  Le script construit un corps en text/plain.  Le corps est envoyé en 2 chunks via le ReadableStream, ce qui forcera le navigateur à utiliser Transfer-Encoding: chunked.  Le fichier n’est pas pris en charge dans ce simple exemple (le multipart/form-data est plus adapté pour les fichiers).  Le serveur doit accepter ce POST chunked.Le formulaire n’est pas soumis "normalement" (on bloque avec type="button").  Le script construit un corps en text/plain.  Le corps est envoyé en 2 chunks via le ReadableStream, ce qui forcera le navigateur à utiliser Transfer-Encoding: chunked.  Le fichier n’est pas pris en charge dans ce simple exemple (le multipart/form-data est plus adapté pour les fichiers).  Le serveur doit accepter ce POST chunked.Le formulaire n’est pas soumis "normalement" (on bloque avec type="button").  Le script construit un corps en text/plain.  Le corps est envoyé en 2 chunks via le ReadableStream, ce qui
+------WebKitFormBoundaryEZl4kGmPqUC0WZkp
+Content-Disposition: form-data; name="tr"; filename=""
+Content-Type: application/octet-stream
+
+
+------WebKitFormBoundaryEZl4kGmPqUC0WZkp--
+------WebKitFormBoundaryJkdh8WEMBZhVfS3V
+Content-Disposition: form-data; name="mail"
+
+ok@gmail.com
+------WebKitFormBoundaryJkdh8WEMBZhVfS3V
+Content-Disposition: form-data; name="age1"
+
+Le formulaire n’est pas Le formulaire n’est pas soumis "normalement" (on bloque avec type="button").  Le script construit un corps en text/plain.  Le corps est envoyé en 2 chunks via le ReadableStream, ce qui forcera 

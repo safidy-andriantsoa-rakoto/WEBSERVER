@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 15:21:38 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/02 11:30:05 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -380,16 +380,15 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	{
 		_request.parseRequest(clientRequest);
 		processRequestWithConfig();
-		if (_request.get_v_body_two(0).size())
-			std::cout << "			---BUFF_FIRST_BODY[" << _request.get_v_body_two(0) << "]" << std::endl;
+		// if (_request.get_Body().size() && _request.getMethod() == "POST")
+		// 	_request.set_v_body_two(_request.get_Body());
+		// std::cout << "ATY GET_HEAD[" << _request.get_v_body_two(0) << "]" << std::endl;
 	}
 	else
 	{
-		// _request.set_Body(clientRequest);// mila miala ee
-		_request.set_v_body_two(clientRequest);
-		std::cout << "			---BUFF_SECOND_BODY[" << clientRequest << "]" << std::endl;
-
-		// _request.set_c_length_received(clientRequest.size());
+		_request.set_Body(clientRequest);
+		// if (clientRequest.size() && _request.getMethod() == "POST")
+		// 	_request.set_v_body_two(clientRequest);
 	}
 	/*********************************** */
 	header = _request.getHeader();//eto aloha ity a

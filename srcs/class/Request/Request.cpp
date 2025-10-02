@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 15:24:03 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/02 11:53:48 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,13 +177,11 @@ void	Request::setRequestBody(std::string const & requeststring, size_t const & p
 		return ;
 	length = atoi((*it).second.c_str());
 	content = requeststring.substr(pos, static_cast<size_t>(length));
-	//Length error management to see
-	// _body = content;//alana @zay eee
-	_body_two.push_back(content);
+	_body = content;//alana @zay eee
 	_c_length_received += content.size();
 	_content_length = length;
-	// std::cout << "[" << content << "]" << std::endl;
-	std::cout << "CONTENT_LENGTH=" << _content_length << " received =" << content.size() << std::endl;
+	
+	std::cout << "\nCONTENT_LENGTH=" << _content_length << " received =" << content.size() << "\n"<< std::endl;
 }
 
 void	Request::parseRequest(std::string const & requeststring)
@@ -195,7 +193,7 @@ void	Request::parseRequest(std::string const & requeststring)
 	stringVect	headerVect;
 
 	startPos = 0;
-	std::cout << "REQUEST_STRING--->" << requeststring << "<----" << std::endl;
+	// std::cout << "REQUEST_STRING--->" << requeststring << "<----" << std::endl;
 	pos = requeststring.find(sep, startPos);
 	if (pos == std::string::npos)
 		throw std::runtime_error("Parsing request : No request line found");
@@ -216,6 +214,11 @@ void	Request::parseRequest(std::string const & requeststring)
 	setRequestBody(requeststring, pos + sep.size());
 	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")
 		this->_is_CRLF_header = true;
+	// if (this->_body_two.size())
+	// 	std::cout << "[" << _body_two[0] << "]" << std::endl;
+	// else
+	// 	std::cout << ""
+	
 }
 
 void Request::displayRequest() const
@@ -267,23 +270,4 @@ void Request::set_c_length_received(size_t received)
 size_t Request::get_content_length()
 {
     return (this->_content_length);
-}
-
-void Request::set_v_body_two(std::string body)
-{
-	_body_two.push_back(body);
-	std::cout << "\e[5mLEN_POST_BODY=" << _body_two.size() << "\e[0m" << std::endl;
-}
-
-std::string Request::get_v_body_two(int pos)
-{
-    if (pos && pos > (int)_body_two.size())
-		return (_body_two[0]);
-	return ("");
-}
-
-void Request::remove_from_body_two(int pos)
-{
-    if (pos && pos > (int)_body_two.size())
-		_body_two.erase(_body_two.begin() + pos);
 }

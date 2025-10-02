@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 15:08:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/02 11:49:13 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,23 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	}
 	if (fdFile != -1)
 	{
+		std::cout << "\033[33m		CREATE FILEFD *\033[0m" << std::endl;
 		handler.addToVectFileFd(it, fdFile, fd, filePath);
 		epoll.epoll_control(fileFdOpt, fdFile);
+		std::cout << "\033[33m		CREATE FILEFD *\033[0m" << std::endl;
 	}
 	if ((*it).getFileFD())
 	{
-		std::cout << "				\e[5mBODY\e[0m---["<< (*it).getobjREquest().get_v_body_two(0) << "]" << std::endl;
-		(*it).getFileFD()->setBuffer((*it).getobjREquest().get_v_body_two(0));
-		(*it).getobjREquest().remove_from_body_two(0);
+		std::cout << " BODY ATO AAAANNN  ["<< (*it).getobjREquest().get_Body() << "]" << std::endl;
+		(*it).getFileFD()->set_post_body((*it).getobjREquest().get_Body());
+		// std::cout << "		OAY EEEEEEEEEEEEE" << std::endl;
+		// if (tmpRequest.getMethod() == "POST")
+		// std::cout << "				\e[5mBODY\e[0m---["<< (*it).getobjREquest().get_v_body_two(0) << "]" << std::endl;
+		// (*it).getFileFD()->setBuffer((*it).getobjREquest().get_v_body_two(0));
+		// (*it).getobjREquest().remove_from_body_two(0);
 	}
+	// else
+		// std::cout << "		OAY EEEEEEEEEEEEE" << std::endl;
 }
 
 /*
@@ -203,23 +211,21 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		{
 			std::string body;
 			(*it)->manageFd();
-			// stringVectIt content = (*clIt).getobjREquest().get_v_body_two(0);
-			// if (content != )
-			// {
-			// 	body = content[0];
-			// 	content.erase(content.begin());
-			// 	std::cout << "			ATY EEE ok ok" << std::endl;
-			// }
-			size_t len =  write((*it)->getFileFd(), ((*it)->getBuffer()).c_str(), (*it)->getBuffer().size());
-			std::cout << " BODY{"<< body <<"}"  << std::endl;
-			// size_t len =  write((*it)->getFileFd(), body.c_str(), body.size());
+
+			body = (*it)->get_FI_post_body();
+			(*it)->remove_FI_body();
+			// body = (*clIt).getobjREquest().get_v_body_two(0);
+			// (*clIt).getobjREquest().remove_from_body_two(0);
+			// std::cout << " BODY{"<< (*it)->getBuffer() <<"}"  << std::endl;
+			// size_t len =  write((*it)->getFileFd(), ((*it)->getBuffer()).c_str(), (*it)->getBuffer().size());
+			size_t len =  write((*it)->getFileFd(), body.c_str(), body.size());
 			if (len == (size_t)(-1))
 				std::cout << "BLEM->" << strerror(errno) << std::endl;
 			else
 				(*it)->setFileTotalSize(len);
 			std::cout << "manoratra->" << (*it)->getFileTotalSize() << std::endl;
 		}
-		if ((*it)->getFileTotalSize() >= (*clIt).getobjREquest().get_content_length())
+		if ((*it)->getFileTotalSize() >= (*clIt).getobjREquest().get_content_length())// fafana avy ee ity aa
 		{
 			std::cout << "			VITA TOMPOKO!" << std::endl;
 			std::cout << "  TOTAL_LENGHT=" << (*clIt).getobjREquest().get_content_length() << "| RECEIVED=" << (*clIt).getobjREquest().get_c_length_received() << std::endl;

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 11:55:49 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/02 11:53:34 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ class Request
 		stringMap	_header;
 		// stringMap	_post_body;
 		std::string	_body;
-		stringVect  _body_two;
 
 		MapSVectStr	_multipart_body;
 		size_t		_request_length;
@@ -82,10 +81,6 @@ class Request
 		void 		set_c_length_received(size_t received);
 
 		size_t 		get_content_length();
-
-		void 		set_v_body_two(std::string body);
-		std::string get_v_body_two(int pos);
-		void		remove_from_body_two(int pos);
 };
 
 #endif
