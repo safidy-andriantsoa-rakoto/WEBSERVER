@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/02 11:30:05 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/02 13:57:55 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -380,15 +380,10 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	{
 		_request.parseRequest(clientRequest);
 		processRequestWithConfig();
-		// if (_request.get_Body().size() && _request.getMethod() == "POST")
-		// 	_request.set_v_body_two(_request.get_Body());
-		// std::cout << "ATY GET_HEAD[" << _request.get_v_body_two(0) << "]" << std::endl;
 	}
 	else
 	{
 		_request.set_Body(clientRequest);
-		// if (clientRequest.size() && _request.getMethod() == "POST")
-		// 	_request.set_v_body_two(clientRequest);
 	}
 	/*********************************** */
 	header = _request.getHeader();//eto aloha ity a
@@ -396,7 +391,6 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	_request.displayRequest();
 	std::cout << std::endl;
 	std::cout << std::endl;
-	
 	
 	/*********************************** */
 	if (_request.getMethod() == "GET")
@@ -410,7 +404,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	{
 		if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 		{
-			filePath = "storage_multi_form_data.txt";
+			filePath = "upload/" + currentDateTimeString() + "storage_multi_form_data.txt";
 			fileFd = creat_file_for_post(filePath, opt);
 			std::string	getboundary = header.find("Content-Type")->second;
 			size_t pos = getboundary.find(boundary);// get boundary
@@ -419,12 +413,12 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 		}
 		else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 		{
-			filePath = "storage_app_xwfurlencoded.txt";
+			filePath = "upload/" + currentDateTimeString() + "storage_app_xwfurlencoded.txt";
 			fileFd = creat_file_for_post(filePath, opt);
 		}
 		else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 		{
-			filePath = "storage_text_plain.txt";
+			filePath = "upload/" + currentDateTimeString() + "storage_text_plain.txt";
 			fileFd = creat_file_for_post(filePath, opt);
 		}
 		else
@@ -483,4 +477,15 @@ int Client::creat_file_for_post(std::string path, uint32_t & opt)
 		opt = EPOLLOUT;
 	}
 	return (fd);
+}
+
+std::string Client::currentDateTimeString()
+{
+	time_t now = time(0);
+	struct tm tstruct;
+	char buf[15];
+
+	tstruct = *localtime(&now);
+	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
+	return (buf);
 }
