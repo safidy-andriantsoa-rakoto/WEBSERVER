@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 16:31:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:55:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,10 @@ void    launchServer(Handler & handler)
 					case FILE_FD:
 						std::cout << "\033[43m	FILEFD" << "\033[0m" << std::endl;
 						handleFileEvent(handler, index, epoll, i);
+						break;
+					case CGI_FD:
+						std::cout << "\033[44m	CGIFD" << "\033[0m" << std::endl;
+						handleCgiEvent(handler, index, epoll, i);
 						break;
 					default:
 						throw std::runtime_error("Unknown fd");

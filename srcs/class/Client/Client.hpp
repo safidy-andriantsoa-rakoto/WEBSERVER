@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 08:52:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:54:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "../FileFd/FileFd.hpp"
 #include "../Server/Server.hpp"
 #include "../Response/Response.hpp"
-// #include "../Epoll/EpollCreation.hpp"
+#include "../CgiFd/CgiFd.hpp"
 
 class Client : public Server
 {
@@ -33,6 +33,7 @@ class Client : public Server
 		Request		_request;
 		Response	_response;
 		FileFd		*_fileFD;
+		CgiFd		*_cgiFD;
 
 		Client();
 
@@ -74,11 +75,17 @@ class Client : public Server
 	
 
 		FileFd		*getFileFD();
-		int			getFileStatus();
 		void        setFileFD(FileFd *fileFd);
 		void		clearFileFd();
-		void		updateFileStatus(int const & status);
 		void		increaseFileSent(size_t const & add);
+		int			getFileStatus();
+		void		updateFileStatus(int const & status);
+
+		CgiFd		*getCgiFd();
+		void        setCgiFd(CgiFd *cgiFd);
+		void		clearCgiFd();
+		int			getCgiFdStatus();
+		void		updateCgiFdStatus(int const & status);
 
 		Response &	getResponse();
 		std::string	getFullResponse();

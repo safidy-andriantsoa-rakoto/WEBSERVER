@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 08:48:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:58:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	launchEpoll(vectServer & allServer, EpollCreation &epoll);
 void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll);
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
+void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
 
 vectServerIt	findFdInServer(vectServer & allServer, int const & fd);
 VClientIt		findFdInClient(VClient & allClient, int const & fd);

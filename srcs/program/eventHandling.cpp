@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 19:44:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:59:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -367,4 +367,16 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		(*it)->set_endFilePost(true);
 		closeFileEvent(handler, i, epoll);
 	}
+}
+
+/*
+	Cgi event is only reading through pipe no matter the method is
+*/
+void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
+{
+	vectCgiFdIt	it = handler.getCgiFd(i);
+	uint32_t	event = epoll.getEvent(eventIdx);
+
+	if (event & EPOLLIN)
+	{}
 }

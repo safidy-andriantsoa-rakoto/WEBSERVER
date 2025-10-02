@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 10:25:14 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 08:43:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:34:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include "../srcs/class/Handler/Handler.hpp"
 #include "../srcs/class/Signal/Signal.hpp"
 #include "../srcs/class/Cgi/Cgi.hpp"
+#include "../srcs/class/CgiFd/CgiFd.hpp"
 
 // Waiting for official class config and location
 #include "../srcs/class/Config/AConfig.hpp"
@@ -37,7 +38,10 @@ typedef VClient::iterator       VClientIt;
 typedef std::vector<Server>		vectServer;
 typedef vectServer::iterator	vectServerIt;
 
-typedef std::vector<FileFd *>		vectFileFd;
+typedef std::vector<FileFd *>	vectFileFd;
 typedef vectFileFd::iterator	vectFileFdIt;
+
+typedef std::vector<CgiFd *>	vectCgiFd;
+typedef vectCgiFd::iterator		vectCgiFdIt;
 
 #endif

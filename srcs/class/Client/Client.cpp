@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 17:12:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:46:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,34 @@ void Client::clearFileFd()
 void Client::updateFileStatus(int const &status)
 {
 	_fileFD->setStatus(status);
+}
+
+CgiFd *Client::getCgiFd()
+{
+    return _cgiFD;
+}
+
+void Client::setCgiFd(CgiFd *cgiFd)
+{
+	clearCgiFd();
+	_cgiFD = cgiFd;
+}
+
+void Client::clearCgiFd()
+{
+	if (_cgiFD)
+		delete _cgiFD;
+	_cgiFD = NULL;
+}
+
+int Client::getCgiFdStatus()
+{
+    return _cgiFD->getStatus();
+}
+
+void Client::updateCgiFdStatus(int const &status)
+{
+	_cgiFD->setStatus(status);
 }
 
 void Client::increaseFileSent(size_t const &add)

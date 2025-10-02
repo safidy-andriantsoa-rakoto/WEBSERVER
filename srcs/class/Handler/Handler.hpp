@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 08:12:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:48:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "../Server/Server.hpp"
 #include "../Client/Client.hpp"
 #include "../FileFd/FileFd.hpp"
+#include "../CgiFd/CgiFd.hpp"
 #include "../Epoll/EpollCreation.hpp"
 
 class Client;
@@ -30,12 +31,16 @@ typedef vectServer::iterator	vectServerIt;
 typedef std::vector<FileFd *>	vectFileFd;
 typedef vectFileFd::iterator	vectFileFdIt;
 
+typedef std::vector<CgiFd *>	vectCgiFd;
+typedef vectCgiFd::iterator		vectCgiFdIt;
+
 class Handler
 {
 	private:
 		vectServer	_vectServer;
 		VClient		_vectClient;
 		vectFileFd	_vectFileFd;
+		vectCgiFd	_vectCgiFd;
 
 	public:
 		Handler();
@@ -49,15 +54,18 @@ class Handler
 		vectServer & 	getVectServer();
 		VClient &		getVectClient();
 		vectFileFd &	getVectFileFd();
+		vectCgiFd &		getVectCgiFd();
 
 		vectServerIt	getServer(int const & i);
 		VClientIt		getClient(int const & i);
 		vectFileFdIt	getFileFd(int const & i);
+		vectCgiFdIt		getCgiFd(int const & i);
 
 		void			setVectServer(vectServer & vectServer);
 
 		void			addToVectClient(Server const & server, int const & fd);
 		void			addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath, int const & category);
+		void			addToVectCgiFd(VClientIt & it, int const & fd, int const & fdCli);
 
 		void			removeClient(int const & index, EpollCreation & epoll);
 		void			removeClient(VClientIt & it, EpollCreation & epoll);
@@ -65,6 +73,10 @@ class Handler
 		void			removeFileFd(int const & index);
 		void			removeFileFd(vectFileFdIt & it);
 		vectFileFdIt	findFdInFileFd(vectFileFd & allFileFd, int const & fd);
+
+		void			removeCgiFd(int const & index);
+		void			removeCgiFd(vectCgiFdIt & it);
+		vectCgiFdIt		findInCgiFd(vectCgiFd & allCgiFd, int const & fd);
 
 		void			cleanFdAndAlloc();
 

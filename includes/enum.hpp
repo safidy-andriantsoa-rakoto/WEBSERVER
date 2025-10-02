@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 09:00:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/02 19:53:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ enum    e_identifier
 {
     SERVER,
     CLIENT,
-    FILE_FD
+    FILE_FD,
+    CGI_FD
 };
 
 enum    e_fileCategory
