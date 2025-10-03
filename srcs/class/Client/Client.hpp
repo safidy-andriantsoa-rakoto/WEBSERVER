@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/03 08:44:15 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 10:11:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Client : public Server
 		void		processRedirection(MyLoc const & location, Request & request);
 
 				//HTTP Method
-		int			get_request();
+		int			get_request(uint32_t & opt);
 		int			stdGetRequest();
 		int			cgiGetRequest();
 

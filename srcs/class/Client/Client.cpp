@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/03 08:45:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 10:11:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -388,12 +388,17 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
-int Client::get_request()
+int Client::get_request(uint32_t & opt)
 {
+	int	fd;
+
 	if (_request.getIsCgi() == false)
-		return stdGetRequest();
+		fd = stdGetRequest();
 	else
-		return cgiGetRequest();
+		fd = cgiGetRequest();
+	opt = EPOLLIN;
+	setStatusCodeResponse(200);
+	return fd;
 }
 
 int Client::stdGetRequest()
@@ -563,18 +568,13 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt)
 	_request.displayRequest();
 	if (_request.getMethod() == "GET")
 	{
-		fd = get_request();
-		opt = EPOLLIN;
-		/*
-			Update response category + status in each method !!!!
-			Normally, statusCode = success from here, if there was an error, it would have been throw ErrExcept()
-		*/
-		setStatusCodeResponse(200);
-		updateResponseCategory(STD_RSP);
+		fd = get_request(opt);
+
 	}
 	else if (_request.getMethod() == "POST")
 	{
 		fd = post_request(header, boundary, opt);
+		setStatusCodeResponse(201);
 	}
 	else if (_request.getMethod() == "DELETE")
 	{
@@ -582,6 +582,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt)
 		/*
 			Need to return fd???
 		*/
+		setStatusCodeResponse(201);
 	}
 	return fd;
 }

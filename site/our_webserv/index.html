@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OUR WEBSERV</title>
+    <!-- Assuming this CSS link is available in your environment -->
+    <link href="tooplate/tooplate-minimal-white-style.css" rel="stylesheet">
+    
+    <style>
+        /* Custom styles for the API Test Section */
+        #api-test {
+            background-color: #f9f9f9;
+            padding: 40px 0;
+            border-top: 1px solid #eee;
+        }
+        .test-grid {
+            /* Now handling 5 cards, auto-fit ensures responsiveness */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .test-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ddd;
+        }
+        .test-card h3 {
+            margin-top: 0;
+            color: #c0392b; /* DELETE color */
+        }
+        .test-card.post h3 {
+            color: #27ae60; /* POST color */
+        }
+        .test-card.get h3 {
+            color: #2980b9; /* GET color */
+        }
+        .result-box {
+            background: #333;
+            color: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            min-height: 50px;
+            overflow-x: auto;
+        }
+        
+        /* Fixed Overlap Issue: Adjusting label content and positioning */
+        .form-group label:after {
+            /* Reset the content added by previous CSS to prevent overlap */
+            content: " "; 
+        }
+
+        /* Adjusting for proper file input display */
+        .file-upload-input {
+            margin-top: 20px; 
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo">MINIMAL</a>
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="nav-link">HOME</a></li>
+                <li><a href="#simple-test" class="nav-link">SIMPLE TEST</a></li>
+                <li><a href="#cgi-test" class="nav-link">CGI TEST</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Section 1: Hero -->
+    <section id="home" class="hero">
+        <!-- Animated Objects (Reduced) -->
+        <div class="floating-objects">
+            <div class="floating-circle"></div>
+            <div class="floating-circle"></div>
+            <div class="floating-square"></div>
+            <div class="floating-line"></div>
+        </div>
+        
+        <div class="hero-decoration"></div>
+        <div class="hero-content">
+            <h1>OUR WEBSERV</h1>
+            <p class="subtitle">This is the webpage to our webserv project, test the GET, POST and DELETE method</p>
+            <!-- Applied original cta-button style for hero navigation buttons -->
+            <a href="#simple-test" class="cta-button" style="margin-right: 15px;">FILE TEST</a>
+            <a href="#cgi-test" class="cta-button">CGI TEST</a>
+        </div>
+    </section>
+
+    <!-- Section 2: API Test Area -->
+    <section id="api-test" class="api-test-section">
+        <div class="container">
+            
+            <!-- Simple Test Section -->
+            <h2 id="simple-test">FILE TEST (Navigation)</h2>
+            <p>Test basic **POST** and **DELETE** for uploading and deleting file inside the webserv.</p>
+            
+            <div class="test-grid">
+                 <!-- 1. POST TEST CARD (File Upload) -->
+                <div class="test-card post file">
+                    <h3>POST Request</h3>
+                    <p>Uploads a file to the server. Receives JSON status.</p>
+                    <form id="fileUploadForm" enctype="multipart/form-data" action="script.php" method="POST" onsubmit="handleFileUpload(event)">
+                        <div class="form-group file-upload-input">
+                            <!-- File input is always visible -->
+                            <input type="file" name="upload_file" required>
+                            <label>File</label>
+                        </div>
+                        <!-- Using the standard submit-btn class -->
+                        <button type="submit" class="submit-btn">Upload File</button>
+                    </form>
+                    <div class="result-box" id="uploadResult">Ready for file upload...</div>
+                </div>
+
+                <!-- 2. DELETE TEST CARD (File Delete) -->
+                <div class="test-card delete file">
+                    <h3>DELETE Request</h3>
+                    <p>Write the filename to be deleted.</p>
+                    
+                    <div class="form-group">
+                        <input type="text" id="deleteFilename" placeholder=" " value="test_file.txt" required>
+                        <label>Filename</label>
+                    </div>
+                    <!-- Using the standard submit-btn class -->
+                    <button type="button" class="submit-btn" onclick="sendDeleteFileRequest()">Delete file</button>
+
+                    <h4>Response:</h4>
+                    <pre id="deleteFileResult" class="result-box">Click to DELETE a file.</pre>
+                </div>
+            </div> <!-- End Simple Test Grid -->
+            
+            <!-- CGI Test Section -->
+            <h2 id="cgi-test" style="margin-top: 60px;">CGI TEST</h2>
+            <p>Test **GET** as welcome page, **POST** **DELETE** using log.</p>
+            
+            <div class="test-grid">
+                <!-- 1. GET TEST CARD (Name Lookup) - SIMPLE -->
+                <div class="test-card get">
+                    <h3>GET Request (Welcome)</h3>
+                    <p>Sends a name and receives a personalized HTML welcome page.</p>
+                    <form method="GET" action="script.php">
+                        <div class="form-group">
+                            <input type="text" name="user_name" placeholder=" " value="Alice" required>
+                            <label>Name</label>
+                        </div>
+                        <!-- Using the standard submit-btn class -->
+                        <button type="submit" class="submit-btn">GET</button>
+                    </form>
+                    <div class="result-box">
+                        <p>Submitting this form will navigate you directly to the HTML response page.</p>
+                    </div>
+                </div>
+
+                <!-- 2. POST TEST CARD (Name Register) - SIMPLE -->
+                <div class="test-card post">
+                    <h3>POST Request (Register)</h3>
+                    <p>Registers the name in the log file if it doesn't exist. Receives an HTML page with status.</p>
+                    <form method="POST" action="script.php">
+                        <div class="form-group">
+                            <input type="text" name="user_name" placeholder=" " value="Bob" required>
+                            <label>Name</label>
+                        </div>
+                        <!-- Using the standard submit-btn class -->
+                        <button type="submit" class="submit-btn">POST</button>
+                    </form>
+                    <div class="result-box">
+                        <p>Submitting this form will navigate you directly to the JSON response page.</p>
+                    </div>
+                </div>
+
+                <!-- 3. DELETE TEST CARD (Name Unregister) -->
+                <div class="test-card delete">
+                    <h3>DELETE Request (Unregister)</h3>
+                    <p>Removes the name from the log file.</p>
+                    
+                    <div class="form-group">
+                        <input type="text" id="deleteName" placeholder=" " value="Bob" required>
+                        <label>Name</label>
+                    </div>
+                    <!-- Using the standard submit-btn class -->
+                    <button type="button" class="submit-btn" onclick="sendDeleteNameRequest()">DELETE</button>
+
+                    <h4>Response:</h4>
+                    <pre id="deleteNameResult" class="result-box">Click to DELETE a name inside the log.</pre>
+                </div>
+
+            </div> <!-- End CGI Test grid -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Minimal Studio — Designed by <a href="https://www.tooplate.com" target="_blank" rel="nofollow noopener" style="color: #000; font-weight: 700;">Tooplate</a></p>
+    </footer>
+    
+    <!-- External JavaScript file inclusion -->
+    <script src="api-tests.js"></script>
+    
+    <!-- JavaScript for non-API functionality (Menu toggle, etc.) -->
+    <script>
+        // File Upload Handler (Stays here for form submission control)
+        async function handleFileUpload(event) {
+            event.preventDefault(); // Stop the default form submission
+
+            const form = event.target;
+            const endpoint = form.action;
+            const resultBox = document.getElementById('uploadResult');
+            resultBox.textContent = 'Uploading file...';
+
+            try {
+                // Use the FormData object to correctly handle the file input
+                const formData = new FormData(form);
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData // Fetch sends multipart/form-data correctly
+                });
+
+                const contentType = response.headers.get("content-type");
+                
+                if (contentType && contentType.includes("application/json")) {
+                    const data = await response.json();
+                    resultBox.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    const text = await response.text();
+                    resultBox.textContent = `Non-JSON Response (${response.status}):\n${text}`;
+                }
+
+            } catch (error) {
+                resultBox.textContent = 'Request failed: ' + error.message;
+            }
+        }
+        
+        // Original template script functionality (menu toggle, etc.)
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuToggle.classList.remove('active');
+            });
+        });
+
+    </script>
+</body>
+</html>
