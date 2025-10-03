@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 09:03:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 09:44:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,8 +356,8 @@ void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int
 	(*it)->setBuffer(bufferString);
 	if ((*it)->getStatus() == OP_OPEN)
 	{
-		fdCli = (*it)->getClientFd();
 		(*it)->setStatus(OP_START);
+		fdCli = (*it)->getClientFd();
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 08:59:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 10:02:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ void	sendFileOrErrorResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	else
 		responseString = (*it).getFullResponse();
 	std::cout <<"\e[45mResponse from the file : " << (*it).getPtrFileFd()->getFilePath() << "\e[0m" << std::endl;
-	// std::cout <<"\e[45m" << responseString << "\e[0m" << std::endl;
 	send_value(fdCli, responseString);
+    (*it).getPtrFileFd()->clearBuffer();
 	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 	if (fileStatus == OP_START)
@@ -63,7 +63,12 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	int			cgiStatus;
 
 	cgiStatus = (*it).getCgiFdStatus();
-	std::cout << "\033[35mSending cgi chunked response" << "\033[0m"<< std::endl;
+    if (cgiStatus == OP_ONGOING && (*it).getPtrCgiFd()->getBuffer().size() == 0)
+    {
+        // std::cout << "          Nothing inside the buffer yet !!!!!\n";
+        return;
+    }
+    std::cout << "\033[35mSending cgi chunked response to " << fdCli << " with status = " << cgiStatus << "\033[0m"<< std::endl;
 	(*it).setCgiChunkedResponse();
 	if (cgiStatus == OP_ONGOING || cgiStatus == OP_CLOSE)
 		responseString = (*it).getBodyResponse() + "\r\n";
@@ -71,8 +76,9 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		responseString = (*it).getFullResponse();
 	std::cout <<"\e[45mCgi response sent : \n" << responseString << "\e[0m" << std::endl;
 	send_value(fdCli, responseString);
+    (*it).getPtrCgiFd()->clearBuffer();
 	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)
-		epoll.epoll_update_event(fdCli, EPOLLIN);
+        epoll.epoll_update_event(fdCli, EPOLLIN);
 	if (cgiStatus == OP_START)
 		(*it).updateCgiFdStatus(OP_ONGOING);
 	if (cgiStatus == OP_CLOSE)
