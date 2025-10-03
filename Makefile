@@ -37,8 +37,11 @@ FILE = FileFd.cpp
 SIGNAL_DIR = Signal/
 SIGNAL_CPP = Signal.cpp
 
-CGI_DIR = Cgi/
-CGI = Cgi.cpp
+CGIPAR_DIR = CgiParser/
+CGIPAR = CgiParser.cpp
+
+CGIFD_DIR = CgiFd/
+CGIFD = CgiFd.cpp
 
 CLASS_DIR = class/
 CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(SERV_DIR)) \
@@ -51,7 +54,8 @@ CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(SERV_DIR)) \
 				$(addprefix $(CLASS_DIR), $(HAND_DIR)) \
 				$(addprefix $(CLASS_DIR), $(FILE_DIR)) \
 				$(addprefix $(CLASS_DIR), $(SIGNAL_DIR)) \
-				$(addprefix $(CLASS_DIR), $(CGI_DIR))
+				$(addprefix $(CLASS_DIR), $(CGIPAR_DIR)) \
+				$(addprefix $(CLASS_DIR), $(CGIFD_DIR))
 
 
 CLASS = $(addprefix $(SERV_DIR), $(SERV)) \
@@ -64,7 +68,8 @@ CLASS = $(addprefix $(SERV_DIR), $(SERV)) \
 		$(addprefix $(HAND_DIR), $(HAND)) \
 		$(addprefix $(FILE_DIR), $(FILE)) \
 		$(addprefix $(SIGNAL_DIR), $(SIGNAL_CPP)) \
-		$(addprefix $(CGI_DIR), $(CGI))
+		$(addprefix $(CGIPAR_DIR), $(CGIPAR)) \
+		$(addprefix $(CGIFD_DIR), $(CGIFD))
 
 UTILS_DIR = utils/
 UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp \

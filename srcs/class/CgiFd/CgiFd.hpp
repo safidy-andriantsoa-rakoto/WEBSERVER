@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 19:29:15 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 07:53:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class CgiFd
 		CgiFd & operator=(CgiFd const & other);
 		~CgiFd();
 
-		int			getCgiFd() const;
+		int			getFd() const;
 		int			getClientFd() const;
 		std::string	getBuffer() const;
 		int			getStatus() const;

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 07:53:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 08:16:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void Request::setIsCgi(bool const &condition)
 	_isCgi = condition;
 }
 
-Cgi Request::getCgiClass() const
+CgiParser Request::getCgiClass() const
 {
     return _cgi;
 }
@@ -96,7 +96,7 @@ void Request::processCgiClass(std::string const &target, std::string const & roo
 	_cgi.configEnvp();
 }
 
-void Request::setCgiClass(Cgi const &cgi)
+void Request::setCgiClass(CgiParser const &cgi)
 {
 	_cgi = cgi;
 }

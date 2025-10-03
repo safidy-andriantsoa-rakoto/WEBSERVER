@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Cgi.hpp                                            :+:      :+:    :+:   */
+/*   CgiParser.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:11:42 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 07:49:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 08:16:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CGI_HPP
-# define CGI_HPP
+#ifndef CGIPARSER_HPP
+# define CGIPARSER_HPP
 
 #include "general.hpp"
 
-class Cgi
+class CgiParser
 {
 	private:
 		std::string _reqMethod;
@@ -27,10 +27,10 @@ class Cgi
 		char**		_envp;
 
 	public:
-		Cgi();
-		Cgi(Cgi const & other);
-		Cgi& operator=(Cgi const & other);
-		~Cgi();
+		CgiParser();
+		CgiParser(CgiParser const & other);
+		CgiParser& operator=(CgiParser const & other);
+		~CgiParser();
 
 		char**	getEnvp();
 

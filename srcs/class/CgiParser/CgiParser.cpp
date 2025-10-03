@@ -1,27 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Cgi.cpp                                            :+:      :+:    :+:   */
+/*   CgiParser.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 09:41:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 08:17:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Cgi.hpp"
+#include "CgiParser.hpp"
 
-std::string Cgi::_cgiConfig;
+std::string CgiParser::_cgiConfig;
 
-Cgi::Cgi() : _envp(NULL){}
+CgiParser::CgiParser() : _envp(NULL){}
 
-Cgi::Cgi(Cgi const &other)
+CgiParser::CgiParser(CgiParser const &other)
 {
 	*this = other;
 }
 
-Cgi &Cgi::operator=(Cgi const &other)
+CgiParser &CgiParser::operator=(CgiParser const &other)
 {
 	if (this != &other)
 	{
@@ -35,14 +35,14 @@ Cgi &Cgi::operator=(Cgi const &other)
 	return *this;
 }
 
-Cgi::~Cgi(){}
+CgiParser::~CgiParser(){}
 
-char **Cgi::getEnvp()
+char **CgiParser::getEnvp()
 {
 	return _envp;
 }
 
-void Cgi::parseCgiEnv(std::string const & requestTarget, std::string const & rootDirectory)
+void CgiParser::parseCgiEnv(std::string const & requestTarget, std::string const & rootDirectory)
 {
 	stringVect	vect;
 
@@ -52,9 +52,9 @@ void Cgi::parseCgiEnv(std::string const & requestTarget, std::string const & roo
 	_scriptFileName = rootDirectory + _scriptName;
 }
 
-void Cgi::configEnvp()
+void CgiParser::configEnvp()
 {
-	std::string	ownedConfig = Cgi::_cgiConfig;
+	std::string	ownedConfig = CgiParser::_cgiConfig;
 	stringVect	vect;
 	
 	replaceString(ownedConfig, _reqMethod, "$1");
@@ -70,7 +70,7 @@ void Cgi::configEnvp()
 	ownedConfig.clear();
 }
 
-void Cgi::execCgi()
+void CgiParser::execCgi()
 {
 	char		*argv[3];
 	std::string	php;
@@ -87,17 +87,17 @@ void Cgi::execCgi()
 	}
 }
 
-void Cgi::setReqMethod(std::string const &method)
+void CgiParser::setReqMethod(std::string const &method)
 {
 	_reqMethod = method;
 }
 
-void Cgi::setContentLength(size_t const &length)
+void CgiParser::setContentLength(size_t const &length)
 {
 	_contentLength = length;
 }
 
-void Cgi::clearCgiClass()
+void CgiParser::clearCgiClass()
 {
 	_reqMethod.clear();
 	_query.clear();
@@ -107,7 +107,7 @@ void Cgi::clearCgiClass()
 	clearCharTable(_envp);
 }
 
-void Cgi::displayCgiClass() const
+void CgiParser::displayCgiClass() const
 {
 	std::cout << "\033[46m==================CGI COMPONENT==================" << std::endl;
 	std::cout << "Method = ["<< _reqMethod << "]" << std::endl
@@ -118,7 +118,7 @@ void Cgi::displayCgiClass() const
 	std::cout << "==============END OF CGI COMPONENT=============\033[0m" << std::endl;
 }
 
-void Cgi::initCgiConfig(std::string const & path)
+void CgiParser::initCgiConfig(std::string const & path)
 {
 	_cgiConfig = readFileToString(path);
 }

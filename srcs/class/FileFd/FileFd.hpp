@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 08:10:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 07:54:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ class FileFd
 		std::string	_fileType;
 		std::string	_method;
 
-		int			_fileFdCategory;
 		int			_status;
 		bool		_EndFilepost;
 
@@ -38,13 +37,13 @@ class FileFd
 	public:
 		static int			_sockFd[2];
 
-		FileFd(int const & fileFd, int const & clientFd, std::string const & filePath, int const & category);
+		FileFd(int const & fileFd, int const & clientFd, std::string const & filePath);
 		FileFd(FileFd const & other);
 		FileFd & operator=(FileFd const & other);
 		~FileFd();
 
 		int			getStockFd() const;
-		int			getFileFd() const;
+		int			getFd() const;
 		int			getClientFd() const;
 		std::string	getBuffer() const;
 		std::string	getFilePath() const;
@@ -58,9 +57,6 @@ class FileFd
 
 		int			getStatus() const;
 		void		setStatus(int const & status);
-		
-		int			getFileFdCategory() const;
-		void		setFileFdCategory(int const & category);
 		
 		std::string	getFileType() const;
 		void		setFileType();

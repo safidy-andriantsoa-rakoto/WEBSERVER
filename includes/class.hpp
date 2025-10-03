@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 10:25:14 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 19:34:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 08:17:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include "../srcs/class/FileFd/FileFd.hpp"
 #include "../srcs/class/Handler/Handler.hpp"
 #include "../srcs/class/Signal/Signal.hpp"
-#include "../srcs/class/Cgi/Cgi.hpp"
+#include "../srcs/class/CgiParser/CgiParser.hpp"
 #include "../srcs/class/CgiFd/CgiFd.hpp"
 
 // Waiting for official class config and location

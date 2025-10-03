@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 19:59:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 09:03:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 {
 	int 			fdc;
-	vectServerIt	it = handler.getServer(i);
+	vectServerIt	it = handler.getServerIterator(i);
 
 	fdc = (*it).accept_client_connexion();
 	epoll.epoll_control(EPOLLIN, fdc);
@@ -25,31 +25,30 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 
 void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll, Handler & handler)
 {
-	int			fdFromFile;
-	uint32_t	fileFdOpt;
+	int			fdFromRequest;
+	uint32_t	epollOpt;
 	std::string client_request;
 	std::string limit = "\r\n\r\n";
 	std::string body;
-	std::string filePath;
 	// Request		tmpRequest;
 	std::string limiter = "--";
 	std::string limiterEnd = "--";
-	int			fileCategory = CAT_FILE;
 	
-	// if ((*it).getobjREquest().getMethod() == "POST" && (*it).getFileFD() && (*it).getFileFD()->get_endFilePost())
-	// 	(*it).clearFileFd();
-	// tmpRequest = (*it).getobjREquest();
+	// if ((*it).getObjRequest().getMethod() == "POST" && (*it).getPtrFileFd() && (*it).getPtrFileFd()->get_endFilePost())
+	// 	(*it).clearPtrFileFd();
+	// tmpRequest = (*it).getObjRequest();
 	(*it).ClientRequest();
 	client_request = (*it).getClientRequest();
 	// std::cout << "-->> \033[042m ManageRequestFromClient : request_size = " << client_request.size() << "\033[0m" << std::endl;
 	if (client_request.size() == 0)
 	{
-		(*it).clearFileFd();
+		(*it).clearPtrFileFd();
+		(*it).clearPtrCgiFd();
 		throw std::runtime_error("ManageRequestFromClient - request size = 0");
 	}
 	try
 	{
-		fdFromFile = (*it).processRequest(client_request, fileFdOpt, filePath, fileCategory);
+		fdFromRequest = (*it).processRequest(client_request, epollOpt);
 		// size_t pos = client_request.find(limit);
 		// if (pos != std::string::npos)
 		// {
@@ -116,7 +115,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		// 					else
 		// 						var = strictSplit(separate[0], ": ");
 		// 					if (var.size())
-		// 						(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+		// 						(*it).getObjRequest().set_post_body(var, *(separate.begin() + 1));
 		// 				}
 		// 				std::cout << "BODY=====>[" << tmp << "]" << std::endl;
 		// 			}
@@ -164,7 +163,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		// 					else
 		// 						var = strictSplit(separate[0], ": ");
 		// 					if (var.size())
-		// 						(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+		// 						(*it).getObjRequest().set_post_body(var, *(separate.begin() + 1));
 		// 				}
 		// 				std::cout << "\e[5m		TAPITRA       \e[0m" << std::endl;
 		// 			}
@@ -213,99 +212,56 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		// 					else
 		// 						var = strictSplit(separate[0], ": ");
 		// 					if (var.size())
-		// 						(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
+		// 						(*it).getObjRequest().set_post_body(var, *(separate.begin() + 1));
 		// 				}
 		// 				std::cout << "BODY==NOT=END===>[" << body << "]" << std::endl;
 		// 			}
 		// 		}
 		// 	}
 		// }
-		// (*it).getobjREquest().displayRequestMultipartData();
+		// (*it).getObjRequest().displayRequestMultipartData();
 		// int fdCli = (*it).get_clientFD();
 		// epoll.epoll_update_event(fdCli, EPOLLOUT);
-		(*it).updateResponseCategory(STD_RSP);
 	}
 	catch(AExcept & e)
 	{
 		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
-		(*it).setCatchedResponse(e, fdFromFile, filePath);
-		fileFdOpt = EPOLLIN;
+		(*it).setCatchedResponse(e, fdFromRequest);
+		epollOpt = EPOLLIN;
 		if ((*it).getCategoryResponse() == REDIR_RSP || (*it).getCategoryResponse() == LDIR_RSP)
 		{
 			epoll.epoll_update_event(fdCli, EPOLLOUT);
 			return;
 		}
 	}
-	if (fdFromFile != -1)
+	if (fdFromRequest != -1)
 	{
-		handler.addToVectFileFd(it, fdFromFile, fdCli, filePath, fileCategory);
-		epoll.epoll_control(fileFdOpt, fdFromFile);
+		std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest << std::endl;
+		if ((*it).getObjRequest().getIsCgi() == false)
+			handler.addToVectFileFd(it, fdFromRequest);
+		else
+			handler.addToVectCgiFd(it, fdFromRequest);
+		epoll.epoll_control(epollOpt, fdFromRequest);
 	}
-	std::cout << "manageRequest done" << std::endl;
 }
 
-/*
-	See other cases of response, for successfull response
-*/
 void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
-	std::string	responseString;
-	int			statusCode;
-	int			fileStatus;
 	int			responseCategory = (*it).getCategoryResponse();
 	std::cout << "-->> \033[45mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
 
 	if (responseCategory == REDIR_RSP || responseCategory == LDIR_RSP)
-	{
-		responseString = (*it).getFullResponse();
-		std::cout <<"\033[35mSending redirectory/listing directory response\n" << responseString << "\033[0m" << std::endl;
-		send_value(fdCli, responseString);
-		epoll.epoll_update_event(fdCli, EPOLLIN);
-		return ;
-	}
-	fileStatus = (*it).getFileStatus();
-	if (responseCategory == STD_RSP)
-		statusCode = 200;
+		sendRedirOrLdirResponse(it, fdCli, epoll);
+	else if ((*it).getObjRequest().getIsCgi() == false)
+		sendFileOrErrorResponse(it, fdCli, epoll);
 	else
-		statusCode = (*it).getStatusCodeResponse();
-	if (fileStatus == OP_ONCE)
-	{
-		std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
-		(*it).setStandardResponse(statusCode);
-	}
-	else
-	{
-		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
-		(*it).setChunkedResponse(statusCode);
-	}
-	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
-		responseString = (*it).getBodyResponse() + "\r\n";
-	else
-		responseString = (*it).getFullResponse();
-	std::cout <<"\e[45mResponse from the file : " << (*it).getFileFD()->getFilePath() << "\e[0m" << std::endl;
-	std::cout <<"\e[45m" << responseString << "\e[0m" << std::endl;
-	// if (responseCategory == ERR_RSP && responseString.find("$status") != std::string::npos)
-	// {
-	// 	std::string	replace;
-
-	// 	replace = convertIntToString(statusCode);
-	// 	replace += " : " + (*(Response::_allStatusCode).find(replace)).second;
-	// 		replaceString(responseString, replace, "$status");
-	// }
-	send_value(fdCli, responseString);
-	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
-		epoll.epoll_update_event(fdCli, EPOLLIN);
-	if (fileStatus == OP_START)
-		(*it).updateFileStatus(OP_ONGOING);
-	(*it).increaseFileSent(_BUFFER);
-	if (fileStatus == OP_ONCE || fileStatus == OP_CLOSE)
-		(*it).clearFileFd();
+		sendCgiResponse(it, fdCli, epoll);
 }
 
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
 	uint32_t	event = epoll.getEvent(eventIdx);
-	VClientIt	it = handler.getClient(i);
+	VClientIt	it = handler.getClientIterator(i);
 	int			fdCli = (*it).get_clientFD();
 	
 	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
@@ -314,7 +270,6 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		sendingResponseToClient(it, fdCli, epoll);
 	else
 		throw std::runtime_error("HandleClientEvent error");
-	std::cout << "HandleClientEvent done" << std::endl;
 }
 
 void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler, int const & i)
@@ -328,12 +283,12 @@ void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler,
 	(*it)->manageFd();
 	if ((*it)->getStatus() == OP_START)
 		return;
-	bytesRead = read((*it)->getFileFd(), buffer, _BUFFER);
+	bytesRead = read((*it)->getFd(), buffer, _BUFFER);
 	if (bytesRead <= 0)
 	{
 		(*it)->setStatus(OP_CLOSE);
 		(*it)->clearBuffer();
-		closeFileEvent(handler, i, epoll);
+		closeFileFdEvent(handler, i, epoll);
 		return ;
 	}
 	if ((*it)->getStatus() == OP_OPEN && (*it)->getFileTotalSize() <= static_cast<size_t>(bytesRead))
@@ -351,12 +306,12 @@ void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler,
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
 	if ((*it)->getStatus() == OP_ONCE || (*it)->getStatus() == OP_CLOSE)
-		closeFileEvent(handler, i, epoll);
+		closeFileFdEvent(handler, i, epoll);
 }
 
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
-	vectFileFdIt	it = handler.getFileFd(i);
+	vectFileFdIt	it = handler.getFileFdIterator(i);
 	uint32_t		event = epoll.getEvent(eventIdx);
 
 	if (event & EPOLLIN)
@@ -365,7 +320,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	{
 		std::cout << "			\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
 		(*it)->set_endFilePost(true);
-		closeFileEvent(handler, i, epoll);
+		closeFileFdEvent(handler, i, epoll);
 	}
 }
 
@@ -374,9 +329,35 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 */
 void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
-	vectCgiFdIt	it = handler.getCgiFd(i);
+	vectCgiFdIt	it = handler.getCgiFdIterator(i);
 	uint32_t	event = epoll.getEvent(eventIdx);
+	int			fdCli;
+	int			bytesRead;
+	char		buffer[_BUFFER];
+	std::string	bufferString;
 
-	if (event & EPOLLIN)
-	{}
+	if (event & EPOLLOUT)
+	{
+		std::cout << "Must be EPOLLIN";
+		return; //Error on event selection
+	}
+	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getClientFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
+	if ((*it)->getStatus() == OP_START) //See if necessary
+		return;
+	bytesRead = read((*it)->getFd(), buffer, _BUFFER);
+	if (bytesRead <= 0)
+	{
+		(*it)->setStatus(OP_CLOSE);
+		(*it)->clearBuffer();
+		closeCgiFdEvent(handler, i, epoll);
+		return ;
+	}
+	bufferString.append(buffer, bytesRead);
+	(*it)->setBuffer(bufferString);
+	if ((*it)->getStatus() == OP_OPEN)
+	{
+		fdCli = (*it)->getClientFd();
+		(*it)->setStatus(OP_START);
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
+	}
 }

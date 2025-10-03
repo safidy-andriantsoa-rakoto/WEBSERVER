@@ -38,7 +38,7 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 
 CgiFd::~CgiFd(){}
 
-int CgiFd::getCgiFd() const
+int CgiFd::getFd() const
 {
     return _CgiFd;
 }

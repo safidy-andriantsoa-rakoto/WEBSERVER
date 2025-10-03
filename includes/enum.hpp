@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 19:53:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 09:04:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ enum   e_resp
     STD_RSP,
     REDIR_RSP,
     ERR_RSP,
-    LDIR_RSP
+    LDIR_RSP,
+    CGI_RSP
 };
 
 enum    e_operation
@@ -36,12 +37,6 @@ enum    e_identifier
     CLIENT,
     FILE_FD,
     CGI_FD
-};
-
-enum    e_fileCategory
-{
-    CAT_FILE,
-    CAT_CGI
 };
 
 #endif

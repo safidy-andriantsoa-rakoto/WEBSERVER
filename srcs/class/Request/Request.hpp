@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 07:53:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 08:18:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define REQUEST_HPP
 
 #include "general.hpp"
-#include "../Cgi/Cgi.hpp"
+#include "../CgiParser/CgiParser.hpp"
 
 class Request
 {
@@ -35,7 +35,7 @@ class Request
 		bool		_is_CRLF_header;
 
 		bool		_isCgi;
-		Cgi			_cgi;
+		CgiParser			_cgi;
 
 		void    	setRequestLine(std::string const & set);
 		void		setRequestBody(std::string const & requeststring, size_t const & pos);
@@ -57,9 +57,9 @@ class Request
 		bool		getIsCgi() const;
 		void		setIsCgi(bool const & condition);
 
-		Cgi			getCgiClass() const;
+		CgiParser			getCgiClass() const;
 		void		processCgiClass(std::string const & target, std::string const & rootDirectory);
-		void		setCgiClass(Cgi const & cgi);
+		void		setCgiClass(CgiParser const & cgi);
 		void		execCgiClass();
 		void		clearCgiClass();
 

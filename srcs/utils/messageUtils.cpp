@@ -6,11 +6,78 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 08:13:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 08:59:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
+
+/*
+	See other cases of response, for successfull response
+*/
+void	sendRedirOrLdirResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
+{
+	std::string	responseString;
+
+	responseString = (*it).getFullResponse();
+	std::cout <<"\033[35mSending redirectory/listing directory response\n" << responseString << "\033[0m" << std::endl;
+	send_value(fdCli, responseString);
+	epoll.epoll_update_event(fdCli, EPOLLIN);
+}
+
+void	sendFileOrErrorResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
+{
+	std::string	responseString;
+	int			fileStatus;
+
+	fileStatus = (*it).getFileStatus();
+	if (fileStatus == OP_ONCE)
+	{
+		std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
+		(*it).setStandardResponse();
+	}
+	else
+	{
+		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
+		(*it).setChunkedResponse();
+	}
+	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
+		responseString = (*it).getBodyResponse() + "\r\n";
+	else
+		responseString = (*it).getFullResponse();
+	std::cout <<"\e[45mResponse from the file : " << (*it).getPtrFileFd()->getFilePath() << "\e[0m" << std::endl;
+	// std::cout <<"\e[45m" << responseString << "\e[0m" << std::endl;
+	send_value(fdCli, responseString);
+	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
+		epoll.epoll_update_event(fdCli, EPOLLIN);
+	if (fileStatus == OP_START)
+		(*it).updateFileStatus(OP_ONGOING);
+	(*it).increaseFileSent(_BUFFER);
+	if (fileStatus == OP_ONCE || fileStatus == OP_CLOSE)
+		(*it).clearPtrFileFd();
+}
+
+void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
+{
+	std::string	responseString;
+	int			cgiStatus;
+
+	cgiStatus = (*it).getCgiFdStatus();
+	std::cout << "\033[35mSending cgi chunked response" << "\033[0m"<< std::endl;
+	(*it).setCgiChunkedResponse();
+	if (cgiStatus == OP_ONGOING || cgiStatus == OP_CLOSE)
+		responseString = (*it).getBodyResponse() + "\r\n";
+	else
+		responseString = (*it).getFullResponse();
+	std::cout <<"\e[45mCgi response sent : \n" << responseString << "\e[0m" << std::endl;
+	send_value(fdCli, responseString);
+	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)
+		epoll.epoll_update_event(fdCli, EPOLLIN);
+	if (cgiStatus == OP_START)
+		(*it).updateCgiFdStatus(OP_ONGOING);
+	if (cgiStatus == OP_CLOSE)
+		(*it).clearPtrFileFd();
+}
 
 /*
     Need to throw exception if error on sending? because some connexion stopped from the client

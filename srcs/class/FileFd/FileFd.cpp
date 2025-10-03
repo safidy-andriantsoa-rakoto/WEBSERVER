@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 19:37:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 07:54:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,19 @@ int	FileFd::_sockFd[2] = {-1, -1};
 
 FileFd::FileFd(){}
 
-FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath, int const & category) : 
+FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath) : 
 	_fileFd(fileFd),
 	_clientFd(clientFd),
 	_filePath(filePath),
 	_status(OP_OPEN),
 	_EndFilepost(false)
 {
-	_fileFdCategory = category;
 	_fileSent = 0;
 	_stockFd = -1;
 	_fileType = "cgi";
 	_fileTotalSize = 0;
-	if (category == CAT_FILE)
-	{
-		_fileType = Mime::getFileType(_filePath);
-		_fileTotalSize = getFileSize(_filePath);
-	}
+	_fileType = Mime::getFileType(_filePath);
+	_fileTotalSize = getFileSize(_filePath);
 }
 
 FileFd::FileFd(FileFd const & other)
@@ -66,7 +62,7 @@ int FileFd::getStockFd() const
     return _stockFd;
 }
 
-int FileFd::getFileFd() const
+int FileFd::getFd() const
 {
     return _fileFd;
 }
@@ -131,16 +127,6 @@ void FileFd::setStatus(int const &status)
 	_status = status;
 }
 
-int FileFd::getFileFdCategory() const
-{
-    return _fileFdCategory;
-}
-
-void FileFd::setFileFdCategory(int const &category)
-{
-	_fileFdCategory = category;
-}
-
 void FileFd::setFileType()
 {
 	_fileType = Mime::getFileType(_filePath);
@@ -158,8 +144,6 @@ void FileFd::clearBuffer()
 
 void FileFd::setupFd()
 {
-	if (_fileFdCategory == CAT_CGI)
-		return;
 	_stockFd = dup(_fileFd);
 	if (_stockFd == -1)
 		throw std::runtime_error("setupFd() : dup error");
@@ -169,16 +153,12 @@ void FileFd::setupFd()
 
 void FileFd::manageFd()
 {
-	if (_fileFdCategory == CAT_CGI)
-		return;
 	if (dup2(_stockFd, _fileFd) == -1)
 		throw std::runtime_error("manageFd() : dup2 error");
 }
 
 void FileFd::restoreFd()
 {
-	if (_fileFdCategory == CAT_CGI)
-		return;
 	if (dup2(_sockFd[0], _fileFd) == -1)
 		throw std::runtime_error("restoreFd() : dup2 error");
 }

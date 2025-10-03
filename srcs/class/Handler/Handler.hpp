@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 19:48:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 08:13:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,16 @@ class Handler
 		vectFileFd &	getVectFileFd();
 		vectCgiFd &		getVectCgiFd();
 
-		vectServerIt	getServer(int const & i);
-		VClientIt		getClient(int const & i);
-		vectFileFdIt	getFileFd(int const & i);
-		vectCgiFdIt		getCgiFd(int const & i);
+		vectServerIt	getServerIterator(int const & i);
+		VClientIt		getClientIterator(int const & i);
+		vectFileFdIt	getFileFdIterator(int const & i);
+		vectCgiFdIt		getCgiFdIterator(int const & i);
 
 		void			setVectServer(vectServer & vectServer);
 
 		void			addToVectClient(Server const & server, int const & fd);
-		void			addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath, int const & category);
-		void			addToVectCgiFd(VClientIt & it, int const & fd, int const & fdCli);
+		void			addToVectFileFd(VClientIt & it, int const & fd);
+		void			addToVectCgiFd(VClientIt & it, int const & fd);
 
 		void			removeClient(int const & index, EpollCreation & epoll);
 		void			removeClient(VClientIt & it, EpollCreation & epoll);

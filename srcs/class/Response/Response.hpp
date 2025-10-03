@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 09:36:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 08:41:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ class Response
 
         void				generateStandardResponse(std::string const & body);
 		void				generateChunkedResponse(std::string const & body, int const & status);
+		void				generateCgiChunkedResponse(std::string const & body, int const & status);
 		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, int & fd, std::string & filePath);
 		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int & fd, std::string & filePath);
 		void				generateRedirectResponse(RedirExcept & r);
