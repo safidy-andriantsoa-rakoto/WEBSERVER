@@ -38,8 +38,7 @@ switch ($method) {
 <body>
     <div class='card'>
         <h1>Welcome Back, " . htmlspecialchars($userName) . "!</h1>
-        <p>This is the HTML body for a successful **GET** request.</p>
-        <p>Headers (like Content-Type: text/html) must be set externally.</p>
+        <p>This is the HTML body for a successful **GET CGI** request.</p>
         <p><a href='javascript:history.back()'>Go back to the test page</a></p>
     </div>
 </body>

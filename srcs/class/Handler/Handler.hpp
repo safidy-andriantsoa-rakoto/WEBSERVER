@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 08:13:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 14:50:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ class Handler
 		vectFileFd	_vectFileFd;
 		vectCgiFd	_vectCgiFd;
 
+		bool		_programBreak;
+
 	public:
 		Handler();
 		Handler(vectServer & vectServer);
@@ -55,6 +57,9 @@ class Handler
 		VClient &		getVectClient();
 		vectFileFd &	getVectFileFd();
 		vectCgiFd &		getVectCgiFd();
+
+		bool			getProgramBreak();
+		void			setProgramBreak(bool const & stat);
 
 		vectServerIt	getServerIterator(int const & i);
 		VClientIt		getClientIterator(int const & i);
@@ -73,13 +78,13 @@ class Handler
 		void			removeFileFd(int const & index);
 		void			removeFileFd(vectFileFdIt & it);
 		vectFileFdIt	findFdInFileFd(vectFileFd & allFileFd, int const & fd);
-
+		
 		void			removeCgiFd(int const & index);
 		void			removeCgiFd(vectCgiFdIt & it);
-		vectCgiFdIt		findInCgiFd(vectCgiFd & allCgiFd, int const & fd);
-
+		vectCgiFdIt		findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd);
+		
 		void			cleanFdAndAlloc();
-
+		
 		void			displayHandlerStat();
 };
 

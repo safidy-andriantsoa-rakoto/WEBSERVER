@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/03 10:11:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 14:53:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -467,8 +467,8 @@ int Client::cgiGetRequest()
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << e.what() << '\n';
-			exit(1); // Throw exception to clean handler and epoll and exit the program
+			std::cerr << "Child process error : " << e.what() << std::endl;
+			return -1;
 		}
 	}
 	close(pipeFd[1]);
@@ -569,7 +569,6 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt)
 	if (_request.getMethod() == "GET")
 	{
 		fd = get_request(opt);
-
 	}
 	else if (_request.getMethod() == "POST")
 	{

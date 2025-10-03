@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 08:13:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 14:51:15 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Handler::Handler(){}
 
-Handler::Handler(vectServer &vectServer) : _vectServer(vectServer){}
+Handler::Handler(vectServer &vectServer) : _vectServer(vectServer), _programBreak(false){}
 
 Handler::Handler(Handler const & other) :
 	_vectServer(other._vectServer),
@@ -87,7 +87,17 @@ vectCgiFd &Handler::getVectCgiFd()
     return _vectCgiFd;
 }
 
-vectServerIt Handler::getServerIterator(int const & i)
+bool Handler::getProgramBreak()
+{
+    return _programBreak;
+}
+
+void Handler::setProgramBreak(bool const &stat)
+{
+	_programBreak = stat;
+}
+
+vectServerIt Handler::getServerIterator(int const &i)
 {
 	vectServerIt it = _vectServer.begin() + i;
 
@@ -158,17 +168,7 @@ vectFileFdIt	Handler::findFdInFileFd(vectFileFd & allFileFd, int const & fd)
 	return it;
 }
 
-void Handler::removeCgiFd(int const &index)
-{
-	_vectCgiFd.erase(_vectCgiFd.begin() + index);
-}
-
-void Handler::removeCgiFd(vectCgiFdIt &it)
-{
-	_vectCgiFd.erase(it);
-}
-
-vectCgiFdIt Handler::findInCgiFd(vectCgiFd & allCgiFd, int const &fd)
+vectCgiFdIt Handler::findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd)
 {
 	vectCgiFdIt it;
 
@@ -180,12 +180,24 @@ vectCgiFdIt Handler::findInCgiFd(vectCgiFd & allCgiFd, int const &fd)
 	return it;
 }
 
+void Handler::removeCgiFd(int const &index)
+{
+	_vectCgiFd.erase(_vectCgiFd.begin() + index);
+}
+
+void Handler::removeCgiFd(vectCgiFdIt &it)
+{
+	_vectCgiFd.erase(it);
+}
+
 void Handler::removeClient(int const & index, EpollCreation & epoll)
 {
 	VClientIt		it = _vectClient.begin() + index;
 	vectFileFdIt	itFd;
+	vectCgiFdIt		itCgi;
 	int				fdFile;
 	int				stockFdFile;
+	int				cgiFd;
 
 	std::cout << "REMOVING CLIENT " << index << std::endl;
 	if ((*it).getPtrFileFd())
@@ -198,7 +210,13 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 			close (stockFdFile);
 		removeFileFd(itFd);
 	}
-	(*it).clearPtrFileFd();
+	if ((*it).getPtrCgiFd())
+	{
+		cgiFd = (*it).getPtrCgiFd()->getFd();
+		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd);
+		epoll.epoll_clean(fdFile);
+		removeCgiFd(itCgi);
+	}
 	_vectClient.erase(it);
 }
 

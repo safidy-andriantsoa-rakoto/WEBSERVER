@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 09:44:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 14:52:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,15 +234,17 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 			return;
 		}
 	}
-	if (fdFromRequest != -1)
+	std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest << std::endl;
+	if (fdFromRequest == -1)
 	{
-		std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest << std::endl;
-		if ((*it).getObjRequest().getIsCgi() == false)
-			handler.addToVectFileFd(it, fdFromRequest);
-		else
-			handler.addToVectCgiFd(it, fdFromRequest);
-		epoll.epoll_control(epollOpt, fdFromRequest);
+		handler.setProgramBreak(true);
+		return;
 	}
+	if ((*it).getObjRequest().getIsCgi() == false)
+		handler.addToVectFileFd(it, fdFromRequest);
+	else
+		handler.addToVectCgiFd(it, fdFromRequest);
+	epoll.epoll_control(epollOpt, fdFromRequest);
 }
 
 void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)

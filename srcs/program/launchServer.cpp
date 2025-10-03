@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/02 19:55:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/03 14:55:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ void    launchServer(Handler & handler)
 					epoll.epoll_clean(fdEvent);
 				}
 			}
+			if (handler.getProgramBreak() == true)
+				throw std::runtime_error("Program break launched");
 		}
 	}
 }
