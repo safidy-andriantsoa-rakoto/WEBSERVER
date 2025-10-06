@@ -93,13 +93,18 @@ OBJ = $(OBJ_MAIN) $(OBJ_CLASS) $(OBJ_UTILS) $(OBJ_CGI) $(OBJ_PRO)
 
 NAME = webserv
 
+UPLOAD:= upload
+
 all : $(NAME)
 
-$(NAME) : $(OBJ_SUB_DIR) $(OBJ)
+$(NAME) : $(OBJ_SUB_DIR) $(OBJ) $(UPLOAD)
 	$(CC) $(FLAG) $(OBJ) -o $(NAME)
 
 $(OBJ_SUB_DIR) :
 	mkdir -p $(OBJ_SUB_DIR)
+
+$(UPLOAD):
+	mkdir -p $(UPLOAD)
 
 $(OBJ) : $(OBJ_DIR)%.o:$(SRC_DIR)%.cpp $(INC)
 	$(CC) $(FLAG) -c $< -o $@ -I $(INC_DIR)
@@ -110,6 +115,6 @@ clean :
 
 fclean : clean
 	rm -f $(NAME)
-	rm -f upload/*
+	rm -rf upload
 
 re : fclean all
