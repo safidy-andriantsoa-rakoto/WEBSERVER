@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 08:16:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 10:03:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Request &Request::operator=(Request const & other)
 		_is_CRLF_header = other._is_CRLF_header;
 		_multipart_body = other._multipart_body;
 		_isCgi = other._isCgi;
-		_cgi = other._cgi;
+		_cgiParser = other._cgiParser;
 	}
 	return *this;
 }
@@ -84,31 +84,31 @@ void Request::setIsCgi(bool const &condition)
 
 CgiParser Request::getCgiClass() const
 {
-    return _cgi;
+    return _cgiParser;
 }
 
 void Request::processCgiClass(std::string const &target, std::string const & rootDirectory)
 {
-	_cgi.parseCgiEnv(target, rootDirectory);
-	_cgi.setReqMethod(_method);
-	_cgi.setContentLength(_request_length);
-	_cgi.displayCgiClass(); //For test only
-	_cgi.configEnvp();
+	_cgiParser.parseCgiEnv(target, rootDirectory);
+	_cgiParser.setReqMethod(_method);
+	_cgiParser.setContentLength(_request_length);
+	_cgiParser.displayCgiClass(); //For test only
+	_cgiParser.configEnvp();
 }
 
 void Request::setCgiClass(CgiParser const &cgi)
 {
-	_cgi = cgi;
+	_cgiParser = cgi;
 }
 
 void Request::execCgiClass()
 {
-	_cgi.execCgi();
+	_cgiParser.execCgi();
 }
 
 void Request::clearCgiClass()
 {
-	_cgi.clearCgiClass();
+	_cgiParser.clearCgiClass();
 }
 
 const MapSVectStr& Request::getpostMultipartData() const

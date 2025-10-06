@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 09:52:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 10:29:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,9 +143,9 @@ void Handler::addToVectClient(Server const & server, int const & fd)
 
 void Handler::addToVectFileFd(VClientIt & it, int const & fd)
 {
-	int		fdCli = (*it).get_clientFD();
+	int			fdCli = (*it).get_clientFD();
 	std::string	filePath = (*it).getObjRequest().getRequestTarget();
-	FileFd *fileFd = new FileFd(fd, fdCli, filePath);
+	FileFd 		*fileFd = new FileFd(fd, fdCli, filePath);
 
 	fileFd->setFileType();
 	fileFd->setupFd();

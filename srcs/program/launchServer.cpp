@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/06 09:51:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 10:29:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,32 @@ void handle_c(int SIGNUM)
 {
 	if (SIGNUM == SIGINT)
 		sign = SIGINT;
+}
+
+void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int const & identifier, int const & i)
+{
+	switch (identifier)
+	{
+		case SERVER:
+			std::cout << "\033[46m	SERVER" << "\033[0m" << std::endl;
+			handleServerEvent(handler, index, epoll);
+			break;
+		case CLIENT:
+			std::cout << "\033[42m	CLIENT" << "\033[0m" << std::endl;
+			handleClientEvent(handler, index, epoll, i);
+			break;
+		case FILE_FD:
+			std::cout << "\033[43m	FILEFD" << "\033[0m" << std::endl;
+			handleFileEvent(handler, index, epoll, i);
+			break;
+		case CGI_FD:
+			std::cout << "\033[44m	CGIFD" << "\033[0m" << std::endl;
+			handleCgiEvent(handler, index, epoll, i);
+			break;
+		default:
+			throw std::runtime_error("Unknown fd");
+			break;
+	}
 }
 
 void    launchServer(Handler & handler)
@@ -46,38 +72,25 @@ void    launchServer(Handler & handler)
 			catch(AExcept & err)
 			{
 				std::cerr << "CGI error identified : " << err.what() << '\n';
-				/*
-					CGI error got
-					Add error fd/call CGI script error
-					Create FileFd and add to epoll event
-					break;
-				*/
+				int	fd;
+				vectCgiFdIt	itCgi = handler.getCgiFdIterator(index);
+
+				VClientIt	it = findFdInClient(handler.getVectClient(), (*itCgi)->getClientFd());
+				(*it).setCatchedResponse(err, fd);
+				std::cout << fd << std::endl;
+				if (fd != -1)
+				{
+					handler.addToVectFileFd(it, fd);
+					epoll.epoll_control(EPOLLIN, fd);
+					epoll.epoll_clean((*itCgi)->getErrFd());
+					epoll.epoll_clean((*itCgi)->getFd());
+					handler.removeCgiFd(itCgi);
+				}
 				break;
 			}
 			try
 			{
-				switch (identifier)
-				{
-					case SERVER:
-						std::cout << "\033[46m	SERVER" << "\033[0m" << std::endl;
-						handleServerEvent(handler, index, epoll);
-						break;
-					case CLIENT:
-						std::cout << "\033[42m	CLIENT" << "\033[0m" << std::endl;
-						handleClientEvent(handler, index, epoll, i);
-						break;
-					case FILE_FD:
-						std::cout << "\033[43m	FILEFD" << "\033[0m" << std::endl;
-						handleFileEvent(handler, index, epoll, i);
-						break;
-					case CGI_FD:
-						std::cout << "\033[44m	CGIFD" << "\033[0m" << std::endl;
-						handleCgiEvent(handler, index, epoll, i);
-						break;
-					default:
-						throw std::runtime_error("Unknown fd");
-						break;
-				}
+				callEvent(handler, epoll, index, identifier, i);
 			}
 			catch(const std::exception & e)
 			{

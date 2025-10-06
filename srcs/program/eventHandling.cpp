@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 09:56:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 10:39:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 
 void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll, Handler & handler)
 {
-	int			fdFromRequest;
+	int			fdFromRequest = -1;;
 	uint32_t	epollOpt;
 	std::string client_request;
 	std::string limit = "\r\n\r\n";
@@ -222,6 +222,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		// (*it).getObjRequest().displayRequestMultipartData();
 		// int fdCli = (*it).get_clientFD();
 		// epoll.epoll_update_event(fdCli, EPOLLOUT);
+		fdFromRequest = (*it).getFdTab()[FIRST_CAT];
 	}
 	catch(AExcept & e)
 	{
@@ -234,7 +235,6 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 			return;
 		}
 	}
-	fdFromRequest = (*it).getFdTab()[FIRST_CAT];
 	std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest << std::endl;
 	if (fdFromRequest == -1)
 	{
@@ -242,7 +242,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		return;
 	}
 	if ((*it).getObjRequest().getIsCgi() == false)
-	handler.addToVectFileFd(it, fdFromRequest);
+		handler.addToVectFileFd(it, fdFromRequest);
 	else
 	{
 		int	fdErr = (*it).getFdTab()[ERR_CAT];

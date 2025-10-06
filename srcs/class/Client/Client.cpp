@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/06 09:32:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 10:39:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void Client::setCatchedResponse(AExcept & e, int & fd)
 	std::string	filePath = _request.getRequestTarget();
 	_request.setIsCgi(false);
 	_response.generateCatchedResponse(e, errPage, fd, filePath);
+	_request.setRequestTarget(filePath);
 }
 
 void Client::setStandardResponse()

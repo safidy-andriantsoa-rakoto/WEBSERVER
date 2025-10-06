@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 09:08:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 10:36:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,9 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int &
 {
 	_statusCode = e._statusCode;
 	setStatusLine();
+	std::cout << "Old fd = " << fd << std::endl;
 	buildErrorPage(_statusCode, errPage, fd, filePath);
+	std::cout << "New fd = " << fd << std::endl;
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)
