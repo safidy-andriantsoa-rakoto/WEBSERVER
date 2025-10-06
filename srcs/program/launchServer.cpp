@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/06 10:29:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 15:54:09 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,34 @@ void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int 
 	}
 }
 
+void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err)
+{
+	int			fd = -1;
+	vectCgiFdIt	itCgi = handler.getCgiFdIterator(index);
+	VClientIt	it = findFdInClient(handler.getVectClient(), (*itCgi)->getClientFd());
+	int			bytesRead;
+	char		buffer[_BUFFER];
+	std::string	bufferString;
+
+	bytesRead = read((*itCgi)->getErrFd(), buffer, _BUFFER);
+	if (bytesRead <= 0)
+	{
+		// std::cout << "Nothing to read for CGI Err \n";
+		epoll.epoll_clean((*itCgi)->getErrFd());
+		return;
+	}
+	bufferString.append(buffer, bytesRead);
+	std::cout << "				***************BUFFER ERROR \n" << bufferString << std::endl;
+	(*it).setCatchedResponse(err, fd);
+	if (fd == -1)
+		return;
+	epoll.epoll_clean((*itCgi)->getErrFd());
+	epoll.epoll_clean((*itCgi)->getFd());
+	handler.removeCgiFd(itCgi);
+	handler.addToVectFileFd(it, fd);
+	epoll.epoll_control(EPOLLIN, fd);
+}
+
 void    launchServer(Handler & handler)
 {
 	int				fdEvent;
@@ -72,20 +100,7 @@ void    launchServer(Handler & handler)
 			catch(AExcept & err)
 			{
 				std::cerr << "CGI error identified : " << err.what() << '\n';
-				int	fd;
-				vectCgiFdIt	itCgi = handler.getCgiFdIterator(index);
-
-				VClientIt	it = findFdInClient(handler.getVectClient(), (*itCgi)->getClientFd());
-				(*it).setCatchedResponse(err, fd);
-				std::cout << fd << std::endl;
-				if (fd != -1)
-				{
-					handler.addToVectFileFd(it, fd);
-					epoll.epoll_control(EPOLLIN, fd);
-					epoll.epoll_clean((*itCgi)->getErrFd());
-					epoll.epoll_clean((*itCgi)->getFd());
-					handler.removeCgiFd(itCgi);
-				}
+				handleCgiError(handler, index, epoll, err);
 				break;
 			}
 			try
@@ -105,7 +120,10 @@ void    launchServer(Handler & handler)
 				}
 			}
 			if (handler.getProgramBreak() == true)
+			{
+				std::cout << "				ENDING THE PROGRAM HERE !!!!" << std::endl;
 				throw std::runtime_error("Program break launched");
+			}
 		}
 	}
 }

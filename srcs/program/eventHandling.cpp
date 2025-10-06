@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 10:39:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 15:44:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 
 void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll, Handler & handler)
 {
-	int			fdFromRequest = -1;;
 	uint32_t	epollOpt;
 	std::string client_request;
 	std::string limit = "\r\n\r\n";
@@ -33,6 +32,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	// Request		tmpRequest;
 	std::string limiter = "--";
 	std::string limiterEnd = "--";
+	int			fdFromRequest[2] = {-1, -1};
 	
 	// if ((*it).getObjRequest().getMethod() == "POST" && (*it).getPtrFileFd() && (*it).getPtrFileFd()->get_endFilePost())
 	// 	(*it).clearPtrFileFd();
@@ -48,7 +48,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	try
 	{
-		fdFromRequest = (*it).processRequest(client_request, epollOpt);
+		(*it).processRequest(client_request, epollOpt, fdFromRequest);
 		// size_t pos = client_request.find(limit);
 		// if (pos != std::string::npos)
 		// {
@@ -222,12 +222,11 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		// (*it).getObjRequest().displayRequestMultipartData();
 		// int fdCli = (*it).get_clientFD();
 		// epoll.epoll_update_event(fdCli, EPOLLOUT);
-		fdFromRequest = (*it).getFdTab()[FIRST_CAT];
 	}
 	catch(AExcept & e)
 	{
 		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
-		(*it).setCatchedResponse(e, fdFromRequest);
+		(*it).setCatchedResponse(e, fdFromRequest[FD_PRINCIPAL]);
 		epollOpt = EPOLLIN;
 		if ((*it).getCategoryResponse() == REDIR_RSP || (*it).getCategoryResponse() == LDIR_RSP)
 		{
@@ -235,22 +234,21 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 			return;
 		}
 	}
-	std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest << std::endl;
-	if (fdFromRequest == -1)
+	std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest[FD_PRINCIPAL] 
+	<< "/" << fdFromRequest[FD_CGI_ERROR] << std::endl;
+	if (fdFromRequest[FD_PRINCIPAL] == -1)
 	{
 		handler.setProgramBreak(true);
 		return;
 	}
 	if ((*it).getObjRequest().getIsCgi() == false)
-		handler.addToVectFileFd(it, fdFromRequest);
+		handler.addToVectFileFd(it, fdFromRequest[FD_PRINCIPAL]);
 	else
 	{
-		int	fdErr = (*it).getFdTab()[ERR_CAT];
-
-		handler.addToVectCgiFd(it, fdFromRequest, fdErr);
-		epoll.epoll_control(epollOpt, fdErr);
+		handler.addToVectCgiFd(it, fdFromRequest[FD_PRINCIPAL], fdFromRequest[FD_CGI_ERROR]);
+		epoll.epoll_control(epollOpt, fdFromRequest[FD_CGI_ERROR]);
 	}
-	epoll.epoll_control(epollOpt, fdFromRequest);
+	epoll.epoll_control(epollOpt, fdFromRequest[FD_PRINCIPAL]);
 }
 
 void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
@@ -350,7 +348,7 @@ void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int
 		return; //Error on event selection
 	}
 	if ((*it)->getStatus() == OP_START) //See if necessary
-	return;
+		return;
 	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
 	bytesRead = read((*it)->getFd(), buffer, _BUFFER);
 	if (bytesRead <= 0)
@@ -368,6 +366,6 @@ void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int
 		fdCli = (*it)->getClientFd();
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
-	// std::cout << "				******** Buffer = \n" << bufferString << std::endl;
+	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
 }
 

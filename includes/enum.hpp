@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 08:36:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 14:38:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ enum    e_identifier
     CGI_FD
 };
 
-enum    e_fdCat
+enum    e_fdCategory
 {
-    FIRST_CAT,
-    ERR_CAT
+    FD_PRINCIPAL,
+    FD_CGI_ERROR
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/06 08:42:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 14:43:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ class Client : public Server
 		void		processRedirection(MyLoc const & location, Request & request);
 
 				//HTTP Method
-		void		get_request(uint32_t & opt);
-		void		stdGetRequest();
-		void		cgiGetRequest();
+		void		get_request(uint32_t & opt, int *fd);
+		void		stdGetRequest(int *fd);
+		void		cgiGetRequest(int *fd);
 
-		int			post_request(stringMap & header, std::string & boundary, uint32_t & opt);
+		void		post_request(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
 		void		delete_request();
 
 	public:
@@ -117,7 +117,7 @@ class Client : public Server
 				const char *what() const throw();
 		};
 
-		int processRequest(std::string const & clientRequest, uint32_t & opt);
+		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd);
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 
