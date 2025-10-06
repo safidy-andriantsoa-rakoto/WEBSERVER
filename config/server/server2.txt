@@ -1,4 +1,0 @@
-host localhost
-port 2004
-server_names localhost login1.fr
-size 2000000

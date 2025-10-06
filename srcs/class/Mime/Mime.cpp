@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/17 10:56:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 22:11:51 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,16 @@ void Mime::trim_space(std::string &data)
         data.erase(data.find(' '), 1);
 }
 
+/*
+    What status code if file not supported, especially with POST request? [Safidy]
+*/
 std::string Mime::getFileType(std::string const &file)
 {
     std::string extFile;
     stringMapIt it;
     std::string type;
 
+	std::cout << "		BON TRAVAIL EEE" << std::endl;
     extFile = getFileExtension(file);
     it = _mime.find(extFile);
     if (extFile == "/")
@@ -91,11 +95,7 @@ void Mime::initMapMime(std::string const &path)
 
     DIR* dir = opendir(path.c_str());
 	if (!dir)
-	{
-        
-		std::cout << "Error\n Mime:" << strerror(errno) << std::endl;
-		return ;
-	}
+        throw (std::runtime_error("No directory for Mime"));
     while ((entry = readdir(dir)) != NULL)
 	{
 		std::string name(entry->d_name);
@@ -112,6 +112,8 @@ void Mime::initMapMime(std::string const &path)
             get_file_content_mime(fileStream);
             fileStream.close();
         }
+        else
+            throw std::runtime_error("Mime file error");
     }
 }
 

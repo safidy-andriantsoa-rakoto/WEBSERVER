@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   EpollCreation.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/11 10:08:28 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:56:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void EpollCreation::epoll_clean(int &clientFD)
         std::string error(strerror(errno));
         throw std::runtime_error("\033[31m[ERROR]~Epoll_ctl(clean):" + error + "\033[0m");
     }
+    std::cout << "\e[1;33mEpoll_clean : " << clientFD << "\e[0m" << std::endl;
     if (clientFD > -1)
         close(clientFD);
 }
@@ -90,6 +91,7 @@ void EpollCreation::epoll_update_event(int &fd, uint32_t event)
     if (epoll_ctl(this->efds, EPOLL_CTL_MOD, fd, &up) < 0)
     {
         std::string error(strerror(errno));
+        error += " (" + convertIntToString(fd) + ")";
         throw std::runtime_error("\033[31m[ERROR]~Epoll_ctl(update):" + error + "\033[0m");
     }
 }

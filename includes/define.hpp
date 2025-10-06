@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   define.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/18 10:55:10 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/25 09:15:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,34 +17,24 @@
 #define FILE_EXT ".php"
 #define RESPONSE_FILE_NAME "response.txt"
 
-//Response
-#define ERR_PATH "errorPage/default/index.html"
-#define STAT_PATH "ext/statcode/statusCode.txt"
+//PATH
+#define ERR_PATH "./config/errorPage/default/index.html"
+#define STAT_PATH "./config/statcode/statusCode.conf"
+#define LDIR_PATH "./config/listingDirectory/listDir.html"
+#define MIME_PATH "./config/ext"
+#define CONF_PATH "./config/serverConf/"
 
-// #define POST "POST "
+#define DEF_ERR_LOCATION "location /errorPage | root ./config/errorPage/default | method GET POST DELETE"
+
+//HTTP
 #define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"
 #define CONTENT_TYPE "Content-Type: text/html\r\n"
 #define CONTENT_TYPE_CSS "Content-Type: text/css\r\n"
 #define CONTENT_LENGTH "Content-Length: "
 #define _EMPTY_LINE "\n\r\n"
-
-#define MIME_PATH "ext"
-
-#ifndef _NB_CLIENT
 #define _NB_CLIENT 10
-#endif
-
-#ifndef _BUFFER
-#define _BUFFER 1024
-#endif
-
 #define MAX_EVENT 2042
-
-enum   e_resp
-{
-    STD_RSP,
-    REDIR_RSP,
-    ERR_RSP
-};
+#define _BUFFER 1000 
+#define _BUFFER_RECV 1024
 
 #endif

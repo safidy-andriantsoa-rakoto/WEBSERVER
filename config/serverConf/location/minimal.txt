@@ -1,0 +1,3 @@
+location / | root ./site/minimal | method GET | autoindex ON
+location /tooplate | root ./site/minimal/tooplate | method GET | autoindex ON
+location /custom | root ./config/errorPage/custom | method GET

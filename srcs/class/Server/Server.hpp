@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 10:28:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/24 09:50:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,15 @@
 
 class Server
 {
-	protected :
-	// From Config file (need to review attributes)
-		MyConf				_config;
-
+	private:
 	// For socket
-	    int     			_fdSocket;
-        int     			_fdClient;
-        socklen_t  			_size_sockaddrin;
-        SockAddrIn			_sockaddrIn;
+	    int     	_fdSocket;
+        int     	_fdClient;
+        socklen_t  	_size_sockaddrin;
+        SockAddrIn	_sockaddrIn;
 
-		//HTTP Method
-		int		get_request(Request & request);
-		int		post_request(Request & request);
-		void	delete_request(Request & request);
+	protected :
+		MyConf		_config;
 
 	public:
 		Server();
@@ -53,13 +48,16 @@ class Server
 		//Server connection
 		int 		get_fdClient() const;
 		int 		get_fdSocket() const;
-		SockAddrIn	get_confSockAddrIn() const;
+		SockAddrIn	& get_confSockAddrIn();
         int 		create_socket();
         void 		configure_sockaddrin(int port);
         int 		link_socket_adress();
         int 		wait_connexion_from_client();
         int 		accept_client_connexion();
         std::string get_client_request();
+
+		void		clearAllFd();
+
 		//For testing only !!!!
 		void simpleInit(std::string const & servPath, std::string const & locationPath);
 

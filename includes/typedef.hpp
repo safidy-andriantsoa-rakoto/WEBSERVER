@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   typedef.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/13 10:34:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/09/22 16:01:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,8 @@ typedef struct epoll_event		SEpollEvent;
 typedef struct s_errPage        t_errPage;
 typedef std::vector<t_errPage>  errVect;
 typedef errVect::iterator       errIt;
+
+typedef std::map<stringVect, std::string>   MapSVectStr;
+typedef MapSVectStr::iterator               MapSVectStrIt;
 
 #endif

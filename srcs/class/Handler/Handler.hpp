@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 10:27:33 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:05:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "../Server/Server.hpp"
 #include "../Client/Client.hpp"
 #include "../FileFd/FileFd.hpp"
+#include "../Epoll/EpollCreation.hpp"
 
 class Client;
 
@@ -26,7 +27,7 @@ typedef VClient::iterator       VClientIt;
 typedef std::vector<Server>		vectServer;
 typedef vectServer::iterator	vectServerIt;
 
-typedef std::vector<FileFd>		vectFileFd;
+typedef std::vector<FileFd *>	vectFileFd;
 typedef vectFileFd::iterator	vectFileFdIt;
 
 class Handler
@@ -43,7 +44,7 @@ class Handler
 		Handler & operator=(Handler const & other);
 		~Handler();
 
-		std::string	identifyFd(int const & fd, int & index);
+		int				identifyFd(int const & fd, int & index);
 
 		vectServer & 	getVectServer();
 		VClient &		getVectClient();
@@ -55,15 +56,19 @@ class Handler
 
 		void			setVectServer(vectServer & vectServer);
 
-		void	addToVectClient(Server const & server, int const & fd);
-		void	addToVectFileFd(int const & fd, int const & fdCli, std::string const & filePath);
+		void			addToVectClient(Server const & server, int const & fd);
+		void			addToVectFileFd(VClientIt & it, int const & fd, int const & fdCli, std::string const & filePath);
 
-		void	removeClient(int const & index);
-		void	removeFileFd(int const & index);
+		void			removeClient(int const & index, EpollCreation & epoll);
+		void			removeClient(VClientIt & it, EpollCreation & epoll);
+	
+		void			removeFileFd(int const & index);
+		void			removeFileFd(vectFileFdIt & it);
+		vectFileFdIt	findFdInFileFd(vectFileFd & allFileFd, int const & fd);
 
-		void	closeAllFd();
+		void			cleanFdAndAlloc();
 
-		void	displayHandlerStat();
+		void			displayHandlerStat();
 };
 
 #endif

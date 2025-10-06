@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fileUtils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/09 09:16:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:22:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,5 +228,32 @@ bool checkNumberAllContent(std::vector<std::string> &file)
 		|| !checkCountWord(file, "SRCIPT_FILENAME", 2) || !checkCountWord(file, "autoindex", 2))
 		return (false);
 	return (true);
+}
+
+int	openFile(std::string const & filePath)
+{
+	int			fd;
+	DIR*		dir;
+
+	dir = opendir(filePath.c_str());
+	if (dir)
+		throw std::runtime_error("File is a directory");	
+	fd = open(filePath.c_str(), O_RDONLY);
+	if (fd == -1)
+	{
+		perror("Open file");
+		throw std::runtime_error("File error");
+	}
+	return fd;
+}
+
+size_t	getFileSize(std::string const & path)
+{
+	struct stat	sf;
+
+	if (stat(path.c_str(), &sf) == -1)
+		throw std::runtime_error("Stat function error");
+	std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
+	return sf.st_size;
 }
 

@@ -3,25 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/15 08:13:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/02 11:52:16 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FileFd.hpp"
 
-int	FileFd::_sockFd[2];
+int	FileFd::_sockFd[2] = {-1, -1};
 
 FileFd::FileFd(){}
 
 FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath) : 
 	_fileFd(fileFd),
 	_clientFd(clientFd),
-	_filePath(filePath) 
+	_fileTotalSize(0),
+	_fileSent(0),
+	_filePath(filePath),
+	_status(OP_OPEN),
+	_EndFilepost(false)
 {
+	std::cout << "		PATH-->" << _filePath << std::endl;
 	_fileType = Mime::getFileType(_filePath);
+	// std::cout << "		BON TRAVAIL EEE" << std::endl;
+	_fileTotalSize = getFileSize(_filePath);
+	_fileSent = 0;
 }
 
 FileFd::FileFd(FileFd const & other)
@@ -36,12 +44,15 @@ FileFd &FileFd::operator=(FileFd const & other)
 		_stockFd = other._stockFd;
 		_clientFd = other._clientFd;
 		_fileFd = other._fileFd;
-		_sockFd[0] = other._sockFd[0];
-		_sockFd[1] = other._sockFd[1];
 		_buffer = other._buffer;
 		_filePath = other._filePath;
 		_fileType = other._fileType;
 		_method = other._method;
+		_status = other._status;
+		_fileTotalSize = other._fileTotalSize;
+		_fileSent = other._fileSent;
+		_EndFilepost = other._EndFilepost;
+		_post_body = other._post_body;
 	}
 	return *this;
 }
@@ -83,6 +94,53 @@ std::string FileFd::getOriginMethod() const
     return _method;
 }
 
+void FileFd::setFileTotalSize(size_t size)
+{
+	if ((int)size > -1)
+		this->_fileTotalSize += size;
+}
+
+void FileFd::setFileSentSize(size_t size)
+{
+	if ((int)size > -1)
+		this->_fileSent = size;
+}
+
+size_t FileFd::getFileTotalSize() const
+{
+    return _fileTotalSize;
+}
+
+size_t FileFd::getFileSentSize() const
+{
+    return _fileSent;
+}
+
+void FileFd::increaseFileSent(size_t const &add)
+{
+	_fileSent += add;
+}
+
+bool FileFd::get_endFilePost()
+{
+    return (_EndFilepost);
+}
+
+void FileFd::set_endFilePost(bool stat)
+{
+	this->_EndFilepost = stat;
+}
+
+int FileFd::getStatus() const
+{
+    return _status;
+}
+
+void FileFd::setStatus(int const &status)
+{
+	_status = status;
+}
+
 void FileFd::setFileType()
 {
 	_fileType = Mime::getFileType(_filePath);
@@ -93,20 +151,30 @@ void FileFd::setBuffer(std::string const &content)
 	_buffer = content;
 }
 
+void FileFd::clearBuffer()
+{
+	_buffer.clear();
+}
+
 void FileFd::setupFd()
 {
 	_stockFd = dup(_fileFd);
-	dup2(_sockFd[0], _fileFd);
+	if (_stockFd == -1)
+		throw std::runtime_error("setupFd() : dup error");
+	if (dup2(_sockFd[0], _fileFd) == -1)
+		throw std::runtime_error("setupFd() : dup2 error");
 }
 
 void FileFd::manageFd()
 {
-	dup2(_stockFd, _fileFd);
+	if (dup2(_stockFd, _fileFd) == -1)
+		throw std::runtime_error("manageFd() : dup2 error");
 }
 
 void FileFd::restoreFd()
 {
-	dup2(_sockFd[0], _fileFd);
+	if (dup2(_sockFd[0], _fileFd) == -1)
+		throw std::runtime_error("restoreFd() : dup2 error");
 }
 
 void FileFd::initSockFd()
@@ -118,6 +186,27 @@ void FileFd::initSockFd()
 
 void FileFd::closeSockFd()
 {
-	close(_sockFd[0]);
-	close(_sockFd[1]);
+	if (_sockFd[0] != -1)
+		close(_sockFd[0]);
+	if (_sockFd[1] != -1)
+		close(_sockFd[1]);
+}
+
+void FileFd::set_post_body(std::string content)
+{
+	if (content.size())
+		_post_body.push_back(content);
+}
+
+std::string &FileFd::get_FI_post_body()
+{
+    if (_post_body.size())
+		return (_post_body[0]);
+	throw ErrorExcept(404, "ERROR BODY EMPTY"); // soloina eee
+}
+
+void FileFd::remove_FI_body()
+{
+	if (_post_body.size())
+		_post_body.erase(_post_body.begin());
 }
