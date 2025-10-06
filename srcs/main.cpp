@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 08:16:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 08:21:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int main()
 	{
 		std::cerr << e.what() << std::endl;
 		handler.cleanFdAndAlloc();
+		return -1;
 	}
 	return 0;
 }

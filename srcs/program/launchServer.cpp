@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/03 14:55:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 09:51:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,25 @@ void    launchServer(Handler & handler)
 		handler.displayHandlerStat();
 		for (int i = 0; i < nb_event; i++)
 		{
+			fdEvent = epoll.get_fdEvent(i);
+			std::cout << "\033[47;30m		FD EVENT = " << fdEvent << "\033[0m" << std::endl;
 			try
 			{
-				fdEvent = epoll.get_fdEvent(i);
-				std::cout << "\033[47;30m		FD EVENT = " << fdEvent << "\033[0m" << std::endl;
 				identifier = handler.identifyFd(fdEvent, index);
+			}
+			catch(AExcept & err)
+			{
+				std::cerr << "CGI error identified : " << err.what() << '\n';
+				/*
+					CGI error got
+					Add error fd/call CGI script error
+					Create FileFd and add to epoll event
+					break;
+				*/
+				break;
+			}
+			try
+			{
 				switch (identifier)
 				{
 					case SERVER:
@@ -65,9 +79,9 @@ void    launchServer(Handler & handler)
 						break;
 				}
 			}
-			catch(const std::exception& e)
+			catch(const std::exception & e)
 			{
-				std::cerr << "\033[41mError on main loop : " << e.what() << "\033[0m" << std::endl;
+				std::cerr << "\033[41mError on epoll event loop : " << e.what() << "\033[0m" << std::endl;
 				std::string eWhat = e.what();
 				if (eWhat == "AExcept error")
 					throw std::runtime_error("Error page corrupted");

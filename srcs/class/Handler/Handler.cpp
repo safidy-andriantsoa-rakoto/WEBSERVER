@@ -6,13 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 14:51:15 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 09:52:54 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Handler.hpp"
 
-Handler::Handler(){}
+Handler::Handler() : _programBreak(false){}
 
 Handler::Handler(vectServer &vectServer) : _vectServer(vectServer), _programBreak(false){}
 
@@ -28,6 +28,7 @@ Handler &Handler::operator=(Handler const & other)
 		_vectServer = other._vectServer;
 		_vectClient = other._vectClient;
 		_vectFileFd = other._vectFileFd;
+		_programBreak = other._programBreak;
 	}
 	return *this;
 }
@@ -62,6 +63,11 @@ int Handler::identifyFd(int const & fd, int & index)
 	{
 		if ((*itCgiFd) && (*itCgiFd)->getFd() == fd)
 			return CGI_FD;
+		if ((*itCgiFd) && (*itCgiFd)->getErrFd() == fd)
+		{
+			(*itCgiFd)->setIsError(true);
+			throw ErrorExcept(500, "Bad gateway");
+		}
 		index++;
 	}
 	return -1;
@@ -147,10 +153,10 @@ void Handler::addToVectFileFd(VClientIt & it, int const & fd)
 	_vectFileFd.push_back(fileFd);
 }
 
-void Handler::addToVectCgiFd(VClientIt &it, int const &fd)
+void Handler::addToVectCgiFd(VClientIt &it, int const &fd, int const & fdErr)
 {
 	int	fdCli = (*it).get_clientFD();
-	CgiFd *cgiFd = new CgiFd(fd, fdCli);
+	CgiFd *cgiFd = new CgiFd(fd, fdErr, fdCli);
 
 	(*it).setPtrCgiFd(cgiFd);
 	_vectCgiFd.push_back(cgiFd);
@@ -302,7 +308,7 @@ void Handler::displayHandlerStat()
 	for(size_t i = 0; i < _vectCgiFd.size(); i++)
 	{
 		if (_vectCgiFd[i])
-			std::cout << _vectCgiFd[i]->getFd() << ":" << _vectCgiFd[i] << " ";
+			std::cout << _vectCgiFd[i]->getFd() << " - " << _vectCgiFd[i]->getErrFd() << ":" << _vectCgiFd[i] << " ";
 	}
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;

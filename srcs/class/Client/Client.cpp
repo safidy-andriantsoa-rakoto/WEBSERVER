@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/03 14:53:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 09:32:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	this->_clientRequest= "";
 	this->_to_send = 0;
 	this->_total_send = 0;
+	_fd[FIRST_CAT] = -1;
+	_fd[ERR_CAT] = -1;
 	if (_clientFD < 0)
 		throw std::runtime_error("Client constructor error");
 }
@@ -52,6 +54,8 @@ Client &Client::operator=(const Client &client)
 		this->_request = client._request;
 		setPtrFileFd(client._fileFD);
 		setPtrCgiFd(client._cgiFD);
+		_fd[FIRST_CAT] = client._fd[FIRST_CAT];
+		_fd[ERR_CAT] = client._fd[ERR_CAT];
 	}
 	return (*this);
 }
@@ -89,6 +93,11 @@ void Client::setToSendSize(size_t to_send)
 void Client::IncrementTotalSendSize(size_t total_send)
 {
 	this->_total_send += total_send;
+}
+
+int *Client::getFdTab()
+{
+    return _fd;
 }
 
 int Client::get_clientFD() const
@@ -388,20 +397,20 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
-int Client::get_request(uint32_t & opt)
+void Client::get_request(uint32_t & opt)
 {
-	int	fd;
+	// int	fd;
 
 	if (_request.getIsCgi() == false)
-		fd = stdGetRequest();
+		stdGetRequest();
 	else
-		fd = cgiGetRequest();
+		cgiGetRequest();
 	opt = EPOLLIN;
 	setStatusCodeResponse(200);
-	return fd;
+	// return fd;
 }
 
-int Client::stdGetRequest()
+void Client::stdGetRequest()
 {
 	int			fd;
 	std::string	filePath;
@@ -428,7 +437,7 @@ int Client::stdGetRequest()
 			throw ErrorExcept(403, "No permission for file");
 		throw ErrorExcept(404, "File can't be opened");
 	}
-	return fd;
+	_fd[FIRST_CAT] = fd;
 }
 
 /*
@@ -443,21 +452,30 @@ int Client::stdGetRequest()
 			return pipe_fd[0] because read with get to add it inside the epoll_event;
 			sSee what happen with child if ctrl+c?
 */
-int Client::cgiGetRequest()
+void Client::cgiGetRequest()
 {
 	int	pipeFd[2];
 	int	pid;
 	// int	waitValue;
 	// int	childStatus;
+	int	errFd[2];
+	int	stderr_fd = dup(STDERR_FILENO);
+	int	stdout_fd = dup(STDOUT_FILENO);
 
 	if (pipe(pipeFd) == -1)
-		throw std::runtime_error("Pipe error");
+		throw std::runtime_error("Pipe fd error");
+	if (pipe(errFd) == -1)
+		throw std::runtime_error("Pipe err error");
 	std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
+	std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
 	pid = fork();
 	if (pid == -1)
 		throw std::runtime_error("Fork error");
 	if (pid == 0)
 	{
+		dup2(errFd[1], STDERR_FILENO);
+		close(errFd[0]);
+		close(errFd[1]);
 		dup2(pipeFd[1], STDOUT_FILENO);
 		close(pipeFd[0]);
 		close(pipeFd[1]);
@@ -467,17 +485,40 @@ int Client::cgiGetRequest()
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << "Child process error : " << e.what() << std::endl;
-			return -1;
+			dup2(stderr_fd, STDERR_FILENO);
+			dup2(stdout_fd, STDOUT_FILENO);
+			close(stderr_fd);
+			close(stdout_fd);
+			std::cerr << "					Child process error : " << e.what() << std::endl;
+			// return -1;
+			// exit(-1);
+			_fd[FIRST_CAT] = -1;
 		}
 	}
+	close(errFd[1]);
 	close(pipeFd[1]);
+	close(stderr_fd);
+	close(stdout_fd);
 	_request.clearCgiClass();
     // waitValue = waitpid(pid, &childStatus, 0);
-	// std::cout << "Exited status = " << WEXITSTATUS(childStatus) << std::endl;
+	// std::cout << "Exited status = " << WEXITSTATUS(childStatus) << " " << waitValue << std::endl;
 	// if (waitValue == -1 || WIFEXITED(childStatus) == false)
+	// {
+	// 	int			bytesRead;
+	// 	char		buffer[_BUFFER];
+	
+	// 	bytesRead = read(errFd[0], buffer, _BUFFER);
+	// 	if (bytesRead <= 0)
+	// 	{
+	// 		std::cout << "			read error" << std::endl;
+	// 		return pipeFd[0];
+	// 	}
+	// 	std::cout << "FROM THE ERR BUFFER = \n" << buffer << std::endl;
 	// 	throw ErrorExcept(500, "Error on child exec");
-    return pipeFd[0];
+	// }
+    // return pipeFd[0];
+	_fd[FIRST_CAT] = pipeFd[0];
+	_fd[ERR_CAT] = errFd[0];
 }
 
 int Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt)
@@ -568,7 +609,8 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt)
 	_request.displayRequest();
 	if (_request.getMethod() == "GET")
 	{
-		fd = get_request(opt);
+		// fd = get_request(opt);
+		get_request(opt);
 	}
 	else if (_request.getMethod() == "POST")
 	{

@@ -15,9 +15,21 @@
 CgiFd::CgiFd(){}
 
 CgiFd::CgiFd(int const &CgiFd, int const &clientFd) : 
-	_CgiFd(CgiFd),
+	_cgiFd(CgiFd),
 	_clientFd(clientFd),
-	_status(OP_OPEN){}
+	_status(OP_OPEN)
+	{
+		_isError = false;
+	}
+
+CgiFd::CgiFd(int const &cgiFd, int const & cgiErrFd, int const &clientFd) : 
+	_cgiFd(cgiFd),
+	_cgiErrFd(cgiErrFd),
+	_clientFd(clientFd),
+	_status(OP_OPEN)
+	{
+		_isError = false;
+	}
 
 CgiFd::CgiFd(CgiFd const & other)
 {
@@ -29,9 +41,11 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 	if (this != &other)
 	{
 		_clientFd = other._clientFd;
-		_CgiFd = other._CgiFd;
+		_cgiFd = other._cgiFd;
+		_cgiErrFd = other._cgiErrFd;
 		_buffer = other._buffer;
 		_status = other._status;
+		_isError = other._isError;
 	}
 	return *this;
 }
@@ -40,7 +54,12 @@ CgiFd::~CgiFd(){}
 
 int CgiFd::getFd() const
 {
-    return _CgiFd;
+    return _cgiFd;
+}
+
+int CgiFd::getErrFd() const
+{
+    return _cgiErrFd;
 }
 
 int CgiFd::getClientFd() const
@@ -61,6 +80,16 @@ int CgiFd::getStatus() const
 void CgiFd::setStatus(int const &status)
 {
 	_status = status;
+}
+
+bool CgiFd::getIsError() const
+{
+    return _isError;
+}
+
+void CgiFd::setIsError(bool const &stat)
+{
+	_isError = stat;
 }
 
 void CgiFd::setBuffer(std::string const &content)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 08:17:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/06 09:42:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void CgiParser::execCgi()
 	char		*argv[3];
 	std::string	php;
 
-	php = "/usr/bin/php-cgi";
+	php = PHP_CGI_PATH;
 	argv[0] = const_cast<char * >(php.c_str());
 	argv[1] = const_cast<char * >(_scriptFileName.c_str());
 	argv[2] = NULL;
