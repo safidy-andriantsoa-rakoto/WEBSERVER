@@ -18,7 +18,7 @@
 #define RESPONSE_FILE_NAME "response.txt"
 
 //PATH
-#define ERR_PATH "./config/errorPage/default/index.html"
+#define ERR_PATH "./config/errorPage/default/default.html"
 #define STAT_PATH "./config/statcode/statusCode.conf"
 #define LDIR_PATH "./config/listingDirectory/listDir.html"
 #define MIME_PATH "./config/ext"

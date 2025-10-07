@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        /* A modern, clean font from Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
+
+        /* Basic styles for the page */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #121212; /* A dark, modern background */
+            color: #ffffff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden; /* Hide scrollbars */
+        }
+
+        /* The main container for the content */
+        .container {
+            z-index: 1; /* Ensure content is above the background effect */
+        }
+
+        /* Styling for the main "ERROR" text */
+        h1 {
+            font-size: 12rem; /* Make it very large */
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -0.05em; /* Tighten up the letters */
+            
+            /* A cool gradient effect for the text color */
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+            
+            /* A subtle animation to make it pop */
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        /* Styling for the helpful message below the error */
+        p {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #a0a0a0; /* A softer color for the subtext */
+            margin: 0.5em 0 1.5em;
+        }
+
+        /* A simple, styled link to go back */
+        .home-link {
+            display: inline-block;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: transparent;
+            border: 2px solid #ffffff;
+            padding: 12px 30px;
+            border-radius: 50px; /* Fully rounded corners */
+            font-weight: 700;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .home-link:hover {
+            background-color: #ffffff;
+            color: #121212; /* Invert colors on hover */
+        }
+
+        /* The keyframe animation for the pulsing effect */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                text-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 20px rgba(255, 75, 43, 0.7);
+            }
+            100% {
+                transform: scale(1);
+                text-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
+            }
+        }
+
+        /* Make it responsive for smaller screens */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 6rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <h1>ERROR</h1>
+        <p>Oops! It seems we've hit a snag.</p>
+        <a href="/" class="home-link">Go to Homepage</a>
+    </div>
+</body>
+</html>

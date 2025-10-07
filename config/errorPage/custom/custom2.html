@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        /* Import a clean, modern font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        /* Basic page styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6; /* A soft, off-white background */
+            color: #333;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Main content container */
+        .container {
+            max-width: 500px;
+        }
+
+        /* SVG graphic styling */
+        .error-graphic {
+            width: 150px;
+            height: auto;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Main heading */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem;
+            color: #2c3e50; /* A dark, muted blue */
+        }
+
+        /* Descriptive paragraph */
+        p {
+            font-size: 1.1rem;
+            color: #7f8c8d; /* A soft grey */
+            margin: 0 0 2rem;
+        }
+
+        /* "Go Back" button styling */
+        .home-button {
+            display: inline-block;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #ffffff;
+            background-color: #3498db; /* A friendly blue */
+            padding: 14px 35px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .home-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
+        }
+
+        /* Keyframe animation for the floating effect */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .error-graphic {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <svg class="error-graphic" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#e74c3c" d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2zm-1,15v-2h2v2h-2zm0-4V7h2v6h-2z"/>
+        </svg>
+
+        <h1>Oops! Page Not Found</h1>
+        <p>An unexpected error occurred. We're working to fix it, but in the meantime, you can return to safety.</p>
+        <a href="/" class="home-button">Go to Homepage</a>
+    </div>
+</body>
+</html>
