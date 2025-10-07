@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/07 10:11:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 15:29:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,8 @@ void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int 
 	}
 }
 
-void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err)
+int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)
 {
-	int			fd = -1;
-	vectCgiFdIt	itCgi = handler.getCgiFdIterator(index);
-	VClientIt	it = findFdInClient(handler.getVectClient(), (*itCgi)->getClientFd());
 	int			bytesRead;
 	char		buffer[_BUFFER];
 	std::string	bufferString;
@@ -60,18 +57,41 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 	{
 		// std::cout << "Nothing to read for CGI Err \n";
 		epoll.epoll_clean((*itCgi)->getErrFd());
-		return;
+		return 0;
 	}
 	bufferString.append(buffer, bytesRead);
 	std::cout << "				***************BUFFER ERROR \n" << bufferString << std::endl;
-	(*it).setCatchedResponse(err, fd);
-	if (fd == -1)
+	return bytesRead;
+}
+
+void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier)
+{
+	int			fd[2] = {-1, -1};
+	int			bytesRead = 0;
+	int			fdType;
+	vectCgiFdIt	itCgi = handler.getCgiFdIterator(index);
+	VClientIt	it = findFdInClient(handler.getVectClient(), (*itCgi)->getClientFd());
+
+	if (identifier == CGI_ERR_FD)
+	{
+		bytesRead = readCgiStdError(itCgi, epoll);
+		if (!bytesRead)
+			return;
+	}
+	(*it).setCatchedResponse(err, fd, fdType);
+	if (fd[FD_PRINCIPAL] == -1)
 		return;
 	epoll.epoll_clean((*itCgi)->getErrFd());
 	epoll.epoll_clean((*itCgi)->getFd());
 	handler.removeCgiFd(itCgi);
-	handler.addToVectFileFd(it, fd);
-	epoll.epoll_control(EPOLLIN, fd);
+	if (fdType == HTML_FILE)
+		handler.addToVectFileFd(it, fd[FD_PRINCIPAL]);
+	else
+	{
+		handler.addToVectCgiFd(it, fd[FD_PRINCIPAL], fd[FD_CGI_ERROR]);
+		epoll.epoll_control(EPOLLIN, fd[FD_CGI_ERROR]);
+	}
+	epoll.epoll_control(EPOLLIN, fd[FD_PRINCIPAL]);
 }
 
 void    launchServer(Handler & handler)
@@ -96,36 +116,29 @@ void    launchServer(Handler & handler)
 			try
 			{
 				identifier = handler.identifyFd(fdEvent, index);
-			}
-			catch(AExcept & err)
-			{
-				std::cerr << "CGI error identified : " << err.what() << '\n';
-				handleCgiError(handler, index, epoll, err);
-				break;
-			}
-			try
-			{
 				callEvent(handler, epoll, index, identifier, i);
 			}
-			catch(const std::exception & e)
+			catch(std::exception & e)
 			{
 				std::cerr << "\033[41mError on epoll event loop : " << e.what() << "\033[0m" << std::endl;
-				std::string eWhat = e.what();
-				if (eWhat == "AExcept error")
-					throw std::runtime_error("Error page corrupted");
 				if (identifier == CLIENT)
 				{
 					handler.removeClient(index, epoll);
 					epoll.epoll_clean(fdEvent);
 				}
-				if (identifier == CGI_FD)
+				if (identifier == CGI_FD || identifier == CGI_ERR_FD)
 				{
-					/*
-						HandleCgiError()
-						Create File_fd in error page through Client parent
-						Add to epoll
-						Clean class cgi_fd
-					*/
+					std::cerr << "CGI error identified" << std::endl;
+					try
+					{
+						ErrorExcept	& err = dynamic_cast<ErrorExcept &>(e);
+						handleCgiError(handler, index, epoll, err, identifier);
+					}
+					catch(const std::exception& e1)
+					{
+						std::cerr << "			Error on casting " << e1.what() << '\n';
+						break ;
+					}
 				}
 			}
 			if (handler.getProgramBreak() == true)

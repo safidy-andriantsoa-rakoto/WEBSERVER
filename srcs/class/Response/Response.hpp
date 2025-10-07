@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 09:39:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 15:46:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "ErrorExcept.hpp"
 #include "RedirExcept.hpp"
 #include "LDirExcept.hpp"
+#include "../CgiParser/CgiParser.hpp"
 
 class Response
 {
@@ -35,7 +36,7 @@ class Response
 
 		void				setStatusLine();
         // void 				setToDefaultErrorPage();
-		void				buildErrorPage(int const & statusCode, t_errPage & errPage, int & fd, std::string & filePath);
+		void				buildErrorPage(int const & statusCode, t_errPage & errPage, int *fd, std::string & filePath, int & fdType);
 
 	public:
 		Response();
@@ -61,10 +62,12 @@ class Response
         void				generateStandardResponse(std::string const & body);
 		void				generateChunkedResponse(std::string const & body, int const & status);
 		void				generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status);
-		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, int & fd, std::string & filePath);
-		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int & fd, std::string & filePath);
+		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, int  *fd, std::string & filePath, int & fdType);
+		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int  *fd, std::string & filePath, int & fdType);
 		void				generateRedirectResponse(RedirExcept & r);
 		void				generateLDirResponse(LDirExcept & d);
+
+		void				execCgiDefaultScript(int *fd);
 
 		static void			initAllStatusCode(std::string const & statPath);
 		static stringMap	getAllStatusCode();

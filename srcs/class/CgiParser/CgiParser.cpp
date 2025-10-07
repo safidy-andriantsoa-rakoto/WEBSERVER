@@ -6,13 +6,14 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 09:42:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:01:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CgiParser.hpp"
 
 std::string CgiParser::_cgiConfig;
+std::string CgiParser::_cgiErrConfig;
 
 CgiParser::CgiParser() : _envp(NULL){}
 
@@ -64,26 +65,61 @@ void CgiParser::configEnvp()
 	replaceString(ownedConfig, convertIntToString(_contentLength), "$5");
 	vect = splitString(ownedConfig, "\n");
 	_envp = convertStringVectToTable(vect);
-	displayCharTable(_envp, "ENVP");
+	// displayCharTable(_envp, "ENVP");
 	// clearCharTable(_envp);
 	vect.clear();
 	ownedConfig.clear();
 }
 
+void CgiParser::configErrEnvp()
+{
+	std::string	ownedConfig = CgiParser::_cgiErrConfig;
+	stringVect	vect;
+
+	_scriptFileName = "./config/errorPage/default/default.php";
+	_scriptName = "default.php";
+	replaceString(ownedConfig, _scriptFileName, "$1");
+	replaceString(ownedConfig, _scriptName, "$2");
+	vect = splitString(ownedConfig, "\n");
+	_envp = convertStringVectToTable(vect);
+	// displayCharTable(_envp, "ENVP");
+	// clearCharTable(_envp);
+	vect.clear();
+	ownedConfig.clear();
+}
+
+// php-cgi -f error.php -- 404 Not Found
+void CgiParser::execCgiErrorPage(int const & statusCode, std::string const & statusCodePhrase)
+{
+	char		*argv[7];
+	std::string	php;
+	std::string	statusCodeString = convertIntToString(statusCode);
+
+	php = PHP_CGI_PATH;
+	argv[0] = const_cast<char * >(php.c_str());
+	argv[1] = const_cast<char * >("-f");
+	argv[2] = const_cast<char * >(_scriptFileName.c_str());
+	argv[3] = const_cast<char * >("--");
+	argv[4] = const_cast<char * >(statusCodeString.c_str());
+	argv[5] = const_cast<char * >(statusCodePhrase.c_str());
+	argv[6] = NULL;
+	if (execve(php.c_str(), argv, _envp) == -1)
+	{
+		perror("Execve");
+		clearCgiClass();
+		throw std::runtime_error("Execve error");
+	}
+}
+
 void CgiParser::execCgi()
 {
-	char		*argv[5];
-	// char		*argv[3];
+	char		*argv[3];
 	std::string	php;
 
 	php = PHP_CGI_PATH;
 	argv[0] = const_cast<char * >(php.c_str());
-	// argv[1] = const_cast<char * >(_scriptFileName.c_str());
-	// argv[2] = NULL;
-	argv[1] = const_cast<char * >("-d");
-	argv[2] = const_cast<char * >("display_errors=stderr");
-	argv[3] = const_cast<char * >(_scriptFileName.c_str());
-	argv[4] = NULL;
+	argv[1] = const_cast<char * >(_scriptFileName.c_str());
+	argv[2] = NULL;
 	if (execve(php.c_str(), argv, _envp) == -1)
 	{
 		perror("Execve");
@@ -123,9 +159,10 @@ void CgiParser::displayCgiClass() const
 	std::cout << "==============END OF CGI COMPONENT=============\033[0m" << std::endl;
 }
 
-void CgiParser::initCgiConfig(std::string const & path)
+void CgiParser::initCgiConfig(std::string const & generalPath, std::string const & errCgiPath)
 {
-	_cgiConfig = readFileToString(path);
+	_cgiConfig = readFileToString(generalPath);
+	_cgiErrConfig = readFileToString(errCgiPath);
 }
 
 // char *argv[] = { "php-cgi", NULL };

@@ -6,24 +6,19 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 08:21:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 15:51:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-/*
-	Check for all the default file too : 
-		erropage : default/index.html
-		server_conf : default_config.conf
-*/
 static void	initProgram()
 {
 	Response::initAllStatusCode(STAT_PATH);
 	Mime::initMapMime(MIME_PATH);
 	FileFd::initSockFd();
 	LDirExcept::initPart(LDIR_PATH);
-	CgiParser::initCgiConfig(CGI_PATH);
+	CgiParser::initCgiConfig(CGI_PATH, CGI_ERR_PATH);
 	int fd = openFile(ERR_PATH);
 	close(fd);
 }

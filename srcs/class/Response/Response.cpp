@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 09:59:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:03:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,24 +97,26 @@ void	Response::clearResponse()
 	_fullResponse.clear();
 }
 
-void Response::buildErrorPage(int const & status, t_errPage & errPage, int & fd, std::string & filePath)
+void Response::buildErrorPage(int const & status, t_errPage & errPage, int *fd, std::string & filePath, int & fdType)
 {
-	stringVectIt it;
+	stringVectIt	it;
 
 	filePath = ERR_PATH;
+	fdType = PHP_SCRIPT;
 	if (!errPage.listError.size())
 	{
-		fd = openFile(filePath);
+		execCgiDefaultScript(fd);
 		return;
 	}
 	it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
 	if (it != errPage.listError.end())
 	{
+		fdType = HTML_FILE;
 		filePath = errPage.filePath;
-		fd = openFile(errPage.filePath);
+		fd[FD_PRINCIPAL] = openFile(filePath);
 	}
 	else
-		fd = openFile(filePath);
+		execCgiDefaultScript(fd);
 }
 
 void Response::setStatusLine()
@@ -158,14 +160,14 @@ void Response::generateCgiChunkedResponse(std::string const & body, stringMap co
 	}
 }
 
-void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int & fd, std::string & filePath)
+void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int *fd, std::string & filePath, int & fdType)
 {
 	try
 	{
 		if (e._type == ERR_RSP)
 		{
 			ErrorExcept & err = dynamic_cast<ErrorExcept & >(e);
-			generateErrorResponse(err, errPage, fd, filePath);
+			generateErrorResponse(err, errPage, fd, filePath, fdType);
 		}
 		else if (e._type == LDIR_RSP)
 		{
@@ -188,13 +190,13 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int & f
 	_respCategory = e._type;
 }
 
-void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int & fd, std::string & filePath)
+void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int *fd, std::string & filePath, int & fdType)
 {
 	_statusCode = e._statusCode;
 	setStatusLine();
-	std::cout << "Old fd = " << fd << std::endl;
-	buildErrorPage(_statusCode, errPage, fd, filePath);
-	std::cout << "New fd = " << fd << std::endl;
+	std::cout << "Old fd = " << fd[FD_PRINCIPAL] << std::endl;
+	buildErrorPage(_statusCode, errPage, fd, filePath, fdType);
+	std::cout << "New fd = " << fd[FD_PRINCIPAL] << std::endl;
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)
@@ -220,6 +222,51 @@ void Response::generateLDirResponse(LDirExcept &d)
 	_body = LDirExcept::_part[0] + list + LDirExcept::_part[1];
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Connection"] = "keep-alive";
+}
+
+void Response::execCgiDefaultScript(int *fd)
+{
+	int			pid;
+	int			pipeFd[2];
+	int			errFd[2];
+	CgiParser	cgiParser;
+	std::string	statusCodePhrase = _allStatusCode[convertIntToString(_statusCode)];
+
+	cgiParser.configErrEnvp();
+	if (pipe(pipeFd) == -1)
+		throw std::runtime_error("Pipe fd error");
+	if (pipe(errFd) == -1)
+		throw std::runtime_error("Pipe err error");
+	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
+	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
+	pid = fork();
+	if (pid == -1)
+		throw std::runtime_error("Fork error");
+	if (pid == 0)
+	{
+		dup2(errFd[1], STDERR_FILENO);
+		close(errFd[0]);
+		close(errFd[1]);
+		dup2(pipeFd[1], STDOUT_FILENO);
+		close(pipeFd[0]);
+		close(pipeFd[1]);
+		try
+		{
+			cgiParser.execCgiErrorPage(_statusCode, statusCodePhrase);
+		}
+		catch(const std::exception& e)
+		{
+			fd[FD_PRINCIPAL] = -1;
+			fd[FD_CGI_ERROR] = -1;
+		}
+	}
+	else
+	{
+		close(errFd[1]);
+		close(pipeFd[1]);
+		fd[FD_PRINCIPAL] = pipeFd[0];
+		fd[FD_CGI_ERROR] = errFd[0];
+	}
 }
 
 void Response::initAllStatusCode(std::string const & statPath)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 09:35:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 15:48:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,8 +225,10 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	catch(AExcept & e)
 	{
+		int	fdType;
+
 		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
-		(*it).setCatchedResponse(e, fdFromRequest[FD_PRINCIPAL]);
+		(*it).setCatchedResponse(e, fdFromRequest, fdType);
 		epollOpt = EPOLLIN;
 		if ((*it).getCategoryResponse() == REDIR_RSP || (*it).getCategoryResponse() == LDIR_RSP)
 		{
@@ -234,8 +236,8 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 			return;
 		}
 	}
-	std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest[FD_PRINCIPAL] 
-	<< "/" << fdFromRequest[FD_CGI_ERROR] << std::endl;
+	// std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest[FD_PRINCIPAL] 
+	// << "/" << fdFromRequest[FD_CGI_ERROR] << std::endl;
 	if (fdFromRequest[FD_PRINCIPAL] == -1)
 	{
 		handler.setProgramBreak(true);
