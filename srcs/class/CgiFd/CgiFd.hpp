@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 09:14:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 09:48:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,14 @@ class CgiFd
 		int			_cgiErrFd;
 		int			_clientFd;
 		int			_status;
-		std::string	_buffer;
 
 		bool		_isError;
+
+		std::string	_buffer;
+		int			_statusCode;
+		stringMap	_header;
+		bool		_isHeader;
+		std::string	_body;
 
 		CgiFd();
 
@@ -46,7 +51,20 @@ class CgiFd
 		void		setIsError(bool const & stat);
 
 		void		setBuffer(std::string const & content);
+		void		bufferParser();
 		void		clearBuffer();
+
+		std::string	getBody() const;
+
+		stringMap	getHeader() const;
+
+		int			getStatusCode();
+		void		setStatusCode(int const & statusCode);
+
+		bool		getIsHeader();
+		void		setIsHeader(bool const & stat);
+
+		void		displayBufferParsed() const;
 };
 
 #endif

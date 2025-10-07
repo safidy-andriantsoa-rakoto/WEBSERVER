@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/06 15:53:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 10:05:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void Client::setChunkedResponse()
 void Client::setCgiChunkedResponse()
 {
 	if (_cgiFD)
-		_response.generateCgiChunkedResponse(_cgiFD->getBuffer(), _cgiFD->getStatus());
+		_response.generateCgiChunkedResponse(_cgiFD->getBody(), _cgiFD->getHeader(), _cgiFD->getStatus());
 }
 
 void Client::ClientRequest()
@@ -438,25 +438,11 @@ void Client::stdGetRequest(int *fd)
 	fd[FD_PRINCIPAL] = fdGet;
 }
 
-/*
-	create pipe => pipe_fd[2]
-	fork()
-		---child
-			clean every unecessary fd inside epoll and close, or any allocation
-			how to clean envp???
-			execute _cgi from request;
-			clean everything if there is an error for execve
-		---parent
-			return pipe_fd[0] because read with get to add it inside the epoll_event;
-			sSee what happen with child if ctrl+c?
-*/
 void Client::cgiGetRequest(int *fd)
 {
 	int	pipeFd[2];
 	int	pid;
 	int	errFd[2];
-	// int	stderr_fd = dup(STDERR_FILENO);
-	// int	stdout_fd = dup(STDOUT_FILENO);
 
 	if (pipe(pipeFd) == -1)
 		throw std::runtime_error("Pipe fd error");
@@ -481,10 +467,6 @@ void Client::cgiGetRequest(int *fd)
 		}
 		catch(const std::exception& e)
 		{
-			// dup2(stderr_fd, STDERR_FILENO);
-			// dup2(stdout_fd, STDOUT_FILENO);
-			// close(stderr_fd);
-			// close(stdout_fd);
 			fd[FD_PRINCIPAL] = -1;
 			fd[FD_CGI_ERROR] = -1;
 		}
@@ -493,8 +475,6 @@ void Client::cgiGetRequest(int *fd)
 	{
 		close(errFd[1]);
 		close(pipeFd[1]);
-		// close(stderr_fd);
-		// close(stdout_fd);
 		_request.clearCgiClass();
 		fd[FD_PRINCIPAL] = pipeFd[0];
 		fd[FD_CGI_ERROR] = errFd[0];

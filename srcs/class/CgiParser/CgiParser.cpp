@@ -72,13 +72,18 @@ void CgiParser::configEnvp()
 
 void CgiParser::execCgi()
 {
-	char		*argv[3];
+	char		*argv[5];
+	// char		*argv[3];
 	std::string	php;
 
 	php = PHP_CGI_PATH;
 	argv[0] = const_cast<char * >(php.c_str());
-	argv[1] = const_cast<char * >(_scriptFileName.c_str());
-	argv[2] = NULL;
+	// argv[1] = const_cast<char * >(_scriptFileName.c_str());
+	// argv[2] = NULL;
+	argv[1] = const_cast<char * >("-d");
+	argv[2] = const_cast<char * >("display_errors=stderr");
+	argv[3] = const_cast<char * >(_scriptFileName.c_str());
+	argv[4] = NULL;
 	if (execve(php.c_str(), argv, _envp) == -1)
 	{
 		perror("Execve");
@@ -122,3 +127,16 @@ void CgiParser::initCgiConfig(std::string const & path)
 {
 	_cgiConfig = readFileToString(path);
 }
+
+// char *argv[] = { "php-cgi", NULL };
+// char *envp[] = {
+//     "GATEWAY_INTERFACE=CGI/1.1",
+//     "REQUEST_METHOD=GET",
+//     "QUERY_STRING=username=Alice",
+//     "SCRIPT_FILENAME=/var/www/html/welcome.php",
+//     "SCRIPT_NAME=/welcome.php",
+//     "SERVER_PROTOCOL=HTTP/1.1",
+//     "CONTENT_LENGTH=0",
+//     "REDIRECT_STATUS=200",
+//     NULL
+// };

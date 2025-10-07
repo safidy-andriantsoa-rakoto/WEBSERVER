@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 10:36:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 09:59:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,20 +143,19 @@ void Response::generateChunkedResponse(std::string const & body, int const & sta
 	_header["Transfer-Encoding"] = "chunked";
 }
 
-void Response::generateCgiChunkedResponse(std::string const & body, int const & status)
+void Response::generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status)
 {
 	setStatusLine();
 	_body = body;
-	if (status == OP_START)
-	{
-		size_t pos = _body.find_first_of("\n");
-		_body.erase(0, pos + 1);
-	}
 	chunkingString(_body, status);
-	_header.clear();
-	_header["Connection"] = "keep-alive";
-	_header["Content-Type"] = "text/html; charset=UTF-8";
-	_header["Transfer-Encoding"] = "chunked";
+	if (header.size())
+	{
+		_header.clear();
+		_header["Connection"] = "keep-alive";
+		_header["Content-Type"] = (*header.find("Content-type")).second;
+		_header["Content-Type"] = "text/html; charset=UTF-8";
+		_header["Transfer-Encoding"] = "chunked";
+	}
 }
 
 void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int & fd, std::string & filePath)

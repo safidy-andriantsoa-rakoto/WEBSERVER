@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/06 15:54:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 10:11:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,15 @@ void    launchServer(Handler & handler)
 				{
 					handler.removeClient(index, epoll);
 					epoll.epoll_clean(fdEvent);
+				}
+				if (identifier == CGI_FD)
+				{
+					/*
+						HandleCgiError()
+						Create File_fd in error page through Client parent
+						Add to epoll
+						Clean class cgi_fd
+					*/
 				}
 			}
 			if (handler.getProgramBreak() == true)

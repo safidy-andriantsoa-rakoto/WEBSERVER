@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 15:44:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/07 09:35:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -360,6 +360,8 @@ void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int
 	}
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBuffer(bufferString);
+	(*it)->bufferParser();
+	// (*it)->displayBufferParsed();
 	if ((*it)->getStatus() == OP_OPEN)
 	{
 		(*it)->setStatus(OP_START);

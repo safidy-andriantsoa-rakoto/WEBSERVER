@@ -23,7 +23,7 @@
 #define LDIR_PATH "./config/listingDirectory/listDir.html"
 #define MIME_PATH "./config/ext"
 #define CGI_PATH  "./config/cgiConf/cgi.conf"
-#define PHP_CGI_PATH "/usr/bin/php-cgiii"
+#define PHP_CGI_PATH "/usr/bin/php-cgi"
 
 #define DEF_ERR_LOCATION "location /errorPage | root ./config/errorPage/default | method GET POST DELETE"
 

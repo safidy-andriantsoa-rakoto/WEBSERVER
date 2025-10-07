@@ -20,6 +20,8 @@ CgiFd::CgiFd(int const &CgiFd, int const &clientFd) :
 	_status(OP_OPEN)
 	{
 		_isError = false;
+		_isHeader = false;
+		_statusCode = -1;
 	}
 
 CgiFd::CgiFd(int const &cgiFd, int const & cgiErrFd, int const &clientFd) : 
@@ -29,6 +31,8 @@ CgiFd::CgiFd(int const &cgiFd, int const & cgiErrFd, int const &clientFd) :
 	_status(OP_OPEN)
 	{
 		_isError = false;
+		_isHeader = false;
+		_statusCode = -1;
 	}
 
 CgiFd::CgiFd(CgiFd const & other)
@@ -46,6 +50,10 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 		_buffer = other._buffer;
 		_status = other._status;
 		_isError = other._isError;
+		_statusCode = other._statusCode;
+		_isHeader = other._isHeader;
+		_header = other._header;
+		_body = other._body;
 	}
 	return *this;
 }
@@ -97,8 +105,81 @@ void CgiFd::setBuffer(std::string const &content)
 	_buffer = content;
 }
 
+void CgiFd::bufferParser()
+{
+	size_t		pos;
+	size_t		startPos;
+	std::string	sep = "\r\n";
+	std::string	line;
+	stringVect	headerVect;
+
+	_header.clear();
+	_body.clear();
+	if (_isHeader == true)
+	{
+		_body = _buffer;
+		return;
+	}
+	startPos = 0;
+	pos = 0;
+	while (pos != std::string::npos)
+	{
+		pos = _buffer.find(sep, startPos);
+		if (pos == startPos)
+			break ;
+		line = _buffer.substr(startPos, pos - startPos);
+		headerVect = strictSplit(line, ": ");
+		addToMapString(_header, headerVect[0], headerVect[1]);
+		startPos = pos + sep.size();
+		headerVect.clear();
+	}
+	_isHeader = true;
+	_body = _buffer.substr(pos, _buffer.size() - pos);
+}
+
 void CgiFd::clearBuffer()
 {
 	_buffer.clear();
+	_body.clear();
+	_header.clear();
 }
 
+std::string CgiFd::getBody() const
+{
+    return _body;
+}
+
+stringMap CgiFd::getHeader() const
+{
+    return _header;
+}
+
+int CgiFd::getStatusCode()
+{
+    return _statusCode;
+}
+
+void CgiFd::setStatusCode(int const &statusCode)
+{
+	_statusCode = statusCode;
+}
+
+bool CgiFd::getIsHeader()
+{
+    return _isHeader;
+}
+
+void CgiFd::setIsHeader(bool const &stat)
+{
+	_isHeader = stat;
+}
+
+void CgiFd::displayBufferParsed() const
+{
+	std::cout << "\033[44m==================BUFFER PARSING==================" << std::endl
+	<< "==== Header field ===" << std::endl;
+	displayStringMap(_header);
+	if (_body.size())
+		std::cout << std::endl << "==== Body ===" << std::endl << _body << std::endl;
+	std::cout << "==============END OF BUFFER PARSING=============\033[0m" << std::endl;
+}
