@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 11:46:55 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/07 22:11:54 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class FileFd
 		bool		_EndFilepost;
 
 		stringVect	_post_body;
+		int			_fdMPFDT; // multipartdata
 		
 		FileFd();
 
@@ -80,6 +81,8 @@ class FileFd
 		void 		set_post_body(std::string content);
 		std::string& get_FI_post_body();
 		void		remove_FI_body();
+		void		set_fdMPFDT(int &fd);
+		int			&get_fdMPFDT();
 };
 
 #endif

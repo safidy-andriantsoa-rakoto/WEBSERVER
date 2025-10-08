@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 11:49:13 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/08 16:54:08 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	tmpRequest = (*it).getobjREquest();
 	(*it).ClientRequest();
 	client_request = (*it).getClientRequest();
-	if (client_request.size() == 0)
-	{
-		(*it).clearFileFd();
-		throw std::runtime_error("ManageRequestFromClient - request size = 0");
-	}
+	// if (client_request.size() == 0)
+	// {
+	// 	(*it).clearFileFd();
+	// 	// throw std::runtime_error("ManageRequestFromClient - request size = 0");
+	// }
 	try
 	{
 		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);// parsing POST process
@@ -61,23 +61,17 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	}
 	if (fdFile != -1)
 	{
-		std::cout << "\033[33m		CREATE FILEFD *\033[0m" << std::endl;
+		// std::cout << "\033[33m		CREATE FILEFD *\033[0m" << std::endl;
 		handler.addToVectFileFd(it, fdFile, fd, filePath);
 		epoll.epoll_control(fileFdOpt, fdFile);
-		std::cout << "\033[33m		CREATE FILEFD *\033[0m" << std::endl;
+		// std::cout << "\033[33m		CREATE FILEFD *\033[0m" << std::endl;
 	}
-	if ((*it).getFileFD())
+	if ((*it).getFileFD() && (*it).getobjREquest().getMethod() == "POST")
 	{
-		std::cout << " BODY ATO AAAANNN  ["<< (*it).getobjREquest().get_Body() << "]" << std::endl;
+		// std::cout << " BODY ATO AAAANNN  ["<< (*it).getobjREquest().get_Body() << "]" << std::endl;
 		(*it).getFileFD()->set_post_body((*it).getobjREquest().get_Body());
-		// std::cout << "		OAY EEEEEEEEEEEEE" << std::endl;
-		// if (tmpRequest.getMethod() == "POST")
-		// std::cout << "				\e[5mBODY\e[0m---["<< (*it).getobjREquest().get_v_body_two(0) << "]" << std::endl;
-		// (*it).getFileFD()->setBuffer((*it).getobjREquest().get_v_body_two(0));
-		// (*it).getobjREquest().remove_from_body_two(0);
+		(*it).getobjREquest().clear_body();
 	}
-	// else
-		// std::cout << "		OAY EEEEEEEEEEEEE" << std::endl;
 }
 
 /*
@@ -119,7 +113,7 @@ void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
 	else
 		responseString = (*it).getFullResponse();
 	// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
-	std::cout <<"\e[45mResponse from the file : " << (*it).getFileFD()->getFilePath() << "\e[0m" << std::endl;
+	// std::cout <<"\e[45mResponse from the file : " << (*it).getFileFD()->getFilePath() << "\e[0m" << std::endl;
 	// if (responseCategory == ERR_RSP && responseString.find("$status") != std::string::npos)
 	// {
 	// 	std::string	replace;
@@ -200,13 +194,22 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	vectFileFdIt	it = handler.getFileFd(i);
 	uint32_t		event = epoll.getEvent(eventIdx);
 	VClientIt		clIt = handler.getClient(i);
-	int				ClientFD = (*clIt).get_clientFD();
+	// int				ClientFD = (*clIt).get_clientFD();
 
 	if (event & EPOLLIN)
 		readFromFileFd(it, epoll, handler, i);
 	else if (event & EPOLLOUT)
 	{
+		//open new file: avec son nom filename="..."
+		//if filename && fd file binary out  compare fd == fdfileMPFDT
+		//{
+		// parse and get body file
+		//write binary file jusqua boundary end et close apres
+		//}
+		// else
 		std::cout << "ATY QQQ		\033[43mFD EPOLLOUT FOR FILE IO-" << "\033[0m" << (*it)->getFileFd() << std::endl;
+		// if ((*it)->getFileFd() != -1 && (*it)->get_fdMPFDT() < 0)
+		// std::cout << "				FILEFDOUT eeee" << std::endl;
 		if ((*it)->getFileFd() != -1)
 		{
 			std::string body;
@@ -214,10 +217,6 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 
 			body = (*it)->get_FI_post_body();
 			(*it)->remove_FI_body();
-			// body = (*clIt).getobjREquest().get_v_body_two(0);
-			// (*clIt).getobjREquest().remove_from_body_two(0);
-			// std::cout << " BODY{"<< (*it)->getBuffer() <<"}"  << std::endl;
-			// size_t len =  write((*it)->getFileFd(), ((*it)->getBuffer()).c_str(), (*it)->getBuffer().size());
 			size_t len =  write((*it)->getFileFd(), body.c_str(), body.size());
 			if (len == (size_t)(-1))
 				std::cout << "BLEM->" << strerror(errno) << std::endl;
@@ -225,196 +224,16 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 				(*it)->setFileTotalSize(len);
 			std::cout << "manoratra->" << (*it)->getFileTotalSize() << std::endl;
 		}
-		if ((*it)->getFileTotalSize() >= (*clIt).getobjREquest().get_content_length())// fafana avy ee ity aa
+		// (*it)->get_FI_post_body()
+		if ((*clIt).getobjREquest().get_c_length_received() == (*clIt).getobjREquest().get_content_length())
 		{
 			std::cout << "			VITA TOMPOKO!" << std::endl;
 			std::cout << "  TOTAL_LENGHT=" << (*clIt).getobjREquest().get_content_length() << "| RECEIVED=" << (*clIt).getobjREquest().get_c_length_received() << std::endl;
 			(*it)->set_endFilePost(true);
-			epoll.epoll_update_event(ClientFD, EPOLLOUT);
+			// epoll.epoll_update_event(ClientFD, EPOLLOUT);
 			closeFileEvent(handler, i, epoll);
 		}
-		// if ((*it)->getFileTotalSize() == (*clIt).getobjREquest().get_content_length())
-		// {
-		// 	std::cout << "			VITA TOMPOKO!" << std::endl;
-		// 	std::cout << "  TOTAL_LENGHT=" << (*clIt).getobjREquest().get_content_length() << "| RECEIVED=" << (*clIt).getobjREquest().get_c_length_received() << std::endl;
-		// 	(*it)->set_endFilePost(true);
-		// 	epoll.epoll_update_event(ClientFD, EPOLLOUT);
-		// 	closeFileEvent(handler, i, epoll);
-		// }
 	}
+		// if (!(*it)->get_FI_post_body().size() && (*clIt).getobjREquest().get_c_length_received() == (*clIt).getobjREquest().get_content_length())
 }
 
-		// size_t pos = client_request.find(limit);
-		// if (pos != std::string::npos)
-		// {
-		// 	std::string header = client_request.substr(0, pos);
-		// 	std::cout << "HEADER====>" << header << "]" << std::endl;
-		// 	body = client_request.substr(pos + limit.size(), client_request.size());
-		// 	if ((*it).getBoundaryLimit().size() && body.size())
-		// 	{
-		// 		limiter += (*it).getBoundaryLimit() + "\r\n";
-		// 		limiterEnd += (*it).getBoundaryLimit() + "--\r\n";
-		// 		size_t is_boundary = body.find(limiter);
-		// 		size_t is_boundaryEnd;
-		// 		body.erase(0, is_boundary);
-		// 		while (is_boundary != std::string::npos)
-		// 		{
-		// 			body.erase(0, is_boundary + limiter.size());
-		// 			is_boundary = body.find(limiter);
-		// 			is_boundaryEnd = body.find(limiterEnd);
-
-		// 			if (is_boundary != std::string::npos)
-		// 			{
-		// 				// std::string tmp = body.substr(0, is_boundary - 2);
-		// 				// stringVect separate = strictSplit(tmp, limit);
-		// 				// if (separate.size())
-		// 				// 	std::cout << "["<< separate[0] << "][" << separate[1] << "]" << std::endl;
-		// 				stringVect separate;
-		// 				std::string tmp = body.substr(0, is_boundary - 2);
-		// 			 	size_t is_end = tmp.find("\r\n\r\n");
-		// 				if (is_end != std::string::npos)
-		// 				{
-		// 					std::cout << "			aty eeeee" << std::endl;
-		// 					if (is_end + 4 == tmp.size())
-		// 					{
-		// 						tmp.erase(is_end);
-		// 						separate.push_back(tmp);
-		// 						separate.push_back("");
-		// 					}
-		// 				}
-		// 				else
-		// 					separate = strictSplit(tmp, "\r\n\r\n");
-		// 				if (separate.size() == 2)
-		// 				{
-		// 					stringVect var_line;
-		// 					stringVect var;
-
-		// 					size_t find_rn = separate[0].find("\r\n");
-		// 					if (find_rn != std::string::npos)
-		// 					{
-		// 						while (find_rn != std::string::npos)
-		// 						{
-		// 							stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 							if (tmp1.size())
-		// 								std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
-		// 							separate[0].erase(0, find_rn + 2);
-		// 							find_rn = separate[0].find("\r\n");
-		// 							if (find_rn == std::string::npos)
-		// 							{
-		// 								stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 								if (tmp.size())
-		// 									std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
-		// 							}
-		// 						}
-		// 					}
-		// 					else
-		// 						var = strictSplit(separate[0], ": ");
-		// 					if (var.size())
-		// 						(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
-		// 				}
-		// 				std::cout << "BODY=====>[" << tmp << "]" << std::endl;
-		// 			}
-		// 			else if (is_boundaryEnd != std::string::npos)
-		// 			{
-		// 				stringVect separate;
-		// 				std::string tmp = body.substr(0, is_boundaryEnd - 2);
-		// 			 	size_t is_end = tmp.find("\r\n\r\n");
-		// 				if (is_end != std::string::npos)
-		// 				{
-		// 					if (is_end + 4 == tmp.size())
-		// 					{
-		// 						tmp.erase(is_end);
-		// 						separate.push_back(tmp);
-		// 						separate.push_back("");
-		// 					}
-		// 				}
-		// 				else
-		// 					separate = strictSplit(tmp, "\r\n\r\n");
-		// 				if (separate.size())
-		// 					std::cout << " END{"<< tmp << "} ["<< separate[0] << "][" << separate[1] << "]" << std::endl;
-		// 				if (separate.size() == 2)
-		// 				{
-		// 					stringVect var_line;
-		// 					stringVect var;
-
-		// 					size_t find_rn = separate[0].find("\r\n");
-		// 					if (find_rn != std::string::npos)
-		// 					{
-		// 						while (find_rn != std::string::npos)
-		// 						{
-		// 							stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 							if (tmp1.size())
-		// 								std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
-		// 							separate[0].erase(0, find_rn + 2);
-		// 							find_rn = separate[0].find("\r\n");
-		// 							if (find_rn == std::string::npos)
-		// 							{
-		// 								stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 								if (tmp.size())
-		// 									std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
-		// 							}
-		// 						}
-		// 					}
-		// 					else
-		// 						var = strictSplit(separate[0], ": ");
-		// 					if (var.size())
-		// 						(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
-		// 				}
-		// 				std::cout << "\e[5m		TAPITRA       \e[0m" << std::endl;
-		// 			}
-		// 			else
-		// 			{
-		// 				// stringVect separate = strictSplit(body, limit);
-		// 				// if (separate.size())
-		// 				// 	std::cout << "["<< separate[0] << "][" << separate[1] << "]" << std::endl;
-		// 				stringVect separate;
-		// 				std::string tmp = body;
-		// 			 	size_t is_end = tmp.find("\r\n\r\n");
-		// 				if (is_end != std::string::npos)
-		// 				{
-		// 					if (is_end + 4 == tmp.size())
-		// 					{
-		// 						tmp.erase(is_end);
-		// 						separate.push_back(tmp);
-		// 						separate.push_back("");
-		// 					}
-		// 				}
-		// 				else
-		// 					separate = strictSplit(tmp, "\r\n\r\n");
-		// 				if (separate.size() == 2)
-		// 				{
-		// 					stringVect var_line;
-		// 					stringVect var;
-
-		// 					size_t find_rn = separate[0].find("\r\n");
-		// 					if (find_rn != std::string::npos)
-		// 					{
-		// 						while (find_rn != std::string::npos)
-		// 						{
-		// 							stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 							if (tmp1.size())
-		// 								std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
-		// 							separate[0].erase(0, find_rn + 2);
-		// 							find_rn = separate[0].find("\r\n");
-		// 							if (find_rn == std::string::npos)
-		// 							{
-		// 								stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 								if (tmp.size())
-		// 									std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
-		// 							}
-		// 						}
-		// 					}
-		// 					else
-		// 						var = strictSplit(separate[0], ": ");
-		// 					if (var.size())
-		// 						(*it).getobjREquest().set_post_body(var, *(separate.begin() + 1));
-		// 				}
-		// 				std::cout << "BODY==NOT=END===>[" << body << "]" << std::endl;
-		// 			}
-		// 		}
-		// 	}
-		// }
-		// (*it).getobjREquest().displayRequestMultipartData();
-		
-		// int fdCli = (*it).get_clientFD();
-		// epoll.epoll_update_event(fd, EPOLLOUT);

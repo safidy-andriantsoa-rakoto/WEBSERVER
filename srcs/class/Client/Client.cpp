@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/02 13:57:55 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/08 21:26:20 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	Server(server),
 	_clientFD(_clientFD),
 	_connect(is_connect),
-	_fileFD(NULL)
+	_fileFD(NULL),
+	_modPostFile(false)
 {
 	this->_clientRequest= "";
 	this->_to_send = 0;
@@ -48,6 +49,7 @@ Client &Client::operator=(const Client &client)
 		this->_client_stat = client._client_stat;
 		this->_boundary_sep = client._boundary_sep;
 		this->_request = client._request;
+		// *(this->_fileMPFDT) = *(client._fileMPFDT);
 		setFileFD(client._fileFD);
 	}
 	return (*this);
@@ -150,6 +152,11 @@ std::string Client::getBoundaryLimit() const
     return (this->_boundary_sep);
 }
 
+void Client::setBoundaryLimit(std::string boundary)
+{
+	this->_boundary_sep = boundary;
+}
+
 void Client::setFileFD(FileFd *fileFd)
 {
 	clearFileFd();
@@ -216,7 +223,9 @@ FileFd *Client::getFileFD()
 
 int Client::getFileStatus()
 {
-	return _fileFD->getStatus();
+	if (_fileFD)
+		return _fileFD->getStatus();
+	return (-1);
 }
 
 const char *Client::Deconnect::what() const throw()
@@ -383,7 +392,9 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	}
 	else
 	{
+		std::cout << "METHODE=" << _request.getMethod() << std::endl;
 		_request.set_Body(clientRequest);
+		this->_request.set_c_length_received(clientRequest.size());
 	}
 	/*********************************** */
 	header = _request.getHeader();//eto aloha ity a
@@ -404,12 +415,34 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	{
 		if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 		{
+			//mila creena eto si parsena eto ny multipart-body + flag hiclosena ilay form-data 
+			//mba hicreer fichier raha filename.size() != 0
+			if (!getBoundaryLimit().size())
+			{
+				std::string	getboundary = header.find("Content-Type")->second;
+				size_t pos = getboundary.find(boundary);// get boundary
+				if (pos != std::string::npos)
+					this->_boundary_sep = getboundary.substr(pos + boundary.size());
+			}
+			std::string body = this->getobjREquest().get_Body();
+			size_t		pos;
+			pos = body.find(this->getBoundaryLimit());
+			if (pos != std::string::npos)
+			{
+				body.erase(pos - 2, this->getBoundaryLimit().size() + 4); // -2 analana ilay --boundary + analana \r\n\r\n
+				std::cout << "		--->>" << body << std::endl;
+				pos = body.find("\r\n\r\n");
+				if (pos != std::string::npos)
+				{
+					body.erase(pos, body.size());
+					std::cout << "			--->>" << body << std::endl;
+				}
+			}
+			else
+				std::cout << "tsy misy boundary limit" << std::endl;
 			filePath = "upload/" + currentDateTimeString() + "storage_multi_form_data.txt";
 			fileFd = creat_file_for_post(filePath, opt);
-			std::string	getboundary = header.find("Content-Type")->second;
-			size_t pos = getboundary.find(boundary);// get boundary
-			if (pos != std::string::npos)
-				this->_boundary_sep = getboundary.substr(pos + boundary.size());
+			std::cout << "\e[5m" << getBoundaryLimit() << "\e[0m" << std::endl;
 		}
 		else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 		{
@@ -425,7 +458,34 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 			throw ErrorExcept(400, "Client-side error");
 	}
 	else if (_request.getMethod() == "DELETE")
-		std::cout << _request.getMethod() << std::endl; // Calling delete_request
+	{
+		std::string root;
+		std::string target;
+		stringVectIt _configIt;
+		vectLocation loc;
+	
+		target = _request.getRequestTarget();
+		loc = _config.getClassLocation();
+		if (!target.size())
+			throw ErrorExcept(403, "Forbidden");
+		if (loc.size())
+		{
+			root = loc[0].getRootDirectory();
+			if (target.compare(0, root.size(), root) != 0)
+				throw ErrorExcept(401, "Unauthorized");
+			struct  stat s_stat;
+			if (stat(target.c_str(), &s_stat) != 0)
+				throw ErrorExcept(401, "Unauthorized");
+			if (S_ISREG(s_stat.st_mode))
+			{
+				if (unlink(target.c_str()) != 0) // unlink respect la recommandation de la suject
+					throw ErrorExcept(401, "Unauthorized");
+			}
+			else
+				throw ErrorExcept(403, "Forbidden");
+			throw ErrorExcept(200, "Ok");
+		}
+	}
 	else
 		throw ErrorExcept(501, "Not Implemented");
 	return fileFd;
@@ -471,7 +531,7 @@ int Client::creat_file_for_post(std::string path, uint32_t & opt)
 	int fd = -1;
 	if (!this->_fileFD && path.size())
 	{
-		fd = open(path.c_str(), O_RDWR | O_CREAT | O_APPEND, 0644);
+		fd = open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
 			throw ErrorExcept(404, "File can't be opened");
 		opt = EPOLLOUT;
@@ -488,4 +548,27 @@ std::string Client::currentDateTimeString()
 	tstruct = *localtime(&now);
 	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
 	return (buf);
+}
+
+void Client::set_fileMPFDT(FileFd *_fileMPFDT)
+{
+	if (_fileMPFDT)
+		this->_fileMPFDT = _fileMPFDT;
+}
+
+FileFd *Client::get_fileMPFDT()
+{
+	if (this->_fileMPFDT)
+		return (this->_fileMPFDT);
+    return (NULL);
+}
+
+void Client::switch_modPostFile(bool stat)
+{
+	this->_modPostFile = stat;
+}
+
+bool Client::modPostFile_stat()
+{
+    return (this->_fileMPFDT);
 }
