@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 15:00:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 07:15:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,42 +35,55 @@ Handler &Handler::operator=(Handler const & other)
 
 Handler::~Handler(){}
 
-int Handler::identifyFd(int const & fd, int & index)
+void Handler::identifyFd(int const & fd, int & index, int & identifier)
 {
 	index = 0;
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
 	{
 		if ((*itVect).get_fdSocket() == fd)
-			return SERVER;
+		{
+			identifier = SERVER;
+			return;
+		}
 		index++;
 	}
 	index = 0;
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
 	{
 		if ((*itCli).get_clientFD() == fd)
-			return CLIENT;
+		{
+			identifier = CLIENT;
+			return;
+		}
 		index++;
 	}
 	index = 0;
 	for (vectFileFdIt itFile = _vectFileFd.begin(); itFile != _vectFileFd.end(); itFile++)
 	{
 		if ((*itFile) && (*itFile)->getFd() == fd)
-			return FILE_FD;
+		{
+			identifier = FILE_FD;
+			return;
+		}
 		index++;
 	}
 	index = 0;
 	for (vectCgiFdIt itCgiFd = _vectCgiFd.begin(); itCgiFd != _vectCgiFd.end(); itCgiFd++)
 	{
 		if ((*itCgiFd) && (*itCgiFd)->getFd() == fd)
-			return CGI_FD;
+		{
+			identifier = CGI_FD;
+			return;
+		}
 		if ((*itCgiFd) && (*itCgiFd)->getErrFd() == fd)
 		{
 			(*itCgiFd)->setIsError(true);
+			identifier = CGI_ERR_FD;
 			throw ErrorExcept(500, "Bad gateway");
 		}
 		index++;
 	}
-	return -1;
+	identifier = -1;
 }
 
 vectServer &Handler::getVectServer()

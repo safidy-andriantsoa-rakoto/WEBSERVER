@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/07 15:25:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 08:10:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	this->_clientRequest= "";
 	this->_to_send = 0;
 	this->_total_send = 0;
-	_fd[FD_PRINCIPAL] = -1;
-	_fd[FD_CGI_ERROR] = -1;
 	if (_clientFD < 0)
 		throw std::runtime_error("Client constructor error");
 }
@@ -54,8 +52,6 @@ Client &Client::operator=(const Client &client)
 		this->_request = client._request;
 		setPtrFileFd(client._fileFD);
 		setPtrCgiFd(client._cgiFD);
-		_fd[FD_PRINCIPAL] = client._fd[FD_PRINCIPAL];
-		_fd[FD_CGI_ERROR] = client._fd[FD_CGI_ERROR];
 	}
 	return (*this);
 }
@@ -95,22 +91,18 @@ void Client::IncrementTotalSendSize(size_t total_send)
 	this->_total_send += total_send;
 }
 
-int *Client::getFdTab()
-{
-    return _fd;
-}
-
 int Client::get_clientFD() const
 {
 	return (this->_clientFD);
 }
 
-void Client::setCatchedResponse(AExcept & e, int *fd, int & fdType)
+void Client::setCatchedResponse(AExcept & e, int *fd)
 {
+	std::cout << "				Catched Response status code = " << e._statusCode << std::endl;
 	t_errPage	errPage = _config.getErrPage();
 	std::string	filePath = _request.getRequestTarget();
 	_request.setIsCgi(false);
-	_response.generateCatchedResponse(e, errPage, fd, filePath, fdType);
+	_response.generateCatchedResponse(e, errPage, fd, filePath, _fdType);
 	_request.setRequestTarget(filePath);
 }
 
@@ -260,6 +252,16 @@ void Client::updateResponseCategory(int const &stat)
 	_response.setCategory(stat);
 }
 
+int Client::getFdType() const
+{
+    return _fdType;
+}
+
+void Client::setFdType(int const &type)
+{
+	_fdType = type;
+}
+
 FileFd *Client::getPtrFileFd()
 {
 	return (_fileFD);
@@ -401,9 +403,15 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 void Client::get_request(uint32_t & opt, int *fd)
 {
 	if (_request.getIsCgi() == false)
+	{
+		_fdType = HTML_FILE;
 		stdGetRequest(fd);
+	}
 	else
+	{
+		_fdType = PHP_SCRIPT;
 		cgiGetRequest(fd);
+	}
 	opt = EPOLLIN;
 	setStatusCodeResponse(200);
 }

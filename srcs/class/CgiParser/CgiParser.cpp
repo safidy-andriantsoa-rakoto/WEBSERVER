@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 16:01:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 08:47:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void CgiParser::configEnvp()
 	ownedConfig.clear();
 }
 
-void CgiParser::configErrEnvp()
+void CgiParser::configErrEnvp(int const & statusCode, std::string const & statusCodePhrase)
 {
 	std::string	ownedConfig = CgiParser::_cgiErrConfig;
 	stringVect	vect;
@@ -80,6 +80,8 @@ void CgiParser::configErrEnvp()
 	_scriptName = "default.php";
 	replaceString(ownedConfig, _scriptFileName, "$1");
 	replaceString(ownedConfig, _scriptName, "$2");
+	replaceString(ownedConfig, convertIntToString(statusCode), "$3");
+	replaceString(ownedConfig, statusCodePhrase, "$4");
 	vect = splitString(ownedConfig, "\n");
 	_envp = convertStringVectToTable(vect);
 	// displayCharTable(_envp, "ENVP");
@@ -88,28 +90,7 @@ void CgiParser::configErrEnvp()
 	ownedConfig.clear();
 }
 
-// php-cgi -f error.php -- 404 Not Found
-void CgiParser::execCgiErrorPage(int const & statusCode, std::string const & statusCodePhrase)
-{
-	char		*argv[7];
-	std::string	php;
-	std::string	statusCodeString = convertIntToString(statusCode);
-
-	php = PHP_CGI_PATH;
-	argv[0] = const_cast<char * >(php.c_str());
-	argv[1] = const_cast<char * >("-f");
-	argv[2] = const_cast<char * >(_scriptFileName.c_str());
-	argv[3] = const_cast<char * >("--");
-	argv[4] = const_cast<char * >(statusCodeString.c_str());
-	argv[5] = const_cast<char * >(statusCodePhrase.c_str());
-	argv[6] = NULL;
-	if (execve(php.c_str(), argv, _envp) == -1)
-	{
-		perror("Execve");
-		clearCgiClass();
-		throw std::runtime_error("Execve error");
-	}
-}
+// /usr/bin/php-cgi -d register_argc_argv=On -f config/errorPage/default/default.php -- 500 "Bad Gateway"
 
 void CgiParser::execCgi()
 {

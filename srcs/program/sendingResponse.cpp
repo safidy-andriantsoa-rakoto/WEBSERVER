@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   messageUtils.cpp                                   :+:      :+:    :+:   */
+/*   sendingResponse.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 09:28:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 07:19:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	sendRedirOrLdirResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	epoll.epoll_update_event(fdCli, EPOLLIN);
 }
 
-void	sendFileOrErrorResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
+void	sendSimpleHtmlFileResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
 	std::string	responseString;
 	int			fileStatus;
@@ -74,7 +74,7 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		responseString = (*it).getBodyResponse() + "\r\n";
 	else
 		responseString = (*it).getFullResponse();
-	std::cout <<"\e[45mCgi response sent : \n" << responseString << "\e[0m" << std::endl;
+	// std::cout <<"\e[45mCgi response sent : \n" << responseString << "\e[0m" << std::endl;
 	send_value(fdCli, responseString);
     (*it).getPtrCgiFd()->clearBuffer();
 	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)

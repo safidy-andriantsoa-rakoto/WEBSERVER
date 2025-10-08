@@ -1,29 +1,24 @@
 <?php
 // Set default values in case arguments are not provided.
-$statusCode = 500;
-$statusText = 'Internal Server Error';
+$statusCode = 400;
+$statusText = 'Bad Request';
 
-// $argv is an array containing the command-line arguments.
-// $argv[0] is the script name.
-// $argv[1] is the first argument (status code).
-// $argv[2] is the second argument (status phrase).
-if (isset($argv[1])) {
-    // Ensure the status code is an integer.
-    $statusCode = (int)$argv[1];
-}
-if (isset($argv[2])) {
-    // Collect all arguments from the second one onwards to allow phrases with spaces.
-    $statusText = implode(' ', array_slice($argv, 2));
+// Get status code and phrase from environment variables (as suggested in the previous solution).
+if (isset($_SERVER['STATUS_CODE'])) {
+    $statusCode = (int)$_SERVER['STATUS_CODE'];
 }
 
-// 1. Send HTTP Headers
-// echo "Status: {$statusCode} {$statusText}\r\n";
-// echo "Content-Type: text/html; charset=UTF-8\r\n";
-// echo "\r\n"; // This blank line is crucial! It separates headers from the body.
+if (isset($_SERVER['STATUS_PHRASE'])) {
+    $statusText = $_SERVER['STATUS_PHRASE'];
+}
 
 // Prepare variables for safe HTML display.
 $safeStatusCode = htmlspecialchars($statusCode, ENT_QUOTES, 'UTF-8');
 $safeStatusText = htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8');
+
+// 1. Send the HTTP status header
+// (It's good practice to ensure the correct status code is sent to the client)
+http_response_code($statusCode);
 
 // 2. Send HTML Body using a HEREDOC for readability.
 echo <<<HTML
@@ -68,6 +63,21 @@ echo <<<HTML
         }
         small {
             color: #adb5bd;
+            display: block; /* Make small text take its own line */
+            margin-bottom: 1rem; /* Space before the link */
+        }
+        .home-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+            background-color: #007bff; /* A standard blue color */
+            color: white;
+            text-decoration: none;
+            border-radius: 0.3rem;
+            transition: background-color 0.3s;
+        }
+        .home-link:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -77,6 +87,9 @@ echo <<<HTML
         <p>{$safeStatusText}</p>
         <hr>
         <small>We apologize for the inconvenience. Please try again later.</small>
+        
+        <a href="/" class="home-link">Go to Homepage</a>
+        
     </div>
 </body>
 </html>

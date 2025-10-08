@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 15:48:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 08:36:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,10 +225,8 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	catch(AExcept & e)
 	{
-		int	fdType;
-
 		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
-		(*it).setCatchedResponse(e, fdFromRequest, fdType);
+		(*it).setCatchedResponse(e, fdFromRequest);
 		epollOpt = EPOLLIN;
 		if ((*it).getCategoryResponse() == REDIR_RSP || (*it).getCategoryResponse() == LDIR_RSP)
 		{
@@ -243,7 +241,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		handler.setProgramBreak(true);
 		return;
 	}
-	if ((*it).getObjRequest().getIsCgi() == false)
+	if ((*it).getFdType() == HTML_FILE)
 		handler.addToVectFileFd(it, fdFromRequest[FD_PRINCIPAL]);
 	else
 	{
@@ -260,9 +258,9 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 
 	if (responseCategory == REDIR_RSP || responseCategory == LDIR_RSP)
 		sendRedirOrLdirResponse(it, fdCli, epoll);
-	else if ((*it).getObjRequest().getIsCgi() == false)
-		sendFileOrErrorResponse(it, fdCli, epoll);
-	else
+	else if ((*it).getPtrFileFd())
+		sendSimpleHtmlFileResponse(it, fdCli, epoll);
+	else if ((*it).getPtrCgiFd())
 		sendCgiResponse(it, fdCli, epoll);
 }
 
@@ -362,6 +360,7 @@ void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int
 	}
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBuffer(bufferString);
+	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
 	(*it)->bufferParser();
 	// (*it)->displayBufferParsed();
 	if ((*it)->getStatus() == OP_OPEN)
@@ -370,6 +369,5 @@ void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int
 		fdCli = (*it)->getClientFd();
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
-	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
 }
 

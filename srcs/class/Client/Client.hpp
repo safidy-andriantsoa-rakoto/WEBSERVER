@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/07 15:24:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 07:32:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,7 @@ class Client : public Server
 		Response	_response;
 		FileFd		*_fileFD;
 		CgiFd		*_cgiFD;
-
-		int			_fd[2];
+		int			_fdType;
 
 		Client();
 
@@ -68,15 +67,14 @@ class Client : public Server
 		bool		is_finishedSendContent();	
 		
 		Request&	getObjRequest();
-		
-		
-		int			*getFdTab();
 
 		int         get_clientFD() const;
 		std::string getClientRequest() const;
 		bool        getConnexionStat();
 		std::string getBoundaryLimit() const;
 	
+		int			getFdType() const;
+		void		setFdType(int const & type);
 
 		FileFd		*getPtrFileFd();
 		void        setPtrFileFd(FileFd *fileFd);
@@ -99,7 +97,7 @@ class Client : public Server
 		void		setStatusCodeResponse(int const & status);
 		void		clearResponse();
 		void		updateResponseCategory(int const & stat);
-		void		setCatchedResponse(AExcept & e, int *fd, int & fdType);
+		void		setCatchedResponse(AExcept & e, int *fd);
 		void		setStandardResponse();
 		void		setChunkedResponse();
 		void		setCgiChunkedResponse();

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 09:11:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 07:26:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ char**	convertStringVectToTable(stringVect & vect)
 	size_t	sizeIntern;
 	size_t	i;
 
-	std::cout << "CONVERT STRINGVECT TO TABLE : " << size << std::endl;
 	if (!vect.size())
 		return NULL;
 	res = static_cast<char **>(calloc(size, sizeof(char *)));

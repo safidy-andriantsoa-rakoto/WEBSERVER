@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 16:03:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 08:47:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,20 +103,27 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, int *fd, 
 
 	filePath = ERR_PATH;
 	fdType = PHP_SCRIPT;
+	std::cout << "List Error Size = " << errPage.listError.size() << std::endl;
 	if (!errPage.listError.size())
 	{
+		std::cout << "Execute CGI Default Script" << std::endl;
 		execCgiDefaultScript(fd);
 		return;
 	}
 	it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
 	if (it != errPage.listError.end())
 	{
+		std::cout << "Html error page" << std::endl;
 		fdType = HTML_FILE;
 		filePath = errPage.filePath;
 		fd[FD_PRINCIPAL] = openFile(filePath);
 	}
 	else
+	{
+		std::cout << "Execute CGI Default Script" << std::endl;
 		execCgiDefaultScript(fd);
+	}
+		
 }
 
 void Response::setStatusLine()
@@ -232,13 +239,13 @@ void Response::execCgiDefaultScript(int *fd)
 	CgiParser	cgiParser;
 	std::string	statusCodePhrase = _allStatusCode[convertIntToString(_statusCode)];
 
-	cgiParser.configErrEnvp();
+	cgiParser.configErrEnvp(_statusCode, statusCodePhrase);
 	if (pipe(pipeFd) == -1)
 		throw std::runtime_error("Pipe fd error");
 	if (pipe(errFd) == -1)
 		throw std::runtime_error("Pipe err error");
-	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
-	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
+	std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
+	std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
 	pid = fork();
 	if (pid == -1)
 		throw std::runtime_error("Fork error");
@@ -252,7 +259,7 @@ void Response::execCgiDefaultScript(int *fd)
 		close(pipeFd[1]);
 		try
 		{
-			cgiParser.execCgiErrorPage(_statusCode, statusCodePhrase);
+			cgiParser.execCgi();
 		}
 		catch(const std::exception& e)
 		{

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/07 15:29:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 07:58:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 {
 	int			fd[2] = {-1, -1};
 	int			bytesRead = 0;
-	int			fdType;
 	vectCgiFdIt	itCgi = handler.getCgiFdIterator(index);
 	VClientIt	it = findFdInClient(handler.getVectClient(), (*itCgi)->getClientFd());
 
@@ -78,13 +77,13 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 		if (!bytesRead)
 			return;
 	}
-	(*it).setCatchedResponse(err, fd, fdType);
+	(*it).setCatchedResponse(err, fd);
 	if (fd[FD_PRINCIPAL] == -1)
 		return;
 	epoll.epoll_clean((*itCgi)->getErrFd());
 	epoll.epoll_clean((*itCgi)->getFd());
 	handler.removeCgiFd(itCgi);
-	if (fdType == HTML_FILE)
+	if ((*it).getFdType() == HTML_FILE)
 		handler.addToVectFileFd(it, fd[FD_PRINCIPAL]);
 	else
 	{
@@ -115,12 +114,12 @@ void    launchServer(Handler & handler)
 			std::cout << "\033[47;30m		FD EVENT = " << fdEvent << "\033[0m" << std::endl;
 			try
 			{
-				identifier = handler.identifyFd(fdEvent, index);
+				handler.identifyFd(fdEvent, index, identifier);
 				callEvent(handler, epoll, index, identifier, i);
 			}
 			catch(std::exception & e)
 			{
-				std::cerr << "\033[41mError on epoll event loop : " << e.what() << "\033[0m" << std::endl;
+				std::cerr << "\033[41m" << fdEvent << " , idt = " << identifier << " => Error on epoll event loop : " << e.what() << "\033[0m" << std::endl;
 				if (identifier == CLIENT)
 				{
 					handler.removeClient(index, epoll);
@@ -140,6 +139,7 @@ void    launchServer(Handler & handler)
 						break ;
 					}
 				}
+				break ;
 			}
 			if (handler.getProgramBreak() == true)
 			{
