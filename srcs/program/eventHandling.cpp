@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 08:36:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 10:12:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	// if ((*it).getObjRequest().getMethod() == "POST" && (*it).getPtrFileFd() && (*it).getPtrFileFd()->get_endFilePost())
 	// 	(*it).clearPtrFileFd();
 	// tmpRequest = (*it).getObjRequest();
-	(*it).ClientRequest();
+	(*it).receiveClientRequest();
 	client_request = (*it).getClientRequest();
 	// std::cout << "-->> \033[042m ManageRequestFromClient : request_size = " << client_request.size() << "\033[0m" << std::endl;
 	if (client_request.size() == 0)
@@ -234,21 +234,21 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 			return;
 		}
 	}
-	// std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest[FD_PRINCIPAL] 
-	// << "/" << fdFromRequest[FD_CGI_ERROR] << std::endl;
-	if (fdFromRequest[FD_PRINCIPAL] == -1)
+	// std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest[FD_STDOUT] 
+	// << "/" << fdFromRequest[FD_STDERR] << std::endl;
+	if (fdFromRequest[FD_STDOUT] == -1)
 	{
 		handler.setProgramBreak(true);
 		return;
 	}
 	if ((*it).getFdType() == HTML_FILE)
-		handler.addToVectFileFd(it, fdFromRequest[FD_PRINCIPAL]);
+		handler.addToVectFileFd(it, fdFromRequest[FD_STDOUT]);
 	else
 	{
-		handler.addToVectCgiFd(it, fdFromRequest[FD_PRINCIPAL], fdFromRequest[FD_CGI_ERROR]);
-		epoll.epoll_control(epollOpt, fdFromRequest[FD_CGI_ERROR]);
+		handler.addToVectCgiFd(it, fdFromRequest[FD_STDOUT], fdFromRequest[FD_STDERR]);
+		epoll.epoll_control(epollOpt, fdFromRequest[FD_STDERR]);
 	}
-	epoll.epoll_control(epollOpt, fdFromRequest[FD_PRINCIPAL]);
+	epoll.epoll_control(epollOpt, fdFromRequest[FD_STDOUT]);
 }
 
 void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
@@ -259,7 +259,7 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	if (responseCategory == REDIR_RSP || responseCategory == LDIR_RSP)
 		sendRedirOrLdirResponse(it, fdCli, epoll);
 	else if ((*it).getPtrFileFd())
-		sendSimpleHtmlFileResponse(it, fdCli, epoll);
+		sendHtmlFileResponse(it, fdCli, epoll);
 	else if ((*it).getPtrCgiFd())
 		sendCgiResponse(it, fdCli, epoll);
 }
@@ -362,6 +362,7 @@ void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int
 	(*it)->setBuffer(bufferString);
 	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
 	(*it)->bufferParser();
+	(*it)->checkError();
 	// (*it)->displayBufferParsed();
 	if ((*it)->getStatus() == OP_OPEN)
 	{

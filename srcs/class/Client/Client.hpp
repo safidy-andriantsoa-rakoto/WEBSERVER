@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/08 07:32:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 09:13:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ class Client : public Server
 		void		setChunkedResponse();
 		void		setCgiChunkedResponse();
 
-		void        ClientRequest();
+		void        receiveClientRequest();
 
 		class Deconnect: public std::exception
 		{

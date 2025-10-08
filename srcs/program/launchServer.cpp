@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/08 07:58:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 09:32:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,19 +78,19 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 			return;
 	}
 	(*it).setCatchedResponse(err, fd);
-	if (fd[FD_PRINCIPAL] == -1)
+	if (fd[FD_STDOUT] == -1)
 		return;
 	epoll.epoll_clean((*itCgi)->getErrFd());
 	epoll.epoll_clean((*itCgi)->getFd());
 	handler.removeCgiFd(itCgi);
 	if ((*it).getFdType() == HTML_FILE)
-		handler.addToVectFileFd(it, fd[FD_PRINCIPAL]);
+		handler.addToVectFileFd(it, fd[FD_STDOUT]);
 	else
 	{
-		handler.addToVectCgiFd(it, fd[FD_PRINCIPAL], fd[FD_CGI_ERROR]);
-		epoll.epoll_control(EPOLLIN, fd[FD_CGI_ERROR]);
+		handler.addToVectCgiFd(it, fd[FD_STDOUT], fd[FD_STDERR]);
+		epoll.epoll_control(EPOLLIN, fd[FD_STDERR]);
 	}
-	epoll.epoll_control(EPOLLIN, fd[FD_PRINCIPAL]);
+	epoll.epoll_control(EPOLLIN, fd[FD_STDOUT]);
 }
 
 void    launchServer(Handler & handler)
@@ -107,7 +107,7 @@ void    launchServer(Handler & handler)
 	while (SIGINT != sign.getSigNum())
 	{
 		nb_event = epoll.epoll_wait_event();
-		handler.displayHandlerStat();
+		handler.displayHandlerStat(); //Use for checking error
 		for (int i = 0; i < nb_event; i++)
 		{
 			fdEvent = epoll.get_fdEvent(i);
@@ -136,16 +136,12 @@ void    launchServer(Handler & handler)
 					catch(const std::exception& e1)
 					{
 						std::cerr << "			Error on casting " << e1.what() << '\n';
-						break ;
 					}
 				}
 				break ;
 			}
-			if (handler.getProgramBreak() == true)
-			{
-				std::cout << "				ENDING THE PROGRAM HERE !!!!" << std::endl;
+			if (handler.getProgramBreak() == true) //Used to exit the child process correctly
 				throw std::runtime_error("Program break launched");
-			}
 		}
 	}
 }

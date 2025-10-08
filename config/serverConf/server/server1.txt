@@ -1,5 +1,5 @@
 host localhost
 port 2003
 server_names localhost login1.fr
-error_page 404 ./config/errorPage/custom/custom1.html
+error_page 404 ./config/errorPage/custom/custom2.html
 size 2000000000

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 15:24:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 09:32:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ enum    e_identifier
 
 enum    e_fdCategory
 {
-    FD_PRINCIPAL,
-    FD_CGI_ERROR
+    FD_STDOUT,
+    FD_STDERR
 };
 
 enum    e_fdRspType

@@ -183,3 +183,20 @@ void CgiFd::displayBufferParsed() const
 		std::cout << std::endl << "==== Body ===" << std::endl << _body << std::endl;
 	std::cout << "==============END OF BUFFER PARSING=============\033[0m" << std::endl;
 }
+
+void CgiFd::checkError()
+{
+	stringMapIt	it = _header.find("Status");
+	int			statusCode;
+	std::string	tmp;
+	stringVect	vect;
+
+	std::cout << "			CHECK ERROR" << std::endl;
+	if (it == _header.end())
+		return;
+	tmp = (*it).second;
+	vect = splitString(tmp, " ");
+	statusCode = convertStringToInt(vect[0]);
+	std::cout << "			ERROR FOUND IN CGI" << std::endl;
+	throw ErrorExcept(statusCode, "Error from cgi");
+}

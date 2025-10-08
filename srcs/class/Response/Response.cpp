@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 08:47:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 09:32:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, int *fd, 
 		std::cout << "Html error page" << std::endl;
 		fdType = HTML_FILE;
 		filePath = errPage.filePath;
-		fd[FD_PRINCIPAL] = openFile(filePath);
+		fd[FD_STDOUT] = openFile(filePath);
 	}
 	else
 	{
@@ -201,9 +201,9 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int *
 {
 	_statusCode = e._statusCode;
 	setStatusLine();
-	std::cout << "Old fd = " << fd[FD_PRINCIPAL] << std::endl;
+	std::cout << "Old fd = " << fd[FD_STDOUT] << std::endl;
 	buildErrorPage(_statusCode, errPage, fd, filePath, fdType);
-	std::cout << "New fd = " << fd[FD_PRINCIPAL] << std::endl;
+	std::cout << "New fd = " << fd[FD_STDOUT] << std::endl;
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)
@@ -263,16 +263,16 @@ void Response::execCgiDefaultScript(int *fd)
 		}
 		catch(const std::exception& e)
 		{
-			fd[FD_PRINCIPAL] = -1;
-			fd[FD_CGI_ERROR] = -1;
+			fd[FD_STDOUT] = -1;
+			fd[FD_STDERR] = -1;
 		}
 	}
 	else
 	{
 		close(errFd[1]);
 		close(pipeFd[1]);
-		fd[FD_PRINCIPAL] = pipeFd[0];
-		fd[FD_CGI_ERROR] = errFd[0];
+		fd[FD_STDOUT] = pipeFd[0];
+		fd[FD_STDERR] = errFd[0];
 	}
 }
 

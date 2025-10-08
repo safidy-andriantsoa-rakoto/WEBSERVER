@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/08 08:10:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 09:32:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void Client::setCgiChunkedResponse()
 		_response.generateCgiChunkedResponse(_cgiFD->getBody(), _cgiFD->getHeader(), _cgiFD->getStatus());
 }
 
-void Client::ClientRequest()
+void Client::receiveClientRequest()
 {
 	char response[_BUFFER_RECV];
 
@@ -443,7 +443,7 @@ void Client::stdGetRequest(int *fd)
 			throw ErrorExcept(403, "No permission for file");
 		throw ErrorExcept(404, "File can't be opened");
 	}
-	fd[FD_PRINCIPAL] = fdGet;
+	fd[FD_STDOUT] = fdGet;
 }
 
 void Client::cgiGetRequest(int *fd)
@@ -475,8 +475,8 @@ void Client::cgiGetRequest(int *fd)
 		}
 		catch(const std::exception& e)
 		{
-			fd[FD_PRINCIPAL] = -1;
-			fd[FD_CGI_ERROR] = -1;
+			fd[FD_STDOUT] = -1;
+			fd[FD_STDERR] = -1;
 		}
 	}
 	else
@@ -484,8 +484,8 @@ void Client::cgiGetRequest(int *fd)
 		close(errFd[1]);
 		close(pipeFd[1]);
 		_request.clearCgiClass();
-		fd[FD_PRINCIPAL] = pipeFd[0];
-		fd[FD_CGI_ERROR] = errFd[0];
+		fd[FD_STDOUT] = pipeFd[0];
+		fd[FD_STDERR] = errFd[0];
 	}
 }
 
@@ -553,7 +553,7 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	else
 		std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 	opt = EPOLLOUT;
-	fd[FD_PRINCIPAL] = fdPost;
+	fd[FD_STDOUT] = fdPost;
 }
 
 void Client::delete_request(){}

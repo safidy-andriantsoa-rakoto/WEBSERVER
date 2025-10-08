@@ -18,7 +18,7 @@ $safeStatusText = htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8');
 
 // 1. Send the HTTP status header
 // (It's good practice to ensure the correct status code is sent to the client)
-http_response_code($statusCode);
+// http_response_code($statusCode);
 
 // 2. Send HTML Body using a HEREDOC for readability.
 echo <<<HTML

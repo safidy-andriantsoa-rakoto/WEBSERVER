@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 09:48:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 10:28:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define CGIFD_HPP
 
 #include "general.hpp"
+#include "../Response/ErrorExcept.hpp"
 
 class CgiFd
 {
@@ -63,8 +64,10 @@ class CgiFd
 
 		bool		getIsHeader();
 		void		setIsHeader(bool const & stat);
-
+	
 		void		displayBufferParsed() const;
+
+		void		checkError();
 };
 
 #endif
