@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 14:26:29 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/08 16:51:30 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void    launchServer(Handler & handler)
 						throw std::runtime_error("Unknown fd");
 						break;
 				}
+				sleep(1);
 			}
 			catch(const std::exception& e)
 			{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 09:51:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 20:25:34 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,5 +194,5 @@ void Server::simpleInit(std::string const & servPath, std::string const & locati
 
 	conf.parseConfig(servPath, locationPath);
 	_config = conf;
-	// _config.displayConfig();
+	_config.displayConfig();
 }

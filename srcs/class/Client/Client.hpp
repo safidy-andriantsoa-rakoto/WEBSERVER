@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/02 13:56:44 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/08 15:17:53 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Client : public Server
 		Response	_response;
 		FileFd		*_fileFD;
 
+		FileFd		*_fileMPFDT; //multipart filefd
 		Client();
 
 		void		processRequestWithConfig();
@@ -48,6 +49,8 @@ class Client : public Server
 		int			get_request();
 		int			post_request(stringMap & header, std::string & md, std::string & boundary);
 		void		delete_request();
+
+		bool		_modPostFile;
 
 	public:
 		Client(const Client& client);
@@ -68,6 +71,7 @@ class Client : public Server
 		std::string getClientRequest() const;
 		bool        getConnexionStat();
 		std::string getBoundaryLimit() const;
+		void		setBoundaryLimit(std::string boundary);
 	
 
 		FileFd		*getFileFD();
@@ -108,5 +112,12 @@ class Client : public Server
 		int	creat_file_for_post(std::string path, uint32_t & opt);
 
 		std::string currentDateTimeString();
+
+
+		void	set_fileMPFDT(FileFd* _fileMPFDT);
+		FileFd* get_fileMPFDT();
+
+		void	switch_modPostFile(bool stat);
+		bool	modPostFile_stat();
 
 };

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 11:53:34 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/08 16:41:01 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ class Request
 
 		void		set_Body(const std::string& body);
 		std::string&	get_Body();
+		void		clear_body();
 		void		set_post_body(stringVect var, std::string content);
 
 		void		setRequestTarget(std::string const & target);
@@ -81,6 +82,7 @@ class Request
 		void 		set_c_length_received(size_t received);
 
 		size_t 		get_content_length();
+		void 		set_content_length(size_t size);
 };
 
 #endif

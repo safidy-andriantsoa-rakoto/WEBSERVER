@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 11:53:48 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/08 16:46:11 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,11 @@ void Request::set_Body(const std::string& body)
 std::string& Request::get_Body()
 {
     return (_body);
+}
+
+void Request::clear_body()
+{
+	this->_body.clear();
 }
 
 void Request::set_post_body(stringVect var, std::string content)
@@ -270,4 +275,9 @@ void Request::set_c_length_received(size_t received)
 size_t Request::get_content_length()
 {
     return (this->_content_length);
+}
+
+void Request::set_content_length(size_t size)
+{
+	this->_content_length = size;
 }

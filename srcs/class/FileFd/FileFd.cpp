@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 11:52:16 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/07 22:01:00 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePa
 	_fileSent(0),
 	_filePath(filePath),
 	_status(OP_OPEN),
-	_EndFilepost(false)
+	_EndFilepost(false),
+	_fdMPFDT(-1)
 {
 	std::cout << "		PATH-->" << _filePath << std::endl;
 	_fileType = Mime::getFileType(_filePath);
@@ -53,6 +54,7 @@ FileFd &FileFd::operator=(FileFd const & other)
 		_fileSent = other._fileSent;
 		_EndFilepost = other._EndFilepost;
 		_post_body = other._post_body;
+		_fdMPFDT = other._fdMPFDT;
 	}
 	return *this;
 }
@@ -200,13 +202,26 @@ void FileFd::set_post_body(std::string content)
 
 std::string &FileFd::get_FI_post_body()
 {
+	std::string o = "";
+	std::string &r = o;
     if (_post_body.size())
 		return (_post_body[0]);
-	throw ErrorExcept(404, "ERROR BODY EMPTY"); // soloina eee
+	return (r);
 }
 
 void FileFd::remove_FI_body()
 {
 	if (_post_body.size())
 		_post_body.erase(_post_body.begin());
+}
+
+void FileFd::set_fdMPFDT(int &fd)
+{
+	if (fd > -1)
+		this->_fdMPFDT = fd;
+}
+
+int &FileFd::get_fdMPFDT()
+{
+    return (this->_fdMPFDT);
 }
