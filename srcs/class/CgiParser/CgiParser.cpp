@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 08:47:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/09 07:40:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,6 @@ void CgiParser::configErrEnvp(int const & statusCode, std::string const & status
 	vect.clear();
 	ownedConfig.clear();
 }
-
-// /usr/bin/php-cgi -d register_argc_argv=On -f config/errorPage/default/default.php -- 500 "Bad Gateway"
 
 void CgiParser::execCgi()
 {

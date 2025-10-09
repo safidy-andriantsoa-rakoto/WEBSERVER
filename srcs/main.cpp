@@ -6,12 +6,15 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 15:51:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/09 08:05:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
+/*
+	Check every configFile needed by the program !!!
+*/
 static void	initProgram()
 {
 	Response::initAllStatusCode(STAT_PATH);

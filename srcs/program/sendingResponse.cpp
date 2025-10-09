@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 09:59:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/09 07:36:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	sendRedirOrLdirResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	std::string	responseString;
 
 	responseString = (*it).getFullResponse();
-	std::cout <<"\033[35mSending redirectory/listing directory response\n" << responseString << "\033[0m" << std::endl;
+	// std::cout <<"\033[35mSending redirectory/listing directory response\n" << responseString << "\033[0m" << std::endl;
 	send_value(fdCli, responseString);
 	epoll.epoll_update_event(fdCli, EPOLLIN);
 }
