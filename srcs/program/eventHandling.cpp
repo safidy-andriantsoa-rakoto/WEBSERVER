@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 08:10:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 09:21:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,6 +236,11 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	// std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest[FD_STDOUT] 
 	// << "/" << fdFromRequest[FD_STDERR] << std::endl;
+	if ((*it).getObjRequest().getMethod() == "DELETE")
+	{
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
+		return;
+	}
 	if (fdFromRequest[FD_STDOUT] == -1)
 	{
 		handler.setProgramBreak(true);

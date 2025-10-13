@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 08:02:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:06:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,7 +322,15 @@ void Client::buildRequestTarget()
 	if (target == "/")
 	{
 		processLocationOption(_config.getClassLocation()[0], _request);
-		_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
+		it = _config.findClassLocation("/");
+		if ((*it).getAutoindex() == "ON")
+		{
+			_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory());
+		}
+		else
+		{
+			_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
+		}
 		std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
 		return ;
 	}
@@ -330,7 +338,6 @@ void Client::buildRequestTarget()
 	if (target.find(".php", 0) != std::string::npos)
 	{
 		_request.clearCgiClass();
-		std::cout << "CGI ON GOING !!!!" << std::endl;
 		_request.setIsCgi(true);
 		it = _config.findClassLocation(".php");
 		processLocationOption(*it, _request);
@@ -588,10 +595,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	else if (_request.getMethod() == "DELETE")
 	{
 		delete_request();
-		/*
-			Need to return fd???
-		*/
-		setSingleResponse(201);
+		setSingleResponse(204);
 	}
 }
 
