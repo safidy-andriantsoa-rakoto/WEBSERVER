@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 16:41:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:51:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define REQUEST_HPP
 
 #include "general.hpp"
+#include "../CgiParser/CgiParser.hpp"
 
 class Request
 {
@@ -36,6 +37,9 @@ class Request
 		size_t		_content_length;
 		size_t		_c_length_received;
 
+		bool		_isCgi;
+		CgiParser	_cgiParser;
+
 		void    	setRequestLine(std::string const & set);
 		void		setRequestBody(std::string const & requeststring, size_t const & pos);
 
@@ -52,27 +56,39 @@ class Request
 		std::string	getRequestLine() const;
 		std::string	getBody() const;
 		stringMap	getHeader() const;
+
+		bool		getIsCgi() const;
+		void		setIsCgi(bool const & condition);
+
+		CgiParser			getCgiClass() const;
+		void		processCgiClass(std::string const & target, std::string const & rootDirectory);
+		void		setCgiClass(CgiParser const & cgi);
+		void		execCgiClass();
+		void		clearCgiClass();
+
 		const	MapSVectStr&	getpostMultipartData() const;
 
-		void 		Del_space(std::string &data);
+		void 			Del_space(std::string &data);
 
-		void		set_is_CRLF_header(bool is_crlf);
-		bool		get_is_CRLF_header();
+		void			set_is_CRLF_header(bool is_crlf);
+		bool			get_is_CRLF_header();
 		
-		bool		getAutoIdx() const;
-		void		setAutoIdx(bool const & autoIdx);
+		bool			getAutoIdx() const;
+		void			setAutoIdx(bool const & autoIdx);
 
-		void		setRequestSize(ssize_t size);
-		ssize_t		getRequestSize();
+		void			setRequestSize(ssize_t size);
+		ssize_t			getRequestSize();
 
 		void		set_Body(const std::string& body);
 		std::string&	get_Body();
 		void		clear_body();
-		void		set_post_body(stringVect var, std::string content);
+		void			set_post_body(stringVect var, std::string content);
 
-		void		setRequestTarget(std::string const & target);
+		void			setRequestTarget(std::string const & target);
 	
-		void		parseRequest(std::string const & requestString);
+		void			parseRequest(std::string const & requestString);
+
+		void			displayRequest() const;
 
 		void		displayRequest() const;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:29:40 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:54:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 {
 	int 			fdc;
-	vectServerIt	it = handler.getServer(i);
+	vectServerIt	it = handler.getServerIterator(i);
 
 	fdc = (*it).accept_client_connexion();
 	epoll.epoll_control(EPOLLIN, fdc);
@@ -23,143 +23,271 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 	std::cout << "\033[42mNEW CLIENT JOIN = " << fdc << "--> SERVER=" << (*it).get_fdSocket() << "\033[0m" << std::endl;
 }
 
-void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Handler & handler)
+void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll, Handler & handler)
 {
-	int			fdFile;
-	uint32_t	fileFdOpt;
+	uint32_t	epollOpt;
 	std::string client_request;
 	std::string limit = "\r\n\r\n";
 	std::string body;
-	std::string filePath;
-	Request		tmpRequest;
+	// Request		tmpRequest;
 	std::string limiter = "--";
 	std::string limiterEnd = "--";
+	int			fdFromRequest[2] = {-1, -1};
 	
-	tmpRequest = (*it).getobjREquest();
-	(*it).ClientRequest();
+	// if ((*it).getObjRequest().getMethod() == "POST" && (*it).getPtrFileFd() && (*it).getPtrFileFd()->get_endFilePost())
+	// 	(*it).clearPtrFileFd();
+	// tmpRequest = (*it).getObjRequest();
+	(*it).receiveClientRequest();
 	client_request = (*it).getClientRequest();
-	// if (client_request.size() == 0)
-	// {
-	// 	(*it).clearFileFd();
-	// 	// throw std::runtime_error("ManageRequestFromClient - request size = 0");
-	// }
+	// std::cout << "-->> \033[042m ManageRequestFromClient : request_size = " << client_request.size() << "\033[0m" << std::endl;
+	if (client_request.size() == 0)
+	{
+		(*it).clearPtrFileFd();
+		(*it).clearPtrCgiFd();
+		throw std::runtime_error("ManageRequestFromClient - request size = 0");
+	}
 	try
 	{
-		fdFile = (*it).processRequest(client_request, fileFdOpt, filePath);// parsing POST process
-		(*it).updateResponseCategory(STD_RSP);
+		(*it).processRequest(client_request, epollOpt, fdFromRequest);
+		// size_t pos = client_request.find(limit);
+		// if (pos != std::string::npos)
+		// {
+		// 	std::string header = client_request.substr(0, pos);
+		// 	std::cout << "HEADER====>" << header << "]" << std::endl;
+		// 	body = client_request.substr(pos + limit.size(), client_request.size());
+		// 	if ((*it).getBoundaryLimit().size() && body.size())
+		// 	{
+		// 		limiter += (*it).getBoundaryLimit() + "\r\n";
+		// 		limiterEnd += (*it).getBoundaryLimit() + "--\r\n";
+		// 		size_t is_boundary = body.find(limiter);
+		// 		size_t is_boundaryEnd;
+		// 		body.erase(0, is_boundary);
+		// 		while (is_boundary != std::string::npos)
+		// 		{
+		// 			body.erase(0, is_boundary + limiter.size());
+		// 			is_boundary = body.find(limiter);
+		// 			is_boundaryEnd = body.find(limiterEnd);
+
+		// 			if (is_boundary != std::string::npos)
+		// 			{
+		// 				// std::string tmp = body.substr(0, is_boundary - 2);
+		// 				// stringVect separate = strictSplit(tmp, limit);
+		// 				// if (separate.size())
+		// 				// 	std::cout << "["<< separate[0] << "][" << separate[1] << "]" << std::endl;
+		// 				stringVect separate;
+		// 				std::string tmp = body.substr(0, is_boundary - 2);
+		// 			 	size_t is_end = tmp.find("\r\n\r\n");
+		// 				if (is_end != std::string::npos)
+		// 				{
+		// 					std::cout << "			aty eeeee" << std::endl;
+		// 					if (is_end + 4 == tmp.size())
+		// 					{
+		// 						tmp.erase(is_end);
+		// 						separate.push_back(tmp);
+		// 						separate.push_back("");
+		// 					}
+		// 				}
+		// 				else
+		// 					separate = strictSplit(tmp, "\r\n\r\n");
+		// 				if (separate.size() == 2)
+		// 				{
+		// 					stringVect var_line;
+		// 					stringVect var;
+
+		// 					size_t find_rn = separate[0].find("\r\n");
+		// 					if (find_rn != std::string::npos)
+		// 					{
+		// 						while (find_rn != std::string::npos)
+		// 						{
+		// 							stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
+		// 							if (tmp1.size())
+		// 								std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
+		// 							separate[0].erase(0, find_rn + 2);
+		// 							find_rn = separate[0].find("\r\n");
+		// 							if (find_rn == std::string::npos)
+		// 							{
+		// 								stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
+		// 								if (tmp.size())
+		// 									std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
+		// 							}
+		// 						}
+		// 					}
+		// 					else
+		// 						var = strictSplit(separate[0], ": ");
+		// 					if (var.size())
+		// 						(*it).getObjRequest().set_post_body(var, *(separate.begin() + 1));
+		// 				}
+		// 				std::cout << "BODY=====>[" << tmp << "]" << std::endl;
+		// 			}
+		// 			else if (is_boundaryEnd != std::string::npos)
+		// 			{
+		// 				stringVect separate;
+		// 				std::string tmp = body.substr(0, is_boundaryEnd - 2);
+		// 			 	size_t is_end = tmp.find("\r\n\r\n");
+		// 				if (is_end != std::string::npos)
+		// 				{
+		// 					if (is_end + 4 == tmp.size())
+		// 					{
+		// 						tmp.erase(is_end);
+		// 						separate.push_back(tmp);
+		// 						separate.push_back("");
+		// 					}
+		// 				}
+		// 				else
+		// 					separate = strictSplit(tmp, "\r\n\r\n");
+		// 				if (separate.size())
+		// 					std::cout << " END{"<< tmp << "} ["<< separate[0] << "][" << separate[1] << "]" << std::endl;
+		// 				if (separate.size() == 2)
+		// 				{
+		// 					stringVect var_line;
+		// 					stringVect var;
+
+		// 					size_t find_rn = separate[0].find("\r\n");
+		// 					if (find_rn != std::string::npos)
+		// 					{
+		// 						while (find_rn != std::string::npos)
+		// 						{
+		// 							stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
+		// 							if (tmp1.size())
+		// 								std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
+		// 							separate[0].erase(0, find_rn + 2);
+		// 							find_rn = separate[0].find("\r\n");
+		// 							if (find_rn == std::string::npos)
+		// 							{
+		// 								stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
+		// 								if (tmp.size())
+		// 									std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
+		// 							}
+		// 						}
+		// 					}
+		// 					else
+		// 						var = strictSplit(separate[0], ": ");
+		// 					if (var.size())
+		// 						(*it).getObjRequest().set_post_body(var, *(separate.begin() + 1));
+		// 				}
+		// 				std::cout << "\e[5m		TAPITRA       \e[0m" << std::endl;
+		// 			}
+		// 			else
+		// 			{
+		// 				// stringVect separate = strictSplit(body, limit);
+		// 				// if (separate.size())
+		// 				// 	std::cout << "["<< separate[0] << "][" << separate[1] << "]" << std::endl;
+		// 				stringVect separate;
+		// 				std::string tmp = body;
+		// 			 	size_t is_end = tmp.find("\r\n\r\n");
+		// 				if (is_end != std::string::npos)
+		// 				{
+		// 					if (is_end + 4 == tmp.size())
+		// 					{
+		// 						tmp.erase(is_end);
+		// 						separate.push_back(tmp);
+		// 						separate.push_back("");
+		// 					}
+		// 				}
+		// 				else
+		// 					separate = strictSplit(tmp, "\r\n\r\n");
+		// 				if (separate.size() == 2)
+		// 				{
+		// 					stringVect var_line;
+		// 					stringVect var;
+
+		// 					size_t find_rn = separate[0].find("\r\n");
+		// 					if (find_rn != std::string::npos)
+		// 					{
+		// 						while (find_rn != std::string::npos)
+		// 						{
+		// 							stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
+		// 							if (tmp1.size())
+		// 								std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
+		// 							separate[0].erase(0, find_rn + 2);
+		// 							find_rn = separate[0].find("\r\n");
+		// 							if (find_rn == std::string::npos)
+		// 							{
+		// 								stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
+		// 								if (tmp.size())
+		// 									std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
+		// 							}
+		// 						}
+		// 					}
+		// 					else
+		// 						var = strictSplit(separate[0], ": ");
+		// 					if (var.size())
+		// 						(*it).getObjRequest().set_post_body(var, *(separate.begin() + 1));
+		// 				}
+		// 				std::cout << "BODY==NOT=END===>[" << body << "]" << std::endl;
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// (*it).getObjRequest().displayRequestMultipartData();
+		// int fdCli = (*it).get_clientFD();
+		// epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
 	catch(AExcept & e)
 	{
 		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
-		(*it).setCatchedResponse(e, fdFile, filePath);
-		fileFdOpt = EPOLLIN;
+		(*it).setCatchedResponse(e, fdFromRequest);
+		epollOpt = EPOLLIN;
 		if ((*it).getCategoryResponse() == REDIR_RSP || (*it).getCategoryResponse() == LDIR_RSP)
 		{
-			epoll.epoll_update_event(fd, EPOLLOUT);
+			epoll.epoll_update_event(fdCli, EPOLLOUT);
 			return;
 		}
 	}
-	if (fdFile != -1)
+	// std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest[FD_STDOUT] 
+	// << "/" << fdFromRequest[FD_STDERR] << std::endl;
+	if ((*it).getObjRequest().getMethod() == "DELETE")
 	{
-		// std::cout << "\033[33m		CREATE FILEFD *\033[0m" << std::endl;
-		handler.addToVectFileFd(it, fdFile, fd, filePath);
-		epoll.epoll_control(fileFdOpt, fdFile);
-		// std::cout << "\033[33m		CREATE FILEFD *\033[0m" << std::endl;
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
+		return;
 	}
-	if ((*it).getFileFD() && (*it).getobjREquest().getMethod() == "POST")
+	if (fdFromRequest[FD_STDOUT] == -1)
 	{
-		if (!(*it).getFileFD()->get_boundary().size())
-		{
-			std::string boundary = (*it).getBoundaryLimit();
-			(*it).getFileFD()->set_boundary(boundary);
-		}
-		// std::cout << " BODY ATO AAAANNN  ["<< (*it).getobjREquest().get_Body() << "]" << std::endl;
-		(*it).getFileFD()->set_post_body((*it).getobjREquest().get_Body());
-		(*it).getobjREquest().clear_body();
+		handler.setProgramBreak(true);
+		return;
 	}
+	if ((*it).getFdType() == HTML_FILE)
+		handler.addToVectFileFd(it, fdFromRequest[FD_STDOUT]);
+	else
+	{
+		handler.addToVectCgiFd(it, fdFromRequest[FD_STDOUT], fdFromRequest[FD_STDERR]);
+		epoll.epoll_control(epollOpt, fdFromRequest[FD_STDERR]);
+	}
+	epoll.epoll_control(epollOpt, fdFromRequest[FD_STDOUT]);
 }
 
-/*
-	See other cases of response, for successfull response
-*/
-void	sendingResponseToClient(VClientIt & it, int & fd, EpollCreation & epoll)
+void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
-	std::string	responseString;
-	int			statusCode;
-	int			fileStatus;
 	int			responseCategory = (*it).getCategoryResponse();
 	std::cout << "-->> \033[45mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
 
-	if (responseCategory == REDIR_RSP || responseCategory == LDIR_RSP)
-	{
-		responseString = (*it).getFullResponse();
-		std::cout <<"\033[35mSending redirectory/listing directory response" << "\033[0m" << std::endl;
-		send_value(fd, responseString);
-		epoll.epoll_update_event(fd, EPOLLIN);
-		return ;
-	}
-	fileStatus = (*it).getFileStatus();
-	if (responseCategory == STD_RSP)
-		statusCode = 200;
-	else
-		statusCode = (*it).getStatusCodeResponse();
-	if (fileStatus == OP_ONCE)
-	{
-		std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
-		(*it).setStandardResponse(statusCode);
-	}
-	else
-	{
-		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
-		(*it).setChunkedResponse(statusCode);
-	}
-	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
-		responseString = (*it).getBodyResponse() + "\r\n";
-	else
-		responseString = (*it).getFullResponse();
-	// std::cout <<"\e[45mResponse: \n" << responseString << "\e[0m" << std::endl;
-	// std::cout <<"\e[45mResponse from the file : " << (*it).getFileFD()->getFilePath() << "\e[0m" << std::endl;
-	// if (responseCategory == ERR_RSP && responseString.find("$status") != std::string::npos)
-	// {
-	// 	std::string	replace;
-
-	// 	replace = convertIntToString(statusCode);
-	// 	replace += " : " + (*(Response::_allStatusCode).find(replace)).second;
-	// 		replaceString(responseString, replace, "$status");
-	// }
-	send_value(fd, responseString);
-	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
-		epoll.epoll_update_event(fd, EPOLLIN);
-	if (fileStatus == OP_START)
-		(*it).updateFileStatus(OP_ONGOING);
-	(*it).increaseFileSent(_BUFFER);
-	if (fileStatus == OP_ONCE || fileStatus == OP_CLOSE)
-		(*it).clearFileFd();
+	if (responseCategory == LDIR_RSP)
+		sendLdirResponse(it, fdCli, epoll); //Review for Listing Directory : maybe sending multiple response if the string is not fully sent
+	else if (responseCategory == REDIR_RSP || responseCategory == SINGLE_RSP) //Response send only one time : redirection, POST and DELETE method
+		sendSingleResponse(it, fdCli, epoll);
+	else if ((*it).getPtrFileFd())
+		sendHtmlFileResponse(it, fdCli, epoll);
+	else if ((*it).getPtrCgiFd())
+		sendCgiResponse(it, fdCli, epoll);
 }
 
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
 	uint32_t	event = epoll.getEvent(eventIdx);
-	VClientIt	it = handler.getClient(i);
-	int			fd = (*it).get_clientFD();
-
+	VClientIt	it = handler.getClientIterator(i);
+	int			fdCli = (*it).get_clientFD();
+	
 	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
-	{
-		std::cout << "				EPOLLIN CLIENT" << std::endl;
-		manageRequestFromClient(it, fd, epoll, handler);
-	}
+		manageRequestFromClient(it, fdCli, epoll, handler);
 	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
-	{
-		std::cout << "				EPOLLOUT CLIENT" << std::endl;
-		sendingResponseToClient(it, fd, epoll);
-	}
+		sendingResponseToClient(it, fdCli, epoll);
 	else
 		throw std::runtime_error("HandleClientEvent error");
 }
 
 void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler, int const & i)
 {
-	int			fdClient;
+	int			fdCli;
 	int			bytesRead;
 	char		buffer[_BUFFER];
 	std::string	bufferString;
@@ -168,12 +296,12 @@ void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler,
 	(*it)->manageFd();
 	if ((*it)->getStatus() == OP_START)
 		return;
-	bytesRead = read((*it)->getFileFd(), buffer, _BUFFER);
+	bytesRead = read((*it)->getFd(), buffer, _BUFFER);
 	if (bytesRead <= 0)
 	{
 		(*it)->setStatus(OP_CLOSE);
 		(*it)->clearBuffer();
-		closeFileEvent(handler, i, epoll);
+		closeFileFdEvent(handler, i, epoll);
 		return ;
 	}
 	if ((*it)->getStatus() == OP_OPEN && (*it)->getFileTotalSize() <= static_cast<size_t>(bytesRead))
@@ -185,18 +313,18 @@ void	readFromFileFd(vectFileFdIt & it, EpollCreation & epoll, Handler & handler,
 		(*it)->setStatus(OP_CLOSE);
 	if ((*it)->getStatus() == OP_ONCE || (*it)->getStatus() == OP_OPEN)
 	{
-		fdClient = (*it)->getClientFd();
+		fdCli = (*it)->getClientFd();
 		if ((*it)->getStatus() == OP_OPEN)
 			(*it)->setStatus(OP_START);
-		epoll.epoll_update_event(fdClient, EPOLLOUT);
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
 	if ((*it)->getStatus() == OP_ONCE || (*it)->getStatus() == OP_CLOSE)
-		closeFileEvent(handler, i, epoll);
+		closeFileFdEvent(handler, i, epoll);
 }
 
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
-	vectFileFdIt	it = handler.getFileFd(i);
+	vectFileFdIt	it = handler.getFileFdIterator(i);
 	uint32_t		event = epoll.getEvent(eventIdx);
 	VClientIt		clIt = handler.getClient(i);
 	// int				ClientFD = (*clIt).get_clientFD();

@@ -34,8 +34,14 @@ HAND = Handler.cpp
 FILE_DIR = FileFd/
 FILE = FileFd.cpp
 
-SIGNAL_dir = signal/
+SIGNAL_DIR = Signal/
 SIGNAL_CPP = Signal.cpp
+
+CGIPAR_DIR = CgiParser/
+CGIPAR = CgiParser.cpp
+
+CGIFD_DIR = CgiFd/
+CGIFD = CgiFd.cpp
 
 CLASS_DIR = class/
 CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(SERV_DIR)) \
@@ -47,7 +53,9 @@ CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(SERV_DIR)) \
 				$(addprefix $(CLASS_DIR), $(CONF_DIR)) \
 				$(addprefix $(CLASS_DIR), $(HAND_DIR)) \
 				$(addprefix $(CLASS_DIR), $(FILE_DIR)) \
-				$(addprefix $(CLASS_DIR), $(SIGNAL_dir))
+				$(addprefix $(CLASS_DIR), $(SIGNAL_DIR)) \
+				$(addprefix $(CLASS_DIR), $(CGIPAR_DIR)) \
+				$(addprefix $(CLASS_DIR), $(CGIFD_DIR))
 
 
 CLASS = $(addprefix $(SERV_DIR), $(SERV)) \
@@ -59,37 +67,33 @@ CLASS = $(addprefix $(SERV_DIR), $(SERV)) \
 		$(addprefix $(CONF_DIR), $(CONF)) \
 		$(addprefix $(HAND_DIR), $(HAND)) \
 		$(addprefix $(FILE_DIR), $(FILE)) \
-		$(addprefix $(SIGNAL_dir), $(SIGNAL_CPP))
-
-CGI_DIR = cgi/
-CGI = cgi.cpp
+		$(addprefix $(SIGNAL_DIR), $(SIGNAL_CPP)) \
+		$(addprefix $(CGIPAR_DIR), $(CGIPAR)) \
+		$(addprefix $(CGIFD_DIR), $(CGIFD))
 
 UTILS_DIR = utils/
-UTILS = stringUtils.cpp fileUtils.cpp messageUtils.cpp displayUtils.cpp \
+UTILS = stringUtils.cpp fileUtils.cpp displayUtils.cpp \
 		units.cpp conversion.cpp searchingUtils.cpp dirListing.cpp handleUtils.cpp
 
 PRO_DIR = program/
-PRO = launchServer.cpp parseConfig.cpp eventHandling.cpp initServer.cpp
+PRO = launchServer.cpp parseConfig.cpp eventHandling.cpp initServer.cpp sendingResponse.cpp
 
 SRC_DIR = srcs/
 SRC = $(addprefix $(SRC_DIR), $(MAIN)) \
-		$(addprefix $(SRC_DIR), $(addprefix $(CGI_DIR), $(CGI))) \
 		$(addprefix $(SRC_DIR), $(addprefix $(UTILS_DIR), $(UTILS))) \
 		$(addprefix $(SRC_DIR), $(addprefix $(CLASS_DIR), $(CLASS))) \
 		$(addprefix $(SRC_DIR), $(addprefix $(PRO_DIR), $(PRO)))
 
 OBJ_DIR = obj/
 OBJ_SUB_DIR = $(addprefix $(OBJ_DIR), $(CLASS_SUB_DIR)) \
-				$(addprefix $(OBJ_DIR), $(CGI_DIR)) \
 				$(addprefix $(OBJ_DIR), $(UTILS_DIR)) \
 				$(addprefix $(OBJ_DIR), $(PRO_DIR))
 
 OBJ_MAIN = $(addprefix $(OBJ_DIR), $(MAIN:.cpp=.o))
 OBJ_CLASS = $(addprefix $(OBJ_DIR), $(addprefix $(CLASS_DIR), $(CLASS:.cpp=.o)))
-OBJ_CGI = $(addprefix $(OBJ_DIR), $(addprefix $(CGI_DIR), $(CGI:.cpp=.o)))
 OBJ_UTILS = $(addprefix $(OBJ_DIR), $(addprefix $(UTILS_DIR), $(UTILS:.cpp=.o)))
 OBJ_PRO = $(addprefix $(OBJ_DIR), $(addprefix $(PRO_DIR), $(PRO:.cpp=.o)))
-OBJ = $(OBJ_MAIN) $(OBJ_CLASS) $(OBJ_UTILS) $(OBJ_CGI) $(OBJ_PRO)
+OBJ = $(OBJ_MAIN) $(OBJ_CLASS) $(OBJ_UTILS) $(OBJ_PRO)
 
 NAME = webserv
 

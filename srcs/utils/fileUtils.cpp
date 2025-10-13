@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 15:22:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/01 19:32:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,4 +256,3 @@ size_t	getFileSize(std::string const & path)
 	std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
 	return sf.st_size;
 }
-

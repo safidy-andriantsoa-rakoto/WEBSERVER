@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/08 15:17:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:47:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "../FileFd/FileFd.hpp"
 #include "../Server/Server.hpp"
 #include "../Response/Response.hpp"
-#include "../Handler/Handler.hpp"
+#include "../CgiFd/CgiFd.hpp"
 
 class Client : public Server
 {
@@ -33,6 +33,8 @@ class Client : public Server
 		Request		_request;
 		Response	_response;
 		FileFd		*_fileFD;
+		CgiFd		*_cgiFD;
+		int			_fdType;
 
 		FileFd		*_fileMPFDT; //multipart filefd
 		Client();
@@ -46,8 +48,11 @@ class Client : public Server
 		void		processRedirection(MyLoc const & location, Request & request);
 
 				//HTTP Method
-		int			get_request();
-		int			post_request(stringMap & header, std::string & md, std::string & boundary);
+		void		get_request(uint32_t & opt, int *fd);
+		void		stdGetRequest(int *fd);
+		void		cgiGetRequest(int *fd);
+
+		void		post_request(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
 		void		delete_request();
 
 		bool		_modPostFile;
@@ -64,35 +69,45 @@ class Client : public Server
 		size_t		getTotalSendSize();
 		bool		is_finishedSendContent();	
 		
-		Request&	getobjREquest();
-		
-		
+		Request&	getObjRequest();
+
 		int         get_clientFD() const;
 		std::string getClientRequest() const;
 		bool        getConnexionStat();
 		std::string getBoundaryLimit() const;
 		void		setBoundaryLimit(std::string boundary);
 	
+		int			getFdType() const;
+		void		setFdType(int const & type);
 
-		FileFd		*getFileFD();
-		int			getFileStatus();
-		void        setFileFD(FileFd *fileFd);
-		void		clearFileFd();
-		void		updateFileStatus(int const & status);
+		FileFd		*getPtrFileFd();
+		void        setPtrFileFd(FileFd *fileFd);
+		void		clearPtrFileFd();
 		void		increaseFileSent(size_t const & add);
+		int			getFileStatus();
+		void		updateFileStatus(int const & status);
 
-		Response &	getResponse();
+		CgiFd		*getPtrCgiFd();
+		void        setPtrCgiFd(CgiFd *cgiFd);
+		void		clearPtrCgiFd();
+		int			getCgiFdStatus();
+		void		updateCgiFdStatus(int const & status);
+
+		Response &	getObjResponse();
 		std::string	getFullResponse();
 		std::string	getBodyResponse();
 		int			getCategoryResponse();
 		int			getStatusCodeResponse();
+		void		setStatusCodeResponse(int const & status);
 		void		clearResponse();
 		void		updateResponseCategory(int const & stat);
-		void		setCatchedResponse(AExcept & e, int & fd, std::string & filePath);
-		void		setStandardResponse(int const & statusCode);
-		void		setChunkedResponse(int const & statusCode);
+		void		setCatchedResponse(AExcept & e, int *fd);
+		void		setStandardResponse();
+		void		setChunkedResponse();
+		void		setCgiChunkedResponse();
+		void		setSingleResponse(int const & statusCode);
 
-		void        ClientRequest();
+		void        receiveClientRequest();
 
 		class Deconnect: public std::exception
 		{
@@ -105,7 +120,7 @@ class Client : public Server
 				const char *what() const throw();
 		};
 
-		int processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath);
+		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd);
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 

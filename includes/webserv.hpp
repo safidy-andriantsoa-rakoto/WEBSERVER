@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 13:45:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:37:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
 
 std::string     currentDateTimeString();
+void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
 
 vectServerIt	findFdInServer(vectServer & allServer, int const & fd);
 VClientIt		findFdInClient(VClient & allClient, int const & fd);
@@ -37,6 +38,14 @@ void    launchServer(Handler & handler);
 vectServer	parseConfigFile();
 
 //HandleUtils
-void	closeFileEvent(Handler & handler, int const & i, EpollCreation & epoll);
+void	closeFileFdEvent(Handler & handler, int const & i, EpollCreation & epoll);
+void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll);
+
+//MessageUtils
+void	sendLdirResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
+void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
+void	sendHtmlFileResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
+void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
+void    send_value(int const & _acceptStatus, std::string & _send_content);
 
 #endif

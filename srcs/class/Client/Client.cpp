@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 10:29:54 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:47:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	_clientFD(_clientFD),
 	_connect(is_connect),
 	_fileFD(NULL),
-	_modPostFile(false)
+	_modPostFile(false),
+	_cgiFD(NULL)
 {
 	this->_clientRequest= "";
 	this->_to_send = 0;
@@ -29,6 +30,7 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 Client::Client(const Client &client) : Server(client)
 {
 	_fileFD = NULL;
+	_cgiFD = NULL;
 	*this = client;
 }
 
@@ -49,8 +51,8 @@ Client &Client::operator=(const Client &client)
 		this->_client_stat = client._client_stat;
 		this->_boundary_sep = client._boundary_sep;
 		this->_request = client._request;
-		// *(this->_fileMPFDT) = *(client._fileMPFDT);
-		setFileFD(client._fileFD);
+		setPtrFileFd(client._fileFD);
+		setPtrCgiFd(client._cgiFD);
 	}
 	return (*this);
 }
@@ -74,7 +76,7 @@ bool Client::is_finishedSendContent()
     return (false);
 }
 
-Request &Client::getobjREquest()
+Request &Client::getObjRequest()
 {
     return (_request);
 }
@@ -95,22 +97,24 @@ int Client::get_clientFD() const
 	return (this->_clientFD);
 }
 
-void Client::setCatchedResponse(AExcept & e, int & fd, std::string & filePath)
+void Client::setCatchedResponse(AExcept & e, int *fd)
 {
+	std::cout << "				Catched Response status code = " << e._statusCode << std::endl;
 	t_errPage	errPage = _config.getErrPage();
-	_response.generateCatchedResponse(e, errPage, fd, filePath);
+	std::string	filePath = _request.getRequestTarget();
+	_request.setIsCgi(false);
+	_response.generateCatchedResponse(e, errPage, fd, filePath, _fdType);
+	_request.setRequestTarget(filePath);
 }
 
-void Client::setStandardResponse(int const & statusCode)
+void Client::setStandardResponse()
 {
 	_response.setType(_fileFD->getFileType());
-	_response.setStatusCode(statusCode);
 	_response.generateStandardResponse(_fileFD->getBuffer());
 }
 
-void Client::setChunkedResponse(int const &statusCode)
+void Client::setChunkedResponse()
 {	
-	_response.setStatusCode(statusCode);
 	if (_fileFD)
 	{
 		_response.setType(_fileFD->getFileType());
@@ -118,7 +122,18 @@ void Client::setChunkedResponse(int const &statusCode)
 	}
 }
 
-void Client::ClientRequest()
+void Client::setCgiChunkedResponse()
+{
+	if (_cgiFD)
+		_response.generateCgiChunkedResponse(_cgiFD->getBody(), _cgiFD->getHeader(), _cgiFD->getStatus());
+}
+
+void Client::setSingleResponse(int const &statusCode)
+{
+	_response.generateSingleResponse(statusCode);
+}
+
+void Client::receiveClientRequest()
 {
 	char response[_BUFFER_RECV];
 
@@ -157,14 +172,14 @@ void Client::setBoundaryLimit(std::string boundary)
 	this->_boundary_sep = boundary;
 }
 
-void Client::setFileFD(FileFd *fileFd)
+void Client::setPtrFileFd(FileFd *fileFd)
 {
-	clearFileFd();
+	clearPtrFileFd();
 	if (fileFd)
 		_fileFD = fileFd;
 }
 
-void Client::clearFileFd()
+void Client::clearPtrFileFd()
 {
 	if (_fileFD)
 		delete _fileFD;
@@ -176,12 +191,40 @@ void Client::updateFileStatus(int const &status)
 	_fileFD->setStatus(status);
 }
 
+CgiFd *Client::getPtrCgiFd()
+{
+    return _cgiFD;
+}
+
+void Client::setPtrCgiFd(CgiFd *cgiFd)
+{
+	clearPtrCgiFd();
+	_cgiFD = cgiFd;
+}
+
+void Client::clearPtrCgiFd()
+{
+	if (_cgiFD)
+		delete _cgiFD;
+	_cgiFD = NULL;
+}
+
+int Client::getCgiFdStatus()
+{
+    return _cgiFD->getStatus();
+}
+
+void Client::updateCgiFdStatus(int const &status)
+{
+	_cgiFD->setStatus(status);
+}
+
 void Client::increaseFileSent(size_t const &add)
 {
 	_fileFD->increaseFileSent(add);
 }
 
-Response & Client::getResponse()
+Response & Client::getObjResponse()
 {
 	return (this->_response);
 }
@@ -206,6 +249,11 @@ int Client::getStatusCodeResponse()
     return _response.getStatusCode();
 }
 
+void Client::setStatusCodeResponse(int const &status)
+{
+	_response.setStatusCode(status);
+}
+
 void Client::clearResponse()
 {
 	_response.clearResponse();
@@ -216,7 +264,17 @@ void Client::updateResponseCategory(int const &stat)
 	_response.setCategory(stat);
 }
 
-FileFd *Client::getFileFD()
+int Client::getFdType() const
+{
+    return _fdType;
+}
+
+void Client::setFdType(int const &type)
+{
+	_fdType = type;
+}
+
+FileFd *Client::getPtrFileFd()
 {
 	return (_fileFD);
 }
@@ -240,7 +298,7 @@ const char *Client::RecvError::what() const throw()
 
 void Client::processRequestWithConfig()
 {
-	checkContentLength();
+	checkContentLength(); //See with POST method [Safidy]
 	buildRequestTarget();
 }
 
@@ -268,22 +326,43 @@ void Client::buildRequestTarget()
 	vectLocation	loc;
 
 	target = _request.getRequestTarget();
+	_request.setIsCgi(false);
 	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
 	if (target == "/")
 	{
 		processLocationOption(_config.getClassLocation()[0], _request);
-		_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
+		it = _config.findClassLocation("/");
+		if ((*it).getAutoindex() == "ON")
+		{
+			_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory());
+		}
+		else
+		{
+			_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
+		}
 		std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
 		return ;
 	}
 	loc = _config.getClassLocation();
-	it = findLongestMatch(target, loc);
-	processLocationOption(*it, _request);
-	std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
-	if ((*it).getLocation() != "/")
-		target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
+	if (target.find(".php", 0) != std::string::npos)
+	{
+		_request.clearCgiClass();
+		_request.setIsCgi(true);
+		it = _config.findClassLocation(".php");
+		processLocationOption(*it, _request);
+		_request.processCgiClass(target, (*it).getRootDirectory());
+		target = (*it).getRootDirectory() + target; //Review if request target needed ? normally done during parsing Cgi
+	}
 	else
-		target = (*it).getRootDirectory() + target;
+	{
+		it = findLongestMatch(target, loc);
+		processLocationOption(*it, _request);
+		std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
+		if ((*it).getLocation() != "/")
+			target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
+		else
+			target = (*it).getRootDirectory() + target;
+	}
 	_request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
 }
@@ -342,14 +421,29 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
-int Client::get_request()
+void Client::get_request(uint32_t & opt, int *fd)
 {
-	int			fd;
+	if (_request.getIsCgi() == false)
+	{
+		_fdType = HTML_FILE;
+		stdGetRequest(fd);
+	}
+	else
+	{
+		_fdType = PHP_SCRIPT;
+		cgiGetRequest(fd);
+	}
+	opt = EPOLLIN;
+	setStatusCodeResponse(200);
+}
+
+void Client::stdGetRequest(int *fd)
+{
+	int			fdGet;
 	std::string	filePath;
 	DIR*		dir;
 
 	filePath = _request.getRequestTarget();
-	// std::cout << "Autoindex = " << _request.getAutoIdx() << std::endl;
 	dir = opendir(filePath.c_str());
 	if (!dir && errno == EACCES)
 		throw ErrorExcept(403, "Directory forbidden");
@@ -360,30 +454,136 @@ int Client::get_request()
 	{
 		filePath += "/index.html";
 		closedir(dir);
-	}
-	fd = open(filePath.c_str(), O_RDONLY);
-	std::cout << "\033[046mFD=" << fd << "\033[0m" << std::endl;
-	if (fd == -1)
+	}		
+	fdGet = open(filePath.c_str(), O_RDONLY | O_CLOEXEC);
+	// std::cout << "\033[046mSTD FD=" << fd << "\033[0m" << std::endl;
+	if (fdGet == -1)
 	{
 		perror("Open file");
 		if (errno == EACCES)
 			throw ErrorExcept(403, "No permission for file");
 		throw ErrorExcept(404, "File can't be opened");
 	}
-	return fd;
+	fd[FD_STDOUT] = fdGet;
 }
 
-int Client::processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath)
+void Client::cgiGetRequest(int *fd)
 {
-	int			fileFd;
-	Response	response;
-    std::string responseString;
-	t_errPage	errPage;
-	std::string	type;
+	int	pipeFd[2];
+	int	pid;
+	int	errFd[2];
+
+	if (pipe(pipeFd) == -1)
+		throw std::runtime_error("Pipe fd error");
+	if (pipe(errFd) == -1)
+		throw std::runtime_error("Pipe err error");
+	std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
+	std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
+	pid = fork();
+	if (pid == -1)
+		throw std::runtime_error("Fork error");
+	if (pid == 0)
+	{
+		dup2(errFd[1], STDERR_FILENO);
+		close(errFd[0]);
+		close(errFd[1]);
+		dup2(pipeFd[1], STDOUT_FILENO);
+		close(pipeFd[0]);
+		close(pipeFd[1]);
+		try
+		{
+			_request.execCgiClass();
+		}
+		catch(const std::exception& e)
+		{
+			fd[FD_STDOUT] = -1;
+			fd[FD_STDERR] = -1;
+		}
+	}
+	else
+	{
+		close(errFd[1]);
+		close(pipeFd[1]);
+		_request.clearCgiClass();
+		fd[FD_STDOUT] = pipeFd[0];
+		fd[FD_STDERR] = errFd[0];
+	}
+}
+
+void Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
+{
+	int	fdPost;
+
+	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
+	{
+		if (!this->_fileFD)
+		{
+			fdPost = open("storage_multi_form_data", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fdPost== -1) {
+				perror("open file in POST");
+				throw ErrorExcept(404, "File can't be opened");
+			}
+			opt = EPOLLOUT;
+			std::cout << "FD FILE->POST Multipart/data=" << fdPost << std::endl; 
+		}
+		else
+			fdPost = -1;
+		std::string	getboundary = header.find("Content-Type")->second;
+		size_t pos = getboundary.find(boundary);
+		if (pos != std::string::npos)
+			this->_boundary_sep = getboundary.substr(pos + boundary.size());
+		// std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
+		std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
+		fdPost = -1;
+	}
+	else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
+	{
+		std::cout << "\napplication/x-www-form-urlencoded\n" << std::endl;
+		if (!_fileFD)
+		{
+			fdPost = open("storage_app_xwfurlencoded", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fdPost== -1) {
+				perror("open file in POST");
+				throw ErrorExcept(404, "File can't be opened");
+			}
+			opt = EPOLLOUT;
+			std::cout << "FD FILE->POST APP/x-wwwfurlencode=" << fdPost << std::endl; 
+		}
+		fdPost = -1;
+	}
+	else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
+	{
+		if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
+		{
+			std::cout << "			VITA ZANY EEE" << std::endl;	
+			_request.set_is_CRLF_header(false);
+		}
+		std::cout << "\ntext/plain\n" << std::endl;
+		if (!_fileFD)
+		{
+			fdPost = open("storage_text_plain", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fdPost== -1) {
+				perror("open file in POST");
+				throw ErrorExcept(404, "File can't be opened");
+			}
+			opt = EPOLLOUT;
+			std::cout << "FD FILE->POST text/plain=" << fdPost << std::endl; 
+		}
+		fdPost = -1;
+	}
+	else
+		std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+	opt = EPOLLOUT;
+	fd[FD_STDOUT] = fdPost;
+}
+
+void Client::delete_request(){}
+
+void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)
+{
 	stringMap	header;
 	std::string boundary;
 
-	fileFd = -1;
 	boundary = "boundary=";
 	if (!_request.get_is_CRLF_header())
 	{
@@ -391,55 +591,15 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 		processRequestWithConfig();
 	}
 	else
-	{
-		std::cout << "METHODE=" << _request.getMethod() << std::endl;
 		_request.set_Body(clientRequest);
-		this->_request.set_c_length_received(clientRequest.size());
-	}
-	/*********************************** */
-	header = _request.getHeader();//eto aloha ity a
-	std::cout << std::endl;
+	header = _request.getHeader();
 	_request.displayRequest();
-	std::cout << std::endl;
-	std::cout << std::endl;
-	
-	/*********************************** */
 	if (_request.getMethod() == "GET")
-	{
-		fileFd = get_request();
-		filePath = _request.getRequestTarget();
-		type = Mime::getFileType(filePath); //Testing if type is listed on our default type list
-		opt = EPOLLIN;
-	}
+		get_request(opt, fd);
 	else if (_request.getMethod() == "POST")
 	{
-		if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
-		{
-			//mila creena eto si parsena eto ny multipart-body + flag hiclosena ilay form-data 
-			//mba hicreer fichier raha filename.size() != 0
-			if (!getBoundaryLimit().size())
-			{
-				std::string	getboundary = header.find("Content-Type")->second;
-				size_t pos = getboundary.find(boundary);// get boundary
-				if (pos != std::string::npos)
-					this->_boundary_sep = getboundary.substr(pos + boundary.size());
-			}
-			filePath = "upload/" + currentDateTimeString() + "storage_multi_form_data.txt";
-			fileFd = creat_file_for_post(filePath, opt);
-			std::cout << "\e[5m" << getBoundaryLimit() << "\e[0m" << std::endl;
-		}
-		else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
-		{
-			filePath = "upload/" + currentDateTimeString() + "storage_app_xwfurlencoded.txt";
-			fileFd = creat_file_for_post(filePath, opt);
-		}
-		else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
-		{
-			filePath = "upload/" + currentDateTimeString() + "storage_text_plain.txt";
-			fileFd = creat_file_for_post(filePath, opt);
-		}
-		else
-			throw ErrorExcept(400, "Client-side error");
+		post_request(header, boundary, opt, fd);
+		setSingleResponse(201);
 	}
 	else if (_request.getMethod() == "DELETE")
 	{

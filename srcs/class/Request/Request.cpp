@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 16:46:11 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:49:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false), _content_length(0), _c_length_received(0)
+Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false), _isCgi(false), _content_length(0), _c_length_received(0)
 {}
 
 Request::Request(Request const & other)
@@ -37,6 +37,8 @@ Request &Request::operator=(Request const & other)
 		_multipart_body = other._multipart_body;
 		_content_length = other._content_length;
 		_c_length_received = other._c_length_received;
+		_isCgi = other._isCgi;
+		_cgiParser = other._cgiParser;
 	}
 	return *this;
 }
@@ -71,6 +73,45 @@ std::string Request::getHttp() const
 stringMap Request::getHeader() const
 {
 	return _header;
+}
+
+bool Request::getIsCgi() const
+{
+    return _isCgi;
+}
+
+void Request::setIsCgi(bool const &condition)
+{
+	_isCgi = condition;
+}
+
+CgiParser Request::getCgiClass() const
+{
+    return _cgiParser;
+}
+
+void Request::processCgiClass(std::string const &target, std::string const & rootDirectory)
+{
+	_cgiParser.parseCgiEnv(target, rootDirectory);
+	_cgiParser.setReqMethod(_method);
+	_cgiParser.setContentLength(_request_length);
+	_cgiParser.displayCgiClass(); //For test only
+	_cgiParser.configEnvp();
+}
+
+void Request::setCgiClass(CgiParser const &cgi)
+{
+	_cgiParser = cgi;
+}
+
+void Request::execCgiClass()
+{
+	_cgiParser.execCgi();
+}
+
+void Request::clearCgiClass()
+{
+	_cgiParser.clearCgiClass();
 }
 
 const MapSVectStr& Request::getpostMultipartData() const
@@ -161,11 +202,7 @@ void Request::setRequestLine(std::string const & replacement)
 		throw std::runtime_error("Error on request line");
 	}
 	_method = splitted[0];
-	size_t f = splitted[1].find_first_of('?');
-	if (f != std::string::npos)
-		_requestTarget =  splitted[1].substr(0, f);
-	else
-		_requestTarget = splitted[1];
+	_requestTarget = splitted[1];
 	_clientHttp = splitted[2];
 	_originalRequestTarget = _requestTarget;
 }

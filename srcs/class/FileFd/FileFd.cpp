@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:09:51 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:47:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,12 @@ FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePa
 	_fdMPFDT(-1)
 {
 	std::cout << "		PATH-->" << _filePath << std::endl;
+	_fileSent = 0;
+	_stockFd = -1;
+	_fileType = "cgi";
+	_fileTotalSize = 0;
 	_fileType = Mime::getFileType(_filePath);
 	_fileTotalSize = getFileSize(_filePath);
-	_fileSent = 0;
 }
 
 FileFd::FileFd(FileFd const & other)
@@ -64,7 +67,7 @@ int FileFd::getStockFd() const
     return _stockFd;
 }
 
-int FileFd::getFileFd() const
+int FileFd::getFd() const
 {
     return _fileFd;
 }

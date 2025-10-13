@@ -4,3 +4,4 @@ location /css | root ./site/dim/assets/css | method GET
 location /js | root ./site/dim/assets/js | method GET
 location /webfonts | root ./site/dim/assets/webfonts | method GET
 location /sass | root ./site/dim/assets/sass | method GET
+location /assets | root ./site/dim/assets | method GET POST | autoindex ON

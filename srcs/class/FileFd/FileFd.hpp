@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:26:04 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:48:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,10 @@ class FileFd
 		~FileFd();
 
 		int			getStockFd() const;
-		int			getFileFd() const;
+		int			getFd() const;
 		int			getClientFd() const;
 		std::string	getBuffer() const;
 		std::string	getFilePath() const;
-		std::string	getFileType() const;
 		std::string	getOriginMethod() const;
 
 		void		setFileTotalSize(size_t size);
@@ -63,9 +62,11 @@ class FileFd
 		void		increaseFileSent(size_t	const & add);
 		bool		get_endFilePost();
 		void		set_endFilePost(bool stat);
+
 		int			getStatus() const;
 		void		setStatus(int const & status);
-
+		
+		std::string	getFileType() const;
 		void		setFileType();
 
 		void		setBuffer(std::string const & content);
