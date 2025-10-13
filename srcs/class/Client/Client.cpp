@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 09:37:14 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:17:14 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,6 +413,7 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 	}
 	else if (_request.getMethod() == "POST")
 	{
+		if (header.find("Content-Type")->second.find("multipart/form-data"))
 		if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 		{
 			//mila creena eto si parsena eto ny multipart-body + flag hiclosena ilay form-data 
