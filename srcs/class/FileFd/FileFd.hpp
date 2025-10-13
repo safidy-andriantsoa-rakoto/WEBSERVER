@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:09:37 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:26:04 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,7 @@ class FileFd
 	
 		std::string get_range_body(int start, int end);
 		void		delete_range_body(int start, int end);
-		
-		// void 		set_post_body(std::string content);
-		// std::string& get_FI_post_body();
-		// void		remove_FI_body();
-		// void		set_fdMPFDT(int &fd);
-		// int			&get_fdMPFDT();
+
 };
 
 #endif
