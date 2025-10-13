@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:02:29 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:29:40 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,16 +205,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 		readFromFileFd(it, epoll, handler, i);
 	else if (event & EPOLLOUT)
 	{
-		//open new file: avec son nom filename="..."
-		//if filename && fd file binary out  compare fd == fdfileMPFDT
-		//{
-		// parse and get body file
-		//write binary file jusqua boundary end et close apres
-		//}
-		// else
 		std::cout << "ATY QQQ		\033[43mFD EPOLLOUT FOR FILE IO-" << "\033[0m" << (*it)->getFileFd() << std::endl;
-		// if ((*it)->getFileFd() != -1 && (*it)->get_fdMPFDT() < 0)
-		// std::cout << "				FILEFDOUT eeee" << std::endl;
 		if ((*it)->getFileFd() != -1)
 		{
 			std::string body;
@@ -229,7 +220,6 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 			std::cout << "manoratra->" << (*it)->getFileTotalSize() << std::endl;
 			(*it)->delete_range_body(0, _BUFFER);
 		}
-		// (*it)->get_FI_post_body()
 		if (!(*it)->getBuffer().size() && ((*clIt).getobjREquest().get_c_length_received() == (*clIt).getobjREquest().get_content_length()))
 		{
 			std::cout << "			VITA TOMPOKO!" << std::endl;
@@ -239,6 +229,5 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 			closeFileEvent(handler, i, epoll);
 		}
 	}
-		// if (!(*it)->get_FI_post_body().size() && (*clIt).getobjREquest().get_c_length_received() == (*clIt).getobjREquest().get_content_length())
 }
 
