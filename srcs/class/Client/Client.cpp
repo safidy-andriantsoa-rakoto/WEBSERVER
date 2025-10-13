@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 11:41:28 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 12:02:18 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -512,7 +512,6 @@ void Client::cgiGetRequest(int *fd)
 
 void Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
 {
-	// int	fdPost;
 	std::string filePath;
 	
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
@@ -536,68 +535,7 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	}
 	else
 		throw ErrorExcept(400, "Client-side error");
-	
-	// if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
-	// {
-	// 	if (!this->_fileFD)
-	// 	{
-	// 		fdPost = open("storage_multi_form_data", O_WRONLY | O_CREAT | O_APPEND, 0644);
-	// 		if (fdPost== -1) {
-	// 			perror("open file in POST");
-	// 			throw ErrorExcept(404, "File can't be opened");
-	// 		}
-	// 		opt = EPOLLOUT;
-	// 		std::cout << "FD FILE->POST Multipart/data=" << fdPost << std::endl; 
-	// 	}
-	// 	else
-	// 		fdPost = -1;
-	// 	std::string	getboundary = header.find("Content-Type")->second;
-	// 	size_t pos = getboundary.find(boundary);
-	// 	if (pos != std::string::npos)
-	// 		this->_boundary_sep = getboundary.substr(pos + boundary.size());
-	// 	// std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
-	// 	std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
-	// 	fdPost = -1;
-	// }
-	// else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
-	// {
-	// 	std::cout << "\napplication/x-www-form-urlencoded\n" << std::endl;
-	// 	if (!_fileFD)
-	// 	{
-	// 		fdPost = open("storage_app_xwfurlencoded", O_WRONLY | O_CREAT | O_APPEND, 0644);
-	// 		if (fdPost== -1) {
-	// 			perror("open file in POST");
-	// 			throw ErrorExcept(404, "File can't be opened");
-	// 		}
-	// 		opt = EPOLLOUT;
-	// 		std::cout << "FD FILE->POST APP/x-wwwfurlencode=" << fdPost << std::endl; 
-	// 	}
-	// 	fdPost = -1;
-	// }
-	// else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
-	// {
-	// 	if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
-	// 	{
-	// 		std::cout << "			VITA ZANY EEE" << std::endl;	
-	// 		_request.set_is_CRLF_header(false);
-	// 	}
-	// 	std::cout << "\ntext/plain\n" << std::endl;
-	// 	if (!_fileFD)
-	// 	{
-	// 		fdPost = open("storage_text_plain", O_WRONLY | O_CREAT | O_APPEND, 0644);
-	// 		if (fdPost== -1) {
-	// 			perror("open file in POST");
-	// 			throw ErrorExcept(404, "File can't be opened");
-	// 		}
-	// 		opt = EPOLLOUT;
-	// 		std::cout << "FD FILE->POST text/plain=" << fdPost << std::endl; 
-	// 	}
-	// 	fdPost = -1;
-	// }
-	// else
-	// 	std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 	opt = EPOLLOUT;
-	// fd[FD_STDOUT] = fdPost;
 }
 
 void Client::delete_request(){}
@@ -614,7 +552,10 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		processRequestWithConfig();
 	}
 	else
+	{
+		std::cout << "			MIDITRA ATY EEEEEEEEEEEEEEEEEEEE" << std::endl;	
 		_request.set_Body(clientRequest);
+	}
 	header = _request.getHeader();
 	_request.displayRequest();
 	if (_request.getMethod() == "GET")

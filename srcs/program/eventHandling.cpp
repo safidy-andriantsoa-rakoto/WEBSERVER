@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 11:24:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:59:32 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,16 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	{
 		handler.addToVectCgiFd(it, fdFromRequest[FD_STDOUT], fdFromRequest[FD_STDERR]);
 		epoll.epoll_control(epollOpt, fdFromRequest[FD_STDERR]);
+	}
+	if ((*it).getPtrFileFd())
+	{
+		std::cout << " BODY ATO AAAANNN  ["<< (*it).getObjRequest().get_Body() << "]" << std::endl;
+		(*it).getPtrFileFd()->set_post_body((*it).getObjRequest().get_Body());
+		// std::cout << "		OAY EEEEEEEEEEEEE" << std::endl;
+		// if (tmpRequest.getMethod() == "POST")
+		// std::cout << "				\e[5mBODY\e[0m---["<< (*it).getobjREquest().get_v_body_two(0) << "]" << std::endl;
+		// (*it).getFileFD()->setBuffer((*it).getobjREquest().get_v_body_two(0));
+		// (*it).getobjREquest().remove_from_body_two(0);
 	}
 	epoll.epoll_control(epollOpt, fdFromRequest[FD_STDOUT]);
 }
@@ -172,6 +182,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 			(*it)->manageFd();
 
 			body = (*it)->get_range_body(0, _BUFFER);
+			std::cout << "BODY---["<< body << "]\nBOUNDARY=["<< (*it)->get_boundary() <<"]" << std::endl;
 			size_t len =  write((*it)->getFd(), body.c_str(), body.size());
 			if (len == (size_t)(-1))
 				std::cout << "BLEM->" << strerror(errno) << std::endl;
@@ -180,7 +191,8 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 			std::cout << "manoratra->" << (*it)->getFileTotalSize() << std::endl;
 			(*it)->delete_range_body(0, _BUFFER);
 		}
-		if (!(*it)->getBuffer().size() && ((*clIt).getObjRequest().get_c_length_received() == (*clIt).getObjRequest().get_content_length()))
+		// if (!(*it)->getBuffer().size() && ((*clIt).getObjRequest().get_c_length_received() == (*clIt).getObjRequest().get_content_length()))
+		if (!(*it)->getBuffer().size())
 		{
 			std::cout << "			VITA TOMPOKO!" << std::endl;
 			std::cout << "  TOTAL_LENGHT=" << (*clIt).getObjRequest().get_content_length() << "| RECEIVED=" << (*clIt).getObjRequest().get_c_length_received() << std::endl;
