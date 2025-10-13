@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 11:45:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 13:33:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	_clientFD(_clientFD),
 	_connect(is_connect),
 	_fileFD(NULL),
-	_cgiFD(NULL)
+	_cgiFD(NULL),
+	_modPostFile(false)
 {
 	this->_clientRequest= "";
 	this->_to_send = 0;
@@ -166,10 +167,16 @@ std::string Client::getBoundaryLimit() const
     return (this->_boundary_sep);
 }
 
+void Client::setBoundaryLimit(std::string boundary)
+{
+	this->_boundary_sep = boundary;
+}
+
 void Client::setPtrFileFd(FileFd *fileFd)
 {
 	clearPtrFileFd();
-	_fileFD = fileFd;
+	if (fileFd)
+		_fileFD = fileFd;
 }
 
 void Client::clearPtrFileFd()
@@ -274,7 +281,9 @@ FileFd *Client::getPtrFileFd()
 
 int Client::getFileStatus()
 {
-	return _fileFD->getStatus();
+	if (_fileFD)
+		return _fileFD->getStatus();
+	return (-1);
 }
 
 const char *Client::Deconnect::what() const throw()
@@ -594,9 +603,35 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	}
 	else if (_request.getMethod() == "DELETE")
 	{
-		delete_request();
-		setSingleResponse(204);
+		std::string root;
+		std::string target;
+		stringVectIt _configIt;
+		vectLocation loc;
+	
+		target = _request.getRequestTarget();
+		loc = _config.getClassLocation();
+		if (!target.size())
+			throw ErrorExcept(403, "Forbidden");
+		if (loc.size())
+		{
+			root = loc[0].getRootDirectory();
+			if (target.compare(0, root.size(), root) != 0)
+				throw ErrorExcept(401, "Unauthorized");
+			struct  stat s_stat;
+			if (stat(target.c_str(), &s_stat) != 0)
+				throw ErrorExcept(401, "Unauthorized");
+			if (S_ISREG(s_stat.st_mode))
+			{
+				if (std::remove(target.c_str()) != 0) // unlink respect la recommandation de la suject
+					throw ErrorExcept(401, "Unauthorized");
+			}
+			else
+				throw ErrorExcept(403, "Forbidden");
+			throw ErrorExcept(200, "Ok");
+		}
 	}
+	else
+		throw ErrorExcept(501, "Not Implemented");
 }
 
 vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation & location)
@@ -634,3 +669,49 @@ vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation &
 	return itFinal;
 }
 
+int Client::creat_file_for_post(std::string path, uint32_t & opt)
+{
+	int fd = -1;
+	if (!this->_fileFD && path.size())
+	{
+		fd = open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fd == -1)
+			throw ErrorExcept(404, "File can't be opened");
+		opt = EPOLLOUT;
+	}
+	return (fd);
+}
+
+std::string Client::currentDateTimeString()
+{
+	time_t now = time(0);
+	struct tm tstruct;
+	char buf[15];
+
+	tstruct = *localtime(&now);
+	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
+	return (buf);
+}
+
+void Client::set_fileMPFDT(FileFd *_fileMPFDT)
+{
+	if (_fileMPFDT)
+		this->_fileMPFDT = _fileMPFDT;
+}
+
+FileFd *Client::get_fileMPFDT()
+{
+	if (this->_fileMPFDT)
+		return (this->_fileMPFDT);
+    return (NULL);
+}
+
+void Client::switch_modPostFile(bool stat)
+{
+	this->_modPostFile = stat;
+}
+
+bool Client::modPostFile_stat()
+{
+    return (this->_fileMPFDT);
+}

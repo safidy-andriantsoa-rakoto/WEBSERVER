@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 11:45:15 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 13:33:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,56 +154,36 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 {
 	vectFileFdIt	it = handler.getFileFdIterator(i);
 	uint32_t		event = epoll.getEvent(eventIdx);
+	int				ClientFD = (*it)->getClientFd();
+	VClientIt		clIt = findFdInClient(handler.getVectClient(), ClientFD);
 
 	if (event & EPOLLIN)
 		readFromFileFd(it, epoll, handler, i);
 	else if (event & EPOLLOUT)
 	{
-		std::cout << "			\033[43mFD EPOLLOUT FOR FILE IO" << "\033[0m" << std::endl;
-		(*it)->set_endFilePost(true);
-		closeFileFdEvent(handler, i, epoll);
-	}
-}
+		std::cout << "ATY QQQ		\033[43mFD EPOLLOUT FOR FILE IO-" << "\033[0m" << (*it)->getFd() << std::endl;
+		if ((*it)->getFd() != -1)
+		{
+			std::string body;
+			(*it)->manageFd();
 
-/*
-	Cgi event is only reading through pipe no matter the method is
-*/
-void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
-{
-	vectCgiFdIt	it = handler.getCgiFdIterator(i);
-	uint32_t	event = epoll.getEvent(eventIdx);
-	int			fdCli;
-	int			bytesRead;
-	char		buffer[_BUFFER];
-	std::string	bufferString;
-
-	if (event & EPOLLOUT)
-	{
-		std::cout << "Must be EPOLLIN";
-		return; //Error on event selection
-	}
-	if ((*it)->getStatus() == OP_START) //See if necessary
-		return;
-	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
-	bytesRead = read((*it)->getFd(), buffer, _BUFFER);
-	if (bytesRead <= 0)
-	{
-		(*it)->setStatus(OP_CLOSE);
-		(*it)->clearBuffer();
-		closeCgiFdEvent(handler, i, epoll);
-		return ;
-	}
-	bufferString.append(buffer, bytesRead);
-	(*it)->setBuffer(bufferString);
-	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
-	(*it)->bufferParser();
-	(*it)->checkError();
-	// (*it)->displayBufferParsed();
-	if ((*it)->getStatus() == OP_OPEN)
-	{
-		(*it)->setStatus(OP_START);
-		fdCli = (*it)->getClientFd();
-		epoll.epoll_update_event(fdCli, EPOLLOUT);
+			body = (*it)->get_range_body(0, _BUFFER);
+			size_t len =  write((*it)->getFd(), body.c_str(), body.size());
+			if (len == (size_t)(-1))
+				std::cout << "BLEM->" << strerror(errno) << std::endl;
+			else
+				(*it)->setFileTotalSize(len);
+			std::cout << "manoratra->" << (*it)->getFileTotalSize() << std::endl;
+			(*it)->delete_range_body(0, _BUFFER);
+		}
+		if (!(*it)->getBuffer().size() && ((*clIt).getObjRequest().get_c_length_received() == (*clIt).getObjRequest().get_content_length()))
+		{
+			std::cout << "			VITA TOMPOKO!" << std::endl;
+			std::cout << "  TOTAL_LENGHT=" << (*clIt).getObjRequest().get_content_length() << "| RECEIVED=" << (*clIt).getObjRequest().get_c_length_received() << std::endl;
+			(*it)->set_endFilePost(true);
+			// epoll.epoll_update_event(ClientFD, EPOLLOUT);
+			closeFileFdEvent(handler, i, epoll);
+		}
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 10:03:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:08:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ class Request
 		size_t		_request_length;
 		bool		_autoIdx;
 		bool		_is_CRLF_header;
+		//for post
+		size_t		_content_length;
+		size_t		_c_length_received;
 
 		bool		_isCgi;
 		CgiParser	_cgiParser;
@@ -76,8 +79,9 @@ class Request
 		void			setRequestSize(ssize_t size);
 		ssize_t			getRequestSize();
 
-		void			set_Body(const std::string& _body);
+		void		set_Body(const std::string& body);
 		std::string&	get_Body();
+		void		clear_body();
 		void			set_post_body(stringVect var, std::string content);
 
 		void			setRequestTarget(std::string const & target);
@@ -86,7 +90,14 @@ class Request
 
 		void			displayRequest() const;
 
-		void			displayRequestMultipartData();
+
+		void		displayRequestMultipartData();
+
+		size_t 		get_c_length_received();
+		void 		set_c_length_received(size_t received);
+
+		size_t 		get_content_length();
+		void 		set_content_length(size_t size);
 };
 
 #endif

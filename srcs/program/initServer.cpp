@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 09:29:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/11 13:19:13 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/02 13:39:48 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,15 @@ void	launchEpoll(vectServer & vectServer, EpollCreation &epoll)
 		if (!(*it).wait_connexion_from_client())
 			throw std::runtime_error("Failed to load server");
 	}
+}
+
+std::string currentDateTimeString()
+{
+    time_t now = time(0);
+    struct tm tstruct;
+    char buf[15];
+
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
+    return (buf);
 }

@@ -6,13 +6,14 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 10:03:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:09:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false), _isCgi(false) {}
+Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false),  _content_length(0), _c_length_received(0), _isCgi(false)
+{}
 
 Request::Request(Request const & other)
 {
@@ -34,6 +35,8 @@ Request &Request::operator=(Request const & other)
 		_autoIdx = other._autoIdx;
 		_is_CRLF_header = other._is_CRLF_header;
 		_multipart_body = other._multipart_body;
+		_content_length = other._content_length;
+		_c_length_received = other._c_length_received;
 		_isCgi = other._isCgi;
 		_cgiParser = other._cgiParser;
 	}
@@ -152,16 +155,23 @@ ssize_t Request::getRequestSize()
 	return (this->_request_length);
 }
 
-void Request::set_Body(const std::string& _body)
+void Request::set_Body(const std::string& body)
 {
 	this->_body.clear();
-	if (!_body.size())
+	if (!body.size())
 		this->_body = "";
+	else
+		this->_body = body;
 }
 
 std::string& Request::get_Body()
 {
     return (_body);
+}
+
+void Request::clear_body()
+{
+	this->_body.clear();
 }
 
 void Request::set_post_body(stringVect var, std::string content)
@@ -209,8 +219,11 @@ void	Request::setRequestBody(std::string const & requeststring, size_t const & p
 		return ;
 	length = atoi((*it).second.c_str());
 	content = requeststring.substr(pos, static_cast<size_t>(length));
-	//Length error management to see with POST method
-	_body = content;
+	_body = content;//alana @zay eee
+	_c_length_received += content.size();
+	_content_length = length;
+	
+	std::cout << "\nCONTENT_LENGTH=" << _content_length << " received =" << content.size() << "\n"<< std::endl;
 }
 
 void	Request::parseRequest(std::string const & requeststring)
@@ -243,6 +256,11 @@ void	Request::parseRequest(std::string const & requeststring)
 	setRequestBody(requeststring, pos + sep.size());
 	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")
 		this->_is_CRLF_header = true;
+	// if (this->_body_two.size())
+	// 	std::cout << "[" << _body_two[0] << "]" << std::endl;
+	// else
+	// 	std::cout << ""
+	
 }
 
 void Request::displayRequest() const
@@ -278,4 +296,25 @@ void Request::displayRequestMultipartData()
 	}
 	std::cout << "==============================MULTIPARTDATA END================================" << std::endl;
 	
+}
+
+size_t Request::get_c_length_received()
+{
+    return (this->_c_length_received);
+}
+
+void Request::set_c_length_received(size_t received)
+{
+	if ((int)received > -1)
+		this->_c_length_received += received;
+}
+
+size_t Request::get_content_length()
+{
+    return (this->_content_length);
+}
+
+void Request::set_content_length(size_t size)
+{
+	this->_content_length = size;
 }

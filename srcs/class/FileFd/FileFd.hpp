@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/03 07:54:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:48:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,14 @@ class FileFd
 		std::string	_filePath;
 		std::string	_fileType;
 		std::string	_method;
+		std::string	_boundary;
 
+			
 		int			_status;
 		bool		_EndFilepost;
 
+		int			_fdMPFDT; // multipartdata
+		
 		FileFd();
 
 	public:
@@ -48,9 +52,13 @@ class FileFd
 		std::string	getBuffer() const;
 		std::string	getFilePath() const;
 		std::string	getOriginMethod() const;
+
+		void		setFileTotalSize(size_t size);
+		void		setFileSentSize(size_t size);
 		size_t		getFileTotalSize() const;
 		size_t		getFileSentSize() const;
 		
+
 		void		increaseFileSent(size_t	const & add);
 		bool		get_endFilePost();
 		void		set_endFilePost(bool stat);
@@ -70,6 +78,14 @@ class FileFd
 
 		static void	initSockFd();
 		static void	closeSockFd();
+
+		void		set_post_body(std::string &body);
+		void		set_boundary(std::string &boundary);
+		std::string &get_boundary();
+	
+		std::string get_range_body(int start, int end);
+		void		delete_range_body(int start, int end);
+
 };
 
 #endif

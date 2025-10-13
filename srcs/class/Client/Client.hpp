@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 07:59:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:47:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Client : public Server
 		CgiFd		*_cgiFD;
 		int			_fdType;
 
+		FileFd		*_fileMPFDT; //multipart filefd
 		Client();
 
 		void		processRequestWithConfig();
@@ -53,6 +54,8 @@ class Client : public Server
 
 		void		post_request(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
 		void		delete_request();
+
+		bool		_modPostFile;
 
 	public:
 		Client(const Client& client);
@@ -72,6 +75,7 @@ class Client : public Server
 		std::string getClientRequest() const;
 		bool        getConnexionStat();
 		std::string getBoundaryLimit() const;
+		void		setBoundaryLimit(std::string boundary);
 	
 		int			getFdType() const;
 		void		setFdType(int const & type);
@@ -120,6 +124,15 @@ class Client : public Server
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 
-		// void	epollAndHandlerCleanup(Handler & handler, EpollCreation & epoll);
+		int	creat_file_for_post(std::string path, uint32_t & opt);
+
+		std::string currentDateTimeString();
+
+
+		void	set_fileMPFDT(FileFd* _fileMPFDT);
+		FileFd* get_fileMPFDT();
+
+		void	switch_modPostFile(bool stat);
+		bool	modPostFile_stat();
 
 };

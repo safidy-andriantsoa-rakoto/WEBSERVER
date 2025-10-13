@@ -1,0 +1,1 @@
+location / | root ./site/delete | method GET DELETE

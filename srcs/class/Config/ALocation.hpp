@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ALocation.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:17:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/08 20:40:31 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

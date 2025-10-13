@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/06 10:29:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:47:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,14 @@ FileFd::FileFd(){}
 FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePath) : 
 	_fileFd(fileFd),
 	_clientFd(clientFd),
+	_fileTotalSize(0),
+	_fileSent(0),
 	_filePath(filePath),
 	_status(OP_OPEN),
-	_EndFilepost(false)
+	_EndFilepost(false),
+	_fdMPFDT(-1)
 {
+	std::cout << "		PATH-->" << _filePath << std::endl;
 	_fileSent = 0;
 	_stockFd = -1;
 	_fileType = "cgi";
@@ -51,6 +55,7 @@ FileFd &FileFd::operator=(FileFd const & other)
 		_fileTotalSize = other._fileTotalSize;
 		_fileSent = other._fileSent;
 		_EndFilepost = other._EndFilepost;
+		_fdMPFDT = other._fdMPFDT;
 	}
 	return *this;
 }
@@ -90,6 +95,18 @@ std::string FileFd::getFileType() const
 std::string FileFd::getOriginMethod() const
 {
     return _method;
+}
+
+void FileFd::setFileTotalSize(size_t size)
+{
+	if ((int)size > -1)
+		this->_fileTotalSize += size;
+}
+
+void FileFd::setFileSentSize(size_t size)
+{
+	if ((int)size > -1)
+		this->_fileSent = size;
 }
 
 size_t FileFd::getFileTotalSize() const
@@ -176,4 +193,38 @@ void FileFd::closeSockFd()
 		close(_sockFd[0]);
 	if (_sockFd[1] != -1)
 		close(_sockFd[1]);
+}
+
+void FileFd::set_post_body(std::string &body)
+{
+	if (body.size())
+		_buffer.insert(_buffer.size(), body);
+}
+
+void FileFd::set_boundary(std::string &boundary)
+{
+	this->_boundary = boundary;
+}
+
+std::string &FileFd::get_boundary()
+{
+    return (this->_boundary);
+}
+
+std::string FileFd::get_range_body(int start, int end)
+{
+	if (_buffer.size() && start > -1 && end > -1 && end > start)
+    	return (_buffer.substr(start, end));
+	return ("");
+}
+
+void FileFd::delete_range_body(int start, int end)
+{
+	if (_buffer.size() && start > -1 && end > -1 && end > start)
+	{
+		if ((size_t)(end) > _buffer.size())
+			_buffer.erase(_buffer.begin() + start, _buffer.end());
+		else
+			_buffer.erase(_buffer.begin() + start, _buffer.begin() + end);
+	}
 }
