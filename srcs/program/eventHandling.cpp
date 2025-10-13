@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 11:06:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:24:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,16 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
 		return;
 	}
-	if (fdFromRequest[FD_STDOUT] == -1)
+	if (fdFromRequest[FD_STDOUT] < 0)
 	{
-		handler.setProgramBreak(true);
+		if (fdFromRequest[FD_STDOUT] == -2)
+		{
+			std::cout << "BREAAAAAK\n";
+			handler.setProgramBreak(true);
+		}
 		return;
 	}
+
 	if ((*it).getFdType() == HTML_FILE)
 		handler.addToVectFileFd(it, fdFromRequest[FD_STDOUT]);
 	else
@@ -183,6 +188,45 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 			// epoll.epoll_update_event(ClientFD, EPOLLOUT);
 			closeFileFdEvent(handler, i, epoll);
 		}
+	}
+}
+
+void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
+{
+	vectCgiFdIt	it = handler.getCgiFdIterator(i);
+	uint32_t	event = epoll.getEvent(eventIdx);
+	int			fdCli;
+	int			bytesRead;
+	char		buffer[_BUFFER];
+	std::string	bufferString;
+
+	if (event & EPOLLOUT)
+	{
+		std::cout << "Must be EPOLLIN";
+		return; //Error on event selection
+	}
+	if ((*it)->getStatus() == OP_START) //See if necessary
+		return;
+	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
+	bytesRead = read((*it)->getFd(), buffer, _BUFFER);
+	if (bytesRead <= 0)
+	{
+		(*it)->setStatus(OP_CLOSE);
+		(*it)->clearBuffer();
+		closeCgiFdEvent(handler, i, epoll);
+		return ;
+	}
+	bufferString.append(buffer, bytesRead);
+	(*it)->setBuffer(bufferString);
+	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
+	(*it)->bufferParser();
+	(*it)->checkError();
+	// (*it)->displayBufferParsed();
+	if ((*it)->getStatus() == OP_OPEN)
+	{
+		(*it)->setStatus(OP_START);
+		fdCli = (*it)->getClientFd();
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
 }
 

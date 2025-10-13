@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 11:10:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:25:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -496,8 +496,8 @@ void Client::cgiGetRequest(int *fd)
 		}
 		catch(const std::exception& e)
 		{
-			fd[FD_STDOUT] = -1;
-			fd[FD_STDERR] = -1;
+			fd[FD_STDOUT] = -2;
+			fd[FD_STDERR] = -2;
 		}
 	}
 	else
