@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 08:01:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 08:10:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,6 +227,7 @@ void Response::generateLDirResponse(LDirExcept &d)
 void Response::generateSingleResponse(int const &statusCode)
 {
 	_statusCode = statusCode;
+	_respCategory = SINGLE_RSP;
 	_type = "text/html";
 	setStatusLine();
 	_header.clear();

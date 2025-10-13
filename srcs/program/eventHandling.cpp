@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 08:05:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 08:10:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,7 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 
 	if (responseCategory == LDIR_RSP)
 		sendLdirResponse(it, fdCli, epoll); //Review for Listing Directory : maybe sending multiple response if the string is not fully sent
-	else if (responseCategory == REDIR_RSP || responseCategory == ONE_RSP) //Response send only one time : redirection, POST and DELETE method
+	else if (responseCategory == REDIR_RSP || responseCategory == SINGLE_RSP) //Response send only one time : redirection, POST and DELETE method
 		sendSingleResponse(it, fdCli, epoll);
 	else if ((*it).getPtrFileFd())
 		sendHtmlFileResponse(it, fdCli, epoll);
