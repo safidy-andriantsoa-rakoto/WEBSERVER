@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 15:46:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 08:00:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ class Response
 		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int  *fd, std::string & filePath, int & fdType);
 		void				generateRedirectResponse(RedirExcept & r);
 		void				generateLDirResponse(LDirExcept & d);
+		void				generateSingleResponse(int const & statusCode);
 
 		void				execCgiDefaultScript(int *fd);
 

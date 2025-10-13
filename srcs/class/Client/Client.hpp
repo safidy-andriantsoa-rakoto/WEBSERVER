@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/08 09:13:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 07:59:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ class Client : public Server
 		void		setStandardResponse();
 		void		setChunkedResponse();
 		void		setCgiChunkedResponse();
+		void		setSingleResponse(int const & statusCode);
 
 		void        receiveClientRequest();
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 09:32:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 07:55:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ enum   e_resp
     REDIR_RSP,
     ERR_RSP,
     LDIR_RSP,
-    CGI_RSP
+    CGI_RSP,
+    ONE_RSP
 };
 
 enum    e_operation

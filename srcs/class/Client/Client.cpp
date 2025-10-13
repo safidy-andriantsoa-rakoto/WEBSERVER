@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/08 09:32:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 08:02:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,11 @@ void Client::setCgiChunkedResponse()
 {
 	if (_cgiFD)
 		_response.generateCgiChunkedResponse(_cgiFD->getBody(), _cgiFD->getHeader(), _cgiFD->getStatus());
+}
+
+void Client::setSingleResponse(int const &statusCode)
+{
+	_response.generateSingleResponse(statusCode);
 }
 
 void Client::receiveClientRequest()
@@ -578,7 +583,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	else if (_request.getMethod() == "POST")
 	{
 		post_request(header, boundary, opt, fd);
-		setStatusCodeResponse(201);
+		setSingleResponse(201);
 	}
 	else if (_request.getMethod() == "DELETE")
 	{
@@ -586,7 +591,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		/*
 			Need to return fd???
 		*/
-		setStatusCodeResponse(201);
+		setSingleResponse(201);
 	}
 }
 

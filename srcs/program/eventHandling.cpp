@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 10:12:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 08:05:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,8 +256,10 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	int			responseCategory = (*it).getCategoryResponse();
 	std::cout << "-->> \033[45mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
 
-	if (responseCategory == REDIR_RSP || responseCategory == LDIR_RSP)
-		sendRedirOrLdirResponse(it, fdCli, epoll);
+	if (responseCategory == LDIR_RSP)
+		sendLdirResponse(it, fdCli, epoll); //Review for Listing Directory : maybe sending multiple response if the string is not fully sent
+	else if (responseCategory == REDIR_RSP || responseCategory == ONE_RSP) //Response send only one time : redirection, POST and DELETE method
+		sendSingleResponse(it, fdCli, epoll);
 	else if ((*it).getPtrFileFd())
 		sendHtmlFileResponse(it, fdCli, epoll);
 	else if ((*it).getPtrCgiFd())

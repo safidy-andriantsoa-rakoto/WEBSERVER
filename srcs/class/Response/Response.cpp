@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/09 08:07:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 08:01:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,6 +222,17 @@ void Response::generateLDirResponse(LDirExcept &d)
 	_body = LDirExcept::_part[0] + list + LDirExcept::_part[1];
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Connection"] = "keep-alive";
+}
+
+void Response::generateSingleResponse(int const &statusCode)
+{
+	_statusCode = statusCode;
+	_type = "text/html";
+	setStatusLine();
+	_header.clear();
+	_body.clear();
+	_header["Connection"] = "keep-alive";
+	_header["Content-Length"] = "0";
 }
 
 void Response::execCgiDefaultScript(int *fd)
