@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/08 09:32:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:58:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,10 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 	epoll.epoll_clean((*itCgi)->getFd());
 	handler.removeCgiFd(itCgi);
 	if ((*it).getFdType() == HTML_FILE)
+	{
+		(*it).clearPtrCgiFd();
 		handler.addToVectFileFd(it, fd[FD_STDOUT]);
+	}
 	else
 	{
 		handler.addToVectCgiFd(it, fd[FD_STDOUT], fd[FD_STDERR]);

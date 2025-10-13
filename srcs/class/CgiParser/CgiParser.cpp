@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/09 07:40:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:53:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ void CgiParser::parseCgiEnv(std::string const & requestTarget, std::string const
 	stringVect	vect;
 
 	vect = splitString(requestTarget, "?");
-	_query = vect[1];
+	if (vect.size() == 2)
+	{
+		_query = vect[1];
+	}
 	_scriptName = vect[0];
 	_scriptFileName = rootDirectory + _scriptName;
 }
@@ -64,9 +67,8 @@ void CgiParser::configEnvp()
 	replaceString(ownedConfig, _scriptName, "$4");
 	replaceString(ownedConfig, convertIntToString(_contentLength), "$5");
 	vect = splitString(ownedConfig, "\n");
+	clearCharTable(_envp);
 	_envp = convertStringVectToTable(vect);
-	// displayCharTable(_envp, "ENVP");
-	// clearCharTable(_envp);
 	vect.clear();
 	ownedConfig.clear();
 }
@@ -83,9 +85,8 @@ void CgiParser::configErrEnvp(int const & statusCode, std::string const & status
 	replaceString(ownedConfig, convertIntToString(statusCode), "$3");
 	replaceString(ownedConfig, statusCodePhrase, "$4");
 	vect = splitString(ownedConfig, "\n");
+	clearCharTable(_envp);
 	_envp = convertStringVectToTable(vect);
-	// displayCharTable(_envp, "ENVP");
-	// clearCharTable(_envp);
 	vect.clear();
 	ownedConfig.clear();
 }

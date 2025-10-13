@@ -1,4 +1,4 @@
-location / | root ./site/our_webserv | method GET
+location / | root ./site/our_webserv | method GET | autoindex ON
 location /tooplate | root ./site/our_webserv/tooplate | method GET | autoindex ON
 location /custom | root ./config/errorPage/custom | method GET
 location .php | root ./site/our_webserv/cgi-bin | method GET POST DELETE | autoindex ON

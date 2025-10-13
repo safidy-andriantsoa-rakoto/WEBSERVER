@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 09:21:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:45:15 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,179 +49,6 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	try
 	{
 		(*it).processRequest(client_request, epollOpt, fdFromRequest);
-		// size_t pos = client_request.find(limit);
-		// if (pos != std::string::npos)
-		// {
-		// 	std::string header = client_request.substr(0, pos);
-		// 	std::cout << "HEADER====>" << header << "]" << std::endl;
-		// 	body = client_request.substr(pos + limit.size(), client_request.size());
-		// 	if ((*it).getBoundaryLimit().size() && body.size())
-		// 	{
-		// 		limiter += (*it).getBoundaryLimit() + "\r\n";
-		// 		limiterEnd += (*it).getBoundaryLimit() + "--\r\n";
-		// 		size_t is_boundary = body.find(limiter);
-		// 		size_t is_boundaryEnd;
-		// 		body.erase(0, is_boundary);
-		// 		while (is_boundary != std::string::npos)
-		// 		{
-		// 			body.erase(0, is_boundary + limiter.size());
-		// 			is_boundary = body.find(limiter);
-		// 			is_boundaryEnd = body.find(limiterEnd);
-
-		// 			if (is_boundary != std::string::npos)
-		// 			{
-		// 				// std::string tmp = body.substr(0, is_boundary - 2);
-		// 				// stringVect separate = strictSplit(tmp, limit);
-		// 				// if (separate.size())
-		// 				// 	std::cout << "["<< separate[0] << "][" << separate[1] << "]" << std::endl;
-		// 				stringVect separate;
-		// 				std::string tmp = body.substr(0, is_boundary - 2);
-		// 			 	size_t is_end = tmp.find("\r\n\r\n");
-		// 				if (is_end != std::string::npos)
-		// 				{
-		// 					std::cout << "			aty eeeee" << std::endl;
-		// 					if (is_end + 4 == tmp.size())
-		// 					{
-		// 						tmp.erase(is_end);
-		// 						separate.push_back(tmp);
-		// 						separate.push_back("");
-		// 					}
-		// 				}
-		// 				else
-		// 					separate = strictSplit(tmp, "\r\n\r\n");
-		// 				if (separate.size() == 2)
-		// 				{
-		// 					stringVect var_line;
-		// 					stringVect var;
-
-		// 					size_t find_rn = separate[0].find("\r\n");
-		// 					if (find_rn != std::string::npos)
-		// 					{
-		// 						while (find_rn != std::string::npos)
-		// 						{
-		// 							stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 							if (tmp1.size())
-		// 								std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
-		// 							separate[0].erase(0, find_rn + 2);
-		// 							find_rn = separate[0].find("\r\n");
-		// 							if (find_rn == std::string::npos)
-		// 							{
-		// 								stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 								if (tmp.size())
-		// 									std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
-		// 							}
-		// 						}
-		// 					}
-		// 					else
-		// 						var = strictSplit(separate[0], ": ");
-		// 					if (var.size())
-		// 						(*it).getObjRequest().set_post_body(var, *(separate.begin() + 1));
-		// 				}
-		// 				std::cout << "BODY=====>[" << tmp << "]" << std::endl;
-		// 			}
-		// 			else if (is_boundaryEnd != std::string::npos)
-		// 			{
-		// 				stringVect separate;
-		// 				std::string tmp = body.substr(0, is_boundaryEnd - 2);
-		// 			 	size_t is_end = tmp.find("\r\n\r\n");
-		// 				if (is_end != std::string::npos)
-		// 				{
-		// 					if (is_end + 4 == tmp.size())
-		// 					{
-		// 						tmp.erase(is_end);
-		// 						separate.push_back(tmp);
-		// 						separate.push_back("");
-		// 					}
-		// 				}
-		// 				else
-		// 					separate = strictSplit(tmp, "\r\n\r\n");
-		// 				if (separate.size())
-		// 					std::cout << " END{"<< tmp << "} ["<< separate[0] << "][" << separate[1] << "]" << std::endl;
-		// 				if (separate.size() == 2)
-		// 				{
-		// 					stringVect var_line;
-		// 					stringVect var;
-
-		// 					size_t find_rn = separate[0].find("\r\n");
-		// 					if (find_rn != std::string::npos)
-		// 					{
-		// 						while (find_rn != std::string::npos)
-		// 						{
-		// 							stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 							if (tmp1.size())
-		// 								std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
-		// 							separate[0].erase(0, find_rn + 2);
-		// 							find_rn = separate[0].find("\r\n");
-		// 							if (find_rn == std::string::npos)
-		// 							{
-		// 								stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 								if (tmp.size())
-		// 									std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
-		// 							}
-		// 						}
-		// 					}
-		// 					else
-		// 						var = strictSplit(separate[0], ": ");
-		// 					if (var.size())
-		// 						(*it).getObjRequest().set_post_body(var, *(separate.begin() + 1));
-		// 				}
-		// 				std::cout << "\e[5m		TAPITRA       \e[0m" << std::endl;
-		// 			}
-		// 			else
-		// 			{
-		// 				// stringVect separate = strictSplit(body, limit);
-		// 				// if (separate.size())
-		// 				// 	std::cout << "["<< separate[0] << "][" << separate[1] << "]" << std::endl;
-		// 				stringVect separate;
-		// 				std::string tmp = body;
-		// 			 	size_t is_end = tmp.find("\r\n\r\n");
-		// 				if (is_end != std::string::npos)
-		// 				{
-		// 					if (is_end + 4 == tmp.size())
-		// 					{
-		// 						tmp.erase(is_end);
-		// 						separate.push_back(tmp);
-		// 						separate.push_back("");
-		// 					}
-		// 				}
-		// 				else
-		// 					separate = strictSplit(tmp, "\r\n\r\n");
-		// 				if (separate.size() == 2)
-		// 				{
-		// 					stringVect var_line;
-		// 					stringVect var;
-
-		// 					size_t find_rn = separate[0].find("\r\n");
-		// 					if (find_rn != std::string::npos)
-		// 					{
-		// 						while (find_rn != std::string::npos)
-		// 						{
-		// 							stringVect tmp1 =  strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 							if (tmp1.size())
-		// 								std::copy(tmp1.begin(), tmp1.end(), std::back_inserter(var));
-		// 							separate[0].erase(0, find_rn + 2);
-		// 							find_rn = separate[0].find("\r\n");
-		// 							if (find_rn == std::string::npos)
-		// 							{
-		// 								stringVect tmp = strictSplit(separate[0].substr(0, find_rn), ": ");
-		// 								if (tmp.size())
-		// 									std::copy(tmp.begin(), tmp.end(), std::back_inserter(var));
-		// 							}
-		// 						}
-		// 					}
-		// 					else
-		// 						var = strictSplit(separate[0], ": ");
-		// 					if (var.size())
-		// 						(*it).getObjRequest().set_post_body(var, *(separate.begin() + 1));
-		// 				}
-		// 				std::cout << "BODY==NOT=END===>[" << body << "]" << std::endl;
-		// 			}
-		// 		}
-		// 	}
-		// }
-		// (*it).getObjRequest().displayRequestMultipartData();
-		// int fdCli = (*it).get_clientFD();
-		// epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
 	catch(AExcept & e)
 	{
@@ -241,9 +68,10 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
 		return;
 	}
-	if (fdFromRequest[FD_STDOUT] == -1)
+	if (fdFromRequest[FD_STDOUT] < 0)
 	{
-		handler.setProgramBreak(true);
+		if (fdFromRequest[FD_STDOUT] == -2)
+			handler.setProgramBreak(true);
 		return;
 	}
 	if ((*it).getFdType() == HTML_FILE)
