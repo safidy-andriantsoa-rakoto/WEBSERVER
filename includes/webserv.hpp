@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 13:42:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 14:49:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,10 @@ vectServerIt	findFdInServer(vectServer & allServer, int const & fd);
 VClientIt		findFdInClient(VClient & allClient, int const & fd);
 
 // Server main
+void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & identifier, int const & fdEvent, int const & index, std::exception & e);
+void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int const & identifier, int const & i);
+void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier);
+int		readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll);
 void    launchServer(Handler & handler);
 
 //Waiting for real parser
@@ -42,7 +46,6 @@ void	closeFileFdEvent(Handler & handler, int const & i, EpollCreation & epoll);
 void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll);
 
 //MessageUtils
-void	sendLdirResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
 void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
 void	sendHtmlFileResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
 void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);

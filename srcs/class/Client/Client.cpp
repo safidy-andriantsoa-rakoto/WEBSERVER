@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 13:33:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 14:47:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -512,7 +512,7 @@ void Client::cgiGetRequest(int *fd)
 
 void Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
 {
-	int	fdPost;
+	int	fdPost = -1;
 
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
@@ -627,7 +627,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 			}
 			else
 				throw ErrorExcept(403, "Forbidden");
-			throw ErrorExcept(200, "Ok");
+			setSingleResponse(204);
 		}
 	}
 	else

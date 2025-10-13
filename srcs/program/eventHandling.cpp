@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 14:17:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 14:51:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
 		(*it).setCatchedResponse(e, fdFromRequest);
 		epollOpt = EPOLLIN;
-		if ((*it).getCategoryResponse() == REDIR_RSP || (*it).getCategoryResponse() == LDIR_RSP)
+		if ((*it).getCategoryResponse() == LDIR_RSP || (*it).getCategoryResponse() == REDIR_RSP)
 		{
 			epoll.epoll_update_event(fdCli, EPOLLOUT);
 			return;
