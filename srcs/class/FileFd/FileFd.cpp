@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:08:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:09:51 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ FileFd::FileFd(int const &fileFd, int const &clientFd, std::string const &filePa
 {
 	std::cout << "		PATH-->" << _filePath << std::endl;
 	_fileType = Mime::getFileType(_filePath);
-	// std::cout << "		BON TRAVAIL EEE" << std::endl;
 	_fileTotalSize = getFileSize(_filePath);
 	_fileSent = 0;
 }
@@ -53,7 +52,6 @@ FileFd &FileFd::operator=(FileFd const & other)
 		_fileTotalSize = other._fileTotalSize;
 		_fileSent = other._fileSent;
 		_EndFilepost = other._EndFilepost;
-		_post_body = other._post_body;
 		_fdMPFDT = other._fdMPFDT;
 	}
 	return *this;
@@ -227,35 +225,3 @@ void FileFd::delete_range_body(int start, int end)
 			_buffer.erase(_buffer.begin() + start, _buffer.begin() + end);
 	}
 }
-
-// void FileFd::set_post_body(std::string content)
-// {
-// 	if (content.size())
-// 		_post_body.push_back(content);
-// }
-
-// std::string &FileFd::get_FI_post_body()
-// {
-// 	std::string o = "";
-// 	std::string &r = o;
-//     if (_post_body.size())
-// 		return (_post_body[0]);
-// 	return (r);
-// }
-
-// void FileFd::remove_FI_body()
-// {
-// 	if (_post_body.size())
-// 		_post_body.erase(_post_body.begin());
-// }
-
-// void FileFd::set_fdMPFDT(int &fd)
-// {
-// 	if (fd > -1)
-// 		this->_fdMPFDT = fd;
-// }
-
-// int &FileFd::get_fdMPFDT()
-// {
-//     return (this->_fdMPFDT);
-// }

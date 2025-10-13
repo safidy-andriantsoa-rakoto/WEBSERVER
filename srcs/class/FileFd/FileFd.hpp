@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 09:55:48 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:09:37 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ class FileFd
 		int			_status;
 		bool		_EndFilepost;
 
-		stringVect	_post_body;
 		int			_fdMPFDT; // multipartdata
 		
 		FileFd();
