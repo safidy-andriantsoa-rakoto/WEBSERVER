@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/08 21:26:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 09:37:14 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -424,22 +424,6 @@ int Client::processRequest(std::string const & clientRequest, uint32_t & opt, st
 				if (pos != std::string::npos)
 					this->_boundary_sep = getboundary.substr(pos + boundary.size());
 			}
-			std::string body = this->getobjREquest().get_Body();
-			size_t		pos;
-			pos = body.find(this->getBoundaryLimit());
-			if (pos != std::string::npos)
-			{
-				body.erase(pos - 2, this->getBoundaryLimit().size() + 4); // -2 analana ilay --boundary + analana \r\n\r\n
-				std::cout << "		--->>" << body << std::endl;
-				pos = body.find("\r\n\r\n");
-				if (pos != std::string::npos)
-				{
-					body.erase(pos, body.size());
-					std::cout << "			--->>" << body << std::endl;
-				}
-			}
-			else
-				std::cout << "tsy misy boundary limit" << std::endl;
 			filePath = "upload/" + currentDateTimeString() + "storage_multi_form_data.txt";
 			fileFd = creat_file_for_post(filePath, opt);
 			std::cout << "\e[5m" << getBoundaryLimit() << "\e[0m" << std::endl;

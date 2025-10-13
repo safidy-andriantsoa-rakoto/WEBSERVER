@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 22:11:54 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 09:55:48 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class FileFd
 		std::string	_filePath;
 		std::string	_fileType;
 		std::string	_method;
+		std::string	_boundary;
 
 			
 		int			_status;
@@ -78,11 +79,18 @@ class FileFd
 		static void	initSockFd();
 		static void	closeSockFd();
 
-		void 		set_post_body(std::string content);
-		std::string& get_FI_post_body();
-		void		remove_FI_body();
-		void		set_fdMPFDT(int &fd);
-		int			&get_fdMPFDT();
+		void		set_post_body(std::string &body);
+		void		set_boundary(std::string &boundary);
+		std::string &get_boundary();
+	
+		std::string get_range_body(int start, int end);
+		void		delete_range_body(int start, int end);
+		
+		// void 		set_post_body(std::string content);
+		// std::string& get_FI_post_body();
+		// void		remove_FI_body();
+		// void		set_fdMPFDT(int &fd);
+		// int			&get_fdMPFDT();
 };
 
 #endif

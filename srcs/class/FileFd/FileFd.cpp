@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/07 22:01:00 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:08:06 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,34 +194,68 @@ void FileFd::closeSockFd()
 		close(_sockFd[1]);
 }
 
-void FileFd::set_post_body(std::string content)
+void FileFd::set_post_body(std::string &body)
 {
-	if (content.size())
-		_post_body.push_back(content);
+	if (body.size())
+		_buffer.insert(_buffer.size(), body);
 }
 
-std::string &FileFd::get_FI_post_body()
+void FileFd::set_boundary(std::string &boundary)
 {
-	std::string o = "";
-	std::string &r = o;
-    if (_post_body.size())
-		return (_post_body[0]);
-	return (r);
+	this->_boundary = boundary;
 }
 
-void FileFd::remove_FI_body()
+std::string &FileFd::get_boundary()
 {
-	if (_post_body.size())
-		_post_body.erase(_post_body.begin());
+    return (this->_boundary);
 }
 
-void FileFd::set_fdMPFDT(int &fd)
+std::string FileFd::get_range_body(int start, int end)
 {
-	if (fd > -1)
-		this->_fdMPFDT = fd;
+	if (_buffer.size() && start > -1 && end > -1 && end > start)
+    	return (_buffer.substr(start, end));
+	return ("");
 }
 
-int &FileFd::get_fdMPFDT()
+void FileFd::delete_range_body(int start, int end)
 {
-    return (this->_fdMPFDT);
+	if (_buffer.size() && start > -1 && end > -1 && end > start)
+	{
+		if ((size_t)(end) > _buffer.size())
+			_buffer.erase(_buffer.begin() + start, _buffer.end());
+		else
+			_buffer.erase(_buffer.begin() + start, _buffer.begin() + end);
+	}
 }
+
+// void FileFd::set_post_body(std::string content)
+// {
+// 	if (content.size())
+// 		_post_body.push_back(content);
+// }
+
+// std::string &FileFd::get_FI_post_body()
+// {
+// 	std::string o = "";
+// 	std::string &r = o;
+//     if (_post_body.size())
+// 		return (_post_body[0]);
+// 	return (r);
+// }
+
+// void FileFd::remove_FI_body()
+// {
+// 	if (_post_body.size())
+// 		_post_body.erase(_post_body.begin());
+// }
+
+// void FileFd::set_fdMPFDT(int &fd)
+// {
+// 	if (fd > -1)
+// 		this->_fdMPFDT = fd;
+// }
+
+// int &FileFd::get_fdMPFDT()
+// {
+//     return (this->_fdMPFDT);
+// }

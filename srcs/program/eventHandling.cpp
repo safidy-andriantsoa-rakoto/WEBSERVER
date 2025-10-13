@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 16:54:08 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/13 10:02:29 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,11 @@ void	manageRequestFromClient(VClientIt & it, int & fd, EpollCreation & epoll, Ha
 	}
 	if ((*it).getFileFD() && (*it).getobjREquest().getMethod() == "POST")
 	{
+		if (!(*it).getFileFD()->get_boundary().size())
+		{
+			std::string boundary = (*it).getBoundaryLimit();
+			(*it).getFileFD()->set_boundary(boundary);
+		}
 		// std::cout << " BODY ATO AAAANNN  ["<< (*it).getobjREquest().get_Body() << "]" << std::endl;
 		(*it).getFileFD()->set_post_body((*it).getobjREquest().get_Body());
 		(*it).getobjREquest().clear_body();
@@ -215,17 +220,17 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 			std::string body;
 			(*it)->manageFd();
 
-			body = (*it)->get_FI_post_body();
-			(*it)->remove_FI_body();
+			body = (*it)->get_range_body(0, _BUFFER);
 			size_t len =  write((*it)->getFileFd(), body.c_str(), body.size());
 			if (len == (size_t)(-1))
 				std::cout << "BLEM->" << strerror(errno) << std::endl;
 			else
 				(*it)->setFileTotalSize(len);
 			std::cout << "manoratra->" << (*it)->getFileTotalSize() << std::endl;
+			(*it)->delete_range_body(0, _BUFFER);
 		}
 		// (*it)->get_FI_post_body()
-		if ((*clIt).getobjREquest().get_c_length_received() == (*clIt).getobjREquest().get_content_length())
+		if (!(*it)->getBuffer().size() && ((*clIt).getobjREquest().get_c_length_received() == (*clIt).getobjREquest().get_content_length()))
 		{
 			std::cout << "			VITA TOMPOKO!" << std::endl;
 			std::cout << "  TOTAL_LENGHT=" << (*clIt).getobjREquest().get_content_length() << "| RECEIVED=" << (*clIt).getobjREquest().get_c_length_received() << std::endl;
