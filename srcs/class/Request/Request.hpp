@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:51:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:08:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ class Request
 
 		void			displayRequest() const;
 
-		void		displayRequest() const;
 
 		void		displayRequestMultipartData();
 

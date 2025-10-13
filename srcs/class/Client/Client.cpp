@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 10:47:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:10:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	_clientFD(_clientFD),
 	_connect(is_connect),
 	_fileFD(NULL),
-	_modPostFile(false),
-	_cgiFD(NULL)
+	_cgiFD(NULL),
+	_modPostFile(false)
 {
 	this->_clientRequest= "";
 	this->_to_send = 0;
@@ -622,7 +622,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 				throw ErrorExcept(401, "Unauthorized");
 			if (S_ISREG(s_stat.st_mode))
 			{
-				if (unlink(target.c_str()) != 0) // unlink respect la recommandation de la suject
+				if (std::remove(target.c_str()) != 0) // unlink respect la recommandation de la suject
 					throw ErrorExcept(401, "Unauthorized");
 			}
 			else
@@ -632,7 +632,6 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	}
 	else
 		throw ErrorExcept(501, "Not Implemented");
-	return fileFd;
 }
 
 vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation & location)

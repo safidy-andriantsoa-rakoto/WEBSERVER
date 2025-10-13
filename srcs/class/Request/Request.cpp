@@ -6,13 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:49:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 11:09:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false), _isCgi(false), _content_length(0), _c_length_received(0)
+Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false),  _content_length(0), _c_length_received(0), _isCgi(false)
 {}
 
 Request::Request(Request const & other)
