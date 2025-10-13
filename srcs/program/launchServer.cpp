@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 13:33:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 14:23:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,28 @@ void handle_c(int SIGNUM)
 {
 	if (SIGNUM == SIGINT)
 		sign = SIGINT;
+}
+
+void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & identifier, int const & fdEvent, int const & index, std::exception & e)
+{
+	if (identifier == CLIENT)
+	{
+		handler.removeClient(index, epoll);
+		epoll.epoll_clean(fdEvent);
+	}
+	if (identifier == CGI_FD || identifier == CGI_ERR_FD)
+	{
+		std::cerr << "CGI error identified" << std::endl;
+		try
+		{
+			ErrorExcept	& err = dynamic_cast<ErrorExcept &>(e);
+			handleCgiError(handler, index, epoll, err, identifier);
+		}
+		catch(const std::exception& e1)
+		{
+			std::cerr << "			Error on casting " << e1.what() << '\n';
+		}
+	}
 }
 
 void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int const & identifier, int const & i)
@@ -123,24 +145,7 @@ void    launchServer(Handler & handler)
 			catch(std::exception & e)
 			{
 				std::cerr << "\033[41m" << fdEvent << " , idt = " << identifier << " => Error on epoll event loop : " << e.what() << "\033[0m" << std::endl;
-				if (identifier == CLIENT)
-				{
-					handler.removeClient(index, epoll);
-					epoll.epoll_clean(fdEvent);
-				}
-				if (identifier == CGI_FD || identifier == CGI_ERR_FD)
-				{
-					std::cerr << "CGI error identified" << std::endl;
-					try
-					{
-						ErrorExcept	& err = dynamic_cast<ErrorExcept &>(e);
-						handleCgiError(handler, index, epoll, err, identifier);
-					}
-					catch(const std::exception& e1)
-					{
-						std::cerr << "			Error on casting " << e1.what() << '\n';
-					}
-				}
+				manageEpollLoopError(handler, epoll, identifier, fdEvent, index, e);
 				break ;
 			}
 			if (handler.getProgramBreak() == true) //Used to exit the child process correctly
