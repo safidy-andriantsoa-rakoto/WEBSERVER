@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 08:04:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 14:17:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,6 @@
 /*
 	See other cases of response, for successfull response
 */
-void	sendLdirResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
-{
-	std::string	responseString;
-
-	// std::cout <<"\033[35mSending single response\n" << responseString << "\033[0m" << std::endl;
-	responseString = (*it).getFullResponse();
-	send_value(fdCli, responseString);
-	epoll.epoll_update_event(fdCli, EPOLLIN);
-}
-
 void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
 	std::string	responseString;
@@ -104,7 +94,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
 
     size_t to_send = _send_content.size();
 
-    // std::cout << "Size to send = " << _send_content.size() << std::endl;
+    std::cout << "Size to send = " << _send_content.size() << std::endl;
     if (_acceptStatus < 0)
         throw std::runtime_error("Invalid fd to send");
     const char *resp =  _send_content.c_str();

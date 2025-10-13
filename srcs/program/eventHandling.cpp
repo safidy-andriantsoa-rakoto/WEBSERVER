@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 13:33:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/13 14:17:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,19 +27,10 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 {
 	uint32_t	epollOpt;
 	std::string client_request;
-	std::string limit = "\r\n\r\n";
-	std::string body;
-	// Request		tmpRequest;
-	std::string limiter = "--";
-	std::string limiterEnd = "--";
 	int			fdFromRequest[2] = {-1, -1};
-	
-	// if ((*it).getObjRequest().getMethod() == "POST" && (*it).getPtrFileFd() && (*it).getPtrFileFd()->get_endFilePost())
-	// 	(*it).clearPtrFileFd();
-	// tmpRequest = (*it).getObjRequest();
+
 	(*it).receiveClientRequest();
 	client_request = (*it).getClientRequest();
-	// std::cout << "-->> \033[042m ManageRequestFromClient : request_size = " << client_request.size() << "\033[0m" << std::endl;
 	if (client_request.size() == 0)
 	{
 		(*it).clearPtrFileFd();
@@ -61,8 +52,6 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 			return;
 		}
 	}
-	// std::cout << (*it).getObjRequest().getIsCgi() << " => FdFromRequest = " << fdFromRequest[FD_STDOUT] 
-	// << "/" << fdFromRequest[FD_STDERR] << std::endl;
 	if ((*it).getObjRequest().getMethod() == "DELETE")
 	{
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
@@ -89,9 +78,7 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	int			responseCategory = (*it).getCategoryResponse();
 	std::cout << "-->> \033[45mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
 
-	if (responseCategory == LDIR_RSP)
-		sendLdirResponse(it, fdCli, epoll); //Review for Listing Directory : maybe sending multiple response if the string is not fully sent
-	else if (responseCategory == REDIR_RSP || responseCategory == SINGLE_RSP) //Response send only one time : redirection, POST and DELETE method
+	if (responseCategory == REDIR_RSP || responseCategory == SINGLE_RSP || responseCategory == LDIR_RSP)
 		sendSingleResponse(it, fdCli, epoll);
 	else if ((*it).getPtrFileFd())
 		sendHtmlFileResponse(it, fdCli, epoll);
@@ -184,6 +171,45 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 			// epoll.epoll_update_event(ClientFD, EPOLLOUT);
 			closeFileFdEvent(handler, i, epoll);
 		}
+	}
+}
+
+/*
+	Cgi event is only reading through pipe no matter the method is
+*/
+void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
+{
+	vectCgiFdIt	it = handler.getCgiFdIterator(i);
+	uint32_t	event = epoll.getEvent(eventIdx);
+	int			fdCli;
+	int			bytesRead;
+	char		buffer[_BUFFER];
+	std::string	bufferString;
+
+	if (event & EPOLLOUT)
+		return;
+	if ((*it)->getStatus() == OP_START) //See if necessary
+		return;
+	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
+	bytesRead = read((*it)->getFd(), buffer, _BUFFER);
+	if (bytesRead <= 0)
+	{
+		(*it)->setStatus(OP_CLOSE);
+		(*it)->clearBuffer();
+		closeCgiFdEvent(handler, i, epoll);
+		return ;
+	}
+	bufferString.append(buffer, bytesRead);
+	(*it)->setBuffer(bufferString);
+	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
+	(*it)->bufferParser();
+	(*it)->checkError();
+	// (*it)->displayBufferParsed();
+	if ((*it)->getStatus() == OP_OPEN)
+	{
+		(*it)->setStatus(OP_START);
+		fdCli = (*it)->getClientFd();
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
 }
 

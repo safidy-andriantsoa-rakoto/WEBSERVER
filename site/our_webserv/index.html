@@ -106,24 +106,21 @@
         <div class="container">
             
             <!-- Simple Test Section -->
-            <h2 id="simple-test">FILE TEST (Navigation)</h2>
-            <p>Test basic **POST** and **DELETE** for uploading and deleting file inside the webserv.</p>
+            <h2 id="simple-test">TESTING UPLOAD</h2>
+            <p>Test basic POST and DELETE for uploading and deleting file inside the webserv.</p>
             
             <div class="test-grid">
                  <!-- 1. POST TEST CARD (File Upload) -->
                 <div class="test-card post file">
                     <h3>POST Request</h3>
-                    <p>Uploads a file to the server. Receives JSON status.</p>
-                    <form id="fileUploadForm" enctype="multipart/form-data" action="script.php" method="POST" onsubmit="handleFileUpload(event)">
-                        <div class="form-group file-upload-input">
-                            <!-- File input is always visible -->
-                            <input type="file" name="upload_file" required>
-                            <label>File</label>
-                        </div>
-                        <!-- Using the standard submit-btn class -->
+                    <p>Upload files to the server</p>
+                    <form id="form" action="" method="post" enctype="multipart/form-data">
+                        <input type="email" name="mail" id="lol" placeholder="email">
+                        <input type="file" name="tr" id="12" placeholder="LOAD FILE">
+                        <input type="file" name="tr" id="12" placeholder="LOAD FILE">
+                        <input type="text" name="age1" id="ops1" placeholder="TEXT1">
                         <button type="submit" class="submit-btn">Upload File</button>
                     </form>
-                    <div class="result-box" id="uploadResult">Ready for file upload...</div>
                 </div>
 
                 <!-- 2. DELETE TEST CARD (File Delete) -->
@@ -137,15 +134,12 @@
                     </div>
                     <!-- Using the standard submit-btn class -->
                     <button type="button" class="submit-btn" onclick="sendDeleteFileRequest()">Delete file</button>
-
-                    <h4>Response:</h4>
-                    <pre id="deleteFileResult" class="result-box">Click to DELETE a file.</pre>
                 </div>
             </div> <!-- End Simple Test Grid -->
             
             <!-- CGI Test Section -->
             <h2 id="cgi-test" style="margin-top: 60px;">CGI TEST</h2>
-            <p>Test **GET** as welcome page, **POST** **DELETE** using log.</p>
+            <p>Test CGI GET, POST and DELETE using log.</p>
             
             <div class="test-grid">
                 <!-- 1. GET TEST CARD (Name Lookup) - SIMPLE -->
@@ -160,9 +154,6 @@
                         <!-- Using the standard submit-btn class -->
                         <button type="submit" class="submit-btn">GET</button>
                     </form>
-                    <div class="result-box">
-                        <p>Submitting this form will navigate you directly to the HTML response page.</p>
-                    </div>
                 </div>
 
                 <!-- 2. POST TEST CARD (Name Register) - SIMPLE -->
@@ -177,9 +168,6 @@
                         <!-- Using the standard submit-btn class -->
                         <button type="submit" class="submit-btn">POST</button>
                     </form>
-                    <div class="result-box">
-                        <p>Submitting this form will navigate you directly to the JSON response page.</p>
-                    </div>
                 </div>
 
                 <!-- 3. DELETE TEST CARD (Name Unregister) -->
@@ -193,9 +181,6 @@
                     </div>
                     <!-- Using the standard submit-btn class -->
                     <button type="button" class="submit-btn" onclick="sendDeleteNameRequest()">DELETE</button>
-
-                    <h4>Response:</h4>
-                    <pre id="deleteNameResult" class="result-box">Click to DELETE a name inside the log.</pre>
                 </div>
 
             </div> <!-- End CGI Test grid -->
