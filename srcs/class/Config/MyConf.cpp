@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 20:20:16 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/14 22:04:47 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,9 +121,9 @@ void MyConf::displayConfig() const
 	}
 }
 
-int MyConf::getElemetConfig(const size_t &start, const size_t &end, const stringVect &file)
+void MyConf::getElemetConfig(const size_t &start, const size_t &end, const stringVect &file)
 {
-	int countLoc;
+	int countLoc = 0;
 	for (size_t i = start; i < end; ++i)
 	{
 		std::istringstream iss(file[i]);
@@ -147,36 +147,16 @@ int MyConf::getElemetConfig(const size_t &start, const size_t &end, const string
 					_errPage.strError.push_back(word);
 			}
 			if (name == "location")
-				countLoc++;
+				_countLocation = countLoc++;
 		}
 	}
-	return (countLoc);
+	std::cout << "size first = " << _errPage.strError.size() << std::endl;
+	for (size_t i = 0; i < _errPage.strError.size(); ++i)
+		std::cout << "- " << _errPage.strError[i] << std::endl;
 }
-
-void MyConf::parseConfig(stringVect file)
+size_t MyConf::findNotDigitError()
 {
-	s_errPage _errPage;
-	int countLoc(0), checkIndex(0), i(0);
-	static size_t currentBlock(0), end;
-	static intVect index = containsExactWordInVector(file, "server");
-
-	if (currentBlock >= index.size())
-		return;
-	size_t start = index[currentBlock];
-	if (currentBlock + 1 < index.size())
-		end = index[currentBlock + 1];
-	else
-		end = file.size();
-	if (checkConfigDupli(file, start, end))
-	{
-		_checkStats = false;
-		return;
-	}
-	countLoc = getElemetConfig(start, end, file);
-	for (size_t i = 0; i < _errPage.strError.size(); i++)
-	{
-		std::cout << "str error = " << _errPage.strError[i] << std::endl;
-	}
+	size_t checkIndex(0), i(0);
 	while (i < _errPage.strError.size())
 	{
 		std::string str = _errPage.strError[i];
@@ -193,7 +173,6 @@ void MyConf::parseConfig(stringVect file)
 		if (isAllDigit && !str.empty())
 		{
 			_errPage.listError.push_back(str);
-			std::cout << _errPage.listError[i] << std::endl;
 		}
 		else if (!isAllDigit)
 		{
@@ -202,17 +181,38 @@ void MyConf::parseConfig(stringVect file)
 		}
 		i++;
 	}
-	i = checkIndex;
-	if (i > 0 && ((_errPage.strError.size() - i) > 1))
+	return (checkIndex);
+}
+void MyConf::parseConfig(stringVect file)
+{
+
+	static size_t currentBlock(0), i(0), k(0);
+	static intVect index = containsExactWordInVector(file, "server");
+
+	if (currentBlock >= index.size())
+		return;
+
+	size_t start = index[currentBlock];
+	size_t end;
+	if (currentBlock + 1 < index.size())
+		end = index[currentBlock + 1];
+	else
+		end = file.size();
+	if (checkConfigDupli(file, start, end))
 	{
-		std::cout << "error of config " << std::endl;
+		_checkStats = false;
+		return;
+	}
+	getElemetConfig(start, end, file);
+	i = findNotDigitError();
+	if (i > 0 && ((_errPage.strError.size() - i > 1)))
+	{
 		_checkStats = false;
 		return;
 	}
 	else if (i > 0 && i < _errPage.strError.size())
 		_errPage.filePath = _errPage.strError[i];
-	size_t k(0);
-	_location = getLocation(countLoc);
+	_location = getLocation(_countLocation);
 	while (k < _location.size())
 	{
 		_location[k].parseLocation(file);
@@ -221,6 +221,7 @@ void MyConf::parseConfig(stringVect file)
 		else
 			return;
 	}
+	_countLocation = 0;
 	_checkStats = true;
 	currentBlock++;
 }

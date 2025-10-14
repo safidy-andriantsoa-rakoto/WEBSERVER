@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 19:12:39 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/14 21:57:09 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int main()
 	s.getParsAllServer(server, file);
 	test = server[0].getConfig();
 	Location = test.getClassLocation();
-	std:: cout << "test root " <<  Location[1].getRootDirectory() << std::endl;
+	// std:: cout << "test root " <<  Location[1].getRootDirectory() << std::endl;
 	// std::cout << "host 1 = " << test.getServHost() << std::endl;
 	// try
 	// {
