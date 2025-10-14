@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/14 14:22:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:10:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,15 +59,9 @@ Client &Client::operator=(const Client &client)
 
 Client::~Client(){}
 
-size_t Client::getToSendSize()
-{
-    return (this->_to_send);
-}
+size_t Client::getToSendSize() {return (this->_to_send);}
 
-size_t Client::getTotalSendSize()
-{
-    return (this->_total_send);
-}
+size_t Client::getTotalSendSize() {return (this->_total_send);}
 
 bool Client::is_finishedSendContent()
 {
@@ -76,10 +70,7 @@ bool Client::is_finishedSendContent()
     return (false);
 }
 
-Request &Client::getObjRequest()
-{
-    return (_request);
-}
+Request &Client::getObjRequest(){return (_request);}
 
 void Client::setToSendSize(size_t to_send)
 {
@@ -87,15 +78,9 @@ void Client::setToSendSize(size_t to_send)
 		this->_to_send = to_send;
 }
 
-void Client::IncrementTotalSendSize(size_t total_send)
-{
-	this->_total_send += total_send;
-}
+void Client::IncrementTotalSendSize(size_t total_send) {this->_total_send += total_send;}
 
-int Client::get_clientFD() const
-{
-	return (this->_clientFD);
-}
+int Client::get_clientFD() const {return (this->_clientFD);}
 
 void Client::setCatchedResponse(AExcept & e, int *fd)
 {
@@ -157,20 +142,11 @@ std::string Client::getClientRequest() const
 	return ("");
 }
 
-bool Client::getConnexionStat()
-{
-	return (this->_connect);
-}
+bool Client::getConnexionStat(){return (this->_connect);}
 
-std::string Client::getBoundaryLimit() const
-{
-    return (this->_boundary_sep);
-}
+std::string Client::getBoundaryLimit() const{return (this->_boundary_sep);}
 
-void Client::setBoundaryLimit(std::string boundary)
-{
-	this->_boundary_sep = boundary;
-}
+void Client::setBoundaryLimit(std::string boundary){this->_boundary_sep = boundary;}
 
 void Client::setPtrFileFd(FileFd *fileFd)
 {
@@ -186,15 +162,9 @@ void Client::clearPtrFileFd()
 	_fileFD = NULL;
 }
 
-void Client::updateFileStatus(int const &status)
-{
-	_fileFD->setStatus(status);
-}
+void Client::updateFileStatus(int const &status){_fileFD->setStatus(status);}
 
-CgiFd *Client::getPtrCgiFd()
-{
-    return _cgiFD;
-}
+CgiFd *Client::getPtrCgiFd(){return _cgiFD;}
 
 void Client::setPtrCgiFd(CgiFd *cgiFd)
 {
@@ -209,75 +179,33 @@ void Client::clearPtrCgiFd()
 	_cgiFD = NULL;
 }
 
-int Client::getCgiFdStatus()
-{
-    return _cgiFD->getStatus();
-}
+int Client::getCgiFdStatus(){return _cgiFD->getStatus();}
 
-void Client::updateCgiFdStatus(int const &status)
-{
-	_cgiFD->setStatus(status);
-}
+void Client::updateCgiFdStatus(int const &status){_cgiFD->setStatus(status);}
 
-void Client::increaseFileSent(size_t const &add)
-{
-	_fileFD->increaseFileSent(add);
-}
+void Client::increaseFileSent(size_t const &add){_fileFD->increaseFileSent(add);}
 
-Response & Client::getObjResponse()
-{
-	return (this->_response);
-}
+Response & Client::getObjResponse(){return (this->_response);}
 
-std::string Client::getFullResponse()
-{
-	return _response.getFullResponse();
-}
+std::string Client::getFullResponse(){return _response.getFullResponse();}
 
-std::string Client::getBodyResponse()
-{
-    return _response.getBody();
-}
+std::string Client::getBodyResponse(){return _response.getBody();}
 
-int Client::getCategoryResponse()
-{
-    return _response.getRespCategory();
-}
+int Client::getCategoryResponse(){return _response.getRespCategory();}
 
-int Client::getStatusCodeResponse()
-{
-    return _response.getStatusCode();
-}
+int Client::getStatusCodeResponse(){return _response.getStatusCode();}
 
-void Client::setStatusCodeResponse(int const &status)
-{
-	_response.setStatusCode(status);
-}
+void Client::setStatusCodeResponse(int const &status){_response.setStatusCode(status);}
 
-void Client::clearResponse()
-{
-	_response.clearResponse();
-}
+void Client::clearResponse(){_response.clearResponse();}
 
-void Client::updateResponseCategory(int const &stat)
-{
-	_response.setCategory(stat);
-}
+void Client::updateResponseCategory(int const &stat){_response.setCategory(stat);}
 
-int Client::getFdType() const
-{
-    return _fdType;
-}
+int Client::getFdType() const{return _fdType;}
 
-void Client::setFdType(int const &type)
-{
-	_fdType = type;
-}
+void Client::setFdType(int const &type){_fdType = type;}
 
-FileFd *Client::getPtrFileFd()
-{
-	return (_fileFD);
-}
+FileFd *Client::getPtrFileFd(){return (_fileFD);}
 
 int Client::getFileStatus()
 {
@@ -540,6 +468,20 @@ void Client::cgiGetRequest(int *fd)
 
 void Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
 {
+	if (_request.getIsCgi() == false)
+	{
+		_fdType = HTML_FILE;
+		stdPostRequest(header, boundary, opt, fd);
+	}
+	else
+	{
+		_fdType = PHP_SCRIPT;
+		cgiPostRequest(fd);
+	}
+}
+
+void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
+{
 	int	fdPost = -1;
 	std::string	fullPath;
 
@@ -608,6 +550,59 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 		std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 	opt = EPOLLOUT;
 	fd[FD_STDOUT] = fdPost;
+}
+
+void Client::cgiPostRequest(int *fd)
+{
+	int	pid;
+	int	outFd[2];
+	int	inFd[2];
+	int	errFd[2];
+
+	if (pipe(inFd) == -1)
+		throw std::runtime_error("input fd error");
+	if (pipe(outFd) == -1)
+		throw std::runtime_error("output fd error");
+	if (pipe(errFd) == -1)
+		throw std::runtime_error("error fd error");
+	std::cout << "inFd [0] = " << inFd[0] << " [1] = " << inFd[1] << std::endl;
+	std::cout << "outFd [0] = " << outFd[0] << " [1] = " << outFd[1] << std::endl;
+	std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
+	pid = fork();
+	if (pid == -1)
+		throw std::runtime_error("Fork error");
+	if (pid == 0)
+	{
+		dup2(inFd[0], STDIN_FILENO);
+		close(inFd[0]);
+		close(inFd[1]);
+		dup2(outFd[1], STDOUT_FILENO);
+		close(outFd[0]);
+		close(outFd[1]);
+		dup2(errFd[1], STDERR_FILENO);
+		close(errFd[0]);
+		close(errFd[1]);
+		try
+		{
+			_request.execCgiClass();
+		}
+		catch(const std::exception& e)
+		{
+			fd[FD_STDIN] = -2;
+			fd[FD_STDOUT] = -2;
+			fd[FD_STDERR] = -2;
+		}
+	}
+	else
+	{
+		close(inFd[0]);
+		close(outFd[1]);
+		close(errFd[1]);
+		_request.clearCgiClass();
+		fd[FD_STDIN] = inFd[1];
+		fd[FD_STDOUT] = outFd[0];
+		fd[FD_STDERR] = errFd[0];
+	}
 }
 
 void Client::delete_request()
@@ -758,12 +753,6 @@ FileFd *Client::get_fileMPFDT()
     return (NULL);
 }
 
-void Client::switch_modPostFile(bool stat)
-{
-	this->_modPostFile = stat;
-}
+void Client::switch_modPostFile(bool stat){this->_modPostFile = stat;}
 
-bool Client::modPostFile_stat()
-{
-    return (this->_fileMPFDT);
-}
+bool Client::modPostFile_stat(){return (this->_fileMPFDT);}

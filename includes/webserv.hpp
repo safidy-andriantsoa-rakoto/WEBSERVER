@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 14:53:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:58:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ void	launchEpoll(vectServer & allServer, EpollCreation &epoll);
 void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll);
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
-void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
-void	writeCgiInput(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
+void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll);
+void	writeCgiInput(Handler & handler, int const & i, EpollCreation & epoll);
 
 std::string	currentDateTimeString();
 

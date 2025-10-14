@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 15:01:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:58:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 /*
 	Cgi event is only reading through pipe no matter the method is
 */
-void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
+void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 {
 	int			fdCli;
 	int			bytesRead;
@@ -196,17 +196,25 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll, int 
 /*
 	Write request body to INPUT
 */
-void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll, int const &eventIdx)
+void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 {
-	int			fdCli;
 	int			bytesRead;
 	char		buffer[_BUFFER];
+	std::string	bufferString;
 	vectCgiFdIt	it = handler.getCgiFdIterator(i);
-	// VClientIt	clIt = findFdInClient(handler.getVectClient(), (*it)->getClientFd());
+	VClientIt	clIt = findFdInClient(handler.getVectClient(), (*it)->getClientFd());
 
-	if ((*it)->getStatus() == OP_START) //See if necessary
-		return;
+	/*
+		Add condition to limit buffer < _BUFFER
+		Check relation with CGI output, are they simultaneous? 
+		or do we need to wait for write to complete before EPOLLIN FD_STDOUT?
+	*/
+	bufferString = (*clIt).getObjRequest().getBody();
+	strlcpy(buffer, bufferString.c_str(), bufferString.size());
+	// if ((*it)->getStatus() == OP_START) //See if necessary
+	// 	return;
 	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
+	std::cout << "Buffer = " << buffer << std::endl;
 	bytesRead = write((*it)->getInputFd(), buffer, _BUFFER);
 	if (bytesRead <= 0)
 	{
@@ -218,7 +226,6 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll, int con
 	if ((*it)->getStatus() == OP_OPEN)
 	{
 		(*it)->setStatus(OP_START);
-		fdCli = (*it)->getClientFd();
-		epoll.epoll_update_event(fdCli, EPOLLOUT);
+		// fdCli = (*it)->getClientFd();
 	}
 }

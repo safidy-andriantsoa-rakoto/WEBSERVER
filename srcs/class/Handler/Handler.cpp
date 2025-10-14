@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 14:50:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:05:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,68 +91,27 @@ void Handler::identifyFd(int const & fd, int & index, int & identifier)
 	identifier = -1;
 }
 
-vectServer &Handler::getVectServer()
-{
-    return _vectServer;
-}
+vectServer &Handler::getVectServer(){ return _vectServer;}
 
-VClient &Handler::getVectClient()
-{
-   return _vectClient;
-}
+VClient &Handler::getVectClient(){ return _vectClient;}
 
-vectFileFd &Handler::getVectFileFd()
-{
-    return _vectFileFd;
-}
+vectFileFd &Handler::getVectFileFd(){ return _vectFileFd;}
 
-vectCgiFd &Handler::getVectCgiFd()
-{
-    return _vectCgiFd;
-}
+vectCgiFd &Handler::getVectCgiFd(){ return _vectCgiFd;}
 
-bool Handler::getProgramBreak()
-{
-    return _programBreak;
-}
+bool Handler::getProgramBreak() {return _programBreak;}
 
-void Handler::setProgramBreak(bool const &stat)
-{
-	_programBreak = stat;
-}
+void Handler::setProgramBreak(bool const &stat){_programBreak = stat;}
 
-vectServerIt Handler::getServerIterator(int const &i)
-{
-	vectServerIt it = _vectServer.begin() + i;
+vectServerIt Handler::getServerIterator(int const &i){return _vectServer.begin() + i;}
 
-    return it;
-}
+VClientIt Handler::getClientIterator(int const & i){return _vectClient.begin() + i;}
 
-VClientIt Handler::getClientIterator(int const & i)
-{
-	VClientIt	it = _vectClient.begin() + i;
+vectFileFdIt Handler::getFileFdIterator(int const &i){return _vectFileFd.begin() + i;}
 
-    return it;
-}
+vectCgiFdIt Handler::getCgiFdIterator(int const &i){ return _vectCgiFd.begin() + i;}
 
-vectFileFdIt Handler::getFileFdIterator(int const &i)
-{
-	vectFileFdIt it = _vectFileFd.begin() + i;
-
-    return it;
-}
-
-vectCgiFdIt Handler::getCgiFdIterator(int const &i)
-{
-	vectCgiFdIt it = _vectCgiFd.begin() + i;
-
-    return it;
-}
-
-void Handler::setVectServer(vectServer &vectServer)
-{
-	_vectServer = vectServer;
-}
+void Handler::setVectServer(vectServer &vectServer){ _vectServer = vectServer;}
 
 void Handler::addToVectClient(Server const & server, int const & fd)
 {
@@ -366,7 +325,7 @@ void Handler::displayHandlerStat()
 	for(size_t i = 0; i < _vectCgiFd.size(); i++)
 	{
 		if (_vectCgiFd[i])
-			std::cout << _vectCgiFd[i]->getOutputFd() << "|" << _vectCgiFd[i]->getErrFd() << ":" << _vectCgiFd[i] << " ";
+			std::cout << _vectCgiFd[i]->getInputFd() << "|" << _vectCgiFd[i]->getOutputFd() << "|" << _vectCgiFd[i]->getErrFd() << ":" << _vectCgiFd[i] << " ";
 	}
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;

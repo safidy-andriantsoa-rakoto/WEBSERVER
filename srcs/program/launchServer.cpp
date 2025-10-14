@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/14 14:53:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:59:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,11 @@ void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int 
 			break;
 		case CGI_FD_OUTPUT:
 			std::cout << "\033[44m	CGIFD OUTPUT" << "\033[0m" << std::endl;
-			readCgiOutput(handler, index, epoll, i);
+			readCgiOutput(handler, index, epoll);
 			break;
 		case CGI_FD_INPUT:
 			std::cout << "\033[44m	CGIFD INPUT" << "\033[0m" << std::endl;
-			writeCgiInput(handler, index, epoll, i);
+			writeCgiInput(handler, index, epoll);
 			break;
 		default:
 			throw std::runtime_error("Unknown fd");

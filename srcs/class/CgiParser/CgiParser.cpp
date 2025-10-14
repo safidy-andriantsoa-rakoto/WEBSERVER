@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 11:53:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:39:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void CgiParser::configEnvp()
 {
 	std::string	ownedConfig = CgiParser::_cgiConfig;
 	stringVect	vect;
-	
+
 	replaceString(ownedConfig, _reqMethod, "$1");
 	replaceString(ownedConfig, _query, "$2");
 	replaceString(ownedConfig, _scriptFileName, "$3");

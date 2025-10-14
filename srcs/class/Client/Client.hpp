@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 10:47:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:27:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ class Client : public Server
 		void		cgiGetRequest(int *fd);
 
 		void		post_request(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
+		void		stdPostRequest(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
+		void		cgiPostRequest(int *fd);
 		void		delete_request();
 
 		bool		_modPostFile;
@@ -124,9 +126,9 @@ class Client : public Server
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 
-		int	creat_file_for_post(std::string path, uint32_t & opt);
+		int				creat_file_for_post(std::string path, uint32_t & opt);
 
-		std::string currentDateTimeString();
+		std::string 	currentDateTimeString();
 
 
 		void	set_fileMPFDT(FileFd* _fileMPFDT);

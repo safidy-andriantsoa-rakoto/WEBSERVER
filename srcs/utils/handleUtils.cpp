@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 14:50:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:43:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,8 @@ void	addFdInHandlerAndEpoll(VClientIt & it, Handler & handler, EpollCreation & e
 	{
 		handler.addToVectCgiFd(it, fdFromRequest[FD_STDOUT], fdFromRequest[FD_STDERR], fdFromRequest[FD_STDIN]);
 		epoll.epoll_control(epollOpt, fdFromRequest[FD_STDERR]);
-		/*
-			Add conditions for STDIN with POST CGI
-		*/
+		if (fdFromRequest[FD_STDIN] > 0)
+			epoll.epoll_control(epollOpt, fdFromRequest[FD_STDIN]);
 	}
 	epoll.epoll_control(epollOpt, fdFromRequest[FD_STDOUT]);
 }

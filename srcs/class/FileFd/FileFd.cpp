@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 13:06:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 20:05:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,40 +62,19 @@ FileFd &FileFd::operator=(FileFd const & other)
 
 FileFd::~FileFd(){}
 
-int FileFd::getStockFd() const
-{
-    return _stockFd;
-}
+int FileFd::getStockFd() const {return _stockFd;}
 
-int FileFd::getFd() const
-{
-    return _fileFd;
-}
+int FileFd::getFd() const {return _fileFd;}
 
-int FileFd::getClientFd() const
-{
-    return _clientFd;
-}
+int FileFd::getClientFd() const {return _clientFd;}
 
-std::string FileFd::getBuffer() const
-{
-    return _buffer;
-}
+std::string FileFd::getBuffer() const {return _buffer;}
 
-std::string FileFd::getFilePath() const
-{
-    return _filePath;
-}
+std::string FileFd::getFilePath() const {return _filePath;}
 
-std::string FileFd::getFileType() const
-{
-    return _fileType;
-}
+std::string FileFd::getFileType() const {return _fileType;}
 
-std::string FileFd::getOriginMethod() const
-{
-    return _method;
-}
+std::string FileFd::getOriginMethod() const {return _method;}
 
 void FileFd::setFileTotalSize(size_t size)
 {
@@ -109,55 +88,28 @@ void FileFd::setFileSentSize(size_t size)
 		this->_fileSent = size;
 }
 
-size_t FileFd::getFileTotalSize() const
-{
-    return _fileTotalSize;
-}
+size_t FileFd::getFileTotalSize() const {return _fileTotalSize;}
 
-size_t FileFd::getFileSentSize() const
-{
-    return _fileSent;
-}
+size_t FileFd::getFileSentSize() const {return _fileSent;}
 
-void FileFd::increaseFileSent(size_t const &add)
-{
-	_fileSent += add;
-}
+void FileFd::increaseFileSent(size_t const &add) {_fileSent += add;}
 
-bool FileFd::get_endFilePost()
-{
-    return (_EndFilepost);
-}
+bool FileFd::get_endFilePost() {return (_EndFilepost);}
 
-void FileFd::set_endFilePost(bool stat)
-{
-	this->_EndFilepost = stat;
-}
+void FileFd::set_endFilePost(bool stat){this->_EndFilepost = stat;}
 
-int FileFd::getStatus() const
-{
-    return _status;
-}
+int FileFd::getStatus() const {return _status;}
 
-void FileFd::setStatus(int const &status)
-{
-	_status = status;
-}
+void FileFd::setStatus(int const &status){_status = status;}
 
 void FileFd::setFileType()
 {
 	_fileType = Mime::getFileType(_filePath);
 }
 
-void FileFd::setBuffer(std::string const &content)
-{
-	_buffer = content;
-}
+void FileFd::setBuffer(std::string const &content){_buffer = content;}
 
-void FileFd::clearBuffer()
-{
-	_buffer.clear();
-}
+void FileFd::clearBuffer(){_buffer.clear();}
 
 void FileFd::setupFd()
 {
@@ -203,15 +155,9 @@ void FileFd::set_post_body(std::string &body)
 		_buffer.insert(_buffer.size(), body);
 }
 
-void FileFd::set_boundary(std::string &boundary)
-{
-	this->_boundary = boundary;
-}
+void FileFd::set_boundary(std::string &boundary) {this->_boundary = boundary;}
 
-std::string &FileFd::get_boundary()
-{
-    return (this->_boundary);
-}
+std::string &FileFd::get_boundary(){return (this->_boundary);}
 
 std::string FileFd::get_range_body(int start, int end)
 {
