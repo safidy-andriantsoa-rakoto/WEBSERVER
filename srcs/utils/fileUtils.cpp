@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 11:24:06 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/14 17:26:30 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,16 +237,19 @@ bool checkDuplicate(stringVect file, std::string name, size_t &start, size_t &en
 		}
 	}
 	if (count != 1)
-		return (false);
-	return (true);
+	{
+		std::cout << "Name of duplicate => " << name << std::endl;
+		return (true);
+	}
+	return (false);
 }
 
-bool checkConfigDupli(stringVect file, std::string name, size_t &start, size_t &end)
+bool checkConfigDupli(stringVect file, size_t &start, size_t &end)
 {
-	if (checkConfigDupli(file, "host", start, end) || checkConfigDupli(file, "port", start, end) || checkConfigDupli(file, "server_names", start, end) 
-		|| checkConfigDupli(file, "error_page", start, end) || checkConfigDupli(file, "size", start, end))
+	if (checkDuplicate(file, "host", start, end) || checkDuplicate(file, "port", start, end) || checkDuplicate(file, "server_names", start, end) 
+		|| checkDuplicate(file, "error_page", start, end) || checkDuplicate(file, "size", start, end))
 	{
-		std::cerr << "Error : duplicate setting find" << std::endl;	
+		std::cerr << "Error : duplicate setting find or not find setting" << std::endl;	
 		return (true);
 	}	
 	return (false);

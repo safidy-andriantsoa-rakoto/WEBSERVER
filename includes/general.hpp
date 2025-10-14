@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 10:59:35 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/14 16:16:23 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,8 @@ bool        checkNumberAllContent(std::vector<std::string> &file);
 std::vector<int> containsExactWordInVector(const std::vector<std::string> &lines, const std::string &word);
 
 std::vector<std::string> getContentFile(std::string _path);
-bool checkDuplicate(stringVect file, std::string name, size_t &start , size_t &end);
+bool        checkDuplicate(stringVect file, std::string name, size_t &start , size_t &end);
+bool        checkConfigDupli(stringVect file, size_t &start, size_t &end);
 
 
 #endif

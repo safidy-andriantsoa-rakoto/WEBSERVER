@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 09:54:21 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/14 19:06:51 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,36 @@ bool MyLoc::getStatus()
     return (_checkStats);
 }
 
+void MyLoc::getElemetLocaton(const size_t &start, const size_t &end, const stringVect &file)
+{
+    for (size_t i = start; i < end; ++i)
+    {
+        std::istringstream iss(file[i]);
+        std::string name, value;
+        iss >> name;
+        while (std::getline(iss, value))
+        {
+            if (name == "location")
+            {
+                stringVect tab = splitString(value, " ");
+                _locations = tab[0];
+            }
+            if (name == "root")
+                _root.push_back(value);
+            if (name == "autoindex")
+                _autoindex.push_back(value);
+            std::istringstream s(value);
+            std::string word;
+            while (s >> word)
+            {
+                if (name == "method")
+                    _method.push_back(word);
+                if (name == "redirect")
+                    _redirect.push_back(word);
+            }
+        }
+    }
+}
 void MyLoc::parseLocation(const stringVect &file)
 {
     static intVect index = containsExactWordInVector(file, "location");
@@ -81,35 +111,7 @@ void MyLoc::parseLocation(const stringVect &file)
     else
         end = file.size();
     std::cout << "file[start] = " << file[start] << std::endl;
-    for (size_t i = start; i < end; ++i)
-    {
-        std::istringstream iss(file[i]);
-        std::string name, value;
-        iss >> name;
-        while (std::getline(iss, value))
-        {
-            if (name == "location")
-            {
-                stringVect tab = splitString(value, " ");
-                _locations = tab[0];
-            }
-            if(name == "root")
-                _root.push_back(value);
-            if(name == "autoindex")
-                _autoindex.push_back(value);
-            std::istringstream s(value);
-            std::string word;
-            while(s >> word)
-            {
-                if(name == "method")
-                    _method.push_back(word);
-                if(name == "redirect")
-                    _redirect.push_back(word);
-            }
-        }
-    }
-    std::cout << "location =  " << _locations << " size = " << _location.size() << std::endl;
-    std::cout << "root = " << _root.size() << std::endl;
+    getElemetLocaton(start, end, file);
     currentBlock++;
     _checkStats = true;
 }

@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/17 07:17:14 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/14 18:45:10 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class MyLoc : public ALocation
 		MyLoc & operator=(MyLoc const & other);
 		~MyLoc();
 
+		void 	getElemetLocaton(const size_t &start, const size_t &end, const stringVect &file);
 		virtual void	parseLocation(std::string const & filePath);
 		virtual void	parseLocation(const stringVect &file);
 		bool getStatus();
