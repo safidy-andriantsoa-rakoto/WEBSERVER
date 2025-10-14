@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 14:51:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 09:49:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	client_request = (*it).getClientRequest();
 	if (client_request.size() == 0)
 	{
+		std::cout << "			Request size = " << client_request.size() << std::endl;
+		handler.checkAndRemoveFileFd((*it).getPtrFileFd());
 		(*it).clearPtrFileFd();
+		handler.checkAndRemoveCgiFd((*it).getPtrCgiFd());
 		(*it).clearPtrCgiFd();
 		throw std::runtime_error("ManageRequestFromClient - request size = 0");
 	}
@@ -46,13 +49,8 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
 		(*it).setCatchedResponse(e, fdFromRequest);
 		epollOpt = EPOLLIN;
-		if ((*it).getCategoryResponse() == LDIR_RSP || (*it).getCategoryResponse() == REDIR_RSP)
-		{
-			epoll.epoll_update_event(fdCli, EPOLLOUT);
-			return;
-		}
 	}
-	if ((*it).getObjRequest().getMethod() == "DELETE")
+	if ((*it).getCategoryResponse() == SINGLE_RSP || (*it).getCategoryResponse() == LDIR_RSP || (*it).getCategoryResponse() == REDIR_RSP)
 	{
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
 		return;

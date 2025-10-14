@@ -97,7 +97,7 @@ OBJ = $(OBJ_MAIN) $(OBJ_CLASS) $(OBJ_UTILS) $(OBJ_PRO)
 
 NAME = webserv
 
-UPLOAD:= upload
+UPLOAD = upload
 
 all : $(NAME)
 

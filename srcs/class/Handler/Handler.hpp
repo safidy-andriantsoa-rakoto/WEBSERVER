@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 07:15:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 08:40:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,15 @@ class Handler
 	
 		void			removeFileFd(int const & index);
 		void			removeFileFd(vectFileFdIt & it);
+		void			checkAndRemoveFileFd(FileFd *ptr);
 		vectFileFdIt	findFdInFileFd(vectFileFd & allFileFd, int const & fd);
+		vectFileFdIt	findPtrInFileFd(vectFileFd & allFileFd, FileFd *ptr);
 		
 		void			removeCgiFd(int const & index);
 		void			removeCgiFd(vectCgiFdIt & it);
+		void			checkAndRemoveCgiFd(CgiFd *ptr);
 		vectCgiFdIt		findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd);
+		vectCgiFdIt		findPtrInCgiFd(vectCgiFd & allCgiFd, CgiFd *ptr);
 		
 		void			cleanFdAndAlloc();
 		

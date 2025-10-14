@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 14:11:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 09:01:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,10 @@
 #define CGI_PATH  "./config/cgiConf/cgi.conf"
 #define CGI_ERR_PATH  "./config/cgiConf/errCgi.conf"
 #define PHP_CGI_PATH "/usr/bin/php-cgi"
+#define UPLOAD_PATH "./upload"
 
 #define DEF_ERR_LOCATION "location /errorPage | root ./config/errorPage/default | method GET POST DELETE"
+#define DEF_UPLOAD_LOCATION "location /upload | root ./upload"
 
 //HTTP
 #define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"

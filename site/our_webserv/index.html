@@ -128,12 +128,37 @@
                     <h3>DELETE Request</h3>
                     <p>Write the filename to be deleted.</p>
                     
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <input type="text" id="deleteFilename" placeholder=" " value="test_file.txt" required>
                         <label>Filename</label>
-                    </div>
-                    <!-- Using the standard submit-btn class -->
-                    <button type="button" class="submit-btn" onclick="sendDeleteFileRequest()">Delete file</button>
+                        <p id="deleteFileResult" class="result-box"></p>
+                    </div> -->
+                    <!-- Using the standard submit-btn class
+                    <button type="button" class="submit-btn" onclick="sendDeleteFileRequest()">Delete file</button> -->
+                    <input id="pathInput" type="text" placeholder="/fichier.txt" />
+                    <button id="deleteBtn">Delete</button>
+                    <div id="result"></div>
+                    <script>
+                        document.getElementById('deleteBtn').addEventListener('click', function() {
+                          var path = document.getElementById('pathInput').value.trim();
+                          if (!path) {
+                            document.getElementById('result').textContent = 'Veuillez entrer un chemin.';
+                            return;
+                          }
+                          if (path[0] !== '/') path = '/' + path;
+                    
+                          var url = window.location.origin + path;
+                          document.getElementById('result').textContent = 'URL for DELETE : ' + url + '...';
+                    
+                          fetch(url, { method: 'DELETE' })
+                            .then(resp => resp.text().then(text => {
+                              document.getElementById('result').textContent = 'Réponse : ' + resp.status + ' ' + resp.statusText + '\n' + text;
+                            }))
+                            .catch(err => {
+                              document.getElementById('result').textContent = 'Erreur : ' + err;
+                            });
+                        });
+                      </script>
                 </div>
             </div> <!-- End Simple Test Grid -->
             

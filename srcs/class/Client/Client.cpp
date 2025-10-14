@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 14:47:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 09:56:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,10 +295,25 @@ const char *Client::RecvError::what() const throw()
 {
 	return ("Error RECV\nget Request from client");
 }
-
+/*
+	If method == POST or DELETE
+	Find "upload" in location or add upload (default) location : Config file (parsing) => TELL TSIKY !!!
+	set request target to root
+*/
 void Client::processRequestWithConfig()
 {
 	checkContentLength(); //See with POST method [Safidy]
+	if (_request.getMethod() == "POST" || _request.getMethod() == "DELETE")
+	{
+		vectLocationIt	it = _config.findClassLocation("/upload");
+		std::string	newTarget = (*it).getRootDirectory();
+
+		if (_request.getMethod() == "DELETE")
+			newTarget += _request.getRequestTarget();
+		// std::cout << _request.getRequestTarget() << " => " << newTarget << std::endl;
+		_request.setRequestTarget(newTarget);
+		return;
+	}
 	buildRequestTarget();
 }
 
@@ -513,12 +528,15 @@ void Client::cgiGetRequest(int *fd)
 void Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
 {
 	int	fdPost = -1;
+	std::string	fullPath;
 
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
 		if (!this->_fileFD)
 		{
-			fdPost = open("storage_multi_form_data", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			fullPath = _request.getRequestTarget() + "/" +  "storage_multi_form_data";
+
+			fdPost = open(fullPath.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fdPost== -1) {
 				perror("open file in POST");
 				throw ErrorExcept(404, "File can't be opened");
@@ -541,7 +559,8 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 		std::cout << "\napplication/x-www-form-urlencoded\n" << std::endl;
 		if (!_fileFD)
 		{
-			fdPost = open("storage_app_xwfurlencoded", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			fullPath = _request.getRequestTarget() + "/" +  "storage_app_xwfurlencoded";
+			fdPost = open(fullPath.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fdPost== -1) {
 				perror("open file in POST");
 				throw ErrorExcept(404, "File can't be opened");
@@ -561,7 +580,8 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 		std::cout << "\ntext/plain\n" << std::endl;
 		if (!_fileFD)
 		{
-			fdPost = open("storage_text_plain", O_WRONLY | O_CREAT | O_APPEND, 0644);
+			fullPath = _request.getRequestTarget() + "/" +  "storage_text_plain";
+			fdPost = open(fullPath.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fdPost== -1) {
 				perror("open file in POST");
 				throw ErrorExcept(404, "File can't be opened");
@@ -577,7 +597,52 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	fd[FD_STDOUT] = fdPost;
 }
 
-void Client::delete_request(){}
+void Client::delete_request()
+{
+	// std::string		root;
+	// std::string		target;
+	// stringVectIt	_configIt;
+	// vectLocation	loc;
+
+	// target = _request.getRequestTarget();
+	// loc = _config.getClassLocation();
+	// if (!target.size())
+	// 	throw ErrorExcept(403, "Forbidden");
+	// if (loc.size())
+	// {
+	// 	root = loc[0].getRootDirectory();
+	// 	if (target.compare(0, root.size(), root) != 0)
+	// 		throw ErrorExcept(401, "Unauthorized");
+	// 	struct  stat s_stat;
+	// 	if (stat(target.c_str(), &s_stat) != 0)
+	// 		throw ErrorExcept(401, "Unauthorized");
+	// 	if (S_ISREG(s_stat.st_mode))
+	// 	{
+	// 		if (std::remove(target.c_str()) != 0)
+	// 			throw ErrorExcept(401, "Unauthorized");
+	// 	}
+	// 	else
+	// 		throw ErrorExcept(403, "Forbidden");
+	// }
+	std::string	target;
+	struct stat	s_stat;
+
+	target = _request.getRequestTarget();
+	std::cout << "		DELETE REQUEST ; " << target << std::endl;
+	if (!target.size())
+		throw ErrorExcept(403, "Forbidden");
+	if (stat(target.c_str(), &s_stat) != 0)
+		throw ErrorExcept(401, "Unauthorized");
+	if (S_ISREG(s_stat.st_mode))
+	{
+		if (std::remove(target.c_str()) != 0)
+			throw ErrorExcept(401, "Unauthorized");
+	}
+	else
+		throw ErrorExcept(403, "Forbidden");
+	_response.setCategory(SINGLE_RSP);
+	std::cout << "		DELETE REQUEST END" << std::endl;
+}
 
 void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)
 {
@@ -603,35 +668,9 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	}
 	else if (_request.getMethod() == "DELETE")
 	{
-		std::string root;
-		std::string target;
-		stringVectIt _configIt;
-		vectLocation loc;
-	
-		target = _request.getRequestTarget();
-		loc = _config.getClassLocation();
-		if (!target.size())
-			throw ErrorExcept(403, "Forbidden");
-		if (loc.size())
-		{
-			root = loc[0].getRootDirectory();
-			if (target.compare(0, root.size(), root) != 0)
-				throw ErrorExcept(401, "Unauthorized");
-			struct  stat s_stat;
-			if (stat(target.c_str(), &s_stat) != 0)
-				throw ErrorExcept(401, "Unauthorized");
-			if (S_ISREG(s_stat.st_mode))
-			{
-				if (std::remove(target.c_str()) != 0) // unlink respect la recommandation de la suject
-					throw ErrorExcept(401, "Unauthorized");
-			}
-			else
-				throw ErrorExcept(403, "Forbidden");
-			setSingleResponse(204);
-		}
+		delete_request();
+		setSingleResponse(204);
 	}
-	else
-		throw ErrorExcept(501, "Not Implemented");
 }
 
 vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation & location)

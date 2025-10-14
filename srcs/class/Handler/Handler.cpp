@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:48:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 08:39:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,6 +187,18 @@ vectFileFdIt	Handler::findFdInFileFd(vectFileFd & allFileFd, int const & fd)
 	return it;
 }
 
+vectFileFdIt Handler::findPtrInFileFd(vectFileFd &allFileFd, FileFd *ptr)
+{
+	vectFileFdIt it;
+
+	for(it = allFileFd.begin(); it != allFileFd.end(); it++)
+	{
+		if ((*it) == ptr)
+			break;
+	}
+	return it;
+}
+
 vectCgiFdIt Handler::findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd)
 {
 	vectCgiFdIt it;
@@ -194,6 +206,18 @@ vectCgiFdIt Handler::findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd)
 	for(it = allCgiFd.begin(); it != allCgiFd.end(); it++)
 	{
 		if ((*it) && (*it)->getFd() == fd)
+			break;
+	}
+	return it;
+}
+
+vectCgiFdIt Handler::findPtrInCgiFd(vectCgiFd &allCgiFd, CgiFd *ptr)
+{
+	vectCgiFdIt it;
+
+	for(it = allCgiFd.begin(); it != allCgiFd.end(); it++)
+	{
+		if ((*it) == ptr)
 			break;
 	}
 	return it;
@@ -207,6 +231,14 @@ void Handler::removeCgiFd(int const &index)
 void Handler::removeCgiFd(vectCgiFdIt &it)
 {
 	_vectCgiFd.erase(it);
+}
+
+void Handler::checkAndRemoveCgiFd(CgiFd *ptr)
+{
+	vectCgiFdIt	it = findPtrInCgiFd(_vectCgiFd, ptr);
+
+	if (it != _vectCgiFd.end())
+		removeCgiFd(it);
 }
 
 void Handler::removeClient(int const & index, EpollCreation & epoll)
@@ -268,6 +300,14 @@ void Handler::removeFileFd(int const & index)
 void Handler::removeFileFd(vectFileFdIt & it)
 {
 	_vectFileFd.erase(it);
+}
+
+void Handler::checkAndRemoveFileFd(FileFd *ptr)
+{
+	vectFileFdIt	it = findPtrInFileFd(_vectFileFd, ptr);
+
+	if (it != _vectFileFd.end())
+		removeFileFd(it);
 }
 
 void	Handler::cleanFdAndAlloc()
