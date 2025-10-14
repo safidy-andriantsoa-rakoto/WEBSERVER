@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/01 19:32:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:07:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ void	printFileContent(std::string const & path)
 	std::string		line;
 	std::ifstream	file;
 
-	file.open(path.c_str()); //Use C open() and get fd
+	file.open(path.c_str());
 	if (!file.is_open())
 		return ;
 	while (!file.eof())
 	{
-		std::getline(file, line); //Use read with epoll
+		std::getline(file, line);
 		std::cout << line << std::endl;
 	}
 }
@@ -37,10 +37,10 @@ std::string readFileToString(std::string filePath)
 {
 	std::fstream file;
 
-	file.open(filePath.c_str()); //Use C open() and get fd
+	file.open(filePath.c_str());
 	if (!file.is_open())
-		throw std::runtime_error("ReadFileToString : File can't be opened"); //Review exception to throw by the situation (StatusCode)
-	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>()); //Use read with epoll
+		throw std::runtime_error("ReadFileToString : File can't be opened");
+	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	return (fileString);
 }
 
@@ -52,10 +52,10 @@ stringMap splitFileToMapString(std::string const &filePath, std::string const & 
 	stringVect		vect;
 	stringMap		result;
 
-	file.open(filePath.c_str()); //Use C open() and get fd
+	file.open(filePath.c_str());
 	if (!file.is_open())
 		throw std::runtime_error("splitFileToMapString : File is not available");
-	while (getline(file, line)) //Use read with epoll
+	while (getline(file, line))
 	{
 		vect = strictSplit(line, sep);
 		pair.first = vect[0];
@@ -179,11 +179,6 @@ bool checkWriteConfig(const std::vector<std::string> &lines, const std::string &
 	return true;
 }
 
-// bool checkFilecontent(std::vector<std::string> lines)
-// {
-// 	std::map<std::string, std::vector<std::string>> content;
-// }
-
 bool checkCountWord(const std::vector<std::string> &lines, const std::string &word, const int &count)
 {
 	std::vector<int> indexW = containsExactWordInVector(lines, word);
@@ -255,4 +250,14 @@ size_t	getFileSize(std::string const & path)
 		throw std::runtime_error("Stat function error");
 	std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
 	return sf.st_size;
+}
+
+DIR*	openDir(std::string const & dirPath)
+{
+	DIR	*dir;
+
+	dir = opendir(dirPath.c_str());
+	if (!dir)
+		throw std::runtime_error("Opendir error");
+	return dir;
 }

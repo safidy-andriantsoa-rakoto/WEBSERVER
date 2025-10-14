@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/14 09:56:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 13:04:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -624,11 +624,12 @@ void Client::delete_request()
 	// 	else
 	// 		throw ErrorExcept(403, "Forbidden");
 	// }
+
+	/*	Check error for delete */
 	std::string	target;
 	struct stat	s_stat;
 
 	target = _request.getRequestTarget();
-	std::cout << "		DELETE REQUEST ; " << target << std::endl;
 	if (!target.size())
 		throw ErrorExcept(403, "Forbidden");
 	if (stat(target.c_str(), &s_stat) != 0)
@@ -641,7 +642,6 @@ void Client::delete_request()
 	else
 		throw ErrorExcept(403, "Forbidden");
 	_response.setCategory(SINGLE_RSP);
-	std::cout << "		DELETE REQUEST END" << std::endl;
 }
 
 void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)

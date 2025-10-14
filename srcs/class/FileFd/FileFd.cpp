@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:47:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 13:06:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,9 @@ void FileFd::initSockFd()
 {
 	if (socketpair(AF_UNIX, SOCK_STREAM, 0, _sockFd) == -1)
 		throw std::runtime_error("Error on socketpair creation");
-	write(_sockFd[1], "*", 1);
+	if (write(_sockFd[1], "*", 1) <= 0)
+		throw std::runtime_error("Error on socketpair creation");
+
 }
 
 void FileFd::closeSockFd()

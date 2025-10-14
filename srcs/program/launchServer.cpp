@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 14:23:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 13:44:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,56 +66,6 @@ void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int 
 			throw std::runtime_error("Unknown fd");
 			break;
 	}
-}
-
-int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)
-{
-	int			bytesRead;
-	char		buffer[_BUFFER];
-	std::string	bufferString;
-
-	bytesRead = read((*itCgi)->getErrFd(), buffer, _BUFFER);
-	if (bytesRead <= 0)
-	{
-		// std::cout << "Nothing to read for CGI Err \n";
-		epoll.epoll_clean((*itCgi)->getErrFd());
-		return 0;
-	}
-	bufferString.append(buffer, bytesRead);
-	std::cout << "				***************BUFFER ERROR \n" << bufferString << std::endl;
-	return bytesRead;
-}
-
-void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier)
-{
-	int			fd[2] = {-1, -1};
-	int			bytesRead = 0;
-	vectCgiFdIt	itCgi = handler.getCgiFdIterator(index);
-	VClientIt	it = findFdInClient(handler.getVectClient(), (*itCgi)->getClientFd());
-
-	if (identifier == CGI_ERR_FD)
-	{
-		bytesRead = readCgiStdError(itCgi, epoll);
-		if (!bytesRead)
-			return;
-	}
-	(*it).setCatchedResponse(err, fd);
-	if (fd[FD_STDOUT] == -1)
-		return;
-	epoll.epoll_clean((*itCgi)->getErrFd());
-	epoll.epoll_clean((*itCgi)->getFd());
-	handler.removeCgiFd(itCgi);
-	if ((*it).getFdType() == HTML_FILE)
-	{
-		(*it).clearPtrCgiFd();
-		handler.addToVectFileFd(it, fd[FD_STDOUT]);
-	}
-	else
-	{
-		handler.addToVectCgiFd(it, fd[FD_STDOUT], fd[FD_STDERR]);
-		epoll.epoll_control(EPOLLIN, fd[FD_STDERR]);
-	}
-	epoll.epoll_control(EPOLLIN, fd[FD_STDOUT]);
 }
 
 void    launchServer(Handler & handler)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 08:45:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:05:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ static void	initProgram()
 	CgiParser::initCgiConfig(CGI_PATH, CGI_ERR_PATH);
 	int fd = openFile(ERR_PATH);
 	close(fd);
+	DIR *dir = openDir(UPLOAD_PATH);
+	closedir(dir);
 }
 
 int main()

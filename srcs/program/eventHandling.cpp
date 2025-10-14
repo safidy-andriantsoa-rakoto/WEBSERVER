@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 09:49:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 13:52:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,33 +50,17 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		(*it).setCatchedResponse(e, fdFromRequest);
 		epollOpt = EPOLLIN;
 	}
-	if ((*it).getCategoryResponse() == SINGLE_RSP || (*it).getCategoryResponse() == LDIR_RSP || (*it).getCategoryResponse() == REDIR_RSP)
-	{
+	if (hasSingleResponse((*it).getCategoryResponse()))
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
-		return;
-	}
-	if (fdFromRequest[FD_STDOUT] < 0)
-	{
-		if (fdFromRequest[FD_STDOUT] == -2)
-			handler.setProgramBreak(true);
-		return;
-	}
-	if ((*it).getFdType() == HTML_FILE)
-		handler.addToVectFileFd(it, fdFromRequest[FD_STDOUT]);
 	else
-	{
-		handler.addToVectCgiFd(it, fdFromRequest[FD_STDOUT], fdFromRequest[FD_STDERR]);
-		epoll.epoll_control(epollOpt, fdFromRequest[FD_STDERR]);
-	}
-	epoll.epoll_control(epollOpt, fdFromRequest[FD_STDOUT]);
+		addFdInHandlerAndEpoll(it, handler, epoll, epollOpt, fdFromRequest);
 }
 
 void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
-	int			responseCategory = (*it).getCategoryResponse();
-	std::cout << "-->> \033[45mSendingResponseToClient : " << responseCategory << "\033[0m" << std::endl;
+	std::cout << "-->> \033[45mSendingResponseToClient : " << (*it).getCategoryResponse() << "\033[0m" << std::endl;
 
-	if (responseCategory == REDIR_RSP || responseCategory == SINGLE_RSP || responseCategory == LDIR_RSP)
+	if (hasSingleResponse((*it).getCategoryResponse()))
 		sendSingleResponse(it, fdCli, epoll);
 	else if ((*it).getPtrFileFd())
 		sendHtmlFileResponse(it, fdCli, epoll);
@@ -199,7 +183,7 @@ void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int
 	}
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBuffer(bufferString);
-	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
+	std::cout << "				******** Buffer CGI = \n" << bufferString.size() << std::endl;
 	(*it)->bufferParser();
 	(*it)->checkError();
 	// (*it)->displayBufferParsed();
