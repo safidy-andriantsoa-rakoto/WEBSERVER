@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mime.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/25 22:11:51 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:23:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ std::string Mime::getFileType(std::string const &file)
     stringMapIt it;
     std::string type;
 
-	std::cout << "		BON TRAVAIL EEE" << std::endl;
+	// std::cout << "		BON TRAVAIL EEE" << std::endl;
     extFile = getFileExtension(file);
     it = _mime.find(extFile);
     if (extFile == "/")

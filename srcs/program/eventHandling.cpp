@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 13:52:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 15:01:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 {
 	uint32_t	epollOpt;
 	std::string client_request;
-	int			fdFromRequest[2] = {-1, -1};
+	int			fdFromRequest[3] = {-1, -1, -1};
 
 	(*it).receiveClientRequest();
 	client_request = (*it).getClientRequest();
@@ -159,21 +159,19 @@ void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 /*
 	Cgi event is only reading through pipe no matter the method is
 */
-void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
+void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
 {
-	vectCgiFdIt	it = handler.getCgiFdIterator(i);
-	uint32_t	event = epoll.getEvent(eventIdx);
 	int			fdCli;
 	int			bytesRead;
 	char		buffer[_BUFFER];
 	std::string	bufferString;
+	vectCgiFdIt	it = handler.getCgiFdIterator(i);
 
-	if (event & EPOLLOUT)
-		return;
+
 	if ((*it)->getStatus() == OP_START) //See if necessary
 		return;
-	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
-	bytesRead = read((*it)->getFd(), buffer, _BUFFER);
+	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
+	bytesRead = read((*it)->getOutputFd(), buffer, _BUFFER);
 	if (bytesRead <= 0)
 	{
 		(*it)->setStatus(OP_CLOSE);
@@ -195,3 +193,32 @@ void	handleCgiEvent(Handler & handler, int const & i, EpollCreation & epoll, int
 	}
 }
 
+/*
+	Write request body to INPUT
+*/
+void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll, int const &eventIdx)
+{
+	int			fdCli;
+	int			bytesRead;
+	char		buffer[_BUFFER];
+	vectCgiFdIt	it = handler.getCgiFdIterator(i);
+	// VClientIt	clIt = findFdInClient(handler.getVectClient(), (*it)->getClientFd());
+
+	if ((*it)->getStatus() == OP_START) //See if necessary
+		return;
+	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
+	bytesRead = write((*it)->getInputFd(), buffer, _BUFFER);
+	if (bytesRead <= 0)
+	{
+		(*it)->setStatus(OP_CLOSE);
+		(*it)->clearBuffer();
+		closeCgiFdEvent(handler, i, epoll);
+		return ;
+	}
+	if ((*it)->getStatus() == OP_OPEN)
+	{
+		(*it)->setStatus(OP_START);
+		fdCli = (*it)->getClientFd();
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
+	}
+}

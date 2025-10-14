@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 10:28:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:38:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@
 class CgiFd
 {
 	private:
-		int			_cgiFd;
-		int			_cgiErrFd;
+		int			_outputFd;
+		int			_errorFd;
+		int			_inputFd;
 		int			_clientFd;
 		int			_status;
 
@@ -36,13 +37,14 @@ class CgiFd
 
 	public:
 		CgiFd(int const & cgiFd, int const & clientFd);
-		CgiFd(int const & cgiFd, int const & cgiErrFd, int const & clientFd);
+		CgiFd(int const &outputFd, int const & errorFd, int const & inputFd, int const &clientFd);
 		CgiFd(CgiFd const & other);
 		CgiFd & operator=(CgiFd const & other);
 		~CgiFd();
 
-		int			getFd() const;
+		int			getOutputFd() const;
 		int			getErrFd() const;
+		int			getInputFd() const;
 		int			getClientFd() const;
 		std::string	getBuffer() const;
 		int			getStatus() const;

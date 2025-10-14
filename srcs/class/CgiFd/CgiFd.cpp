@@ -15,7 +15,7 @@
 CgiFd::CgiFd(){}
 
 CgiFd::CgiFd(int const &CgiFd, int const &clientFd) : 
-	_cgiFd(CgiFd),
+	_outputFd(CgiFd),
 	_clientFd(clientFd),
 	_status(OP_OPEN)
 	{
@@ -24,9 +24,10 @@ CgiFd::CgiFd(int const &CgiFd, int const &clientFd) :
 		_statusCode = -1;
 	}
 
-CgiFd::CgiFd(int const &cgiFd, int const & cgiErrFd, int const &clientFd) : 
-	_cgiFd(cgiFd),
-	_cgiErrFd(cgiErrFd),
+CgiFd::CgiFd(int const &outputFd, int const & errorFd, int const & inputFd, int const &clientFd) : 
+	_outputFd(outputFd),
+	_errorFd(errorFd),
+	_inputFd(inputFd),
 	_clientFd(clientFd),
 	_status(OP_OPEN)
 	{
@@ -45,8 +46,9 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 	if (this != &other)
 	{
 		_clientFd = other._clientFd;
-		_cgiFd = other._cgiFd;
-		_cgiErrFd = other._cgiErrFd;
+		_outputFd = other._outputFd;
+		_errorFd = other._errorFd;
+		_inputFd = other._inputFd;
 		_buffer = other._buffer;
 		_status = other._status;
 		_isError = other._isError;
@@ -60,14 +62,19 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 
 CgiFd::~CgiFd(){}
 
-int CgiFd::getFd() const
+int CgiFd::getOutputFd() const
 {
-    return _cgiFd;
+    return _outputFd;
 }
 
 int CgiFd::getErrFd() const
 {
-    return _cgiErrFd;
+    return _errorFd;
+}
+
+int CgiFd::getInputFd() const
+{
+    return _inputFd;
 }
 
 int CgiFd::getClientFd() const

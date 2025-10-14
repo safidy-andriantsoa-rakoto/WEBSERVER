@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/14 13:44:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:53:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 		handler.removeClient(index, epoll);
 		epoll.epoll_clean(fdEvent);
 	}
-	if (identifier == CGI_FD || identifier == CGI_ERR_FD)
+	if (identifier == CGI_FD_OUTPUT || identifier == CGI_FD_ERR)
 	{
 		std::cerr << "CGI error identified" << std::endl;
 		try
@@ -58,9 +58,13 @@ void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int 
 			std::cout << "\033[43m	FILEFD" << "\033[0m" << std::endl;
 			handleFileEvent(handler, index, epoll, i);
 			break;
-		case CGI_FD:
-			std::cout << "\033[44m	CGIFD" << "\033[0m" << std::endl;
-			handleCgiEvent(handler, index, epoll, i);
+		case CGI_FD_OUTPUT:
+			std::cout << "\033[44m	CGIFD OUTPUT" << "\033[0m" << std::endl;
+			readCgiOutput(handler, index, epoll, i);
+			break;
+		case CGI_FD_INPUT:
+			std::cout << "\033[44m	CGIFD INPUT" << "\033[0m" << std::endl;
+			writeCgiInput(handler, index, epoll, i);
 			break;
 		default:
 			throw std::runtime_error("Unknown fd");
@@ -98,7 +102,7 @@ void    launchServer(Handler & handler)
 				manageEpollLoopError(handler, epoll, identifier, fdEvent, index, e);
 				break ;
 			}
-			if (handler.getProgramBreak() == true) //Used to exit the child process correctly
+			if (handler.getProgramBreak() == true)
 				throw std::runtime_error("Program break launched");
 		}
 	}

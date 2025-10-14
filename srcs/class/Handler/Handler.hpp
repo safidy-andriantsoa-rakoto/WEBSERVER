@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 08:40:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:39:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ class Handler
 
 		void			addToVectClient(Server const & server, int const & fd);
 		void			addToVectFileFd(VClientIt & it, int const & fd);
-		void			addToVectCgiFd(VClientIt & it, int const & fd, int const & fdErr);
+		void			addToVectCgiFd(VClientIt &it, int const &fdOut, int const & fdErr, int const & fdIn);
 
 		void			removeClient(int const & index, EpollCreation & epoll);
 		void			removeClient(VClientIt & it, EpollCreation & epoll);

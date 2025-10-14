@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/14 13:04:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:22:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -302,15 +302,28 @@ const char *Client::RecvError::what() const throw()
 */
 void Client::processRequestWithConfig()
 {
+	vectLocationIt	it;
+	std::string		target = _request.getRequestTarget();
+
 	checkContentLength(); //See with POST method [Safidy]
+	if (target.find(".php", 0) != std::string::npos)
+	{
+		_request.clearCgiClass();
+		_request.setIsCgi(true);
+		it = _config.findClassLocation(".php");
+		processLocationOption(*it, _request);
+		_request.processCgiClass(target, (*it).getRootDirectory());
+		target = (*it).getRootDirectory() + target; //Review if request target needed ? normally done during parsing Cgi
+		_request.setRequestTarget(target);
+		return;
+	}
 	if (_request.getMethod() == "POST" || _request.getMethod() == "DELETE")
 	{
-		vectLocationIt	it = _config.findClassLocation("/upload");
+		it = _config.findClassLocation("/upload");
 		std::string	newTarget = (*it).getRootDirectory();
 
 		if (_request.getMethod() == "DELETE")
-			newTarget += _request.getRequestTarget();
-		// std::cout << _request.getRequestTarget() << " => " << newTarget << std::endl;
+			newTarget += target;
 		_request.setRequestTarget(newTarget);
 		return;
 	}

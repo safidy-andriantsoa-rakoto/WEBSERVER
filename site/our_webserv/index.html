@@ -94,7 +94,7 @@
         <div class="hero-decoration"></div>
         <div class="hero-content">
             <h1>OUR WEBSERV</h1>
-            <p class="subtitle">This is the webpage to our webserv project, test the GET, POST and DELETE method</p>
+            <p class="subtitle">This is the webpage to our webserv project</p>
             <!-- Applied original cta-button style for hero navigation buttons -->
             <a href="#simple-test" class="cta-button" style="margin-right: 15px;">FILE TEST</a>
             <a href="#cgi-test" class="cta-button">CGI TEST</a>
@@ -123,18 +123,10 @@
                     </form>
                 </div>
 
-                <!-- 2. DELETE TEST CARD (File Delete) -->
+                <!-- 2. DELETE (File Delete) -->
                 <div class="test-card delete file">
                     <h3>DELETE Request</h3>
                     <p>Write the filename to be deleted.</p>
-                    
-                    <!-- <div class="form-group">
-                        <input type="text" id="deleteFilename" placeholder=" " value="test_file.txt" required>
-                        <label>Filename</label>
-                        <p id="deleteFileResult" class="result-box"></p>
-                    </div> -->
-                    <!-- Using the standard submit-btn class
-                    <button type="button" class="submit-btn" onclick="sendDeleteFileRequest()">Delete file</button> -->
                     <input id="pathInput" type="text" placeholder="/fichier.txt" />
                     <button id="deleteBtn">Delete</button>
                     <div id="result"></div>
@@ -152,13 +144,13 @@
                     
                           fetch(url, { method: 'DELETE' })
                             .then(resp => resp.text().then(text => {
-                              document.getElementById('result').textContent = 'Réponse : ' + resp.status + ' ' + resp.statusText + '\n' + text;
+                              document.getElementById('result').textContent = 'Response : ' + resp.status + ' ' + resp.statusText + '\n' + text;
                             }))
                             .catch(err => {
-                              document.getElementById('result').textContent = 'Erreur : ' + err;
+                              document.getElementById('result').textContent = 'Error !!!';
                             });
                         });
-                      </script>
+                    </script>
                 </div>
             </div> <!-- End Simple Test Grid -->
             

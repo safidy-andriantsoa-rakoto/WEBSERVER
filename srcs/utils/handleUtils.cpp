@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 13:50:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:50:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
 	int			fd;
 	vectCgiFdIt	it = handler.getCgiFdIterator(i);
 
-	fd = (*it)->getFd();
+	fd = (*it)->getOutputFd();
 	epoll.epoll_clean(fd);
 	handler.removeCgiFd(i);
 }
@@ -47,8 +47,11 @@ void	addFdInHandlerAndEpoll(VClientIt & it, Handler & handler, EpollCreation & e
 		handler.addToVectFileFd(it, fdFromRequest[FD_STDOUT]);
 	else
 	{
-		handler.addToVectCgiFd(it, fdFromRequest[FD_STDOUT], fdFromRequest[FD_STDERR]);
+		handler.addToVectCgiFd(it, fdFromRequest[FD_STDOUT], fdFromRequest[FD_STDERR], fdFromRequest[FD_STDIN]);
 		epoll.epoll_control(epollOpt, fdFromRequest[FD_STDERR]);
+		/*
+			Add conditions for STDIN with POST CGI
+		*/
 	}
 	epoll.epoll_control(epollOpt, fdFromRequest[FD_STDOUT]);
 }
@@ -73,12 +76,12 @@ int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)
 
 void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier)
 {
-	int			fd[2] = {-1, -1};
+	int			fd[3] = {-1, -1, -1};
 	int			bytesRead = 0;
 	vectCgiFdIt	itCgi = handler.getCgiFdIterator(index);
 	VClientIt	it = findFdInClient(handler.getVectClient(), (*itCgi)->getClientFd());
 
-	if (identifier == CGI_ERR_FD)
+	if (identifier == CGI_FD_ERR)
 	{
 		bytesRead = readCgiStdError(itCgi, epoll);
 		if (!bytesRead)
@@ -88,7 +91,7 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 	if (fd[FD_STDOUT] == -1)
 		return;
 	epoll.epoll_clean((*itCgi)->getErrFd());
-	epoll.epoll_clean((*itCgi)->getFd());
+	epoll.epoll_clean((*itCgi)->getOutputFd());
 	handler.removeCgiFd(itCgi);
 	if ((*it).getFdType() == HTML_FILE)
 	{
@@ -97,7 +100,7 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 	}
 	else
 	{
-		handler.addToVectCgiFd(it, fd[FD_STDOUT], fd[FD_STDERR]);
+		handler.addToVectCgiFd(it, fd[FD_STDOUT], fd[FD_STDERR], fd[FD_STDIN]);
 		epoll.epoll_control(EPOLLIN, fd[FD_STDERR]);
 	}
 	epoll.epoll_control(EPOLLIN, fd[FD_STDOUT]);

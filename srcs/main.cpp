@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 14:05:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:14:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 /*
 	Check every configFile needed by the program !!!
-	Check for upload directory 
 */
 static void	initProgram()
 {

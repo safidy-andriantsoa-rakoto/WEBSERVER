@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 08:39:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/14 14:50:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,15 +70,20 @@ void Handler::identifyFd(int const & fd, int & index, int & identifier)
 	index = 0;
 	for (vectCgiFdIt itCgiFd = _vectCgiFd.begin(); itCgiFd != _vectCgiFd.end(); itCgiFd++)
 	{
-		if ((*itCgiFd) && (*itCgiFd)->getFd() == fd)
+		if ((*itCgiFd) && (*itCgiFd)->getOutputFd() == fd)
 		{
-			identifier = CGI_FD;
+			identifier = CGI_FD_OUTPUT;
+			return;
+		}
+		if ((*itCgiFd) && (*itCgiFd)->getInputFd() == fd)
+		{
+			identifier = CGI_FD_INPUT;
 			return;
 		}
 		if ((*itCgiFd) && (*itCgiFd)->getErrFd() == fd)
 		{
 			(*itCgiFd)->setIsError(true);
-			identifier = CGI_ERR_FD;
+			identifier = CGI_FD_ERR;
 			throw ErrorExcept(500, "Bad gateway");
 		}
 		index++;
@@ -166,10 +171,10 @@ void Handler::addToVectFileFd(VClientIt & it, int const & fd)
 	_vectFileFd.push_back(fileFd);
 }
 
-void Handler::addToVectCgiFd(VClientIt &it, int const &fd, int const & fdErr)
+void Handler::addToVectCgiFd(VClientIt &it, int const &fdOut, int const & fdErr, int const & fdIn)
 {
 	int	fdCli = (*it).get_clientFD();
-	CgiFd *cgiFd = new CgiFd(fd, fdErr, fdCli);
+	CgiFd *cgiFd = new CgiFd(fdOut, fdErr, fdIn, fdCli);
 
 	(*it).setPtrCgiFd(cgiFd);
 	_vectCgiFd.push_back(cgiFd);
@@ -205,7 +210,7 @@ vectCgiFdIt Handler::findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd)
 
 	for(it = allCgiFd.begin(); it != allCgiFd.end(); it++)
 	{
-		if ((*it) && (*it)->getFd() == fd)
+		if ((*it) && (*it)->getOutputFd() == fd)
 			break;
 	}
 	return it;
@@ -263,7 +268,7 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 	}
 	if ((*it).getPtrCgiFd())
 	{
-		cgiFd = (*it).getPtrCgiFd()->getFd();
+		cgiFd = (*it).getPtrCgiFd()->getOutputFd();
 		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd);
 		epoll.epoll_clean(fdFile);
 		removeCgiFd(itCgi);
@@ -324,8 +329,8 @@ void	Handler::cleanFdAndAlloc()
 	}
 	for (vectCgiFdIt itCgiFd = _vectCgiFd.begin(); itCgiFd != _vectCgiFd.end(); itCgiFd++)
 	{
-		if ((*itCgiFd) && (*itCgiFd)->getFd() != -1)
-			close((*itCgiFd)->getFd());
+		if ((*itCgiFd) && (*itCgiFd)->getOutputFd() != -1)
+			close((*itCgiFd)->getOutputFd());
 	}
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
 	{
@@ -361,7 +366,7 @@ void Handler::displayHandlerStat()
 	for(size_t i = 0; i < _vectCgiFd.size(); i++)
 	{
 		if (_vectCgiFd[i])
-			std::cout << _vectCgiFd[i]->getFd() << "|" << _vectCgiFd[i]->getErrFd() << ":" << _vectCgiFd[i] << " ";
+			std::cout << _vectCgiFd[i]->getOutputFd() << "|" << _vectCgiFd[i]->getErrFd() << ":" << _vectCgiFd[i] << " ";
 	}
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;
