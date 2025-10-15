@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 17:26:30 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/15 08:04:12 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,11 +215,51 @@ bool checkCountWord(const std::vector<std::string> &lines, const std::string &wo
 	}
 	return (true);
 }
+bool checkCountWord2(const std::vector<std::string> &lines, const std::string &word, const int &count)
+{
+	std::vector<int> indexW = containsExactWordInVector(lines, word);
+	for (size_t i = 0; i < indexW.size(); i++)
+	{
+		std::cout << indexW[i] << std::endl;
+	}
+	int countW = 0;
+	std::vector<int> countWord;
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		std::string word;
+		for (size_t j = 0; j < indexW.size(); j++)
+		{
+			if ((int)i == indexW[j])
+			{
+				countW = 0;
+				std::istringstream iss(lines[indexW[j]]);
+				while (iss >> word)
+				{
+					countW++;
+				}
+				countWord.push_back(countW);
+			}
+		}
+	}
+	for (size_t i = 0; i < countWord.size(); i++)
+	{
+		if (countWord[i] <= 1 || countWord[i] > count)
+		{
+			std::cerr << "Error : Syntax error ( " << word << ")" << std::endl;
+			return (false);
+		}
+	}
+	return (true);
+}
 
 bool checkNumberAllContent(std::vector<std::string> &file)
 {
 	if (!checkCountWord(file, "host", 2) || !checkCountWord(file, "port", 2) || !checkCountWord(file, "size", 3) || !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2) || !checkCountWord(file, "SRCIPT_FILENAME", 2) || !checkCountWord(file, "autoindex", 2))
 		return (false);
+	if (!checkCountWord2(file, "method", 4) || !checkCountWord2(file, "error_page", 6))
+	{
+		return (false);
+	}
 	return (true);
 }
 
@@ -246,11 +286,10 @@ bool checkDuplicate(stringVect file, std::string name, size_t &start, size_t &en
 
 bool checkConfigDupli(stringVect file, size_t &start, size_t &end)
 {
-	if (checkDuplicate(file, "host", start, end) || checkDuplicate(file, "port", start, end) || checkDuplicate(file, "server_names", start, end) 
-		|| checkDuplicate(file, "error_page", start, end) || checkDuplicate(file, "size", start, end))
+	if (checkDuplicate(file, "host", start, end) || checkDuplicate(file, "port", start, end) || checkDuplicate(file, "server_names", start, end) || checkDuplicate(file, "error_page", start, end) || checkDuplicate(file, "size", start, end))
 	{
-		std::cerr << "Error : duplicate setting find or not find setting" << std::endl;	
+		std::cerr << "Error : duplicate setting find or not find setting" << std::endl;
 		return (true);
-	}	
+	}
 	return (false);
 }
