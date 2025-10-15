@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 12:02:18 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:25:37 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -553,8 +553,10 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	}
 	else
 	{
-		std::cout << "			MIDITRA ATY EEEEEEEEEEEEEEEEEEEE" << std::endl;	
+		std::cout << "			MIDITRA ATY EEEEEEEEEEEEEEEEEEEE" << std::endl;
 		_request.set_Body(clientRequest);
+		_request.set_c_length_received(clientRequest.size());
+		std::cout << " BODY SET ATO AAAANNN  ["<< _request.get_Body() << "]" << std::endl;
 	}
 	header = _request.getHeader();
 	_request.displayRequest();
@@ -563,6 +565,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	else if (_request.getMethod() == "POST")
 	{
 		post_request(header, boundary, opt, fd);
+		std::cout << "[" << this->_boundary_sep << "]"  << std::endl;
 		setSingleResponse(201);
 	}
 	else if (_request.getMethod() == "DELETE")
@@ -642,6 +645,7 @@ int Client::creat_file_for_post(std::string path, uint32_t & opt)
 		if (fd == -1)
 			throw ErrorExcept(404, "File can't be opened");
 		opt = EPOLLOUT;
+		this->setFdType(POST_FILE);
 	}
 	return (fd);
 }

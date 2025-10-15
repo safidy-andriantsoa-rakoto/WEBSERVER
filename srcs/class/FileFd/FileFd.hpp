@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:48:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:20:46 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ class FileFd
 		static void	closeSockFd();
 
 		void		set_post_body(std::string &body);
-		void		set_boundary(std::string &boundary);
+		void		set_boundary(std::string boundary);
 		std::string &get_boundary();
 	
 		std::string get_range_body(int start, int end);

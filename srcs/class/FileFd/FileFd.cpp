@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileFd.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:47:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:22:16 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,9 +201,10 @@ void FileFd::set_post_body(std::string &body)
 		_buffer.insert(_buffer.size(), body);
 }
 
-void FileFd::set_boundary(std::string &boundary)
+void FileFd::set_boundary(std::string boundary)
 {
-	this->_boundary = boundary;
+	if (boundary.size())
+		this->_boundary = boundary;
 }
 
 std::string &FileFd::get_boundary()
