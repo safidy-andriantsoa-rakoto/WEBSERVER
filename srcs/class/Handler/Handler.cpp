@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 20:05:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 07:43:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,6 +290,10 @@ void	Handler::cleanFdAndAlloc()
 	{
 		if ((*itCgiFd) && (*itCgiFd)->getOutputFd() != -1)
 			close((*itCgiFd)->getOutputFd());
+		if ((*itCgiFd) && (*itCgiFd)->getInputFd() != -1)
+			close((*itCgiFd)->getInputFd());
+		if ((*itCgiFd) && (*itCgiFd)->getErrFd() != -1)
+			close((*itCgiFd)->getErrFd());
 	}
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
 	{

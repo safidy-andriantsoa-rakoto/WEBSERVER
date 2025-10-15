@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 19:43:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 08:01:54 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,11 @@ void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
 
 void	addFdInHandlerAndEpoll(VClientIt & it, Handler & handler, EpollCreation & epoll, int const & epollOpt, int *fdFromRequest)
 {
+	std::cout << "Add FD in Handler and epoll" << std::endl;
+	std::cout << fdFromRequest[FD_STDIN] << " " << fdFromRequest[FD_STDOUT] << " " << fdFromRequest[FD_STDERR] << std::endl;
 	if (fdFromRequest[FD_STDOUT] < 0)
 	{
+		std::cout << "Single response" << std::endl;
 		if (fdFromRequest[FD_STDOUT] == -2)
 			handler.setProgramBreak(true);
 		return;
@@ -107,6 +110,7 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 
 bool	hasSingleResponse(int const & respStat)
 {
+	std::cout << "Response stat = " << respStat << std::endl;
 	if (respStat == REDIR_RSP || respStat == SINGLE_RSP || respStat == LDIR_RSP)
 		return true;
 	return false;

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/14 20:10:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 07:59:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -472,11 +472,13 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	{
 		_fdType = HTML_FILE;
 		stdPostRequest(header, boundary, opt, fd);
+		setSingleResponse(201);
 	}
 	else
 	{
 		_fdType = PHP_SCRIPT;
 		cgiPostRequest(fd);
+		setStatusCodeResponse(200);
 	}
 }
 
@@ -672,7 +674,6 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	else if (_request.getMethod() == "POST")
 	{
 		post_request(header, boundary, opt, fd);
-		setSingleResponse(201);
 	}
 	else if (_request.getMethod() == "DELETE")
 	{
