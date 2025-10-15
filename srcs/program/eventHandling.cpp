@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 14:37:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 14:55:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,35 +194,24 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	}
 }
 
-/*
-	Write request body to INPUT
-
-	Add condition to limit buffer < _BUFFER
-	Check relation with CGI output, are they simultaneous? 
-	or do we need to wait for write to complete before EPOLLIN FD_STDOUT?
-*/
 void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 {
 	int			bytesWritten;
-	// char		buffer[_BUFFER];
 	std::string	bufferString;
 	vectCgiFdIt	it = handler.getCgiFdIterator(i);
 	VClientIt	clIt = findFdInClient(handler.getVectClient(), (*it)->getClientFd());
 
 	bufferString = (*clIt).getObjRequest().getBody();
-	// strlcpy(buffer, bufferString.c_str(), bufferString.size());
-	// if ((*it)->getStatus() == OP_START) //See if necessary
-	// 	return;
 	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
-	std::cout << "Buffer = " << bufferString << " => " << bufferString.size() << std::endl;
+	// std::cout << "Buffer = " << bufferString << " => " << bufferString.size() << std::endl;
 	bytesWritten = write((*it)->getInputFd(), bufferString.c_str(), bufferString.size());
 	if (bytesWritten <= 0)
 	{
 		std::cout << "Bytewritten = " << bytesWritten << std::endl;
 		return ;
 	}
-	(*it)->setStatus(OP_CLOSE);
-	(*it)->clearBuffer();
+	// (*it)->setStatus(OP_CLOSE);
+	// (*it)->clearBuffer();
 	epoll.epoll_clean((*it)->getInputFd());
 	epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
 	epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
