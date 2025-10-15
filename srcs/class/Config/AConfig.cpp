@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 09:22:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 09:55:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ AConfig::AConfig(AConfig const &other) :
 	_serverName(other._serverName),
 	_errPage(other._errPage),
 	_hasErrPage(other._hasErrPage),
-	_location(other._location){}
+	_location(other._location),
+	_size(other._size){}
 
 AConfig &AConfig::operator=(AConfig const &other)
 {
@@ -34,6 +35,7 @@ AConfig &AConfig::operator=(AConfig const &other)
         _errPage    = other._errPage;
         _hasErrPage = other._hasErrPage;
         _location   = other._location;
+		_size = other._size;
     }
     return *this;
 }
@@ -74,6 +76,7 @@ vectLocationIt AConfig::findClassLocation(std::string const & toFind)
 
 	for (it = _location.begin(); it != _location.end(); it++)
 	{
+		std::cout << (*it).getLocation() << std::endl;
 		if ((*it).getLocation() == toFind)
 			break ;
 	}

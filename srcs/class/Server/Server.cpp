@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 10:51:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 09:26:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,4 +150,18 @@ void Server::simpleInit(std::string const & servPath, std::string const & locati
 
 	conf.parseConfig(servPath, locationPath);
 	_config = conf;
+}
+
+void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
+{
+	size_t i(0);
+	while(i < allServer.size())
+	{
+		allServer[i]._config.parseConfig(file);
+		allServer[i]._config.displayConfig();
+		if(allServer[i]._config.getStatus() == true)
+			i++;
+		else
+			return ;
+	}
 }

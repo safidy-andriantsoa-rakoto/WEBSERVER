@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/15 07:59:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:04:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,6 +327,8 @@ void Client::processLocationOption(MyLoc const & location, Request & request)
 {
 	stringVect	locationMethod;
 
+	std::cout << "		Process Location Opt\n";
+	location.displayLocation();
 	locationMethod = location.getAvailableMethod();
 	processRedirection(location, request);
 	checkMethodInLocation(locationMethod, request.getMethod());

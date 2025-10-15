@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 14:04:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 08:24:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,11 @@ bool        checkWriteConfig(const std::vector<std::string>& lines, const std::s
 bool        checkNumberAllContent(std::vector<std::string> &file);
 
 std::vector<std::string> getContentFile(std::string _path);
+std::vector<int> containsExactWordInVector(const std::vector<std::string> &lines, const std::string &word);
+
+std::vector<std::string> getContentFile(std::string _path);
+bool        checkDuplicate(stringVect file, std::string name, size_t &start , size_t &end);
+bool        checkConfigDupli(stringVect file, size_t &start, size_t &end);
 
 // dirListing
 stringMap	listingDirectory(DIR* dir, std::string const & path);
