@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/13 11:45:34 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/15 15:53:44 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ void    launchServer(Handler & handler)
 			}
 			if (handler.getProgramBreak() == true) //Used to exit the child process correctly
 				throw std::runtime_error("Program break launched");
-			sleep(1);
+			// sleep(1);
 		}
 	}
 }

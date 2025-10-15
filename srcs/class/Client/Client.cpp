@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/15 15:35:45 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/15 15:45:34 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -530,8 +530,10 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 			size_t endFile = _request.get_Body().find("\n", findFile + 10);
 			std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
 			std::string filename;
-			//  = _request.get_Body().substr(findFile + 10, endFile - 3);
+
 			std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
+			endFile = _request.get_Body().find("\r\n\r\n", endFile);
+			_request.delete_range_body_request(0, endFile + 4);
 			std::cout << "\e[5mFILE POST  FOUND\e[0m-->>" << filename << "<---" << std::endl;
 			if (filename.size())
 			{

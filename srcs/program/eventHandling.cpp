@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 13:47:51 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/15 15:52:41 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,11 +179,15 @@ void handleFileEvent(Handler &handler, int const &i, EpollCreation &epoll, int c
 		if ((*it)->getFd() != -1)
 		{
 			std::string body;
-		// 	size_t		len;
-		// 	std::string boundary;
+			size_t		pos;
+			std::string boundary;
 			(*it)->manageFd();
 			
 			body = (*it)->get_range_body(0, _BUFFER);
+			boundary = "\r\n" + (*it)->get_boundary();
+			pos = body.find(boundary);
+			if (pos != std::string::npos)
+				body = body.substr(0 , pos);
 			std::cout << "  BODY FILEOUT->" << body << "<--" << std::endl;
 		// 	boundary = (*it)->get_boundary();
 		// 	if (boundary.size())
