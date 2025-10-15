@@ -198,12 +198,10 @@ void CgiFd::checkError()
 	std::string	tmp;
 	stringVect	vect;
 
-	std::cout << "			CHECK ERROR" << std::endl;
 	if (it == _header.end())
 		return;
 	tmp = (*it).second;
 	vect = splitString(tmp, " ");
 	statusCode = convertStringToInt(vect[0]);
-	std::cout << "			ERROR FOUND IN CGI" << std::endl;
 	throw ErrorExcept(statusCode, "Error from cgi");
 }

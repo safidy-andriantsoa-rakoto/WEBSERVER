@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 07:43:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 11:11:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,11 +189,13 @@ vectCgiFdIt Handler::findPtrInCgiFd(vectCgiFd &allCgiFd, CgiFd *ptr)
 
 void Handler::removeCgiFd(int const &index)
 {
+	std::cout << "RemoveCgiFd :" << index << std::endl;
 	_vectCgiFd.erase(_vectCgiFd.begin() + index);
 }
 
 void Handler::removeCgiFd(vectCgiFdIt &it)
 {
+	std::cout << "RemoveCgiFd from iterator:" << std::endl;
 	_vectCgiFd.erase(it);
 }
 

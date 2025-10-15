@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:25:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:44:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ MyLoc &MyLoc::operator=(MyLoc const &other)
 
 MyLoc::~MyLoc() {}
 
-void MyLoc::parseLocation(std::string const &line)
+void MyLoc::myParseLocation(std::string const &line)
 {
     stringVect attr;
     stringVect elt;
@@ -41,7 +41,10 @@ void MyLoc::parseLocation(std::string const &line)
         topic = elt[0];
         elt.erase(elt.begin());
         if (topic == "location")
+        {
             _location = elt;
+            _locations = elt[0];
+        }
         if (topic == "root")
             _root = elt;
         if (topic == "autoindex")
@@ -55,12 +58,9 @@ void MyLoc::parseLocation(std::string const &line)
     }
 }
 
-bool MyLoc::getStatus()
-{
-    return (_checkStats);
-}
+bool MyLoc::getStatus(){return (_checkStats);}
 
-void MyLoc::getElemetLocaton(const size_t &start, const size_t &end, const stringVect &file)
+void MyLoc::getElementLocation(const size_t &start, const size_t &end, const stringVect &file)
 {
     for (size_t i = start; i < end; ++i)
     {
@@ -73,7 +73,6 @@ void MyLoc::getElemetLocaton(const size_t &start, const size_t &end, const strin
             std::string word;
             if (name == "location")
             {
-                std::cout << "VALUE = " << value << std::endl;
                 stringVect tab = splitString(value, " ");
                 _locations = tab[0];
             }
@@ -110,7 +109,7 @@ void MyLoc::parseLocation(const stringVect &file)
         end = file.size();
     std::cout << "start = " << start << " ; end = " << end << std::endl;
     std::cout << "size = " << file.size();
-    getElemetLocaton(start, end, file);
+    getElementLocation(start, end, file);
     currentBlock++;
     _checkStats = true;
 }

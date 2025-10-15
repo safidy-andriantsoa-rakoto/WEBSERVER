@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 14:50:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:40:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ enum    e_identifier
 
 enum    e_fdCategory
 {
-    FD_STDOUT,
+    FD_PRINCIPAL,
     FD_STDERR,
     FD_STDIN
 };

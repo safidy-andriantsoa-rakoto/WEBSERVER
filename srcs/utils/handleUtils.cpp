@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 08:01:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 11:18:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,8 @@ void	closeFileFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
 	handler.removeFileFd(i);
 }
 
-void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
+void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & fd)
 {
-	int			fd;
-	vectCgiFdIt	it = handler.getCgiFdIterator(i);
-
-	fd = (*it)->getOutputFd();
 	epoll.epoll_clean(fd);
 	handler.removeCgiFd(i);
 }
@@ -38,24 +34,23 @@ void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
 void	addFdInHandlerAndEpoll(VClientIt & it, Handler & handler, EpollCreation & epoll, int const & epollOpt, int *fdFromRequest)
 {
 	std::cout << "Add FD in Handler and epoll" << std::endl;
-	std::cout << fdFromRequest[FD_STDIN] << " " << fdFromRequest[FD_STDOUT] << " " << fdFromRequest[FD_STDERR] << std::endl;
-	if (fdFromRequest[FD_STDOUT] < 0)
+	std::cout << fdFromRequest[FD_STDIN] << " " << fdFromRequest[FD_PRINCIPAL] << " " << fdFromRequest[FD_STDERR] << std::endl;
+	if (fdFromRequest[FD_PRINCIPAL] < 0)
 	{
-		std::cout << "Single response" << std::endl;
-		if (fdFromRequest[FD_STDOUT] == -2)
+		if (fdFromRequest[FD_PRINCIPAL] == -2)
 			handler.setProgramBreak(true);
 		return;
 	}
 	if ((*it).getFdType() == HTML_FILE)
-		handler.addToVectFileFd(it, fdFromRequest[FD_STDOUT]);
+		handler.addToVectFileFd(it, fdFromRequest[FD_PRINCIPAL]);
 	else
 	{
-		handler.addToVectCgiFd(it, fdFromRequest[FD_STDOUT], fdFromRequest[FD_STDERR], fdFromRequest[FD_STDIN]);
-		epoll.epoll_control(epollOpt, fdFromRequest[FD_STDERR]);
+		handler.addToVectCgiFd(it, fdFromRequest[FD_PRINCIPAL], fdFromRequest[FD_STDERR], fdFromRequest[FD_STDIN]);
+		epoll.epoll_control(EPOLLOUT, fdFromRequest[FD_STDERR]);
 		if (fdFromRequest[FD_STDIN] > 0)
-			epoll.epoll_control(epollOpt, fdFromRequest[FD_STDIN]);
+			epoll.epoll_control(EPOLLOUT, fdFromRequest[FD_STDIN]);
 	}
-	epoll.epoll_control(epollOpt, fdFromRequest[FD_STDOUT]);
+	epoll.epoll_control(epollOpt, fdFromRequest[FD_PRINCIPAL]);
 }
 
 int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)
@@ -67,7 +62,7 @@ int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)
 	bytesRead = read((*itCgi)->getErrFd(), buffer, _BUFFER);
 	if (bytesRead <= 0)
 	{
-		// std::cout << "Nothing to read for CGI Err \n";
+		std::cout << "Nothing to read for CGI ERROR \n";
 		epoll.epoll_clean((*itCgi)->getErrFd());
 		return 0;
 	}
@@ -90,7 +85,7 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 			return;
 	}
 	(*it).setCatchedResponse(err, fd);
-	if (fd[FD_STDOUT] == -1)
+	if (fd[FD_PRINCIPAL] == -1)
 		return;
 	epoll.epoll_clean((*itCgi)->getErrFd());
 	epoll.epoll_clean((*itCgi)->getOutputFd());
@@ -98,14 +93,14 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 	if ((*it).getFdType() == HTML_FILE)
 	{
 		(*it).clearPtrCgiFd();
-		handler.addToVectFileFd(it, fd[FD_STDOUT]);
+		handler.addToVectFileFd(it, fd[FD_PRINCIPAL]);
 	}
 	else
 	{
-		handler.addToVectCgiFd(it, fd[FD_STDOUT], fd[FD_STDERR], fd[FD_STDIN]);
+		handler.addToVectCgiFd(it, fd[FD_PRINCIPAL], fd[FD_STDERR], fd[FD_STDIN]);
 		epoll.epoll_control(EPOLLIN, fd[FD_STDERR]);
 	}
-	epoll.epoll_control(EPOLLIN, fd[FD_STDOUT]);
+	epoll.epoll_control(EPOLLIN, fd[FD_PRINCIPAL]);
 }
 
 bool	hasSingleResponse(int const & respStat)

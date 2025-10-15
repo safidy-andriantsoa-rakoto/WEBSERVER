@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 09:26:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:32:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ void Server::simpleInit(std::string const & servPath, std::string const & locati
 {
 	MyConf conf;
 
-	conf.parseConfig(servPath, locationPath);
+	conf.myParseConfig(servPath, locationPath);
 	_config = conf;
 }
 

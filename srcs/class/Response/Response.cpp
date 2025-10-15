@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 08:10:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:40:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, int *fd, 
 	{
 		fdType = HTML_FILE;
 		filePath = errPage.filePath;
-		fd[FD_STDOUT] = openFile(filePath);
+		fd[FD_PRINCIPAL] = openFile(filePath);
 	}
 	else
 	{
@@ -268,7 +268,7 @@ void Response::execCgiDefaultScript(int *fd)
 		}
 		catch(const std::exception& e)
 		{
-			fd[FD_STDOUT] = -1;
+			fd[FD_PRINCIPAL] = -1;
 			fd[FD_STDERR] = -1;
 		}
 	}
@@ -277,7 +277,7 @@ void Response::execCgiDefaultScript(int *fd)
 		cgiParser.clearCgiClass();
 		close(errFd[1]);
 		close(pipeFd[1]);
-		fd[FD_STDOUT] = pipeFd[0];
+		fd[FD_PRINCIPAL] = pipeFd[0];
 		fd[FD_STDERR] = errFd[0];
 	}
 }

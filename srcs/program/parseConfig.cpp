@@ -6,13 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 10:19:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 14:01:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:39:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-vectServer parseConfigFile()
+vectServer myParseConfigFile()
 {
 	vectServer	result;
 	Server		server1;

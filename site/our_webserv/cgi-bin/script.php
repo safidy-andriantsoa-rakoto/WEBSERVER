@@ -1,6 +1,6 @@
 <?php
 // Define constants
-const LOG_FILE = 'registered_names.txt';
+const LOG_FILE = 'nameLog.txt';
 const UPLOAD_DIR = 'uploads/'; // Directory where files will be stored
 
 // NOTE: All header() and http_response_code() calls have been removed per your request.

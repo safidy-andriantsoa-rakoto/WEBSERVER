@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/15 10:04:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:49:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -422,7 +422,7 @@ void Client::stdGetRequest(int *fd)
 			throw ErrorExcept(403, "No permission for file");
 		throw ErrorExcept(404, "File can't be opened");
 	}
-	fd[FD_STDOUT] = fdGet;
+	fd[FD_PRINCIPAL] = fdGet;
 }
 
 void Client::cgiGetRequest(int *fd)
@@ -454,7 +454,7 @@ void Client::cgiGetRequest(int *fd)
 		}
 		catch(const std::exception& e)
 		{
-			fd[FD_STDOUT] = -2;
+			fd[FD_PRINCIPAL] = -2;
 			fd[FD_STDERR] = -2;
 		}
 	}
@@ -463,7 +463,7 @@ void Client::cgiGetRequest(int *fd)
 		close(errFd[1]);
 		close(pipeFd[1]);
 		_request.clearCgiClass();
-		fd[FD_STDOUT] = pipeFd[0];
+		fd[FD_PRINCIPAL] = pipeFd[0];
 		fd[FD_STDERR] = errFd[0];
 	}
 }
@@ -478,6 +478,7 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	}
 	else
 	{
+		opt = EPOLLIN;
 		_fdType = PHP_SCRIPT;
 		cgiPostRequest(fd);
 		setStatusCodeResponse(200);
@@ -553,7 +554,7 @@ void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t &
 	else
 		std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 	opt = EPOLLOUT;
-	fd[FD_STDOUT] = fdPost;
+	fd[FD_PRINCIPAL] = fdPost;
 }
 
 void Client::cgiPostRequest(int *fd)
@@ -593,7 +594,7 @@ void Client::cgiPostRequest(int *fd)
 		catch(const std::exception& e)
 		{
 			fd[FD_STDIN] = -2;
-			fd[FD_STDOUT] = -2;
+			fd[FD_PRINCIPAL] = -2;
 			fd[FD_STDERR] = -2;
 		}
 	}
@@ -604,7 +605,7 @@ void Client::cgiPostRequest(int *fd)
 		close(errFd[1]);
 		_request.clearCgiClass();
 		fd[FD_STDIN] = inFd[1];
-		fd[FD_STDOUT] = outFd[0];
+		fd[FD_PRINCIPAL] = outFd[0];
 		fd[FD_STDERR] = errFd[0];
 	}
 }

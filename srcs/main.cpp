@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:14:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:39:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,32 +28,16 @@ static void	initProgram()
 	closedir(dir);
 }
 
-int main(int argc, char **argv)
+int main()
 {
 	Handler handler;
 
-	(void ) argc;
-	(void) argv;
 	try
 	{
 		initProgram();
-		stringVect		file;
-		vectLocation	Location;
-		vectServer 		server;
-		
-		file = getContentFile("config/serverConf/test.conf");
-		if (!checkBraceClose(file))
-			return (1);
-		if(!checkBracesAfterNewline(file))
-			return (1);
-		if (!checkWriteConfig(file, "server", "server {"))
-			return (1);
-		if(!checkNumberAllContent(file))
-			return (1);
-		vectServer	allServer = getServer(file);
-		Server::getParsAllServer(allServer, file);
-		// handler.setVectServer(allServer);
-		// launchServer(handler);
+		vectServer	allServer = myParseConfigFile();
+		handler.setVectServer(allServer);
+		launchServer(handler);
 	}
 	catch(const std::exception & e)
 	{
@@ -63,3 +47,39 @@ int main(int argc, char **argv)
 	}
 	return 0;
 }
+
+// int main(int argc, char **argv)
+// {
+// 	Handler handler;
+
+// 	(void ) argc;
+// 	(void) argv;
+// 	try
+// 	{
+// 		initProgram();
+// 		stringVect		file;
+// 		vectLocation	Location;
+// 		vectServer 		server;
+		
+// 		file = getContentFile("config/serverConf/test.conf");
+// 		if (!checkBraceClose(file))
+// 			return (1);
+// 		if(!checkBracesAfterNewline(file))
+// 			return (1);
+// 		if (!checkWriteConfig(file, "server", "server {"))
+// 			return (1);
+// 		if(!checkNumberAllContent(file))
+// 			return (1);
+// 		vectServer	allServer = getServer(file);
+// 		Server::getParsAllServer(allServer, file);
+// 		// handler.setVectServer(allServer);
+// 		// launchServer(handler);
+// 	}
+// 	catch(const std::exception & e)
+// 	{
+// 		std::cerr << e.what() << std::endl;
+// 		handler.cleanFdAndAlloc();
+// 		return -1;
+// 	}
+// 	return 0;
+// }

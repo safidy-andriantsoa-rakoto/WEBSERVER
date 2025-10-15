@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:15:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:35:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ MyConf &MyConf::operator=(MyConf const &other)
 
 MyConf::~MyConf(){}
 
-void MyConf::parseConfig(std::string const & filePath)
+void MyConf::locationParsing(std::string const & filePath)
 {
 	std::ifstream	file;
 	std::string		line;
@@ -43,19 +43,19 @@ void MyConf::parseConfig(std::string const & filePath)
 	while (std::getline(file, line))
 	{
 		loc = MyLoc();
-		loc.parseLocation(line);
+		loc.myParseLocation(line);
 		_location.push_back(loc);
 	}
 	vectLocationIt it = findClassLocation("upload");
 	if (it == _location.end())
 	{
 		loc = MyLoc();
-		loc.parseLocation(DEF_UPLOAD_LOCATION); //Add default upload location
+		loc.myParseLocation(DEF_UPLOAD_LOCATION);
 		_location.push_back(loc);
 	}
 }
 
-void MyConf::parseConfig(std::string const &servPath, std::string const &locPath)
+void MyConf::myParseConfig(std::string const &servPath, std::string const &locPath)
 {
 	std::ifstream	file;
 	std::string		line;
@@ -90,7 +90,7 @@ void MyConf::parseConfig(std::string const &servPath, std::string const &locPath
 		vect.clear();
 		line.clear();
 	}
-	parseConfig(locPath);
+	locationParsing(locPath);
 }
 
 void	MyConf::displayConfig() const
