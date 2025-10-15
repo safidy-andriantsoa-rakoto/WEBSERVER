@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 19:38:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 14:14:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,11 @@ void Request::processCgiClass(std::string const &target, std::string const & roo
 {
 	_cgiParser.parseCgiEnv(target, rootDirectory);
 	_cgiParser.setReqMethod(_method);
-	_cgiParser.setContentLength(_request_length);
-	// _cgiParser.displayCgiClass(); //For test only
-	_cgiParser.configEnvp();
+	_cgiParser.setContentLength(_body.size());
+	if (_method == "GET")
+		_cgiParser.configGetEnvp();
+	else
+		_cgiParser.configPostEnvp();
 }
 
 void Request::setCgiClass(CgiParser const &cgi)

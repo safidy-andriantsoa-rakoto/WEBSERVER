@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/15 10:49:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 14:31:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,7 @@ void Client::processRequestWithConfig()
 		it = _config.findClassLocation(".php");
 		processLocationOption(*it, _request);
 		_request.processCgiClass(target, (*it).getRootDirectory());
-		target = (*it).getRootDirectory() + target; //Review if request target needed ? normally done during parsing Cgi
+		target = (*it).getRootDirectory() + target; //Review if request target needed ? normaly done during parsing Cgi
 		_request.setRequestTarget(target);
 		return;
 	}
@@ -327,8 +327,6 @@ void Client::processLocationOption(MyLoc const & location, Request & request)
 {
 	stringVect	locationMethod;
 
-	std::cout << "		Process Location Opt\n";
-	location.displayLocation();
 	locationMethod = location.getAvailableMethod();
 	processRedirection(location, request);
 	checkMethodInLocation(locationMethod, request.getMethod());
@@ -388,7 +386,7 @@ void Client::get_request(uint32_t & opt, int *fd)
 	}
 	else
 	{
-		_fdType = PHP_SCRIPT;
+		_fdType = GET_PHP_SCRIPT;
 		cgiGetRequest(fd);
 	}
 	opt = EPOLLIN;
@@ -479,7 +477,7 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	else
 	{
 		opt = EPOLLIN;
-		_fdType = PHP_SCRIPT;
+		_fdType = POST_PHP_SCRIPT;
 		cgiPostRequest(fd);
 		setStatusCodeResponse(200);
 	}
@@ -593,6 +591,7 @@ void Client::cgiPostRequest(int *fd)
 		}
 		catch(const std::exception& e)
 		{
+			std::cout << "		THERE WAS AN ERROR!!!!!!!!!\n";
 			fd[FD_STDIN] = -2;
 			fd[FD_PRINCIPAL] = -2;
 			fd[FD_STDERR] = -2;

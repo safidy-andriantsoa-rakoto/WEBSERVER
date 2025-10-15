@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 11:18:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 13:17:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,21 @@ void	addFdInHandlerAndEpoll(VClientIt & it, Handler & handler, EpollCreation & e
 		return;
 	}
 	if ((*it).getFdType() == HTML_FILE)
+	{
 		handler.addToVectFileFd(it, fdFromRequest[FD_PRINCIPAL]);
-	else
+		epoll.epoll_control(epollOpt, fdFromRequest[FD_PRINCIPAL]);
+	}
+	else if ((*it).getFdType() == GET_PHP_SCRIPT)
 	{
 		handler.addToVectCgiFd(it, fdFromRequest[FD_PRINCIPAL], fdFromRequest[FD_STDERR], fdFromRequest[FD_STDIN]);
 		epoll.epoll_control(EPOLLOUT, fdFromRequest[FD_STDERR]);
-		if (fdFromRequest[FD_STDIN] > 0)
-			epoll.epoll_control(EPOLLOUT, fdFromRequest[FD_STDIN]);
+		epoll.epoll_control(epollOpt, fdFromRequest[FD_PRINCIPAL]);
 	}
-	epoll.epoll_control(epollOpt, fdFromRequest[FD_PRINCIPAL]);
+	else if ((*it).getFdType() == POST_PHP_SCRIPT)
+	{
+		handler.addToVectCgiFd(it, fdFromRequest[FD_PRINCIPAL], fdFromRequest[FD_STDERR], fdFromRequest[FD_STDIN]);
+		epoll.epoll_control(EPOLLOUT, fdFromRequest[FD_STDIN]);
+	}
 }
 
 int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)

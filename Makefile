@@ -100,6 +100,8 @@ NAME = webserv
 
 UPLOAD = upload
 
+LOG	= ./site/our_webserv/cgi-bin/nameLog.txt
+
 all : $(NAME)
 
 $(NAME) : $(OBJ_SUB_DIR) $(OBJ) $(UPLOAD)
@@ -115,6 +117,7 @@ $(OBJ) : $(OBJ_DIR)%.o:$(SRC_DIR)%.cpp $(INC)
 	$(CC) $(FLAG) -c $< -o $@ -I $(INC_DIR)
 
 clean :
+	rm -rf $(LOG)
 	rm -rf $(OBJ)
 	rm -rf $(OBJ_DIR)
 

@@ -6,13 +6,14 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 19:39:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 14:16:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CgiParser.hpp"
 
-std::string CgiParser::_cgiConfig;
+std::string CgiParser::_cgiGetConfig;
+std::string CgiParser::_cgiPostConfig;
 std::string CgiParser::_cgiErrConfig;
 
 CgiParser::CgiParser() : _envp(NULL){}
@@ -56,9 +57,9 @@ void CgiParser::parseCgiEnv(std::string const & requestTarget, std::string const
 	_scriptFileName = rootDirectory + _scriptName;
 }
 
-void CgiParser::configEnvp()
+void CgiParser::configGetEnvp()
 {
-	std::string	ownedConfig = CgiParser::_cgiConfig;
+	std::string	ownedConfig = CgiParser::_cgiGetConfig;
 	stringVect	vect;
 
 	replaceString(ownedConfig, _reqMethod, "$1");
@@ -69,6 +70,25 @@ void CgiParser::configEnvp()
 	vect = splitString(ownedConfig, "\n");
 	clearCharTable(_envp);
 	_envp = convertStringVectToTable(vect);
+	displayCharTable(_envp, "ENVP GET TABLE");
+	vect.clear();
+	ownedConfig.clear();
+}
+
+void CgiParser::configPostEnvp()
+{
+	std::string	ownedConfig = CgiParser::_cgiPostConfig;
+	stringVect	vect;
+
+	std::cout << "			CONFIG POST ENVP" << std::endl;
+	replaceString(ownedConfig, _reqMethod, "$1");
+	replaceString(ownedConfig, _scriptFileName, "$2");
+	replaceString(ownedConfig, _scriptName, "$3");
+	replaceString(ownedConfig, convertIntToString(_contentLength), "$4");
+	vect = splitString(ownedConfig, "\n");
+	clearCharTable(_envp);
+	_envp = convertStringVectToTable(vect);
+	displayCharTable(_envp, "ENVP POST TABLE");
 	vect.clear();
 	ownedConfig.clear();
 }
@@ -139,9 +159,10 @@ void CgiParser::displayCgiClass() const
 	std::cout << "==============END OF CGI COMPONENT=============\033[0m" << std::endl;
 }
 
-void CgiParser::initCgiConfig(std::string const & generalPath, std::string const & errCgiPath)
+void CgiParser::initCgiConfig(std::string const & getCgiPath, std::string const & postCgiPath, std::string const & errCgiPath)
 {
-	_cgiConfig = readFileToString(generalPath);
+	_cgiGetConfig = readFileToString(getCgiPath);
+	_cgiPostConfig = readFileToString(postCgiPath);
 	_cgiErrConfig = readFileToString(errCgiPath);
 }
 

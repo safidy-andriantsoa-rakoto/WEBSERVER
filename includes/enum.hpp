@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:40:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 13:14:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ enum    e_fdCategory
 enum    e_fdRspType
 {
     HTML_FILE,
-    PHP_SCRIPT
+    GET_PHP_SCRIPT,
+    POST_PHP_SCRIPT
 };
 
 #endif

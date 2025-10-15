@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/14 13:58:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 14:05:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,9 @@
 #define STAT_PATH "./config/statcode/statusCode.conf"
 #define LDIR_PATH "./config/listingDirectory/listDir.html"
 #define MIME_PATH "./config/ext"
-#define CGI_PATH  "./config/cgiConf/cgi.conf"
-#define CGI_ERR_PATH  "./config/cgiConf/errCgi.conf"
+#define CGI_GET_PATH  "./config/cgiConf/cgiGet.conf"
+#define CGI_POST_PATH  "./config/cgiConf/cgiPost.conf"
+#define CGI_ERR_PATH  "./config/cgiConf/cgiErr.conf"
 #define PHP_CGI_PATH "/usr/bin/php-cgi"
 #define UPLOAD_PATH "./upload"
 

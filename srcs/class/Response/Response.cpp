@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:40:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 13:09:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, int *fd, 
 	stringVectIt	it;
 
 	filePath = ERR_PATH;
-	fdType = PHP_SCRIPT;
+	fdType = GET_PHP_SCRIPT;
 	if (!errPage.listError.size())
 	{
 		execCgiDefaultScript(fd);
