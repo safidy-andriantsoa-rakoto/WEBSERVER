@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/15 10:25:37 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/15 15:35:45 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -516,22 +516,44 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
-		filePath = "upload/" + currentDateTimeString() + "storage_multi_form_data.txt";
-		fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
+		size_t findFile;
+
 		std::string	getboundary = header.find("Content-Type")->second;
 		size_t pos = getboundary.find(boundary);// get boundary
 		if (pos != std::string::npos)
 			this->_boundary_sep = getboundary.substr(pos + boundary.size());
+		// filePath = "upload/" + currentDateTimeString() + "storage_multi_form_data.txt";
+		// fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
+		findFile = _request.get_Body().find("filename=\"");
+		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
+		{
+			size_t endFile = _request.get_Body().find("\n", findFile + 10);
+			std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
+			std::string filename;
+			//  = _request.get_Body().substr(findFile + 10, endFile - 3);
+			std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
+			std::cout << "\e[5mFILE POST  FOUND\e[0m-->>" << filename << "<---" << std::endl;
+			if (filename.size())
+			{
+				filePath = "upload/" + currentDateTimeString() + filename;
+				std::cout << "PATH=["<< filePath <<"]" << std::endl;
+				fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
+			}
+		}
+		else
+			fd[FD_STDOUT] = -1;
 	}
 	else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 	{
-		filePath = "upload/" + currentDateTimeString() + "storage_app_xwfurlencoded.txt";
-		fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
+		// filePath = "upload/" + currentDateTimeString() + "storage_app_xwfurlencoded.txt";
+		// fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
+		fd[FD_STDOUT] = -1;
 	}
 	else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 	{
-		filePath = "upload/" + currentDateTimeString() + "storage_text_plain.txt";
-		fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
+		// filePath = "upload/" + currentDateTimeString() + "storage_text_plain.txt";
+		// fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
+		fd[FD_STDOUT] = -1;
 	}
 	else
 		throw ErrorExcept(400, "Client-side error");
@@ -550,13 +572,13 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	{
 		_request.parseRequest(clientRequest);
 		processRequestWithConfig();
+		std::cout << "		BODY--->[" << _request.get_Body() << "]" << std::endl;
 	}
 	else
 	{
-		std::cout << "			MIDITRA ATY EEEEEEEEEEEEEEEEEEEE" << std::endl;
+		std::cout << "		BODY--->[" << clientRequest << "]" << std::endl;
 		_request.set_Body(clientRequest);
 		_request.set_c_length_received(clientRequest.size());
-		std::cout << " BODY SET ATO AAAANNN  ["<< _request.get_Body() << "]" << std::endl;
 	}
 	header = _request.getHeader();
 	_request.displayRequest();
@@ -643,7 +665,8 @@ int Client::creat_file_for_post(std::string path, uint32_t & opt)
 	{
 		fd = open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
-			throw ErrorExcept(404, "File can't be opened");
+			perror(strerror(errno));
+			// throw ErrorExcept(404, "File can't be opened");
 		opt = EPOLLOUT;
 		this->setFdType(POST_FILE);
 	}
