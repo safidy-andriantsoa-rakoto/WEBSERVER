@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fileUtils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 09:01:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:28:43 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,9 +285,9 @@ bool checkCountWord2(const std::vector<std::string> &lines, const std::string &w
 
 bool checkNumberAllContent(std::vector<std::string> &file)
 {
-	if (!checkCountWord(file, "host", 2) || !checkCountWord(file, "port", 2) || !checkCountWord(file, "size", 3) || !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2) || !checkCountWord(file, "SRCIPT_FILENAME", 2) || !checkCountWord(file, "autoindex", 2))
+	if (!checkCountWord(file, "host", 2) || !checkCountWord(file, "size", 3) || !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2) || !checkCountWord(file, "SRCIPT_FILENAME", 2) || !checkCountWord(file, "autoindex", 2))
 		return (false);
-	if (!checkCountWord2(file, "method", 4) || !checkCountWord2(file, "error_page", 6))
+	if (!checkCountWord2(file, "method", 4) || !checkCountWord2(file, "error_page", 6 )|| !checkCountWord2(file, "port", 4) )
 	{
 		return (false);
 	}

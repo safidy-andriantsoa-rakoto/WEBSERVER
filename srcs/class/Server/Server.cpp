@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 09:26:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:31:06 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,7 @@ void Server::simpleInit(std::string const & servPath, std::string const & locati
 void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
 {
 	size_t i(0);
+	std::cout << "Server size => " << allServer.size() << std::endl;
 	while(i < allServer.size())
 	{
 		allServer[i]._config.parseConfig(file);

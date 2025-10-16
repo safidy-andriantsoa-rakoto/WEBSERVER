@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyLoc.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:25:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 14:22:36 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ void MyLoc::getElemetLocaton(const size_t &start, const size_t &end, const strin
             std::string word;
             if (name == "location")
             {
-                std::cout << "VALUE = " << value << std::endl;
                 stringVect tab = splitString(value, " ");
                 _locations = tab[0];
             }
@@ -97,19 +96,24 @@ void MyLoc::getElemetLocaton(const size_t &start, const size_t &end, const strin
 
 void MyLoc::parseLocation(const stringVect &file)
 {
+    std::cout << "Hello" << std::endl;
     static intVect index = containsExactWordInVector(file, "location");
+    // index.clear();
+    // std::cout << 
     static size_t currentBlock = 0;
+    // for(size_t i = 0; i < index.size() ; i++)
+    //     std::cout << "Index locations = " << index[i] << std::endl;
     if (currentBlock >= index.size())
         return;
     size_t start = index[currentBlock];
     size_t end;
-    std::cout << "current block : " << currentBlock << std::endl;
+    // std::cout << "current block : " << currentBlock << std::endl;
     if (currentBlock + 1 < index.size())
         end = index[currentBlock + 1];
     else
         end = file.size();
     std::cout << "start = " << start << " ; end = " << end << std::endl;
-    std::cout << "size = " << file.size();
+    // std::cout << "size = " << file.size();
     getElemetLocaton(start, end, file);
     currentBlock++;
     _checkStats = true;

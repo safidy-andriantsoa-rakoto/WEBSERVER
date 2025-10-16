@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:15:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 14:28:34 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,24 +18,24 @@ MyConf::MyConf()
 	_hasErrPage = false;
 }
 
-MyConf::MyConf(MyConf const & other) : AConfig(other){}
+MyConf::MyConf(MyConf const &other) : AConfig(other) {}
 
 MyConf &MyConf::operator=(MyConf const &other)
 {
-    if (this != & other)
+	if (this != &other)
 	{
 		AConfig::operator=(other);
 	}
 	return *this;
 }
 
-MyConf::~MyConf(){}
+MyConf::~MyConf() {}
 
-void MyConf::parseConfig(std::string const & filePath)
+void MyConf::parseConfig(std::string const &filePath)
 {
-	std::ifstream	file;
-	std::string		line;
-	MyLoc			loc;
+	std::ifstream file;
+	std::string line;
+	MyLoc loc;
 
 	file.open(filePath.c_str());
 	if (!file.is_open())
@@ -50,16 +50,16 @@ void MyConf::parseConfig(std::string const & filePath)
 	if (it == _location.end())
 	{
 		loc = MyLoc();
-		loc.parseLocation(DEF_UPLOAD_LOCATION); //Add default upload location
+		loc.parseLocation(DEF_UPLOAD_LOCATION); // Add default upload location
 		_location.push_back(loc);
 	}
 }
 
 void MyConf::parseConfig(std::string const &servPath, std::string const &locPath)
 {
-	std::ifstream	file;
-	std::string		line;
-	stringVect		vect;
+	std::ifstream file;
+	std::string line;
+	stringVect vect;
 
 	file.open(servPath.c_str());
 	if (!file.is_open())
@@ -93,11 +93,11 @@ void MyConf::parseConfig(std::string const &servPath, std::string const &locPath
 	parseConfig(locPath);
 }
 
-void	MyConf::displayConfig() const
+void MyConf::displayConfig() const
 {
 	std::cout << "------------------------------------------" << std::endl;
 	std::cout << "Host " << _host << std::endl
-	<< "Port " << _port << std::endl;
+			  << "Port " << _port << std::endl;
 	if (_serverName.size())
 		displayStringVect(_serverName, "Server name");
 	if (_errPage.listError.size())
@@ -115,7 +115,8 @@ void	MyConf::displayConfig() const
 void MyConf::getElemetConfig(const size_t &start, const size_t &end, const stringVect &file)
 {
 	int countLoc = 0;
-	for (size_t i = start; i < end; ++i)
+	_countLocation = 0;
+	for (size_t i = start; i < end; i++)
 	{
 		std::istringstream iss(file[i]);
 		std::string name, value;
@@ -137,16 +138,20 @@ void MyConf::getElemetConfig(const size_t &start, const size_t &end, const strin
 				if (name == "error_page")
 					_errPage.strError.push_back(word);
 			}
-			if (name == "location")
-				_countLocation = countLoc++;
 		}
+		if (name == "location")
+			countLoc++;
 	}
-	for (size_t i = 0; i < _errPage.strError.size(); ++i)
-		std::cout << "- " << _errPage.strError[i] << std::endl;
+	_countLocation = countLoc;
+	std::cout << "Count Location => " << _countLocation;
+	std::cout << "End => " << end << std::endl;
+	// for (size_t i = 0; i < _errPage.strError.size(); ++i)
+	// 	std::cout << "- " << _errPage.strError[i] << std::endl;
+	// std::cout << "countLocation = " << _countLocation << std::endl;
 }
 bool MyConf::getStatus()
 {
-    return _checkStats;
+	return _checkStats;
 }
 
 size_t MyConf::findNotDigitError()
@@ -177,11 +182,22 @@ size_t MyConf::findNotDigitError()
 	}
 	return (checkIndex);
 }
+vectLocation MyConf::createVectLocation(size_t countLocation)
+{
+	vectLocation tabLocation;
+	MyLoc loc;
+	for (size_t i = 0; i < countLocation; ++i)
+	{
+		loc = MyLoc();
+		tabLocation.push_back(loc);
+	}
+	return (tabLocation);
+}
 void MyConf::parseConfig(stringVect file)
 {
-
 	static size_t currentBlock(0), i(0), k(0);
 	static intVect index = containsExactWordInVector(file, "server");
+	// std::cout << "Index  "
 
 	if (currentBlock >= index.size())
 		return;
@@ -192,12 +208,14 @@ void MyConf::parseConfig(stringVect file)
 		end = index[currentBlock + 1];
 	else
 		end = file.size();
+	_endLocation = end;
 	if (checkConfigDupli(file, start, end))
 	{
 		_checkStats = false;
 		return;
 	}
 	getElemetConfig(start, end, file);
+	std::cout << "location = > " << _countLocation << std::endl;
 	i = findNotDigitError();
 	if (i > 0 && ((_errPage.strError.size() - i > 1)))
 	{
@@ -206,7 +224,8 @@ void MyConf::parseConfig(stringVect file)
 	}
 	else if (i > 0 && i < _errPage.strError.size())
 		_errPage.filePath = _errPage.strError[i];
-	_location = createVectLocation(_countLocation);
+	this->_location = createVectLocation(_countLocation);
+	std::cout << "Location size" << _location.size() << std::endl;
 	while (k < _location.size())
 	{
 		_location[k].parseLocation(file);
@@ -215,19 +234,6 @@ void MyConf::parseConfig(stringVect file)
 		else
 			return;
 	}
-	_countLocation = 0;
 	_checkStats = true;
 	currentBlock++;
-}
-
-vectLocation MyConf::createVectLocation(size_t countLocation)
-{
-    vectLocation tabLocation;
-    MyLoc  loc;
-      	for (size_t i = 0; i < countLocation; ++i)
-        {
-            loc = MyLoc();
-            tabLocation.push_back(loc);
-        }
-    return (tabLocation);
 }

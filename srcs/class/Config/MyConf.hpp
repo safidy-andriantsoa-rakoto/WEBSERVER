@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 09:25:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 14:09:39 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ class MyConf : public AConfig
 	private:
 		bool _checkStats;
 		int  _countLocation;
+		int _endLocation;
 
 	public:
 		MyConf();
