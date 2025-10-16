@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 11:50:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 15:24:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,10 @@ class Response
 
 		int					_respCategory;
 
-		size_t				_sizeSent;
+		int					_respStat;
+		std::string			_originPath;
+		std::string			_originBody;
+		size_t				_pos;
 
 		static stringMap	_allStatusCode;
 
@@ -51,11 +54,23 @@ class Response
 		void				setStatusCode(int const & statusCode);
 		void				setCategory(int const & category);
 
+		size_t				getPosition() const;
+		void				setPosition(size_t const & newPos);
+
+		int					getRespStat() const;
+		void				setRespStat(int const & stat);
+
+		std::string			getOriginPath() const;
+		void				setOriginPath(std::string const & path);
+
 		void				addHeader(std::string const & header, std::string const & content);
 	
 		int					getRespCategory() const;
 		std::string			getFullResponse();
+
 		std::string			getBody() const;
+		std::string			getOriginBody() const;
+		void				setOriginBody(std::string const & body);
 
 		void				clearResponse();
 

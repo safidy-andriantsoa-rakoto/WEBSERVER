@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 11:41:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 15:25:46 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Client : public Server
 		void		cgiGetRequest(int *fd);
 
 		void		post_request(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
-		void		stdPostRequest(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
+		void		stdPostRequest(stringMap & header, std::string & boundary, uint32_t & opt);
 		void		cgiPostRequest(int *fd);
 		void		delete_request();
 
@@ -79,6 +79,12 @@ class Client : public Server
 		int			getFdType() const;
 		void		setFdType(int const & type);
 
+		int			getResponseStat() const;
+		void		setResponseStat(int const & stat);
+
+		std::string	getRspOriginPath() const;
+		void		setRspOriginPath(std::string const & path);
+
 		CgiFd		*getPtrCgiFd();
 		void        setPtrCgiFd(CgiFd *cgiFd);
 		void		clearPtrCgiFd();
@@ -95,7 +101,7 @@ class Client : public Server
 		void		updateResponseCategory(int const & stat);
 		void		setCatchedResponse(AExcept & e);
 		void		setStandardResponse(std::string const & content);
-		void		setChunkedResponse(std::string const & content, std::string const & type, int const & status);
+		void		setChunkedResponse(int const & responseStatus);
 		void		setCgiChunkedResponse();
 		void		setSingleResponse(int const & statusCode);
 

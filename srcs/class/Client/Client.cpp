@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 11:43:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 15:42:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,10 +94,20 @@ void Client::setStandardResponse(std::string const & content)
 	_response.generateStandardResponse(content);
 }
 
-void Client::setChunkedResponse(std::string const & content, std::string const & type, int const & status)
-{	
-	_response.setType(type);
-	_response.generateChunkedResponse(content, status);
+void Client::setChunkedResponse(int const & responseStatus)
+{
+	std::string content;
+	size_t		pos = _response.getPosition();
+
+	content = divideStringBySize(_response.getOriginBody(), pos, _BUFFER);
+	_response.generateChunkedResponse(content, responseStatus);
+	pos += _BUFFER;
+	if (pos > _response.getOriginBody().size())
+	{
+		_response.setRespStat(OP_CLOSE);
+		pos = 0;
+	}
+	_response.setPosition(pos);
 }
 
 void Client::setCgiChunkedResponse()
@@ -180,6 +190,26 @@ int Client::getFdType() const{return _fdType;}
 
 void Client::setFdType(int const &type){_fdType = type;}
 
+int Client::getResponseStat() const
+{
+    return _response.getRespStat();
+}
+
+void Client::setResponseStat(int const &stat)
+{
+	_response.setRespStat(stat);
+}
+
+std::string Client::getRspOriginPath() const
+{
+    return _response.getOriginPath();
+}
+
+void Client::setRspOriginPath(std::string const &path)
+{
+	_response.setOriginPath(path);
+}
+
 const char *Client::Deconnect::what() const throw()
 {
 	return ("disconnected!");
@@ -189,11 +219,7 @@ const char *Client::RecvError::what() const throw()
 {
 	return ("Error RECV\nget Request from client");
 }
-/*
-	If method == POST or DELETE
-	Find "upload" in location or add upload (default) location : Config file (parsing) => TELL TSIKY !!!
-	set request target to root
-*/
+
 void Client::processRequestWithConfig()
 {
 	vectLocationIt	it;
@@ -329,7 +355,7 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	redirect = location.getRedirect();
 	if (!redirect.size())
 		return ;
-	std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
+	// std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
 	redirect = location.getRedirect();
 	statusRedirect = convertStringToInt(redirect[0]);
 	newUri = redirect[1];
@@ -381,7 +407,18 @@ void Client::stdGetRequest()
 	{
 		fileContent = readFileToString(filePath);
 		setStatusCodeResponse(200);
-		setStandardResponse(fileContent);
+		getObjResponse().setPosition(0);
+		setRspOriginPath(filePath);
+		if (fileContent.size() <= _BUFFER)
+		{
+			setStandardResponse(fileContent);
+			setResponseStat(OP_ONCE);
+		}
+		else
+		{
+			setResponseStat(OP_START);
+			getObjResponse().setOriginBody(fileContent);
+		}
 	}
 	catch(const std::exception& e)
 	{
@@ -437,8 +474,8 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	if (_request.getIsCgi() == false)
 	{
 		_fdType = HTML_FILE;
-		stdPostRequest(header, boundary, opt, fd);
-		setSingleResponse(201);
+		stdPostRequest(header, boundary, opt);
+		// setSingleResponse(201);
 	}
 	else
 	{
@@ -449,7 +486,7 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	}
 }
 
-void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
+void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t & opt)
 {
 	int	fdPost = -1;
 	std::string	fullPath;
@@ -465,7 +502,6 @@ void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t &
 				perror("open file in POST");
 				throw ErrorExcept(404, "File can't be opened");
 			}
-			opt = EPOLLOUT;
 			std::cout << "FD FILE->POST Multipart/data=" << fdPost << std::endl; 
 		// }
 		// else
@@ -489,7 +525,6 @@ void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t &
 				perror("open file in POST");
 				throw ErrorExcept(404, "File can't be opened");
 			}
-			opt = EPOLLOUT;
 			std::cout << "FD FILE->POST APP/x-wwwfurlencode=" << fdPost << std::endl; 
 		// }
 		// fdPost = -1;
@@ -510,15 +545,13 @@ void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t &
 				perror("open file in POST");
 				throw ErrorExcept(404, "File can't be opened");
 			}
-			opt = EPOLLOUT;
 			std::cout << "FD FILE->POST text/plain=" << fdPost << std::endl; 
 		// }
 		// fdPost = -1;
 	}
 	else
 		std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
-	opt = EPOLLOUT;
-	fd[FD_PRINCIPAL] = fdPost;
+	opt = EPOLLIN;
 }
 
 void Client::cgiPostRequest(int *fd)
@@ -577,32 +610,6 @@ void Client::cgiPostRequest(int *fd)
 
 void Client::delete_request()
 {
-	// std::string		root;
-	// std::string		target;
-	// stringVectIt	_configIt;
-	// vectLocation	loc;
-
-	// target = _request.getRequestTarget();
-	// loc = _config.getClassLocation();
-	// if (!target.size())
-	// 	throw ErrorExcept(403, "Forbidden");
-	// if (loc.size())
-	// {
-	// 	root = loc[0].getRootDirectory();
-	// 	if (target.compare(0, root.size(), root) != 0)
-	// 		throw ErrorExcept(401, "Unauthorized");
-	// 	struct  stat s_stat;
-	// 	if (stat(target.c_str(), &s_stat) != 0)
-	// 		throw ErrorExcept(401, "Unauthorized");
-	// 	if (S_ISREG(s_stat.st_mode))
-	// 	{
-	// 		if (std::remove(target.c_str()) != 0)
-	// 			throw ErrorExcept(401, "Unauthorized");
-	// 	}
-	// 	else
-	// 		throw ErrorExcept(403, "Forbidden");
-	// }
-
 	/*	Check error for delete */
 	std::string	target;
 	struct stat	s_stat;

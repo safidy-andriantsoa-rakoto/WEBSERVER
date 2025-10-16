@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 10:08:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 15:42:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,35 +27,25 @@ void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 
 void	sendHtmlFileResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
+	int			responseStat;
 	std::string	responseString;
-	// int			fileStatus;
 
-	// fileStatus = (*it).getFileStatus();
-	// if (fileStatus == OP_ONCE)
-	// {
-	// 	std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
-	// 	(*it).setStandardResponse();
-	// }
-	// else
-	// {
-	// 	std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
-	// 	(*it).setChunkedResponse();
-	// }
-	// if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
-	// 	responseString = (*it).getBodyResponse() + "\r\n";
-	// else
-	responseString = (*it).getFullResponse();
-	std::cout << "		SENDING HTML FILE = " << responseString.size() << std::endl;
+	responseStat = (*it).getResponseStat();
+	if (responseStat != OP_ONCE)
+	{
+		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
+		(*it).setChunkedResponse(responseStat);
+	}
+	if (responseStat == OP_ONGOING || responseStat == OP_CLOSE)
+		responseString = (*it).getBodyResponse() + "\r\n";
+	else
+		responseString = (*it).getFullResponse();
+	std::cout << "		SENDING HTML FILE from " << (*it).getRspOriginPath() << std::endl;
 	send_value(fdCli, responseString);
-	epoll.epoll_update_event(fdCli, EPOLLIN);
-	// std::cout <<"\e[45mResponse from the file : " << (*it).getPtrFileFd()->getFilePath() << "\e[0m" << std::endl;
-    // (*it).getPtrFileFd()->clearBuffer();
-	// if (fileStatus != OP_ONGOING && fileStatus != OP_START)
-	// if (fileStatus == OP_START)
-	// 	(*it).updateFileStatus(OP_ONGOING);
-	// (*it).increaseFileSent(_BUFFER);
-	// if (fileStatus == OP_ONCE || fileStatus == OP_CLOSE)
-	// 	(*it).clearPtrFileFd();
+	if (responseStat == OP_START)
+		(*it).setResponseStat(OP_ONGOING);
+	if (responseStat == OP_ONCE || responseStat == OP_CLOSE)
+		epoll.epoll_update_event(fdCli, EPOLLIN);
 }
 
 void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)

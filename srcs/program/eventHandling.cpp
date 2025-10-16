@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 11:38:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 14:06:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	client_request = (*it).getClientRequest();
 	if (client_request.size() == 0)
 	{
-		// std::cout << "			Request size = " << client_request.size() << std::endl;
 		handler.checkAndRemoveCgiFd((*it).getPtrCgiFd());
 		(*it).clearPtrCgiFd();
 		throw std::runtime_error("ManageRequestFromClient - request size = 0");

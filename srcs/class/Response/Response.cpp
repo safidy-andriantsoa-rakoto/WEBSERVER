@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 11:51:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 15:41:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 stringMap	Response::_allStatusCode;
 
-Response::Response() : _respCategory(STD_RSP){}
+Response::Response() : _respCategory(STD_RSP), _pos(0){}
 
-Response::Response(int const & statusCode) : _statusCode(statusCode), _sizeSent(0){}
+Response::Response(int const & statusCode) : _statusCode(statusCode), _pos(0){}
 
-Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type), _sizeSent(0){}
+Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type), _pos(0){}
 
 Response::Response(Response const & other) :
 	_statusCode(other._statusCode),
@@ -28,7 +28,9 @@ Response::Response(Response const & other) :
 	_header(other._header),
 	_fullResponse(other._fullResponse),
 	_respCategory(other._respCategory),
-	_sizeSent(other._sizeSent){}
+	_originPath(other._originPath),
+	_originBody(other._originBody),
+	_pos(other._pos){}
 
 Response &Response::operator=(Response const & other)
 {
@@ -41,7 +43,9 @@ Response &Response::operator=(Response const & other)
 		_header = other._header;
 		_fullResponse = other._fullResponse;
 		_respCategory = other._respCategory;
-		_sizeSent = other._sizeSent;
+		_originPath = other._originPath;
+		_originBody = other._originBody;
+		_pos = other._pos;
 	}
 	return *this;
 }
@@ -66,6 +70,36 @@ void Response::setStatusCode(int const &statusCode)
 void Response::setCategory(int const &category)
 {
 	_respCategory = category;
+}
+
+size_t Response::getPosition() const
+{
+    return _pos;
+}
+
+void Response::setPosition(size_t const &newPos)
+{
+	_pos = newPos;
+}
+
+int Response::getRespStat() const
+{
+    return _respStat;
+}
+
+void Response::setRespStat(int const &stat)
+{
+	_respStat = stat;
+}
+
+std::string Response::getOriginPath() const
+{
+    return _originPath;
+}
+
+void Response::setOriginPath(std::string const &path)
+{
+	_originPath = path;
 }
 
 void Response::addHeader(std::string const &header, std::string const &content)
@@ -93,37 +127,56 @@ std::string Response::getBody() const
     return _body;
 }
 
+std::string Response::getOriginBody() const
+{
+    return _originBody;
+}
+
+void Response::setOriginBody(std::string const &body)
+{
+	_originBody = body;
+}
+
 void	Response::clearResponse()
 {
 	_fullResponse.clear();
 }
 
+
 void Response::buildErrorPage(int const & status, t_errPage & errPage, std::string & filePath, int & fdType)
 {
 	stringVectIt	it;
+	std::string		content;
 
 	filePath = ERR_PATH;
 	fdType = HTML_FILE;
-	if (!errPage.listError.size())
+	if (errPage.listError.size())
 	{
-		fdType = HTML_FILE;
-		_body = readFileToString(filePath);
-		// execCgiDefaultScript(fd);
-		return;
+		content = readFileToString(filePath);
+		it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
+		if (it != errPage.listError.end())
+			filePath = errPage.filePath;
 	}
-	it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
-	if (it != errPage.listError.end())
+	try
 	{
-		fdType = HTML_FILE;
-		filePath = errPage.filePath;
-		_body = readFileToString(filePath);
+		content = readFileToString(filePath);
+		if (content.size() <= _BUFFER)
+		{
+			_body = content;
+			_respStat = OP_ONCE;
+		}
+		else
+		{
+			_originBody = content;
+			_respStat = OP_START;
+		}
+		_pos = 0;
+		setOriginPath(filePath);
 	}
-	else
+	catch(const std::exception& e)
 	{
-		fdType = HTML_FILE;
-		_body = readFileToString(filePath);
-		// execCgiDefaultScript(fd);
-	}	
+		throw std::runtime_error("ERROR PAGE NOT FOUND");
+	}
 }
 
 void Response::setStatusLine()
@@ -202,9 +255,9 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::
 	_statusCode = e._statusCode;
 	setStatusLine();
 	buildErrorPage(_statusCode, errPage, filePath, fdType);
-	_header["Content-Type"] = "text/html; charset=UTF-8";
-	_header["Content-Length"] = convertIntToString(_body.size());
-	_header["Connection"] = "keep-alive";
+	// _header["Content-Type"] = "text/html; charset=UTF-8";
+	// _header["Content-Length"] = convertIntToString(_body.size());
+	// _header["Connection"] = "keep-alive";
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)

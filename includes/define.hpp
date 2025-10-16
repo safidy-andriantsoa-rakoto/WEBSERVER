@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 11:14:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 14:49:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 #define _EMPTY_LINE "\n\r\n"
 #define _NB_CLIENT 10
 #define MAX_EVENT 2042
-#define _BUFFER 2000 
+#define _BUFFER 1000 
 #define _BUFFER_RECV 1024
 
 #endif
