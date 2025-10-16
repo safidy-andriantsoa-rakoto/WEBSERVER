@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 11:51:48 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/16 15:27:34 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -436,7 +436,7 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 	{
 		_fdType = HTML_FILE;
 		stdPostRequest(header, opt);
-		setSingleResponse(201);
+		// setSingleResponse(201);
 	}
 	else
 	{
@@ -451,14 +451,53 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 {
 	std::cout << "\e[5mPOST REQUEST STD\e[0m" << std::endl;
 
-	(void)opt;
+	opt = EPOLLIN;
 	
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
 		size_t pos;
 		std::string body;
+		// size_t findFile;
 		size_t findFile = _request.get_Body().find("filename=\"");
-		
+
+		// {
+		// 	size_t pos_b = _request.get_Body().find(_boundary_sep);
+		// 	while (pos_b != std::string::npos)
+		// 	{
+		// 		_request.delete_range_body_request(0, pos_b + _boundary_sep.size() + 2);
+		// 		size_t pos_filename = _request.get_Body().find("filename=\"");
+		// 		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
+		// 		{
+		// 			std::string filename;
+		// 			this->filepath.clear();
+		// 			size_t endFile = _request.get_Body().find("\n", findFile + 10);
+		// 			std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
+
+		// 			std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
+		// 			endFile = _request.get_Body().find("\r\n\r\n", endFile);
+		// 			_request.delete_range_body_request(0, endFile + 4);
+		// 			std::cout << "\e[5mFILE POST  FOUND\e[0m-->>" << filename << "<---" << std::endl;
+		// 			if (filename.size())
+		// 			{
+		// 				this->filepath = "upload/" + currentDateTimeString() + filename;
+		// 				std::cout << "PATH=["<< this->filepath <<"]" << std::endl;
+		// 				_request.delete_range_body_request(0, endFile + 3);
+		// 			}
+		// 			else
+		// 			{
+		// 				pos_b = _request.get_Body().find(_boundary_sep);
+		// 				if (pos_b != std::string::npos)
+		// 					_request.delete_range_body_request(0, pos_b);
+		// 			}
+		// 		}
+		// 		pos_b = _request.get_Body().find(_boundary_sep);
+		// 		if (pos_b == std::string::npos)
+		// 		{
+
+		// 		}
+		// 	}
+		// }
+
 		{// get boundary
 			std::string	getboundary = header.find("Content-Type")->second;
 			size_t pos = getboundary.find("boundary=");// get boundary
@@ -468,39 +507,130 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 				this->_boundary_sep = "--" + getboundary;
 			}
 		}
-		
-		std::cout << "BOUNDARY = " << this->_boundary_sep << std::endl;
-		body = _request.get_Body();
-		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
-		{
-			size_t endFile = _request.get_Body().find("\n", findFile + 10);
-			std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
-			std::string filename;
 
-			std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
-			endFile = _request.get_Body().find("\r\n\r\n", endFile);
-			_request.delete_range_body_request(0, endFile + 4);
-			std::cout << "\e[5mFILE POST  FOUND\e[0m-->>" << filename << "<---" << std::endl;
-			if (filename.size())
-			{
-				this->filepath = "upload/" + currentDateTimeString() + filename;
-				std::cout << "PATH=["<< this->filepath <<"]" << std::endl;
-			}
-		}
-		if (filepath.size())
+		
 		{
-			std::fstream file(this->filepath.c_str(), std::ios::out | std::ios::binary);
-			if (file.is_open())
+			size_t pos_b;
+			std::string filename;
+			size_t endFile;
+
+			std::cout << "LOOPPPPPP " << std::endl;
+			while (1)
 			{
-				pos = body.find(this->_boundary_sep);
-				std::cout << "\n			BOUNDARY FOUND pos=" << pos << std::endl;
-				if (pos != std::string::npos)
-					body = body.substr(0 , pos - 2);
-				std::cout << "  BODY FILEOUT->" << body << "<--" << std::endl;
-				file << body;
-				file.close();
+				if (!this->filepath.size())
+				{
+					findFile = _request.get_Body().find("filename=\"");
+					std::cout << "FIND FILE = " << findFile << std::endl;
+					if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
+					{
+						_request.delete_range_body_request(0, findFile + 10);
+						std::cout << "AFTER DELETE RANGE BODY REQUEST = " << _request.get_Body() << std::endl;
+						endFile = _request.get_Body().find("\"\r\n");
+						std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
+			
+						std::copy(_request.get_Body().begin(), _request.get_Body().begin() + endFile, std::back_inserter(filename));
+						endFile = _request.get_Body().find("\r\n\r\n", endFile);
+						
+						_request.delete_range_body_request(0, endFile + 4);
+						std::cout << "BODY AFTER->" << _request.get_Body() << "<--" << std::endl;
+						std::cout << "\e[5mFILE POST  FOUND\e[0m-->>" << filename << "<---" << std::endl;
+						if (filename.size())
+						{
+							this->filepath = "upload/" + currentDateTimeString() + filename;
+							std::cout << "PATH=["<< this->filepath <<"]" << std::endl;
+							// pos = _request.get_Body().find("\r\n\r\n");
+							_request.delete_range_body_request(0, pos + 4);
+							std::cout << "AFTER DELETE RANGE BODY REQUEST = " << _request.get_Body() << std::endl;
+						}
+						else
+						{
+							std::cout << "NO FILENAME FOUND 2" << std::endl;
+							pos_b = _request.get_Body().find(_boundary_sep);
+							_request.delete_range_body_request(0, pos_b);
+						}
+					}
+					else
+					{
+						std::cout << "NO FILENAME FOUND" << std::endl;
+						pos_b = _request.get_Body().find(_boundary_sep);
+						_request.delete_range_body_request(0, pos_b);
+					}
+				}
+				if (this->filepath.size())
+				{
+					std::fstream file(this->filepath.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+					if (file.is_open())
+					{
+						pos = body.find(this->_boundary_sep);
+						std::cout << "\n			BOUNDARY FOUND pos=" << pos << std::endl;
+						if (pos != std::string::npos)
+						{
+							std::cout << "		END FILE" << pos << std::endl;
+							this->filepath.clear();
+							body = body.substr(0 , pos - 2);
+						}
+						std::cout << "  BODY FILEOUT->" << body << "<--" << std::endl;
+						file << body;
+						_request.delete_range_body_request(0, body.size());
+						file.close();
+					}
+				}
+				// if (!_request.get_Body().size())
+				// 	break ;
 			}
 		}
+		// std::cout << "BOUNDARY = " << this->_boundary_sep << std::endl;
+		// body = _request.get_Body();
+		// if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
+		// {
+		// 	size_t endFile = _request.get_Body().find("\n", findFile + 10);
+		// 	std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
+		// 	std::string filename;
+
+		// 	std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
+		// 	endFile = _request.get_Body().find("\r\n\r\n", endFile);
+		// 	_request.delete_range_body_request(0, endFile + 4);
+		// 	std::cout << "\e[5mFILE POST  FOUND\e[0m-->>" << filename << "<---" << std::endl;
+		// 	if (filename.size())
+		// 	{
+		// 		this->filepath = "upload/" + currentDateTimeString() + filename;
+		// 		std::cout << "PATH=["<< this->filepath <<"]" << std::endl;
+		// 	}
+		// }
+		// if (filepath.size())
+		// {
+		// 	std::fstream file(this->filepath.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+		// 	if (file.is_open())
+		// 	{
+		// 		pos = body.find(this->_boundary_sep);
+		// 		std::cout << "\n			BOUNDARY FOUND pos=" << pos << std::endl;
+		// 		if (pos != std::string::npos)
+		// 			body = body.substr(0 , pos - 2);
+		// 		std::cout << "  BODY FILEOUT->" << body << "<--" << std::endl;
+		// 		file << body;
+		// 		file.close();
+		// 	}
+		// }
+		// findFile = _request.get_Body().find("filename=\"");
+		// while (pos != std::string::npos)
+		// {
+		// 	if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
+		// 	{
+		// 		size_t endFile = _request.get_Body().find("\n", findFile + 10);
+		// 		std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
+		// 		std::string filename;
+
+		// 		std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
+		// 		endFile = _request.get_Body().find("\r\n\r\n", endFile);
+		// 		_request.delete_range_body_request(0, endFile + 4);
+		// 		std::cout << "\e[5mFILE POST  FOUND\e[0m-->>" << filename << "<---" << std::endl;
+		// 		if (filename.size())
+		// 		{
+		// 			this->filepath = "upload/" + currentDateTimeString() + filename;
+		// 			std::cout << "PATH=["<< this->filepath <<"]" << std::endl;
+		// 		}
+		// 	}
+		// }
 	}
 	else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 	{

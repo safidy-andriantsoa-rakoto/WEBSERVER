@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sendingResponse.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 10:08:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 13:27:32 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
 	std::string	responseString;
 
-	std::cout <<"\033[35mSending single response\n" << responseString.size() << "\033[0m" << std::endl;
+	std::cout <<"\033[35mSending single response\n" << responseString << "\033[0m" << std::endl;
 	responseString = (*it).getFullResponse();
 	send_value(fdCli, responseString);
 	epoll.epoll_update_event(fdCli, EPOLLIN);

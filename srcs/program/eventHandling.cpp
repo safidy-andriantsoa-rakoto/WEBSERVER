@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 11:32:41 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/16 13:32:11 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		addFdInHandlerAndEpoll(it, handler, epoll, epollOpt, fdFromRequest);
 	else
 	{
+		std::cout << "ATY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 		if ((*it).getCategoryResponse() == STD_RSP)
 			(*it).setStandardResponse(content);
 		epoll.epoll_update_event(fdCli, epollOpt);
