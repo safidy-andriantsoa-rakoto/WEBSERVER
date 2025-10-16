@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 10:03:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:38:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,21 +27,20 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 {
 	uint32_t	epollOpt;
 	std::string client_request;
-	std::string	content;
 	int			fdFromRequest[3] = {-1, -1, -1};
 
 	(*it).receiveClientRequest();
 	client_request = (*it).getClientRequest();
 	if (client_request.size() == 0)
 	{
-		std::cout << "			Request size = " << client_request.size() << std::endl;
+		// std::cout << "			Request size = " << client_request.size() << std::endl;
 		handler.checkAndRemoveCgiFd((*it).getPtrCgiFd());
 		(*it).clearPtrCgiFd();
 		throw std::runtime_error("ManageRequestFromClient - request size = 0");
 	}
 	try
 	{
-		(*it).processRequest(client_request, epollOpt, fdFromRequest, content);
+		(*it).processRequest(client_request, epollOpt, fdFromRequest);
 	}
 	catch(AExcept & e)
 	{
@@ -54,11 +53,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	else if ((*it).getObjRequest().getIsCgi() == true)
 		addFdInHandlerAndEpoll(it, handler, epoll, epollOpt, fdFromRequest);
 	else
-	{
-		if ((*it).getCategoryResponse() == STD_RSP)
-			(*it).setStandardResponse(content);
 		epoll.epoll_update_event(fdCli, epollOpt);
-	}
 }
 
 void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)

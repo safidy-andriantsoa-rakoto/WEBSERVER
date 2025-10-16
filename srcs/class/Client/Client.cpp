@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 09:51:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:43:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -343,26 +343,27 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
-void Client::get_request(uint32_t & opt, int *fd, std::string & content)
+void Client::get_request(uint32_t & opt, int *fd)
 {
 	if (_request.getIsCgi() == false)
 	{
 		_fdType = HTML_FILE;
-		stdGetRequest(content);
+		stdGetRequest();
 		opt = EPOLLOUT;
 	}
 	else
 	{
 		_fdType = GET_PHP_SCRIPT;
 		cgiGetRequest(fd);
+		setStatusCodeResponse(200);
 		opt = EPOLLIN;
 	}
-	setStatusCodeResponse(200);
 }
 
-void Client::stdGetRequest(std::string & content)
+void Client::stdGetRequest()
 {
 	std::string	filePath;
+	std::string	fileContent;
 	DIR*		dir;
 
 	filePath = _request.getRequestTarget();
@@ -378,7 +379,9 @@ void Client::stdGetRequest(std::string & content)
 	}
 	try
 	{
-		content = readFileToString(filePath);
+		fileContent = readFileToString(filePath);
+		setStatusCodeResponse(200);
+		setStandardResponse(fileContent);
 	}
 	catch(const std::exception& e)
 	{
@@ -619,7 +622,7 @@ void Client::delete_request()
 	_response.setCategory(SINGLE_RSP);
 }
 
-void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, std::string & content)
+void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)
 {
 	stringMap	header;
 	std::string boundary;
@@ -635,7 +638,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	header = _request.getHeader();
 	_request.displayRequest();
 	if (_request.getMethod() == "GET")
-		get_request(opt, fd, content);
+		get_request(opt, fd);
 	else if (_request.getMethod() == "POST")
 	{
 		post_request(header, boundary, opt, fd);

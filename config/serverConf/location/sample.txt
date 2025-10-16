@@ -1,1 +1,0 @@
-location / | root ./site/sample | method GET POST

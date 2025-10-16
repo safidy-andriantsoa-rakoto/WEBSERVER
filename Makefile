@@ -93,9 +93,9 @@ OBJ = $(OBJ_MAIN) $(OBJ_CLASS) $(OBJ_UTILS) $(OBJ_PRO)
 
 NAME = webserv
 
-UPLOAD = upload
+UPLOAD = ./site/upload
 
-LOG	= ./site/our_webserv/cgi-bin/nameLog.txt
+LOG	= ./site/cgi-bin/nameLog.txt
 
 all : $(NAME)
 

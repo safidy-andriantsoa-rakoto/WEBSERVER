@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 09:50:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:50:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,11 @@ class Response
 
 		int					_respCategory;
 
+		size_t				_sizeSent;
+
 		static stringMap	_allStatusCode;
-		static std::string	_defaultErrPage;
 
 		void				setStatusLine();
-        // void 				setToDefaultErrorPage();
 		void				buildErrorPage(int const & statusCode, t_errPage & errPage, std::string & filePath, int & fdType);
 
 	public:

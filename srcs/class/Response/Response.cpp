@@ -6,20 +6,19 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 10:07:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:51:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
 stringMap	Response::_allStatusCode;
-std::string	Response::_defaultErrPage;
 
 Response::Response() : _respCategory(STD_RSP){}
 
-Response::Response(int const & statusCode) : _statusCode(statusCode){}
+Response::Response(int const & statusCode) : _statusCode(statusCode), _sizeSent(0){}
 
-Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type){}
+Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type), _sizeSent(0){}
 
 Response::Response(Response const & other) :
 	_statusCode(other._statusCode),
@@ -28,7 +27,8 @@ Response::Response(Response const & other) :
 	_statusLine(other._statusLine),
 	_header(other._header),
 	_fullResponse(other._fullResponse),
-	_respCategory(other._respCategory){}
+	_respCategory(other._respCategory),
+	_sizeSent(other._sizeSent){}
 
 Response &Response::operator=(Response const & other)
 {
@@ -41,6 +41,7 @@ Response &Response::operator=(Response const & other)
 		_header = other._header;
 		_fullResponse = other._fullResponse;
 		_respCategory = other._respCategory;
+		_sizeSent = other._sizeSent;
 	}
 	return *this;
 }
