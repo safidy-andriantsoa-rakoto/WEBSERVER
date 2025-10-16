@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 09:51:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:51:48 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -429,12 +429,13 @@ void Client::cgiGetRequest(int *fd)
 	}
 }
 
-void Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
+void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 {
+	std::cout << "\e[5mPOST REQUEST FIRST\e[0m" << std::endl;
 	if (_request.getIsCgi() == false)
 	{
 		_fdType = HTML_FILE;
-		stdPostRequest(header, boundary, opt, fd);
+		stdPostRequest(header, opt);
 		setSingleResponse(201);
 	}
 	else
@@ -446,76 +447,75 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	}
 }
 
-void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
+void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 {
-	int	fdPost = -1;
-	std::string	fullPath;
+	std::cout << "\e[5mPOST REQUEST STD\e[0m" << std::endl;
 
+	(void)opt;
+	
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
-		// if (!this->_fileFD)
-		// {
-			fullPath = _request.getRequestTarget() + "/" +  "storage_multi_form_data";
-
-			fdPost = open(fullPath.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fdPost== -1) {
-				perror("open file in POST");
-				throw ErrorExcept(404, "File can't be opened");
+		size_t pos;
+		std::string body;
+		size_t findFile = _request.get_Body().find("filename=\"");
+		
+		{// get boundary
+			std::string	getboundary = header.find("Content-Type")->second;
+			size_t pos = getboundary.find("boundary=");// get boundary
+			if (pos != std::string::npos)
+			{
+				getboundary.erase(0, pos + 9); 
+				this->_boundary_sep = "--" + getboundary;
 			}
-			opt = EPOLLOUT;
-			std::cout << "FD FILE->POST Multipart/data=" << fdPost << std::endl; 
-		// }
-		// else
-		// 	fdPost = -1;
-		std::string	getboundary = header.find("Content-Type")->second;
-		size_t pos = getboundary.find(boundary);
-		if (pos != std::string::npos)
-			this->_boundary_sep = getboundary.substr(pos + boundary.size());
-		// std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
-		std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
-		fdPost = -1;
+		}
+		
+		std::cout << "BOUNDARY = " << this->_boundary_sep << std::endl;
+		body = _request.get_Body();
+		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
+		{
+			size_t endFile = _request.get_Body().find("\n", findFile + 10);
+			std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
+			std::string filename;
+
+			std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
+			endFile = _request.get_Body().find("\r\n\r\n", endFile);
+			_request.delete_range_body_request(0, endFile + 4);
+			std::cout << "\e[5mFILE POST  FOUND\e[0m-->>" << filename << "<---" << std::endl;
+			if (filename.size())
+			{
+				this->filepath = "upload/" + currentDateTimeString() + filename;
+				std::cout << "PATH=["<< this->filepath <<"]" << std::endl;
+			}
+		}
+		if (filepath.size())
+		{
+			std::fstream file(this->filepath.c_str(), std::ios::out | std::ios::binary);
+			if (file.is_open())
+			{
+				pos = body.find(this->_boundary_sep);
+				std::cout << "\n			BOUNDARY FOUND pos=" << pos << std::endl;
+				if (pos != std::string::npos)
+					body = body.substr(0 , pos - 2);
+				std::cout << "  BODY FILEOUT->" << body << "<--" << std::endl;
+				file << body;
+				file.close();
+			}
+		}
 	}
 	else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 	{
-		std::cout << "\napplication/x-www-form-urlencoded\n" << std::endl;
-		// if (!_fileFD)
-		// {
-			fullPath = _request.getRequestTarget() + "/" +  "storage_app_xwfurlencoded";
-			fdPost = open(fullPath.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fdPost== -1) {
-				perror("open file in POST");
-				throw ErrorExcept(404, "File can't be opened");
-			}
-			opt = EPOLLOUT;
-			std::cout << "FD FILE->POST APP/x-wwwfurlencode=" << fdPost << std::endl; 
-		// }
-		// fdPost = -1;
+		std::cout << "kiiiiiiiiii" << std::endl;
+		// filePath = "upload/" + currentDateTimeString() + "storage_app_xwfurlencoded.txt";
+		// fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
 	}
 	else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 	{
-		if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
-		{
-			std::cout << "			VITA ZANY EEE" << std::endl;	
-			_request.set_is_CRLF_header(false);
-		}
-		std::cout << "\ntext/plain\n" << std::endl;
-		// if (!_fileFD)
-		// {
-			fullPath = _request.getRequestTarget() + "/" +  "storage_text_plain";
-			fdPost = open(fullPath.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fdPost== -1) {
-				perror("open file in POST");
-				throw ErrorExcept(404, "File can't be opened");
-			}
-			opt = EPOLLOUT;
-			std::cout << "FD FILE->POST text/plain=" << fdPost << std::endl; 
-		// }
-		// fdPost = -1;
+		std::cout << "plaaaaaaain" << std::endl;
+		// filePath = "upload/" + currentDateTimeString() + "storage_text_plain.txt";
+		// fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
 	}
 	else
-		std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
-	opt = EPOLLOUT;
-	fd[FD_PRINCIPAL] = fdPost;
+		throw ErrorExcept(400, "Client-side error");
 }
 
 void Client::cgiPostRequest(int *fd)
@@ -638,7 +638,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		get_request(opt, fd, content);
 	else if (_request.getMethod() == "POST")
 	{
-		post_request(header, boundary, opt, fd);
+		post_request(header, opt, fd);
 	}
 	else if (_request.getMethod() == "DELETE")
 	{

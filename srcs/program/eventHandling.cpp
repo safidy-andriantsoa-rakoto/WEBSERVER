@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 10:03:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:32:41 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		std::cout << "			Request size = " << client_request.size() << std::endl;
 		handler.checkAndRemoveCgiFd((*it).getPtrCgiFd());
 		(*it).clearPtrCgiFd();
-		throw std::runtime_error("ManageRequestFromClient - request size = 0");
+		return ;
+		// throw std::runtime_error("ManageRequestFromClient - request size = 0"); // mila timing ohatra ny philo
 	}
 	try
 	{

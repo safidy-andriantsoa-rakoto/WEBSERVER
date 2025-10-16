@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 14:14:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:46:14 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,4 +319,15 @@ size_t Request::get_content_length()
 void Request::set_content_length(size_t size)
 {
 	this->_content_length = size;
+}
+
+void Request::delete_range_body_request(int start, int end)
+{
+	if (_body.size() && start > -1 && end > -1 && end > start)
+	{
+		if ((size_t)(end) > _body.size())
+			_body.erase(_body.begin() + start, _body.end());
+		else
+			_body.erase(_body.begin() + start, _body.begin() + end);
+	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 09:52:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 11:16:37 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Client : public Server
 		Response	_response;
 		CgiFd		*_cgiFD;
 		int			_fdType;
+		std::string filepath;
 
 		Client();
 
@@ -49,8 +50,8 @@ class Client : public Server
 		void		stdGetRequest(std::string & content);
 		void		cgiGetRequest(int *fd);
 
-		void		post_request(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
-		void		stdPostRequest(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
+		void		post_request(stringMap & header, uint32_t & opt, int *fd);
+		void		stdPostRequest(stringMap & header, uint32_t & opt);
 		void		cgiPostRequest(int *fd);
 		void		delete_request();
 
