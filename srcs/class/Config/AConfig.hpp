@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:06:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:32:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 struct s_errPage
 {
+	stringVect	strError;
 	stringVect	listError;
 	std::string	fileContent;
 	std::string	filePath;
@@ -42,6 +43,7 @@ class AConfig
 		t_errPage		_errPage;
 		bool			_hasErrPage;
 		vectLocation	_location;
+		stringVect		_size;
 
 	public:
 		AConfig();
@@ -59,7 +61,7 @@ class AConfig
 
 		virtual 		~AConfig(){};
 
-		virtual void	parseConfig(std::string const & filePath) = 0;
+		virtual void	locationParsing(std::string const & filePath) = 0;
 };
 
 #endif

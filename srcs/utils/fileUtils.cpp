@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 15:22:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 09:01:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ void	printFileContent(std::string const & path)
 	std::string		line;
 	std::ifstream	file;
 
-	file.open(path.c_str()); //Use C open() and get fd
+	file.open(path.c_str());
 	if (!file.is_open())
 		return ;
 	while (!file.eof())
 	{
-		std::getline(file, line); //Use read with epoll
+		std::getline(file, line);
 		std::cout << line << std::endl;
 	}
 }
@@ -37,10 +37,10 @@ std::string readFileToString(std::string filePath)
 {
 	std::fstream file;
 
-	file.open(filePath.c_str()); //Use C open() and get fd
+	file.open(filePath.c_str());
 	if (!file.is_open())
-		throw std::runtime_error("ReadFileToString : File can't be opened"); //Review exception to throw by the situation (StatusCode)
-	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>()); //Use read with epoll
+		throw std::runtime_error("ReadFileToString : File can't be opened");
+	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	return (fileString);
 }
 
@@ -52,10 +52,10 @@ stringMap splitFileToMapString(std::string const &filePath, std::string const & 
 	stringVect		vect;
 	stringMap		result;
 
-	file.open(filePath.c_str()); //Use C open() and get fd
+	file.open(filePath.c_str());
 	if (!file.is_open())
 		throw std::runtime_error("splitFileToMapString : File is not available");
-	while (getline(file, line)) //Use read with epoll
+	while (getline(file, line))
 	{
 		vect = strictSplit(line, sep);
 		pair.first = vect[0];
@@ -179,18 +179,9 @@ bool checkWriteConfig(const std::vector<std::string> &lines, const std::string &
 	return true;
 }
 
-// bool checkFilecontent(std::vector<std::string> lines)
-// {
-// 	std::map<std::string, std::vector<std::string>> content;
-// }
-
 bool checkCountWord(const std::vector<std::string> &lines, const std::string &word, const int &count)
 {
 	std::vector<int> indexW = containsExactWordInVector(lines, word);
-	for (size_t i = 0; i < indexW.size(); i++)
-	{
-		std::cout << indexW[i] << std::endl;
-	}
 	int countW = 0;
 	std::vector<int> countWord;
 	for (size_t i = 0; i < lines.size(); i++)
@@ -221,15 +212,6 @@ bool checkCountWord(const std::vector<std::string> &lines, const std::string &wo
 	return (true);
 }
 
-bool checkNumberAllContent(std::vector<std::string> &file)
-{
-	if (!checkCountWord(file, "host", 2) || !checkCountWord(file, "port", 2) || !checkCountWord(file, "size", 3) 
-		|| !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2)
-		|| !checkCountWord(file, "SRCIPT_FILENAME", 2) || !checkCountWord(file, "autoindex", 2))
-		return (false);
-	return (true);
-}
-
 int	openFile(std::string const & filePath)
 {
 	int			fd;
@@ -257,3 +239,89 @@ size_t	getFileSize(std::string const & path)
 	return sf.st_size;
 }
 
+DIR*	openDir(std::string const & dirPath)
+{
+	DIR	*dir;
+
+	dir = opendir(dirPath.c_str());
+	if (!dir)
+		throw std::runtime_error("Opendir error");
+	return dir;
+}
+
+bool checkCountWord2(const std::vector<std::string> &lines, const std::string &word, const int &count)
+{
+	std::vector<int> indexW = containsExactWordInVector(lines, word);
+	int countW = 0;
+	std::vector<int> countWord;
+	for (size_t i = 0; i < lines.size(); i++)
+	{
+		std::string word;
+		for (size_t j = 0; j < indexW.size(); j++)
+		{
+			if ((int)i == indexW[j])
+			{
+				countW = 0;
+				std::istringstream iss(lines[indexW[j]]);
+				while (iss >> word)
+				{
+					countW++;
+				}
+				countWord.push_back(countW);
+			}
+		}
+	}
+	for (size_t i = 0; i < countWord.size(); i++)
+	{
+		if (countWord[i] <= 1 || countWord[i] > count)
+		{
+			std::cerr << "Error : Syntax error ( " << word << ")" << std::endl;
+			return (false);
+		}
+	}
+	return (true);
+}
+
+
+bool checkNumberAllContent(std::vector<std::string> &file)
+{
+	if (!checkCountWord(file, "host", 2) || !checkCountWord(file, "port", 2) || !checkCountWord(file, "size", 3) || !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2) || !checkCountWord(file, "SRCIPT_FILENAME", 2) || !checkCountWord(file, "autoindex", 2))
+		return (false);
+	if (!checkCountWord2(file, "method", 4) || !checkCountWord2(file, "error_page", 6))
+	{
+		return (false);
+	}
+	return (true);
+}
+
+bool checkDuplicate(stringVect file, std::string name, size_t &start, size_t &end)
+{
+	int count = 0;
+
+	for (size_t i = start; i < end; ++i)
+	{
+		std::istringstream iss(file[i]);
+		std::string word;
+		while (iss >> word)
+		{
+			if (name == word)
+				count++;
+		}
+	}
+	if (count != 1)
+	{
+		std::cout << "Name of duplicate => " << name << std::endl;
+		return (true);
+	}
+	return (false);
+}
+
+bool checkConfigDupli(stringVect file, size_t &start, size_t &end)
+{
+	if (checkDuplicate(file, "host", start, end) || checkDuplicate(file, "port", start, end) || checkDuplicate(file, "server_names", start, end) || checkDuplicate(file, "error_page", start, end) || checkDuplicate(file, "size", start, end))
+	{
+		std::cerr << "Error : duplicate setting find or not find setting" << std::endl;
+		return (true);
+	}
+	return (false);
+}

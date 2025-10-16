@@ -3,20 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/09/20 21:08:26 by rsafidy-         ###   ########.fr       */
-=======
-/*   Updated: 2025/10/02 11:53:48 by rsafidy-         ###   ########.fr       */
->>>>>>> 6ae73645f3cc8449709d44042828db1faf1e59a2
+/*   Updated: 2025/10/15 14:14:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false), _content_length(0), _c_length_received(0)
+Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false),  _content_length(0), _c_length_received(0), _isCgi(false)
 {}
 
 Request::Request(Request const & other)
@@ -41,6 +37,8 @@ Request &Request::operator=(Request const & other)
 		_multipart_body = other._multipart_body;
 		_content_length = other._content_length;
 		_c_length_received = other._c_length_received;
+		_isCgi = other._isCgi;
+		_cgiParser = other._cgiParser;
 	}
 	return *this;
 }
@@ -75,6 +73,47 @@ std::string Request::getHttp() const
 stringMap Request::getHeader() const
 {
 	return _header;
+}
+
+bool Request::getIsCgi() const
+{
+    return _isCgi;
+}
+
+void Request::setIsCgi(bool const &condition)
+{
+	_isCgi = condition;
+}
+
+CgiParser Request::getCgiClass() const
+{
+    return _cgiParser;
+}
+
+void Request::processCgiClass(std::string const &target, std::string const & rootDirectory)
+{
+	_cgiParser.parseCgiEnv(target, rootDirectory);
+	_cgiParser.setReqMethod(_method);
+	_cgiParser.setContentLength(_body.size());
+	if (_method == "GET")
+		_cgiParser.configGetEnvp();
+	else
+		_cgiParser.configPostEnvp();
+}
+
+void Request::setCgiClass(CgiParser const &cgi)
+{
+	_cgiParser = cgi;
+}
+
+void Request::execCgiClass()
+{
+	_cgiParser.execCgi();
+}
+
+void Request::clearCgiClass()
+{
+	_cgiParser.clearCgiClass();
 }
 
 const MapSVectStr& Request::getpostMultipartData() const
@@ -118,9 +157,6 @@ ssize_t Request::getRequestSize()
 	return (this->_request_length);
 }
 
-<<<<<<< HEAD
-std::string& Request::getBody()
-=======
 void Request::set_Body(const std::string& body)
 {
 	this->_body.clear();
@@ -135,6 +171,11 @@ std::string& Request::get_Body()
     return (_body);
 }
 
+void Request::clear_body()
+{
+	this->_body.clear();
+}
+
 void Request::set_post_body(stringVect var, std::string content)
 {
 	if (var.size())
@@ -142,7 +183,6 @@ void Request::set_post_body(stringVect var, std::string content)
 }
 
 std::string Request::getBody() const
->>>>>>> 6ae73645f3cc8449709d44042828db1faf1e59a2
 {
 	return _body;
 }
@@ -164,11 +204,7 @@ void Request::setRequestLine(std::string const & replacement)
 		throw std::runtime_error("Error on request line");
 	}
 	_method = splitted[0];
-	size_t f = splitted[1].find_first_of('?');
-	if (f != std::string::npos)
-		_requestTarget =  splitted[1].substr(0, f);
-	else
-		_requestTarget = splitted[1];
+	_requestTarget = splitted[1];
 	_clientHttp = splitted[2];
 	_originalRequestTarget = _requestTarget;
 }
@@ -219,49 +255,11 @@ void	Request::parseRequest(std::string const & requeststring)
 		startPos = pos + sep.size();
 		headerVect.clear();
 	}
-<<<<<<< HEAD
-	// setRequestBody(requeststring, pos + sep.size());
-	// std::cout << this->_body << std::endl;
-	// displayRequest();
-	// std::cout << "[ "<< _body <<" ]" << std::endl;
-	// pos = _body.find("\n" + sep);
-	// if (pos != std::string::npos)
-	// {
-	// 	std::cout << "POST FILE" << std::endl;
-		// std::string _postNextHead = _body.substr(0, pos);
-		// this->Del_space(_postNextHead);
-		// pos = _postNextHead.find(type);
-		// if (pos != std::string::npos)
-		// {
-		// 	std::string tmp = _postNextHead.substr(pos + type.size(), _postNextHead.size());
-		// 	size_t end = tmp.find_first_of('"');
-		// 	if (end != std::string::npos)
-		// 		std::cout << tmp.substr(0, end) << std::endl;
-		// 	_postInfo["type"] =  _postNextHead.erase(0, pos);
-		// }
-		// pos = _postNextHead.find(name);
-		// if (pos != std::string::npos)
-		// {
-		// 	std::string tmp = _postNextHead.substr(pos + name.size(), _postNextHead.size());
-		// 	size_t end = tmp.find_first_of('"');
-		// 	if (end != std::string::npos)
-		// 		std::cout << tmp.substr(0, end) << std::endl;
-		// 	_postInfo["name"] = _postNextHead.erase(0, pos);
-		// }
-		// pos = _body.find_first_of("\n\r\n");
-		// if (pos != std::string::npos)
-		// {
-		// 	_body = _body.erase(0, pos);
-		// 	// std::cout << "BODY>>[" << _body << std::endl;
-		// }
-	// }
-=======
 	setRequestBody(requeststring, pos + sep.size());
 	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")
 		this->_is_CRLF_header = true;
 	// if (this->_body_two.size())
 	// 	std::cout << "[" << _body_two[0] << "]" << std::endl;
->>>>>>> 6ae73645f3cc8449709d44042828db1faf1e59a2
 	// else
 	// 	std::cout << ""
 	
@@ -316,4 +314,9 @@ void Request::set_c_length_received(size_t received)
 size_t Request::get_content_length()
 {
     return (this->_content_length);
+}
+
+void Request::set_content_length(size_t size)
+{
+	this->_content_length = size;
 }

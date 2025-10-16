@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/08/12 15:54:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:35:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,13 @@ class MyLoc : public ALocation
 		MyLoc & operator=(MyLoc const & other);
 		~MyLoc();
 
-		virtual void	parseLocation(std::string const & filePath);
+		bool	getStatus();
+		void 	getElementLocation(const size_t &start, const size_t &end, const stringVect &file);
+
+		virtual void	parseLocation(const stringVect &file);
+
+		//barandri_function
+		virtual void	myParseLocation(std::string const & filePath);
 };
 
 #endif

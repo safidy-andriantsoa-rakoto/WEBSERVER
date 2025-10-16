@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/10 10:17:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:35:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,15 @@ class ALocation
 {
 	protected:
 
-		stringVect _autoindex;
-		stringVect _location;
-		stringVect _root;
-		stringVect _method;
-		stringVect _redirect;
-		stringVect _index;
+		stringVect	_autoindex;
+		stringVect	_location;
+		std::string _locations;
+		stringVect	_root;
+		stringVect	_method;
+		stringVect	_redirect;
+		stringVect	_index;
+		bool 		_checkStats;
+
 
 	public:
 		ALocation();
@@ -39,7 +42,8 @@ class ALocation
 		stringVect  getRedirect() const;
 		stringVect  getIndex() const;
 
-        virtual void	parseLocation(std::string const & locationString) = 0;
+        virtual void	myParseLocation(std::string const & locationString) = 0;
+		virtual void	parseLocation(const stringVect &file) = 0;
 
 		void			displayLocation() const;
 };

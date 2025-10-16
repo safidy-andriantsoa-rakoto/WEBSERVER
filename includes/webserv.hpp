@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 13:45:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/15 10:56:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,38 @@ void	launchEpoll(vectServer & allServer, EpollCreation &epoll);
 void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll);
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
 void	handleFileEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
+void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll);
+void	writeCgiInput(Handler & handler, int const & i, EpollCreation & epoll);
 
-std::string     currentDateTimeString();
+std::string	currentDateTimeString();
 
 vectServerIt	findFdInServer(vectServer & allServer, int const & fd);
 VClientIt		findFdInClient(VClient & allClient, int const & fd);
 
 // Server main
+void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & identifier, int const & fdEvent, int const & index, std::exception & e);
+void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int const & identifier, int const & i);
+void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier);
+int		readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll);
 void    launchServer(Handler & handler);
 
 //Waiting for real parser
-vectServer	parseConfigFile();
+vectServer	myParseConfigFile();
 
 //HandleUtils
-void	closeFileEvent(Handler & handler, int const & i, EpollCreation & epoll);
+void	closeFileFdEvent(Handler & handler, int const & i, EpollCreation & epoll);
+void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & fd);
+void	addFdInHandlerAndEpoll(VClientIt & it, Handler & handler, EpollCreation & epoll, int const & epollOpt, int *fdFromRequest);
+int     readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll);
+void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier);
+bool	hasSingleResponse(int const & respStat);
 
+//MessageUtils
+void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
+void	sendHtmlFileResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
+void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
+void    send_value(int const & _acceptStatus, std::string & _send_content);
+
+vectServer getServer(stringVect file);
+vectLocation getLocation(size_t countLocation);
 #endif

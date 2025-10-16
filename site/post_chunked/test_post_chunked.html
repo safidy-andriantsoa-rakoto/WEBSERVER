@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Test Méthode POST — Transfer-Encoding: chunked</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; }
+    h1 { font-size: 1.4em; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 8px; box-sizing: border-box; }
+    button { padding: 10px 14px; margin-top: 12px; cursor: pointer; }
+    pre { background: #111; color: #fff; padding: 10px; border-radius: 6px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Tester HTTP POST (Transfer-Encoding: chunked)</h1>
+
+  <label for="serverUrl">URL du serveur :</label>
+  <input id="serverUrl" type="text" value="http://localhost:8080/upload" />
+
+  <label for="postData">Corps du message (sera envoyé par petits chunks) :</label>
+  <textarea id="postData" rows="6">Ceci est un test chunked
+Chaque ligne sera un chunk
+Fin</textarea>
+
+  <button id="sendBtn">Envoyer en chunked</button>
+
+  <h3>Résultat :</h3>
+  <pre id="output">-- aucun envoi encore --</pre>
+
+  <script>
+    async function sendChunked(url, text) {
+      const encoder = new TextEncoder();
+      const chunks = text.split(/\n/).map(line => encoder.encode(line + "\n"));
+
+      const stream = new ReadableStream({
+        start(controller) {
+          let i = 0;
+          function push() {
+            if (i < chunks.length) {
+              controller.enqueue(chunks[i++]);
+              setTimeout(push, 400); // délai entre chaque chunk
+            } else {
+              controller.close();
+            }
+          }
+          push();
+        }
+      });
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain"
+        },
+        body: stream
+      });
+
+      const body = await response.text();
+      return "Status: " + response.status + " " + response.statusText + "\n" + body;
+    }
+
+    document.getElementById("sendBtn").addEventListener("click", async () => {
+      const url = document.getElementById("serverUrl").value.trim();
+      const text = document.getElementById("postData").value;
+      document.getElementById("output").textContent = "Envoi des chunks...";
+
+      try {
+        const result = await sendChunked(url, text);
+        document.getElementById("output").textContent = result;
+      } catch (err) {
+        document.getElementById("output").textContent = "Erreur : " + err;
+      }
+    });
+  </script>
+</body>
+</html>

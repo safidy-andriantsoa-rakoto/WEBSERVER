@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stringUtils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 09:28:21 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/08 07:26:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,30 +74,6 @@ void	replaceString(std::string & text, std::string const & replaceText, std::str
 	text.insert(pos, replaceText);
 }
 
-// void	chunkingString(std::string & text)
-// {
-// 	size_t		pos = 0;
-// 	size_t		startPos;
-// 	size_t		size;
-// 	std::string	sizeHead;
-// 	std::string	crlf = "\r\n";
-
-// 	while(1)
-// 	{
-// 		startPos = pos;
-// 		pos = text.find("\n", pos);
-// 		if (pos == std::string::npos)
-// 			break;
-// 		size = pos - startPos;
-// 		sizeHead = convertIntToString(size) + crlf;
-// 		text.insert(startPos, sizeHead);
-// 		pos += sizeHead.size();
-// 		text.insert(pos, "\r");
-// 		pos += 2;
-// 	}
-// 	text.insert(text.size() - 1, "\r\n0\r\n\r\n");
-// }
-
 void	chunkingString(std::string & text, int const & status)
 {
 	std::string			add;
@@ -109,4 +85,48 @@ void	chunkingString(std::string & text, int const & status)
 	text.insert(0, add + "\r\n");
 	if (status == OP_CLOSE)
 		text += "\r\n0\r\n";
+}
+
+char**	convertStringVectToTable(stringVect & vect)
+{
+	char	**res;
+	size_t	size = vect.size() + 1;
+	size_t	sizeIntern;
+	size_t	i;
+
+	if (!vect.size())
+		return NULL;
+	res = static_cast<char **>(calloc(size, sizeof(char *)));
+	if (!res)
+		return NULL;
+	i = 0;
+	for (stringVectIt it = vect.begin(); it != vect.end(); it++)
+	{
+		sizeIntern = (*it).size() + 1;
+		res[i] = static_cast<char *>(calloc(sizeIntern, sizeof(char)));
+		if (!res[i])
+		{
+			clearCharTable(res);
+			return NULL;
+		}
+		strcpy(res[i], (*it).c_str());
+		i++;
+	}
+	res[i] = NULL;
+	return res;
+}
+
+void	clearCharTable(char **tab)
+{
+	char	**tmpAll = tab;
+	int		i = 0;
+
+	if (!tab)
+		return;
+	while (tab[i])
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tmpAll);
 }

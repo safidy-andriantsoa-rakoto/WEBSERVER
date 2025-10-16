@@ -3,24 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/09/19 21:11:56 by rsafidy-         ###   ########.fr       */
-=======
-/*   Updated: 2025/10/02 13:56:44 by rsafidy-         ###   ########.fr       */
->>>>>>> 6ae73645f3cc8449709d44042828db1faf1e59a2
+/*   Updated: 2025/10/16 09:52:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "general.hpp"
-#include "../FileFd/FileFd.hpp"
 #include "../Server/Server.hpp"
 #include "../Response/Response.hpp"
-#include "../Handler/Handler.hpp"
+#include "../CgiFd/CgiFd.hpp"
 
 class Client : public Server
 {
@@ -33,16 +28,12 @@ class Client : public Server
 		std::string _boundary_sep;
 		size_t		_to_send;
 		size_t		_total_send;
-<<<<<<< HEAD
-		bool		_is_body_post;
-		
-=======
 
 		Request		_request;
 		Response	_response;
-		FileFd		*_fileFD;
+		CgiFd		*_cgiFD;
+		int			_fdType;
 
->>>>>>> 6ae73645f3cc8449709d44042828db1faf1e59a2
 		Client();
 
 		void		processRequestWithConfig();
@@ -54,9 +45,16 @@ class Client : public Server
 		void		processRedirection(MyLoc const & location, Request & request);
 
 				//HTTP Method
-		int			get_request();
-		int			post_request(stringMap & header, std::string & md, std::string & boundary);
+		void		get_request(uint32_t & opt, int *fd, std::string & content);
+		void		stdGetRequest(std::string & content);
+		void		cgiGetRequest(int *fd);
+
+		void		post_request(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
+		void		stdPostRequest(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
+		void		cgiPostRequest(int *fd);
 		void		delete_request();
+
+		bool		_modPostFile;
 
 	public:
 		Client(const Client& client);
@@ -70,34 +68,38 @@ class Client : public Server
 		size_t		getTotalSendSize();
 		bool		is_finishedSendContent();	
 		
-		Request&	getobjREquest();
-		
-		
+		Request&	getObjRequest();
+
 		int         get_clientFD() const;
 		std::string getClientRequest() const;
 		bool        getConnexionStat();
 		std::string getBoundaryLimit() const;
+		void		setBoundaryLimit(std::string boundary);
 	
+		int			getFdType() const;
+		void		setFdType(int const & type);
 
-		FileFd		*getFileFD();
-		int			getFileStatus();
-		void        setFileFD(FileFd *fileFd);
-		void		clearFileFd();
-		void		updateFileStatus(int const & status);
-		void		increaseFileSent(size_t const & add);
+		CgiFd		*getPtrCgiFd();
+		void        setPtrCgiFd(CgiFd *cgiFd);
+		void		clearPtrCgiFd();
+		int			getCgiFdStatus();
+		void		updateCgiFdStatus(int const & status);
 
-		Response &	getResponse();
+		Response &	getObjResponse();
 		std::string	getFullResponse();
 		std::string	getBodyResponse();
 		int			getCategoryResponse();
 		int			getStatusCodeResponse();
+		void		setStatusCodeResponse(int const & status);
 		void		clearResponse();
 		void		updateResponseCategory(int const & stat);
-		void		setCatchedResponse(AExcept & e, int & fd, std::string & filePath);
-		void		setStandardResponse(int const & statusCode);
-		void		setChunkedResponse(int const & statusCode);
+		void		setCatchedResponse(AExcept & e);
+		void		setStandardResponse(std::string const & content);
+		void		setChunkedResponse(std::string const & content, std::string const & type, int const & status);
+		void		setCgiChunkedResponse();
+		void		setSingleResponse(int const & statusCode);
 
-		void        ClientRequest();
+		void        receiveClientRequest();
 
 		class Deconnect: public std::exception
 		{
@@ -109,18 +111,16 @@ class Client : public Server
 			public:
 				const char *what() const throw();
 		};
-<<<<<<< HEAD
-		//Server main functionnality
-		int processRequest(std::string const & clientRequestContent, uint32_t & opt, std::string & filePath);
-=======
 
-		int processRequest(std::string const & clientRequest, uint32_t & opt, std::string & filePath);
->>>>>>> 6ae73645f3cc8449709d44042828db1faf1e59a2
+		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, std::string & content);
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 
-		int	creat_file_for_post(std::string path, uint32_t & opt);
+		int				creat_file_for_post(std::string path, uint32_t & opt);
 
-		std::string currentDateTimeString();
+		std::string 	currentDateTimeString();
+
+		void	switch_modPostFile(bool stat);
+		bool	modPostFile_stat();
 
 };

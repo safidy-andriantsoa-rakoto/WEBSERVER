@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 09:50:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/15 08:37:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ class Server
 		//For testing only !!!!
 		void simpleInit(std::string const & servPath, std::string const & locationPath);
 
+		static void getParsAllServer(std::vector<Server> &allServer, stringVect file);
 };
 
 #endif

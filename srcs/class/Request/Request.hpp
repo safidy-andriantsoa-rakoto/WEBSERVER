@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/09/20 22:01:21 by rsafidy-         ###   ########.fr       */
-=======
-/*   Updated: 2025/10/02 11:53:34 by rsafidy-         ###   ########.fr       */
->>>>>>> 6ae73645f3cc8449709d44042828db1faf1e59a2
+/*   Updated: 2025/10/16 09:21:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +14,7 @@
 # define REQUEST_HPP
 
 #include "general.hpp"
+#include "../CgiParser/CgiParser.hpp"
 
 class Request
 {
@@ -40,7 +37,11 @@ class Request
 		size_t		_content_length;
 		size_t		_c_length_received;
 
+		bool		_isCgi;
+		CgiParser	_cgiParser;
+
 		void    	setRequestLine(std::string const & set);
+		void		setRequestBody(std::string const & requeststring, size_t const & pos);
 
 	public:
 		Request();
@@ -53,38 +54,42 @@ class Request
 		std::string	getRequestTarget() const;
 		std::string	getOriginalRequestTarget() const;
 		std::string	getRequestLine() const;
-		std::string&	getBody();
+		std::string	getBody() const;
 		stringMap	getHeader() const;
-<<<<<<< HEAD
-		stringMap	getpostInfo() const;
-		
-		void		setRequestBody(std::string const & requeststring, size_t const & pos);
-=======
+
+		bool		getIsCgi() const;
+		void		setIsCgi(bool const & condition);
+
+		CgiParser	getCgiClass() const;
+		void		processCgiClass(std::string const & target, std::string const & rootDirectory);
+		void		setCgiClass(CgiParser const & cgi);
+		void		execCgiClass();
+		void		clearCgiClass();
+
 		const	MapSVectStr&	getpostMultipartData() const;
->>>>>>> 6ae73645f3cc8449709d44042828db1faf1e59a2
 
-		void 		Del_space(std::string &data);
+		void 			Del_space(std::string &data);
 
-		void		set_is_CRLF_header(bool is_crlf);
-		bool		get_is_CRLF_header();
+		void			set_is_CRLF_header(bool is_crlf);
+		bool			get_is_CRLF_header();
 		
-		bool		getAutoIdx() const;
-		void		setAutoIdx(bool const & autoIdx);
+		bool			getAutoIdx() const;
+		void			setAutoIdx(bool const & autoIdx);
 
-		void		setRequestSize(ssize_t size);
-		ssize_t		getRequestSize();
+		void			setRequestSize(ssize_t size);
+		ssize_t			getRequestSize();
 
 		void		set_Body(const std::string& body);
 		std::string&	get_Body();
-		void		set_post_body(stringVect var, std::string content);
+		void		clear_body();
+		void			set_post_body(stringVect var, std::string content);
 
-		void		setRequestTarget(std::string const & target);
+		void			setRequestTarget(std::string const & target);
 	
-		void		parseRequest(std::string const & requestString);
+		void			parseRequest(std::string const & requestString);
 
-		void		parseBodyMultipartData(std::string const & requestString);
+		void			displayRequest() const;
 
-		void		displayRequest() const;
 
 		void		displayRequestMultipartData();
 
@@ -92,6 +97,7 @@ class Request
 		void 		set_c_length_received(size_t received);
 
 		size_t 		get_content_length();
+		void 		set_content_length(size_t size);
 };
 
 #endif

@@ -7,15 +7,8 @@ Redirection :
         * Add new location bloc to map the new root to get the files that needed by the redirection if placed locally
 
 Custom Error page:
-    - Add in the server bloc :  [error_page] [list of all statusCode] [index.html file path]
-    - Add new location bloc :
-        location /custom 
-        {
-            root ./errorPage/$dir
-            method GET
-        }
+    - Add in the server bloc :  [error_page] [list of all statusCode] [page.html]
 
-        Where $dir = your file directory for custom page
-
-    NB : You need to edit manually all the links inside the error page index.html if you want to use imported files using /custom/...
-
+Upload (POST and DELETE) : 
+    - default directory + default location bloc : use this if no custom directory is specified in the file configuration
+    - custom directory must be named  : Add new location (must be upload/) bloc with specified root

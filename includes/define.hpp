@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/25 09:15:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 09:46:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,17 @@
 #define RESPONSE_FILE_NAME "response.txt"
 
 //PATH
-#define ERR_PATH "./config/errorPage/default/index.html"
+#define ERR_PATH "./config/errorPage/default/default.html"
 #define STAT_PATH "./config/statcode/statusCode.conf"
 #define LDIR_PATH "./config/listingDirectory/listDir.html"
 #define MIME_PATH "./config/ext"
-#define CONF_PATH "./config/serverConf/"
+#define CGI_GET_PATH  "./config/cgiConf/cgiGet.conf"
+#define CGI_POST_PATH  "./config/cgiConf/cgiPost.conf"
+#define CGI_ERR_PATH  "./config/cgiConf/cgiErr.conf"
+#define PHP_CGI_PATH "/usr/bin/php-cgi"
+#define UPLOAD_PATH "./upload"
 
-#define DEF_ERR_LOCATION "location /errorPage | root ./config/errorPage/default | method GET POST DELETE"
+#define DEF_UPLOAD_LOCATION "location /upload | root ./upload | method GET POST DELETE | autoindex ON"
 
 //HTTP
 #define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"
@@ -34,7 +38,7 @@
 #define _EMPTY_LINE "\n\r\n"
 #define _NB_CLIENT 10
 #define MAX_EVENT 2042
-#define _BUFFER 1000 
+#define _BUFFER 2000 
 #define _BUFFER_RECV 1024
 
 #endif

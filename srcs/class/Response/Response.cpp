@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/24 15:23:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 10:07:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,24 +97,32 @@ void	Response::clearResponse()
 	_fullResponse.clear();
 }
 
-void Response::buildErrorPage(int const & status, t_errPage & errPage, int & fd, std::string & filePath)
+void Response::buildErrorPage(int const & status, t_errPage & errPage, std::string & filePath, int & fdType)
 {
-	stringVectIt it;
+	stringVectIt	it;
 
 	filePath = ERR_PATH;
+	fdType = HTML_FILE;
 	if (!errPage.listError.size())
 	{
-		fd = openFile(filePath);
+		fdType = HTML_FILE;
+		_body = readFileToString(filePath);
+		// execCgiDefaultScript(fd);
 		return;
 	}
 	it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
 	if (it != errPage.listError.end())
 	{
+		fdType = HTML_FILE;
 		filePath = errPage.filePath;
-		fd = openFile(errPage.filePath);
+		_body = readFileToString(filePath);
 	}
 	else
-		fd = openFile(filePath);
+	{
+		fdType = HTML_FILE;
+		_body = readFileToString(filePath);
+		// execCgiDefaultScript(fd);
+	}	
 }
 
 void Response::setStatusLine()
@@ -143,14 +151,29 @@ void Response::generateChunkedResponse(std::string const & body, int const & sta
 	_header["Transfer-Encoding"] = "chunked";
 }
 
-void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int & fd, std::string & filePath)
+void Response::generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status)
+{
+	setStatusLine();
+	_body = body;
+	chunkingString(_body, status);
+	if (header.size())
+	{
+		_header.clear();
+		_header["Connection"] = "keep-alive";
+		_header["Content-Type"] = (*header.find("Content-type")).second;
+		// _header["Content-Type"] = "text/html; charset=UTF-8";
+		_header["Transfer-Encoding"] = "chunked";
+	}
+}
+
+void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)
 {
 	try
 	{
 		if (e._type == ERR_RSP)
 		{
 			ErrorExcept & err = dynamic_cast<ErrorExcept & >(e);
-			generateErrorResponse(err, errPage, fd, filePath);
+			generateErrorResponse(err, errPage, filePath, fdType);
 		}
 		else if (e._type == LDIR_RSP)
 		{
@@ -173,11 +196,14 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int & f
 	_respCategory = e._type;
 }
 
-void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int & fd, std::string & filePath)
+void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)
 {
 	_statusCode = e._statusCode;
 	setStatusLine();
-	buildErrorPage(_statusCode, errPage, fd, filePath);
+	buildErrorPage(_statusCode, errPage, filePath, fdType);
+	_header["Content-Type"] = "text/html; charset=UTF-8";
+	_header["Content-Length"] = convertIntToString(_body.size());
+	_header["Connection"] = "keep-alive";
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)
@@ -186,6 +212,7 @@ void Response::generateRedirectResponse(RedirExcept & r)
 	_type = "text/html";
 	setStatusLine();
 	_header.clear();
+	_body.clear();
 	_header["Location"] = r._uri;
 	_header["Connection"] = "keep-alive";
 	_header["Content-Length"] = "0";
@@ -202,6 +229,64 @@ void Response::generateLDirResponse(LDirExcept &d)
 	_body = LDirExcept::_part[0] + list + LDirExcept::_part[1];
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Connection"] = "keep-alive";
+}
+
+void Response::generateSingleResponse(int const &statusCode)
+{
+	_statusCode = statusCode;
+	_respCategory = SINGLE_RSP;
+	_type = "text/html";
+	setStatusLine();
+	_header.clear();
+	_body.clear();
+	_header["Connection"] = "keep-alive";
+	_header["Content-Length"] = "0";
+}
+
+void Response::execCgiDefaultScript(int *fd)
+{
+	int			pid;
+	int			pipeFd[2];
+	int			errFd[2];
+	CgiParser	cgiParser;
+	std::string	statusCodePhrase = _allStatusCode[convertIntToString(_statusCode)];
+
+	cgiParser.configErrEnvp(_statusCode, statusCodePhrase);
+	if (pipe(pipeFd) == -1)
+		throw std::runtime_error("Pipe fd error");
+	if (pipe(errFd) == -1)
+		throw std::runtime_error("Pipe err error");
+	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
+	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
+	pid = fork();
+	if (pid == -1)
+		throw std::runtime_error("Fork error");
+	if (pid == 0)
+	{
+		dup2(errFd[1], STDERR_FILENO);
+		close(errFd[0]);
+		close(errFd[1]);
+		dup2(pipeFd[1], STDOUT_FILENO);
+		close(pipeFd[0]);
+		close(pipeFd[1]);
+		try
+		{
+			cgiParser.execCgi();
+		}
+		catch(const std::exception& e)
+		{
+			fd[FD_PRINCIPAL] = -1;
+			fd[FD_STDERR] = -1;
+		}
+	}
+	else
+	{
+		cgiParser.clearCgiClass();
+		close(errFd[1]);
+		close(pipeFd[1]);
+		fd[FD_PRINCIPAL] = pipeFd[0];
+		fd[FD_STDERR] = errFd[0];
+	}
 }
 
 void Response::initAllStatusCode(std::string const & statPath)

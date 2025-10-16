@@ -6,20 +6,94 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/23 08:34:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 09:54:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-void	closeFileEvent(Handler & handler, int const & i, EpollCreation & epoll)
+void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & fd)
 {
-	vectFileFdIt	it = handler.getFileFd(i);
-	int				fd;
-
-	(*it)->restoreFd();
-	fd = (*it)->getFileFd();
 	epoll.epoll_clean(fd);
-	close((*it)->getStockFd());
-	handler.removeFileFd(i);
+	handler.removeCgiFd(i);
+}
+
+void	addFdInHandlerAndEpoll(VClientIt & it, Handler & handler, EpollCreation & epoll, int const & epollOpt, int *fdFromRequest)
+{
+	std::cout << "Add FD in Handler and epoll" << std::endl;
+	std::cout << fdFromRequest[FD_STDIN] << " " << fdFromRequest[FD_PRINCIPAL] << " " << fdFromRequest[FD_STDERR] << std::endl;
+	if (fdFromRequest[FD_PRINCIPAL] < 0)
+	{
+		if (fdFromRequest[FD_PRINCIPAL] == -2)
+			handler.setProgramBreak(true);
+		return;
+	}
+	if ((*it).getFdType() == GET_PHP_SCRIPT)
+	{
+		handler.addToVectCgiFd(it, fdFromRequest[FD_PRINCIPAL], fdFromRequest[FD_STDERR], fdFromRequest[FD_STDIN]);
+		epoll.epoll_control(EPOLLOUT, fdFromRequest[FD_STDERR]);
+		epoll.epoll_control(epollOpt, fdFromRequest[FD_PRINCIPAL]);
+	}
+	else if ((*it).getFdType() == POST_PHP_SCRIPT)
+	{
+		handler.addToVectCgiFd(it, fdFromRequest[FD_PRINCIPAL], fdFromRequest[FD_STDERR], fdFromRequest[FD_STDIN]);
+		epoll.epoll_control(EPOLLOUT, fdFromRequest[FD_STDIN]);
+	}
+}
+
+int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)
+{
+	int			bytesRead;
+	char		buffer[_BUFFER];
+	std::string	bufferString;
+
+	bytesRead = read((*itCgi)->getErrFd(), buffer, _BUFFER);
+	if (bytesRead <= 0)
+	{
+		std::cout << "Nothing to read for CGI ERROR \n";
+		epoll.epoll_clean((*itCgi)->getErrFd());
+		return 0;
+	}
+	bufferString.append(buffer, bytesRead);
+	std::cout << "				***************BUFFER ERROR \n" << bufferString.size() << std::endl;
+	return bytesRead;
+}
+
+void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier)
+{
+	int			fd[3] = {-1, -1, -1};
+	int			bytesRead = 0;
+	vectCgiFdIt	itCgi = handler.getCgiFdIterator(index);
+	VClientIt	it = findFdInClient(handler.getVectClient(), (*itCgi)->getClientFd());
+
+	if (identifier == CGI_FD_ERR)
+	{
+		bytesRead = readCgiStdError(itCgi, epoll);
+		if (!bytesRead)
+			return;
+	}
+	(*it).setCatchedResponse(err);
+	if (fd[FD_PRINCIPAL] == -1)
+		return;
+	epoll.epoll_clean((*itCgi)->getErrFd());
+	epoll.epoll_clean((*itCgi)->getOutputFd());
+	handler.removeCgiFd(itCgi);
+	if ((*it).getFdType() == GET_PHP_SCRIPT) //Review later !!!
+	{
+		handler.addToVectCgiFd(it, fd[FD_PRINCIPAL], fd[FD_STDERR], fd[FD_STDIN]);
+		epoll.epoll_control(EPOLLIN, fd[FD_STDERR]);
+		epoll.epoll_control(EPOLLIN, fd[FD_PRINCIPAL]);
+	}
+	else
+	{
+		int fdCli = (*it).get_clientFD();
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
+	}
+}
+
+bool	hasSingleResponse(int const & respStat)
+{
+	if (respStat == REDIR_RSP || respStat == SINGLE_RSP || respStat == LDIR_RSP)
+		return true;
+	return false;
 }
