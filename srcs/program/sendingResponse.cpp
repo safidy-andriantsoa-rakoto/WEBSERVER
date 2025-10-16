@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 14:17:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 10:08:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
 	std::string	responseString;
 
-	// std::cout <<"\033[35mSending single response\n" << responseString << "\033[0m" << std::endl;
+	std::cout <<"\033[35mSending single response\n" << responseString.size() << "\033[0m" << std::endl;
 	responseString = (*it).getFullResponse();
 	send_value(fdCli, responseString);
 	epoll.epoll_update_event(fdCli, EPOLLIN);
@@ -28,33 +28,34 @@ void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 void	sendHtmlFileResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
 	std::string	responseString;
-	int			fileStatus;
+	// int			fileStatus;
 
-	fileStatus = (*it).getFileStatus();
-	if (fileStatus == OP_ONCE)
-	{
-		std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
-		(*it).setStandardResponse();
-	}
-	else
-	{
-		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
-		(*it).setChunkedResponse();
-	}
-	if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
-		responseString = (*it).getBodyResponse() + "\r\n";
-	else
-		responseString = (*it).getFullResponse();
-	std::cout <<"\e[45mResponse from the file : " << (*it).getPtrFileFd()->getFilePath() << "\e[0m" << std::endl;
+	// fileStatus = (*it).getFileStatus();
+	// if (fileStatus == OP_ONCE)
+	// {
+	// 	std::cout << "\033[35mSending standard response" << "\033[0m"<< std::endl;
+	// 	(*it).setStandardResponse();
+	// }
+	// else
+	// {
+	// 	std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
+	// 	(*it).setChunkedResponse();
+	// }
+	// if (fileStatus == OP_ONGOING || fileStatus == OP_CLOSE)
+	// 	responseString = (*it).getBodyResponse() + "\r\n";
+	// else
+	responseString = (*it).getFullResponse();
+	std::cout << "		SENDING HTML FILE = " << responseString.size() << std::endl;
 	send_value(fdCli, responseString);
-    (*it).getPtrFileFd()->clearBuffer();
-	if (fileStatus != OP_ONGOING && fileStatus != OP_START)
-		epoll.epoll_update_event(fdCli, EPOLLIN);
-	if (fileStatus == OP_START)
-		(*it).updateFileStatus(OP_ONGOING);
-	(*it).increaseFileSent(_BUFFER);
-	if (fileStatus == OP_ONCE || fileStatus == OP_CLOSE)
-		(*it).clearPtrFileFd();
+	epoll.epoll_update_event(fdCli, EPOLLIN);
+	// std::cout <<"\e[45mResponse from the file : " << (*it).getPtrFileFd()->getFilePath() << "\e[0m" << std::endl;
+    // (*it).getPtrFileFd()->clearBuffer();
+	// if (fileStatus != OP_ONGOING && fileStatus != OP_START)
+	// if (fileStatus == OP_START)
+	// 	(*it).updateFileStatus(OP_ONGOING);
+	// (*it).increaseFileSent(_BUFFER);
+	// if (fileStatus == OP_ONCE || fileStatus == OP_CLOSE)
+	// 	(*it).clearPtrFileFd();
 }
 
 void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
@@ -81,8 +82,6 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
         epoll.epoll_update_event(fdCli, EPOLLIN);
 	if (cgiStatus == OP_START)
 		(*it).updateCgiFdStatus(OP_ONGOING);
-	if (cgiStatus == OP_CLOSE)
-		(*it).clearPtrFileFd();
 }
 
 /*
@@ -95,6 +94,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
     size_t to_send = _send_content.size();
 
     std::cout << "Size to send = " << _send_content.size() << std::endl;
+    // std::cout << "Sent = " << _send_content << std::endl;
     if (_acceptStatus < 0)
         throw std::runtime_error("Invalid fd to send");
     const char *resp =  _send_content.c_str();

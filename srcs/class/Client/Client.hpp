@@ -6,14 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/14 19:27:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 09:52:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "general.hpp"
-#include "../FileFd/FileFd.hpp"
 #include "../Server/Server.hpp"
 #include "../Response/Response.hpp"
 #include "../CgiFd/CgiFd.hpp"
@@ -32,11 +31,9 @@ class Client : public Server
 
 		Request		_request;
 		Response	_response;
-		FileFd		*_fileFD;
 		CgiFd		*_cgiFD;
 		int			_fdType;
 
-		FileFd		*_fileMPFDT; //multipart filefd
 		Client();
 
 		void		processRequestWithConfig();
@@ -48,8 +45,8 @@ class Client : public Server
 		void		processRedirection(MyLoc const & location, Request & request);
 
 				//HTTP Method
-		void		get_request(uint32_t & opt, int *fd);
-		void		stdGetRequest(int *fd);
+		void		get_request(uint32_t & opt, int *fd, std::string & content);
+		void		stdGetRequest(std::string & content);
 		void		cgiGetRequest(int *fd);
 
 		void		post_request(stringMap & header, std::string & boundary, uint32_t & opt, int *fd);
@@ -82,13 +79,6 @@ class Client : public Server
 		int			getFdType() const;
 		void		setFdType(int const & type);
 
-		FileFd		*getPtrFileFd();
-		void        setPtrFileFd(FileFd *fileFd);
-		void		clearPtrFileFd();
-		void		increaseFileSent(size_t const & add);
-		int			getFileStatus();
-		void		updateFileStatus(int const & status);
-
 		CgiFd		*getPtrCgiFd();
 		void        setPtrCgiFd(CgiFd *cgiFd);
 		void		clearPtrCgiFd();
@@ -103,9 +93,9 @@ class Client : public Server
 		void		setStatusCodeResponse(int const & status);
 		void		clearResponse();
 		void		updateResponseCategory(int const & stat);
-		void		setCatchedResponse(AExcept & e, int *fd);
-		void		setStandardResponse();
-		void		setChunkedResponse();
+		void		setCatchedResponse(AExcept & e);
+		void		setStandardResponse(std::string const & content);
+		void		setChunkedResponse(std::string const & content, std::string const & type, int const & status);
 		void		setCgiChunkedResponse();
 		void		setSingleResponse(int const & statusCode);
 
@@ -122,17 +112,13 @@ class Client : public Server
 				const char *what() const throw();
 		};
 
-		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd);
+		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, std::string & content);
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 
 		int				creat_file_for_post(std::string path, uint32_t & opt);
 
 		std::string 	currentDateTimeString();
-
-
-		void	set_fileMPFDT(FileFd* _fileMPFDT);
-		FileFd* get_fileMPFDT();
 
 		void	switch_modPostFile(bool stat);
 		bool	modPostFile_stat();

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 13:09:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 10:07:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,15 +97,17 @@ void	Response::clearResponse()
 	_fullResponse.clear();
 }
 
-void Response::buildErrorPage(int const & status, t_errPage & errPage, int *fd, std::string & filePath, int & fdType)
+void Response::buildErrorPage(int const & status, t_errPage & errPage, std::string & filePath, int & fdType)
 {
 	stringVectIt	it;
 
 	filePath = ERR_PATH;
-	fdType = GET_PHP_SCRIPT;
+	fdType = HTML_FILE;
 	if (!errPage.listError.size())
 	{
-		execCgiDefaultScript(fd);
+		fdType = HTML_FILE;
+		_body = readFileToString(filePath);
+		// execCgiDefaultScript(fd);
 		return;
 	}
 	it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
@@ -113,11 +115,13 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, int *fd, 
 	{
 		fdType = HTML_FILE;
 		filePath = errPage.filePath;
-		fd[FD_PRINCIPAL] = openFile(filePath);
+		_body = readFileToString(filePath);
 	}
 	else
 	{
-		execCgiDefaultScript(fd);
+		fdType = HTML_FILE;
+		_body = readFileToString(filePath);
+		// execCgiDefaultScript(fd);
 	}	
 }
 
@@ -157,19 +161,19 @@ void Response::generateCgiChunkedResponse(std::string const & body, stringMap co
 		_header.clear();
 		_header["Connection"] = "keep-alive";
 		_header["Content-Type"] = (*header.find("Content-type")).second;
-		_header["Content-Type"] = "text/html; charset=UTF-8";
+		// _header["Content-Type"] = "text/html; charset=UTF-8";
 		_header["Transfer-Encoding"] = "chunked";
 	}
 }
 
-void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int *fd, std::string & filePath, int & fdType)
+void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)
 {
 	try
 	{
 		if (e._type == ERR_RSP)
 		{
 			ErrorExcept & err = dynamic_cast<ErrorExcept & >(e);
-			generateErrorResponse(err, errPage, fd, filePath, fdType);
+			generateErrorResponse(err, errPage, filePath, fdType);
 		}
 		else if (e._type == LDIR_RSP)
 		{
@@ -192,11 +196,14 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, int *fd
 	_respCategory = e._type;
 }
 
-void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, int *fd, std::string & filePath, int & fdType)
+void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)
 {
 	_statusCode = e._statusCode;
 	setStatusLine();
-	buildErrorPage(_statusCode, errPage, fd, filePath, fdType);
+	buildErrorPage(_statusCode, errPage, filePath, fdType);
+	_header["Content-Type"] = "text/html; charset=UTF-8";
+	_header["Content-Length"] = convertIntToString(_body.size());
+	_header["Connection"] = "keep-alive";
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)

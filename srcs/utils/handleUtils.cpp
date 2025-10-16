@@ -6,24 +6,11 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 13:17:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/16 09:54:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-
-void	closeFileFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
-{
-	int				fd;
-	vectFileFdIt	it = handler.getFileFdIterator(i);
-
-	(*it)->restoreFd();
-	fd = (*it)->getFd();
-	epoll.epoll_clean(fd);
-	if ((*it)->getStockFd() != -1)
-		close((*it)->getStockFd());
-	handler.removeFileFd(i);
-}
 
 void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & fd)
 {
@@ -41,12 +28,7 @@ void	addFdInHandlerAndEpoll(VClientIt & it, Handler & handler, EpollCreation & e
 			handler.setProgramBreak(true);
 		return;
 	}
-	if ((*it).getFdType() == HTML_FILE)
-	{
-		handler.addToVectFileFd(it, fdFromRequest[FD_PRINCIPAL]);
-		epoll.epoll_control(epollOpt, fdFromRequest[FD_PRINCIPAL]);
-	}
-	else if ((*it).getFdType() == GET_PHP_SCRIPT)
+	if ((*it).getFdType() == GET_PHP_SCRIPT)
 	{
 		handler.addToVectCgiFd(it, fdFromRequest[FD_PRINCIPAL], fdFromRequest[FD_STDERR], fdFromRequest[FD_STDIN]);
 		epoll.epoll_control(EPOLLOUT, fdFromRequest[FD_STDERR]);
@@ -90,28 +72,27 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 		if (!bytesRead)
 			return;
 	}
-	(*it).setCatchedResponse(err, fd);
+	(*it).setCatchedResponse(err);
 	if (fd[FD_PRINCIPAL] == -1)
 		return;
 	epoll.epoll_clean((*itCgi)->getErrFd());
 	epoll.epoll_clean((*itCgi)->getOutputFd());
 	handler.removeCgiFd(itCgi);
-	if ((*it).getFdType() == HTML_FILE)
-	{
-		(*it).clearPtrCgiFd();
-		handler.addToVectFileFd(it, fd[FD_PRINCIPAL]);
-	}
-	else
+	if ((*it).getFdType() == GET_PHP_SCRIPT) //Review later !!!
 	{
 		handler.addToVectCgiFd(it, fd[FD_PRINCIPAL], fd[FD_STDERR], fd[FD_STDIN]);
 		epoll.epoll_control(EPOLLIN, fd[FD_STDERR]);
+		epoll.epoll_control(EPOLLIN, fd[FD_PRINCIPAL]);
 	}
-	epoll.epoll_control(EPOLLIN, fd[FD_PRINCIPAL]);
+	else
+	{
+		int fdCli = (*it).get_clientFD();
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
+	}
 }
 
 bool	hasSingleResponse(int const & respStat)
 {
-	std::cout << "Response stat = " << respStat << std::endl;
 	if (respStat == REDIR_RSP || respStat == SINGLE_RSP || respStat == LDIR_RSP)
 		return true;
 	return false;

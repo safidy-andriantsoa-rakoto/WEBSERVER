@@ -31,9 +31,6 @@ CONF = AConfig.cpp ALocation.cpp MyConf.cpp MyLoc.cpp
 HAND_DIR = Handler/
 HAND = Handler.cpp
 
-FILE_DIR = FileFd/
-FILE = FileFd.cpp
-
 SIGNAL_DIR = Signal/
 SIGNAL_CPP = Signal.cpp
 
@@ -52,7 +49,6 @@ CLASS_SUB_DIR = $(addprefix $(CLASS_DIR), $(SERV_DIR)) \
 				$(addprefix $(CLASS_DIR), $(MIME_DIR)) \
 				$(addprefix $(CLASS_DIR), $(CONF_DIR)) \
 				$(addprefix $(CLASS_DIR), $(HAND_DIR)) \
-				$(addprefix $(CLASS_DIR), $(FILE_DIR)) \
 				$(addprefix $(CLASS_DIR), $(SIGNAL_DIR)) \
 				$(addprefix $(CLASS_DIR), $(CGIPAR_DIR)) \
 				$(addprefix $(CLASS_DIR), $(CGIFD_DIR))
@@ -66,7 +62,6 @@ CLASS = $(addprefix $(SERV_DIR), $(SERV)) \
 		$(addprefix $(MIME_DIR), $(MIME)) \
 		$(addprefix $(CONF_DIR), $(CONF)) \
 		$(addprefix $(HAND_DIR), $(HAND)) \
-		$(addprefix $(FILE_DIR), $(FILE)) \
 		$(addprefix $(SIGNAL_DIR), $(SIGNAL_CPP)) \
 		$(addprefix $(CGIPAR_DIR), $(CGIPAR)) \
 		$(addprefix $(CGIFD_DIR), $(CGIFD))
