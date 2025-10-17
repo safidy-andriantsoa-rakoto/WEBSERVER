@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/08 10:20:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:19:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void EpollCreation::epoll_control(uint32_t _opt, int const & clientFD)
     struct epoll_event client;
     client.events = _opt;
     client.data.fd = clientFD;
+
     if (epoll_ctl(this->efds, EPOLL_CTL_ADD, clientFD, &client) < 0)
     {
         std::string error(strerror(errno));
@@ -49,6 +50,8 @@ void EpollCreation::epoll_control(uint32_t _opt, int const & clientFD)
 
 void EpollCreation::epoll_clean(int const & clientFD)
 {
+    std::cout << "          Epoll clean = " << clientFD << std::endl;
+
     if (epoll_ctl(efds, EPOLL_CTL_DEL, clientFD, NULL) < 0)
     {
         std::string error(strerror(errno));

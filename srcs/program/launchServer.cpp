@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 09:03:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:44:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void    launchServer(Handler & handler)
 		for (int i = 0; i < nb_event; i++)
 		{
 			fdEvent = epoll.get_fdEvent(i);
-			std::cout << "\033[47;30m		FD EVENT = " << fdEvent << "\033[0m" << std::endl;
+			std::cout << "\033[47;30m		FD EVENT = " << fdEvent << " : " << handler.getIsChildProcess() << "\033[0m" << std::endl;
 			try
 			{
 				handler.identifyFd(fdEvent, index, identifier);
@@ -99,7 +99,10 @@ void    launchServer(Handler & handler)
 				break ;
 			}
 			if (handler.getProgramBreak() == true)
+			{
+				std::cout << "HANDLER PROCESS = " << handler.getIsChildProcess() << std::endl;
 				throw std::runtime_error("Program break launched");
+			}
 		}
 	}
 }

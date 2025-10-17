@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 09:02:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:30:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Handler
 		vectCgiFd	_vectCgiFd;
 
 		bool		_programBreak;
+		bool		_isChildProcess;
 
 	public:
 		Handler();
@@ -52,8 +53,11 @@ class Handler
 		VClient &		getVectClient();
 		vectCgiFd &		getVectCgiFd();
 
-		bool			getProgramBreak();
+		bool			getProgramBreak() const;
 		void			setProgramBreak(bool const & stat);
+
+		bool			getIsChildProcess() const;
+		void			setIsChildProcess(bool const & stat);
 
 		vectServerIt	getServerIterator(int const & i);
 		VClientIt		getClientIterator(int const & i);

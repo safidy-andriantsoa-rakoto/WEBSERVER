@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 10:21:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:54:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,10 @@ void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int c
 	if (fd[FD_STDOUT] < 0)
 	{
 		if (fd[FD_STDOUT] == -2)
+		{
 			handler.setProgramBreak(true);
+			handler.setIsChildProcess(true);
+		}
 		return;
 	}
 	if ((*it).getFdType() == GET_PHP_SCRIPT)
@@ -73,8 +76,9 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 			return;
 	}
 	(*it).setCatchedResponse(err);
+	if ((*itCgi)->getOutputFd() != -1)
+		epoll.epoll_clean((*itCgi)->getOutputFd());
 	epoll.epoll_clean((*itCgi)->getErrFd());
-	epoll.epoll_clean((*itCgi)->getOutputFd());
 	handler.removeCgiFd(itCgi);
 	(*it).clearPtrCgiFd();
 	epoll.epoll_update_event(fdCli, EPOLLOUT);

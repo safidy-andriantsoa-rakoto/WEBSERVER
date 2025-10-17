@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 10:25:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:54:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,14 +100,17 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	bytesRead = read((*it)->getOutputFd(), buffer, _BUFFER);
 	if (bytesRead <= 0)
 	{
+		std::cout << "Nothing to read from CGI OUTPUT : " << bytesRead << std::endl;
 		(*it)->setStatus(OP_CLOSE);
 		(*it)->clearBuffer();
-		epoll.epoll_clean((*it)->getOutputFd());
+		epoll.epoll_clean((*it)->getOutputFd()); //Find a way to change outputFd = -1 if it is going to be closed
+		(*it)->setOutputFd(-1);
 		return ;
 	}
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBuffer(bufferString);
-	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
+	std::cout << "				******** Buffer CGI = \n" << bufferString.size() << std::endl;
+	// std::cout << "				******** Buffer CGI END" << std::endl;
 	(*it)->bufferParser();
 	(*it)->checkError();
 	// (*it)->displayBufferParsed();

@@ -67,6 +67,11 @@ int CgiFd::getOutputFd() const
     return _outputFd;
 }
 
+void CgiFd::setOutputFd(int const &fd)
+{
+	_outputFd = fd;
+}
+
 int CgiFd::getErrFd() const
 {
     return _errorFd;

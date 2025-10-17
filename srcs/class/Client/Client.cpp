@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/17 09:42:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 11:52:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -441,6 +441,7 @@ void Client::cgiGetRequest(int *fd)
 	int	pipeFd[2];
 	int	pid;
 	int	errFd[2];
+	int	stdFd[2] = {-1, -1};
 
 	if (pipe(pipeFd) == -1)
 		throw std::runtime_error("Pipe fd error");
@@ -453,6 +454,8 @@ void Client::cgiGetRequest(int *fd)
 		throw std::runtime_error("Fork error");
 	if (pid == 0)
 	{
+		stdFd[FD_STDOUT] = dup(STDOUT_FILENO);
+		stdFd[FD_STDERR] = dup(STDERR_FILENO);
 		dup2(errFd[1], STDERR_FILENO);
 		close(errFd[0]);
 		close(errFd[1]);
@@ -465,6 +468,10 @@ void Client::cgiGetRequest(int *fd)
 		}
 		catch(const std::exception& e)
 		{
+			dup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			dup2(stdFd[FD_STDERR], STDERR_FILENO);
+			close(stdFd[FD_STDOUT]);
+			close(stdFd[FD_STDERR]);
 			fd[FD_STDOUT] = -2;
 			fd[FD_STDERR] = -2;
 		}
@@ -567,40 +574,49 @@ void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t &
 void Client::cgiPostRequest(int *fd)
 {
 	int	pid;
-	int	outFd[2];
-	int	inFd[2];
-	int	errFd[2];
+	int	pipeOutFd[2];
+	int	pipeInFd[2];
+	int	pipeErrFd[2];
+	int	stdFd[3] = {-1, -1, -1};
 
-	if (pipe(inFd) == -1)
+	if (pipe(pipeInFd) == -1)
 		throw std::runtime_error("input fd error");
-	if (pipe(outFd) == -1)
+	if (pipe(pipeOutFd) == -1)
 		throw std::runtime_error("output fd error");
-	if (pipe(errFd) == -1)
+	if (pipe(pipeErrFd) == -1)
 		throw std::runtime_error("error fd error");
-	std::cout << "inFd [0] = " << inFd[0] << " [1] = " << inFd[1] << std::endl;
-	std::cout << "outFd [0] = " << outFd[0] << " [1] = " << outFd[1] << std::endl;
-	std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
+	// std::cout << "inFd [0] = " << pipeInFd[0] << " [1] = " << pipeInFd[1] << std::endl;
+	// std::cout << "outFd [0] = " << pipeOutFd[0] << " [1] = " << pipeOutFd[1] << std::endl;
+	// std::cout << "errFd [0] = " << pipeErrFd[0] << " [1] = " << pipeErrFd[1] << std::endl;
 	pid = fork();
 	if (pid == -1)
 		throw std::runtime_error("Fork error");
 	if (pid == 0)
 	{
-		dup2(inFd[0], STDIN_FILENO);
-		close(inFd[0]);
-		close(inFd[1]);
-		dup2(outFd[1], STDOUT_FILENO);
-		close(outFd[0]);
-		close(outFd[1]);
-		dup2(errFd[1], STDERR_FILENO);
-		close(errFd[0]);
-		close(errFd[1]);
+		stdFd[FD_STDIN] = dup(STDIN_FILENO);
+		stdFd[FD_STDOUT] = dup(STDOUT_FILENO);
+		stdFd[FD_STDERR] = dup(STDERR_FILENO);
+		dup2(pipeInFd[0], STDIN_FILENO);
+		close(pipeInFd[0]);
+		close(pipeInFd[1]);
+		dup2(pipeOutFd[1], STDOUT_FILENO);
+		close(pipeOutFd[0]);
+		close(pipeOutFd[1]);
+		dup2(pipeErrFd[1], STDERR_FILENO);
+		close(pipeErrFd[0]);
+		close(pipeErrFd[1]);
 		try
 		{
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			std::cout << "		THERE WAS AN ERROR!!!!!!!!!\n";
+			dup2(stdFd[FD_STDIN], STDIN_FILENO);
+			dup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			dup2(stdFd[FD_STDERR], STDERR_FILENO);
+			close(stdFd[FD_STDIN]);
+			close(stdFd[FD_STDOUT]);
+			close(stdFd[FD_STDERR]);
 			fd[FD_STDIN] = -2;
 			fd[FD_STDOUT] = -2;
 			fd[FD_STDERR] = -2;
@@ -608,13 +624,13 @@ void Client::cgiPostRequest(int *fd)
 	}
 	else
 	{
-		close(inFd[0]);
-		close(outFd[1]);
-		close(errFd[1]);
+		close(pipeInFd[0]);
+		close(pipeOutFd[1]);
+		close(pipeErrFd[1]);
 		_request.clearCgiClass();
-		fd[FD_STDIN] = inFd[1];
-		fd[FD_STDOUT] = outFd[0];
-		fd[FD_STDERR] = errFd[0];
+		fd[FD_STDIN] = pipeInFd[1];
+		fd[FD_STDOUT] = pipeOutFd[0];
+		fd[FD_STDERR] = pipeErrFd[0];
 	}
 }
 
