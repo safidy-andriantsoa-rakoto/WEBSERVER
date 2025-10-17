@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 15:42:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 09:56:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,40 +17,40 @@
 */
 void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
-	std::string	responseString;
+	std::string	rspString;
 
-	std::cout <<"\033[35mSending single response\n" << responseString.size() << "\033[0m" << std::endl;
-	responseString = (*it).getFullResponse();
-	send_value(fdCli, responseString);
+	std::cout <<"\033[35mSending single response\n" << rspString.size() << "\033[0m" << std::endl;
+	rspString = (*it).getFullResponse();
+	send_value(fdCli, rspString);
 	epoll.epoll_update_event(fdCli, EPOLLIN);
 }
 
-void	sendHtmlFileResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
+void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
-	int			responseStat;
-	std::string	responseString;
+	std::string	rspString;
 
-	responseStat = (*it).getResponseStat();
-	if (responseStat != OP_ONCE)
+	if ((*it).getResponseStat() != OP_ONCE)
 	{
 		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
-		(*it).setChunkedResponse(responseStat);
+		(*it).setChunkedResponse();
 	}
-	if (responseStat == OP_ONGOING || responseStat == OP_CLOSE)
-		responseString = (*it).getBodyResponse() + "\r\n";
+	if ((*it).getResponseStat() == OP_ONGOING || (*it).getResponseStat() == OP_CLOSE)
+		rspString = (*it).getBodyResponse() + "\r\n";
 	else
-		responseString = (*it).getFullResponse();
-	std::cout << "		SENDING HTML FILE from " << (*it).getRspOriginPath() << std::endl;
-	send_value(fdCli, responseString);
-	if (responseStat == OP_START)
+		rspString = (*it).getFullResponse();
+	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
+	// std::cout << rspString << std::endl;
+	send_value(fdCli, rspString);
+	if ((*it).getResponseStat() == OP_START)
 		(*it).setResponseStat(OP_ONGOING);
-	if (responseStat == OP_ONCE || responseStat == OP_CLOSE)
+	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 		epoll.epoll_update_event(fdCli, EPOLLIN);
+	// std::cout << "		Rsp Stat = " << (*it).getResponseStat() << std::endl;
 }
 
 void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
-	std::string	responseString;
+	std::string	rspString;
 	int			cgiStatus;
 
 	cgiStatus = (*it).getCgiFdStatus();
@@ -62,11 +62,11 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
     std::cout << "\033[35mSending cgi chunked response to " << fdCli << " with status = " << cgiStatus << "\033[0m"<< std::endl;
 	(*it).setCgiChunkedResponse();
 	if (cgiStatus == OP_ONGOING || cgiStatus == OP_CLOSE)
-		responseString = (*it).getBodyResponse() + "\r\n";
+		rspString = (*it).getBodyResponse() + "\r\n";
 	else
-		responseString = (*it).getFullResponse();
-	// std::cout <<"\e[45mCgi response sent : \n" << responseString << "\e[0m" << std::endl;
-	send_value(fdCli, responseString);
+		rspString = (*it).getFullResponse();
+	std::cout <<"\e[45mCgi response sent : \n" << rspString.size() << "\e[0m" << std::endl;
+	send_value(fdCli, rspString);
     (*it).getPtrCgiFd()->clearBuffer();
 	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)
         epoll.epoll_update_event(fdCli, EPOLLIN);

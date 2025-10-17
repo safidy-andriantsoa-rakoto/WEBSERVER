@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 15:42:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 09:42:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,19 +94,22 @@ void Client::setStandardResponse(std::string const & content)
 	_response.generateStandardResponse(content);
 }
 
-void Client::setChunkedResponse(int const & responseStatus)
+void Client::setChunkedResponse()
 {
 	std::string content;
-	size_t		pos = _response.getPosition();
+	size_t		pos;
 
+	if (_response.getRespStat() == OP_START)
+		_response.setPosition(0);
+	pos = _response.getPosition();
 	content = divideStringBySize(_response.getOriginBody(), pos, _BUFFER);
-	_response.generateChunkedResponse(content, responseStatus);
 	pos += _BUFFER;
 	if (pos > _response.getOriginBody().size())
 	{
 		_response.setRespStat(OP_CLOSE);
 		pos = 0;
 	}
+	_response.generateChunkedResponse(content);
 	_response.setPosition(pos);
 }
 
@@ -184,7 +187,7 @@ void Client::setStatusCodeResponse(int const &status){_response.setStatusCode(st
 
 void Client::clearResponse(){_response.clearResponse();}
 
-void Client::updateResponseCategory(int const &stat){_response.setCategory(stat);}
+void Client::updateResponseCategory(int const &stat){_response.setRespCategory(stat);}
 
 int Client::getFdType() const{return _fdType;}
 
@@ -208,6 +211,13 @@ std::string Client::getRspOriginPath() const
 void Client::setRspOriginPath(std::string const &path)
 {
 	_response.setOriginPath(path);
+}
+
+void Client::setRspType(std::string const &filePath)
+{
+	std::string	type = Mime::getFileType(filePath);
+
+	_response.setType(type);
 }
 
 const char *Client::Deconnect::what() const throw()
@@ -373,7 +383,7 @@ void Client::get_request(uint32_t & opt, int *fd)
 {
 	if (_request.getIsCgi() == false)
 	{
-		_fdType = HTML_FILE;
+		_fdType = STD_FILE;
 		stdGetRequest();
 		opt = EPOLLOUT;
 	}
@@ -407,12 +417,12 @@ void Client::stdGetRequest()
 	{
 		fileContent = readFileToString(filePath);
 		setStatusCodeResponse(200);
-		getObjResponse().setPosition(0);
 		setRspOriginPath(filePath);
+		setRspType(filePath);
 		if (fileContent.size() <= _BUFFER)
 		{
-			setStandardResponse(fileContent);
 			setResponseStat(OP_ONCE);
+			setStandardResponse(fileContent);
 		}
 		else
 		{
@@ -455,7 +465,7 @@ void Client::cgiGetRequest(int *fd)
 		}
 		catch(const std::exception& e)
 		{
-			fd[FD_PRINCIPAL] = -2;
+			fd[FD_STDOUT] = -2;
 			fd[FD_STDERR] = -2;
 		}
 	}
@@ -464,7 +474,7 @@ void Client::cgiGetRequest(int *fd)
 		close(errFd[1]);
 		close(pipeFd[1]);
 		_request.clearCgiClass();
-		fd[FD_PRINCIPAL] = pipeFd[0];
+		fd[FD_STDOUT] = pipeFd[0];
 		fd[FD_STDERR] = errFd[0];
 	}
 }
@@ -473,7 +483,7 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 {
 	if (_request.getIsCgi() == false)
 	{
-		_fdType = HTML_FILE;
+		_fdType = STD_FILE;
 		stdPostRequest(header, boundary, opt);
 		// setSingleResponse(201);
 	}
@@ -592,7 +602,7 @@ void Client::cgiPostRequest(int *fd)
 		{
 			std::cout << "		THERE WAS AN ERROR!!!!!!!!!\n";
 			fd[FD_STDIN] = -2;
-			fd[FD_PRINCIPAL] = -2;
+			fd[FD_STDOUT] = -2;
 			fd[FD_STDERR] = -2;
 		}
 	}
@@ -603,7 +613,7 @@ void Client::cgiPostRequest(int *fd)
 		close(errFd[1]);
 		_request.clearCgiClass();
 		fd[FD_STDIN] = inFd[1];
-		fd[FD_PRINCIPAL] = outFd[0];
+		fd[FD_STDOUT] = outFd[0];
 		fd[FD_STDERR] = errFd[0];
 	}
 }
@@ -626,7 +636,7 @@ void Client::delete_request()
 	}
 	else
 		throw ErrorExcept(403, "Forbidden");
-	_response.setCategory(SINGLE_RSP);
+	_response.setRespCategory(SINGLE_RSP);
 }
 
 void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)
@@ -647,9 +657,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	if (_request.getMethod() == "GET")
 		get_request(opt, fd);
 	else if (_request.getMethod() == "POST")
-	{
 		post_request(header, boundary, opt, fd);
-	}
 	else if (_request.getMethod() == "DELETE")
 	{
 		delete_request();

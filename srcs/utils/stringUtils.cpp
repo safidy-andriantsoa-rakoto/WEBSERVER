@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 14:52:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 10:09:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ std::string	divideStringBySize(std::string const & target, size_t const & startP
 	size_t		endPos = startPos + bufferSize;
 	std::string	result;
 
-	std::cout << "startPos = " << startPos << " ; endPos = " << endPos << std::endl;
 	result = target.substr(startPos, endPos - startPos);
 	return result;
 }

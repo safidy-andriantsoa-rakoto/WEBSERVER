@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 15:24:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 09:42:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "RedirExcept.hpp"
 #include "LDirExcept.hpp"
 #include "../CgiParser/CgiParser.hpp"
+#include "../Mime/Mime.hpp"
 
 class Response
 {
@@ -50,9 +51,11 @@ class Response
 		~Response();
 
 		int					getStatusCode() const;
+
+		std::string			getType() const;
 		void				setType(std::string const & type);
+
 		void				setStatusCode(int const & statusCode);
-		void				setCategory(int const & category);
 
 		size_t				getPosition() const;
 		void				setPosition(size_t const & newPos);
@@ -66,6 +69,8 @@ class Response
 		void				addHeader(std::string const & header, std::string const & content);
 	
 		int					getRespCategory() const;
+		void				setRespCategory(int const & category);
+
 		std::string			getFullResponse();
 
 		std::string			getBody() const;
@@ -75,7 +80,7 @@ class Response
 		void				clearResponse();
 
         void				generateStandardResponse(std::string const & body);
-		void				generateChunkedResponse(std::string const & body, int const & status);
+		void				generateChunkedResponse(std::string const & body);
 		void				generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status);
 		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);
 		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);

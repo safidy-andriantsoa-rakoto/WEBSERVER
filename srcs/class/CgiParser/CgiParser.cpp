@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 14:16:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 10:09:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,7 @@ void CgiParser::clearCgiClass()
 	_scriptName.clear();
 	_contentLength = 0;
 	clearCharTable(_envp);
+	_envp = NULL;
 }
 
 void CgiParser::displayCgiClass() const

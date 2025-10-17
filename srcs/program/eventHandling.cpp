@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 14:06:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 10:25:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 {
 	uint32_t	epollOpt;
 	std::string client_request;
-	int			fdFromRequest[3] = {-1, -1, -1};
+	int			fdCgi[3] = {-1, -1, -1};
 
 	(*it).receiveClientRequest();
 	client_request = (*it).getClientRequest();
@@ -39,7 +39,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	try
 	{
-		(*it).processRequest(client_request, epollOpt, fdFromRequest);
+		(*it).processRequest(client_request, epollOpt, fdCgi);
 	}
 	catch(AExcept & e)
 	{
@@ -48,9 +48,12 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		epollOpt = EPOLLOUT;
 	}
 	if (hasSingleResponse((*it).getCategoryResponse()) == true)
-		epoll.epoll_update_event(fdCli, EPOLLOUT);
-	else if ((*it).getObjRequest().getIsCgi() == true)
-		addFdInHandlerAndEpoll(it, handler, epoll, epollOpt, fdFromRequest);
+	{
+		(*it).setResponseStat(OP_ONCE);
+		epollOpt = EPOLLOUT;
+	}
+	if ((*it).getObjRequest().getIsCgi() == true)
+		createCgiFd(it, handler, epoll, epollOpt, fdCgi);
 	else
 		epoll.epoll_update_event(fdCli, epollOpt);
 }
@@ -59,12 +62,10 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
 	std::cout << "-->> \033[45mSendingResponseToClient : " << (*it).getCategoryResponse() << "\033[0m" << std::endl;
 
-	if (hasSingleResponse((*it).getCategoryResponse()))
-		sendSingleResponse(it, fdCli, epoll);
-	else if ((*it).getPtrCgiFd())
+	if ((*it).getPtrCgiFd())
 		sendCgiResponse(it, fdCli, epoll);
 	else
-		sendHtmlFileResponse(it, fdCli, epoll);
+		sendStandardResponse(it, fdCli, epoll);
 }
 
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
@@ -101,13 +102,12 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	{
 		(*it)->setStatus(OP_CLOSE);
 		(*it)->clearBuffer();
-		// closeCgiFdEvent(handler, i, epoll, (*it)->getOutputFd());
 		epoll.epoll_clean((*it)->getOutputFd());
 		return ;
 	}
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBuffer(bufferString);
-	std::cout << "				******** Buffer CGI = \n" << bufferString.size() << std::endl;
+	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
 	(*it)->bufferParser();
 	(*it)->checkError();
 	// (*it)->displayBufferParsed();
@@ -133,10 +133,10 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 	if (bytesWritten <= 0)
 	{
 		std::cout << "Bytewritten = " << bytesWritten << std::endl;
-		return ;
+		/*Check for ERROR in write*/
+		epoll.epoll_clean((*it)->getInputFd());
+		throw std::runtime_error("Write operation error");
 	}
-	// (*it)->setStatus(OP_CLOSE);
-	// (*it)->clearBuffer();
 	epoll.epoll_clean((*it)->getInputFd());
 	epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
 	epoll.epoll_control(EPOLLIN, (*it)->getErrFd());

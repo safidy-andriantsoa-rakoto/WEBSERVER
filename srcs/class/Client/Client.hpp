@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 15:25:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 08:53:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ class Client : public Server
 		std::string	getRspOriginPath() const;
 		void		setRspOriginPath(std::string const & path);
 
+		void		setRspType(std::string const & filePath);
+
 		CgiFd		*getPtrCgiFd();
 		void        setPtrCgiFd(CgiFd *cgiFd);
 		void		clearPtrCgiFd();
@@ -101,7 +103,7 @@ class Client : public Server
 		void		updateResponseCategory(int const & stat);
 		void		setCatchedResponse(AExcept & e);
 		void		setStandardResponse(std::string const & content);
-		void		setChunkedResponse(int const & responseStatus);
+		void		setChunkedResponse();
 		void		setCgiChunkedResponse();
 		void		setSingleResponse(int const & statusCode);
 
