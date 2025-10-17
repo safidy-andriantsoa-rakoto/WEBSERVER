@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 11:16:37 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:01:02 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "../Server/Server.hpp"
 #include "../Response/Response.hpp"
 #include "../CgiFd/CgiFd.hpp"
+#include <sys/time.h>
+#include <ctime>
 
 class Client : public Server
 {
@@ -120,8 +122,8 @@ class Client : public Server
 		int				creat_file_for_post(std::string path, uint32_t & opt);
 
 		std::string 	currentDateTimeString();
-
-		void	switch_modPostFile(bool stat);
-		bool	modPostFile_stat();
+		bool			get_pathfile();
+		void 			get_bounadary_from_header(stringMap &header);
+		void			write_in_file_post();
 
 };

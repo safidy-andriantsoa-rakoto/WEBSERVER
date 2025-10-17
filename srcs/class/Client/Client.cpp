@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/16 15:45:19 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/17 15:01:39 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,54 +455,23 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 	
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
-		size_t pos;
+		std::cout << "			BODY=>" << _request.get_Body() << "<=" << std::endl;
 		std::string body;
-		size_t findFile = _request.get_Body().find("filename=\"");
-
-		{// get boundary
-			std::string	getboundary = header.find("Content-Type")->second;
-			size_t pos = getboundary.find("boundary=");// get boundary
-			if (pos != std::string::npos)
-			{
-				getboundary.erase(0, pos + 9); 
-				this->_boundary_sep = "--" + getboundary;
-			}
-		}
-		{// set filename + path
-			body = _request.get_Body();
-			if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
-			{
-				size_t endFile = _request.get_Body().find("\n", findFile + 10);
-				std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
-				std::string filename;
-	
-				std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
-				endFile = _request.get_Body().find("\r\n\r\n", endFile);
-				_request.delete_range_body_request(0, endFile + 4);
-				std::cout << "\e[5mFILE POST  FOUND\e[0m-->>" << filename << "<---" << std::endl;
-				if (filename.size())
-				{
-					this->filepath = "upload/" + currentDateTimeString() + filename;
-					std::cout << "PATH=["<< this->filepath <<"]" << std::endl;
-				}
-			}
+		get_bounadary_from_header(header);
+		if (get_pathfile())
+		{
+			std::cout << "\e[5m				SEARCH FILE POST\e[0m->"<< this->filepath << std::endl;
 		}
 		if (this->filepath.size())
 		{
-			body = _request.get_Body();
-			std::fstream file(this->filepath.c_str(), std::ios::out | std::ios::binary | std::ios::app);
-			if (file.is_open())
+			while (1)
 			{
-				pos = body.find(this->_boundary_sep);
-				std::cout << "\n			BOUNDARY FOUND pos=" << pos << std::endl;
-				if (pos != std::string::npos)
-				{
-					this->filepath.clear();
-					body = body.substr(0 , pos - 2);
-				}
-				std::cout << "  BODY FILEOUT->" << body << "<--" << std::endl;
-				file << body;
-				file.close();
+				if (this->filepath.empty())
+					break ;
+				write_in_file_post();
+				if (get_pathfile())
+					continue ;
+				break;
 			}
 		}
 		std::cout << "	RECV=" << _request.get_c_length_received() << " / " << _request.get_content_length() << std::endl;
@@ -514,15 +483,19 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 	}
 	else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 	{
-		std::cout << "kiiiiiiiiii" << std::endl;
-		// filePath = "upload/" + currentDateTimeString() + "storage_app_xwfurlencoded.txt";
-		// fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
+		if (_request.get_c_length_received() == _request.get_content_length())
+		{
+			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
+			setSingleResponse(201);
+		}
 	}
 	else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 	{
-		std::cout << "plaaaaaaain" << std::endl;
-		// filePath = "upload/" + currentDateTimeString() + "storage_text_plain.txt";
-		// fd[FD_STDOUT] = creat_file_for_post(filePath, opt);
+		if (_request.get_c_length_received() == _request.get_content_length())
+		{
+			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
+			setSingleResponse(201);
+		}
 	}
 	else
 		throw ErrorExcept(400, "Client-side error");
@@ -646,7 +619,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		_request.set_c_length_received(clientRequest.size());
 	}
 	header = _request.getHeader();
-	_request.displayRequest();
+	// _request.displayRequest();
 	if (_request.getMethod() == "GET")
 		get_request(opt, fd, content);
 	else if (_request.getMethod() == "POST")
@@ -708,15 +681,97 @@ int Client::creat_file_for_post(std::string path, uint32_t & opt)
 	return (fd);
 }
 
+// std::string Client::currentDateTimeString()
+// {
+// 	time_t now = time(0);
+// 	struct tm tstruct;
+// 	char buf[15];
+
+// 	tstruct = *localtime(&now);
+// 	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
+// 	return (buf);
+// }
+
 std::string Client::currentDateTimeString()
 {
-	time_t now = time(0);
-	struct tm tstruct;
-	char buf[15];
-
-	tstruct = *localtime(&now);
-	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
-	return (buf);
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    
+    struct tm tstruct;
+    char buf[20];
+    
+    tstruct = *localtime(&tv.tv_sec);
+    strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
+    std::string result(buf);
+    char msBuf[4];
+    snprintf(msBuf, sizeof(msBuf), "%03d", (int)(tv.tv_usec / 1000));
+    return (result += msBuf);
 }
 
-void Client::switch_modPostFile(bool stat){this->_modPostFile = stat;}
+bool Client::get_pathfile()
+{
+	size_t findFile = _request.get_Body().find("filename=\"");
+	std::string body;
+
+	if (this->filepath.empty())
+	{
+		body = _request.get_Body();
+		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
+		{
+			size_t endFile = _request.get_Body().find("\n", findFile + 10);
+			// std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
+			std::string filename;
+
+			std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
+			endFile = _request.get_Body().find("\r\n\r\n", endFile);
+			_request.delete_range_body_request(0, endFile + 4);
+			if (filename.size())
+			{
+				this->filepath = "upload/" + currentDateTimeString() + filename;
+				// std::cout << "PATH=["<< this->filepath <<"]" << std::endl;
+				return (true);
+			}
+		}
+	}
+	return (false);
+}
+
+void Client::get_bounadary_from_header(stringMap &header)
+{
+	if (this->_boundary_sep.empty())
+	{
+		std::string	getboundary = header.find("Content-Type")->second;
+		size_t pos = getboundary.find("boundary=");// get boundary
+		if (pos != std::string::npos)
+		{
+			getboundary.erase(0, pos + 9); 
+			this->_boundary_sep = "--" + getboundary;
+		}
+		std::cout << "		BOUNDARY=" << this->_boundary_sep << std::endl;
+	}
+}
+
+void Client::write_in_file_post()
+{
+	std::string body;
+	size_t		pos;
+	
+	if (this->filepath.size() && _request.get_Body().size())
+	{
+		body = _request.get_Body();
+		std::fstream file(this->filepath.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+		if (file.is_open())
+		{
+			pos = body.find(this->_boundary_sep);
+			if (pos != std::string::npos)
+			{
+				this->filepath.clear();
+				body = body.substr(0 , pos - 2);
+				_request.delete_range_body_request(0, pos + this->_boundary_sep.size() + 2);
+				std::cout << "		\033[43m\e[5mFILE WRITE DONE\033[0m\e[0m" << std::endl;
+			}
+			file << body;
+			file.close();
+		}
+	}
+}
