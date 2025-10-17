@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/17 08:53:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 13:56:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,6 @@ class Client : public Server
 		std::string 	currentDateTimeString();
 
 		void	switch_modPostFile(bool stat);
-		bool	modPostFile_stat();
+		// bool	modPostFile_stat();
 
 };

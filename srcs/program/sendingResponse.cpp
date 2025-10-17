@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 09:56:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:09:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	cgiStatus = (*it).getCgiFdStatus();
     if (cgiStatus == OP_ONGOING && (*it).getPtrCgiFd()->getBuffer().size() == 0)
     {
-        // std::cout << "          Nothing inside the buffer yet !!!!!\n";
+        std::cout << "          Nothing inside the buffer yet !!!!!\n";
         return;
     }
     std::cout << "\033[35mSending cgi chunked response to " << fdCli << " with status = " << cgiStatus << "\033[0m"<< std::endl;
@@ -83,7 +83,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
 
     size_t to_send = _send_content.size();
 
-    std::cout << "Size to send = " << _send_content.size() << std::endl;
+    // std::cout << "Size to send = " << _send_content.size() << std::endl;
     // std::cout << "Sent = " << _send_content << std::endl;
     if (_acceptStatus < 0)
         throw std::runtime_error("Invalid fd to send");

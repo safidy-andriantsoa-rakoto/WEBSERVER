@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/17 11:52:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:42:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,25 +193,13 @@ int Client::getFdType() const{return _fdType;}
 
 void Client::setFdType(int const &type){_fdType = type;}
 
-int Client::getResponseStat() const
-{
-    return _response.getRespStat();
-}
+int Client::getResponseStat() const{return _response.getRespStat();}
 
-void Client::setResponseStat(int const &stat)
-{
-	_response.setRespStat(stat);
-}
+void Client::setResponseStat(int const &stat){_response.setRespStat(stat);}
 
-std::string Client::getRspOriginPath() const
-{
-    return _response.getOriginPath();
-}
+std::string Client::getRspOriginPath() const{return _response.getOriginPath();}
 
-void Client::setRspOriginPath(std::string const &path)
-{
-	_response.setOriginPath(path);
-}
+void Client::setRspOriginPath(std::string const &path){_response.setOriginPath(path);}
 
 void Client::setRspType(std::string const &filePath)
 {
@@ -247,6 +235,7 @@ void Client::processRequestWithConfig()
 		_request.setRequestTarget(target);
 		return;
 	}
+	_request.setIsCgi(false);
 	if (_request.getMethod() == "POST" || _request.getMethod() == "DELETE")
 	{
 		it = _config.findClassLocation("/upload");
@@ -447,31 +436,24 @@ void Client::cgiGetRequest(int *fd)
 		throw std::runtime_error("Pipe fd error");
 	if (pipe(errFd) == -1)
 		throw std::runtime_error("Pipe err error");
-	std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
-	std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
+	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
+	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
 	pid = fork();
 	if (pid == -1)
 		throw std::runtime_error("Fork error");
 	if (pid == 0)
 	{
-		stdFd[FD_STDOUT] = dup(STDOUT_FILENO);
-		stdFd[FD_STDERR] = dup(STDERR_FILENO);
-		dup2(errFd[1], STDERR_FILENO);
-		close(errFd[0]);
-		close(errFd[1]);
-		dup2(pipeFd[1], STDOUT_FILENO);
-		close(pipeFd[0]);
-		close(pipeFd[1]);
+		dupStandardIO(stdFd, 2);
+		makeDup2(pipeFd[1], STDOUT_FILENO, pipeFd[0]);
+		makeDup2(errFd[1], STDERR_FILENO, errFd[0]);
 		try
 		{
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			dup2(stdFd[FD_STDOUT], STDOUT_FILENO);
-			dup2(stdFd[FD_STDERR], STDERR_FILENO);
-			close(stdFd[FD_STDOUT]);
-			close(stdFd[FD_STDERR]);
+			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDOUT] = -2;
 			fd[FD_STDERR] = -2;
 		}
@@ -548,11 +530,11 @@ void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t &
 	}
 	else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 	{
-		if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
-		{
-			std::cout << "			VITA ZANY EEE" << std::endl;	
-			_request.set_is_CRLF_header(false);
-		}
+		// if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
+		// {
+		// 	std::cout << "			VITA ZANY EEE" << std::endl;	
+		// 	_request.set_is_CRLF_header(false);
+		// }
 		std::cout << "\ntext/plain\n" << std::endl;
 		// if (!_fileFD)
 		// {
@@ -593,30 +575,19 @@ void Client::cgiPostRequest(int *fd)
 		throw std::runtime_error("Fork error");
 	if (pid == 0)
 	{
-		stdFd[FD_STDIN] = dup(STDIN_FILENO);
-		stdFd[FD_STDOUT] = dup(STDOUT_FILENO);
-		stdFd[FD_STDERR] = dup(STDERR_FILENO);
-		dup2(pipeInFd[0], STDIN_FILENO);
-		close(pipeInFd[0]);
-		close(pipeInFd[1]);
-		dup2(pipeOutFd[1], STDOUT_FILENO);
-		close(pipeOutFd[0]);
-		close(pipeOutFd[1]);
-		dup2(pipeErrFd[1], STDERR_FILENO);
-		close(pipeErrFd[0]);
-		close(pipeErrFd[1]);
+		dupStandardIO(stdFd, 3);
+		makeDup2(pipeInFd[0], STDIN_FILENO, pipeInFd[1]);
+		makeDup2(pipeOutFd[1], STDOUT_FILENO, pipeOutFd[0]);
+		makeDup2(pipeErrFd[1], STDERR_FILENO, pipeErrFd[0]);
 		try
 		{
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			dup2(stdFd[FD_STDIN], STDIN_FILENO);
-			dup2(stdFd[FD_STDOUT], STDOUT_FILENO);
-			dup2(stdFd[FD_STDERR], STDERR_FILENO);
-			close(stdFd[FD_STDIN]);
-			close(stdFd[FD_STDOUT]);
-			close(stdFd[FD_STDERR]);
+			makeDup2(stdFd[FD_STDIN], STDIN_FILENO);
+			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDIN] = -2;
 			fd[FD_STDOUT] = -2;
 			fd[FD_STDERR] = -2;
@@ -661,13 +632,8 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	std::string boundary;
 
 	boundary = "boundary=";
-	if (!_request.get_is_CRLF_header())
-	{
-		_request.parseRequest(clientRequest);
-		processRequestWithConfig();
-	}
-	else
-		_request.set_Body(clientRequest);
+	_request.parseRequest(clientRequest);
+	processRequestWithConfig();
 	header = _request.getHeader();
 	_request.displayRequest();
 	if (_request.getMethod() == "GET")

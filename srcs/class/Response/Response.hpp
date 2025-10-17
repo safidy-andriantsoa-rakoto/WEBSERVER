@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 09:42:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:50:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Response
 		static stringMap	_allStatusCode;
 
 		void				setStatusLine();
+		void				setDefaultErrorPage(std::string & content);
 		void				buildErrorPage(int const & statusCode, t_errPage & errPage, std::string & filePath, int & fdType);
 
 	public:

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 11:54:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:11:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,13 @@ int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)
 	bytesRead = read((*itCgi)->getErrFd(), buffer, _BUFFER);
 	if (bytesRead <= 0)
 	{
-		std::cout << "Nothing to read for CGI ERROR \n";
+		// std::cout << "Nothing to read for CGI ERROR \n";
 		epoll.epoll_clean((*itCgi)->getErrFd());
 		return 0;
 	}
 	bufferString.append(buffer, bytesRead);
 	std::cout << "				***************BUFFER ERROR \n" << bufferString << std::endl;
+	std::cout << "				***************BUFFER ERROR END" << std::endl;
 	return bytesRead;
 }
 
@@ -76,9 +77,10 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 			return;
 	}
 	(*it).setCatchedResponse(err);
-	if ((*itCgi)->getOutputFd() != -1)
+	if ((*itCgi)->getOutputFd() > 0)
 		epoll.epoll_clean((*itCgi)->getOutputFd());
-	epoll.epoll_clean((*itCgi)->getErrFd());
+	if ((*itCgi)->getErrFd() > 0)
+		epoll.epoll_clean((*itCgi)->getErrFd());
 	handler.removeCgiFd(itCgi);
 	(*it).clearPtrCgiFd();
 	epoll.epoll_update_event(fdCli, EPOLLOUT);

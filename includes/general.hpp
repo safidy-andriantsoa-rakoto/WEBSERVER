@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 14:29:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:42:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,3 +103,8 @@ bool        checkConfigDupli(stringVect file, size_t &start, size_t &end);
 // dirListing
 stringMap	listingDirectory(DIR* dir, std::string const & path);
 std::string	convertListing(stringMap & mapDir);
+
+//pipeUtils
+void	makeDup2(int const & fd1, int const & fd2, int const & fd3);
+void	makeDup2(int const & fd1, int const & fd2);
+void    dupStandardIO(int *stdFd, int const & n);

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 11:54:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:51:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,6 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 		throw std::runtime_error("HandleClientEvent error");
 }
 
-/*
-	Cgi event is only reading through pipe no matter the method is
-*/
 void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 {
 	int			fdCli;

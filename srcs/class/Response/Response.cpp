@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 09:46:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:51:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,14 @@ void	Response::clearResponse()
 	_fullResponse.clear();
 }
 
+void Response::setDefaultErrorPage(std::string & content)
+{
+	std::string	replace;
+
+	replace = convertIntToString(_statusCode);
+	replace += " : " + (*_allStatusCode.find(replace)).second;
+	replaceString(content, replace, "$status");
+}
 
 void Response::buildErrorPage(int const & status, t_errPage & errPage, std::string & filePath, int & fdType)
 {
@@ -159,7 +167,6 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 	fdType = STD_FILE;
 	if (errPage.listError.size())
 	{
-		content = readFileToString(filePath);
 		it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
 		if (it != errPage.listError.end())
 			filePath = errPage.filePath;
@@ -167,6 +174,8 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 	try
 	{
 		content = readFileToString(filePath);
+		if (filePath == ERR_PATH)
+			setDefaultErrorPage(content);
 		if (content.size() <= _BUFFER)
 		{
 			_body = content;
@@ -177,11 +186,11 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 			_originBody = content;
 			_respStat = OP_START;
 		}
-		// _pos = 0;
 		_originPath = filePath;
 	}
 	catch(const std::exception& e)
 	{
+		/*MANAGE ERROR FOR ERROR PAGE*/
 		throw std::runtime_error("ERROR PAGE NOT FOUND");
 	}
 }

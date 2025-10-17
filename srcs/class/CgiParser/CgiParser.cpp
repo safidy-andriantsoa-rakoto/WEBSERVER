@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 10:09:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/17 14:15:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ CgiParser &CgiParser::operator=(CgiParser const &other)
 		_scriptFileName = other._scriptFileName;
 		_scriptName = other._scriptName;
 		_contentLength = other._contentLength;
-		_envp = other._envp; //Deep copy?
+		_envp = other._envp;
 	}
 	return *this;
 }
@@ -70,7 +70,7 @@ void CgiParser::configGetEnvp()
 	vect = splitString(ownedConfig, "\n");
 	clearCharTable(_envp);
 	_envp = convertStringVectToTable(vect);
-	displayCharTable(_envp, "ENVP GET TABLE");
+	// displayCharTable(_envp, "ENVP GET TABLE");
 	vect.clear();
 	ownedConfig.clear();
 }
@@ -80,7 +80,6 @@ void CgiParser::configPostEnvp()
 	std::string	ownedConfig = CgiParser::_cgiPostConfig;
 	stringVect	vect;
 
-	std::cout << "			CONFIG POST ENVP" << std::endl;
 	replaceString(ownedConfig, _reqMethod, "$1");
 	replaceString(ownedConfig, _scriptFileName, "$2");
 	replaceString(ownedConfig, _scriptName, "$3");
@@ -88,7 +87,7 @@ void CgiParser::configPostEnvp()
 	vect = splitString(ownedConfig, "\n");
 	clearCharTable(_envp);
 	_envp = convertStringVectToTable(vect);
-	displayCharTable(_envp, "ENVP POST TABLE");
+	// displayCharTable(_envp, "ENVP POST TABLE");
 	vect.clear();
 	ownedConfig.clear();
 }
@@ -166,16 +165,3 @@ void CgiParser::initCgiConfig(std::string const & getCgiPath, std::string const 
 	_cgiPostConfig = readFileToString(postCgiPath);
 	_cgiErrConfig = readFileToString(errCgiPath);
 }
-
-// char *argv[] = { "php-cgi", NULL };
-// char *envp[] = {
-//     "GATEWAY_INTERFACE=CGI/1.1",
-//     "REQUEST_METHOD=GET",
-//     "QUERY_STRING=username=Alice",
-//     "SCRIPT_FILENAME=/var/www/html/welcome.php",
-//     "SCRIPT_NAME=/welcome.php",
-//     "SERVER_PROTOCOL=HTTP/1.1",
-//     "CONTENT_LENGTH=0",
-//     "REDIRECT_STATUS=200",
-//     NULL
-// };
