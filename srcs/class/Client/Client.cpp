@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/17 14:42:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/18 16:15:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,8 @@ void Client::processRequestWithConfig()
 	vectLocationIt	it;
 	std::string		target = _request.getRequestTarget();
 
-	checkContentLength(); //See with POST method [Safidy]
+	if (_request.getHttp() != "1.1")
+		throw ErrorExcept(505, "Http version not supported");
 	if (target.find(".php", 0) != std::string::npos)
 	{
 		_request.clearCgiClass();
@@ -238,6 +239,7 @@ void Client::processRequestWithConfig()
 	_request.setIsCgi(false);
 	if (_request.getMethod() == "POST" || _request.getMethod() == "DELETE")
 	{
+		checkContentLength(); //See with POST method [Safidy]
 		it = _config.findClassLocation("/upload");
 		std::string	newTarget = (*it).getRootDirectory();
 
@@ -257,9 +259,11 @@ void Client::checkContentLength()
 
 	maxSize = 0;
 	requestSize = 0;
+	if (_request.getMethod() != "POST")
+		return ;
 	itFind = _request.getHeader().find("Content-Length");
 	if (itFind == _request.getHeader().end())
-		return ;
+		throw ErrorExcept(411, "Length required"); //Ask Safidy where to put this function !!!!!
 	maxSize = _config.getMaxSize();
 	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
 	if (requestSize > maxSize)
@@ -613,13 +617,13 @@ void Client::delete_request()
 
 	target = _request.getRequestTarget();
 	if (!target.size())
-		throw ErrorExcept(403, "Forbidden");
+		throw ErrorExcept(400, "Bad request");
 	if (stat(target.c_str(), &s_stat) != 0)
-		throw ErrorExcept(401, "Unauthorized");
+		throw ErrorExcept(403, "Forbidden");
 	if (S_ISREG(s_stat.st_mode))
 	{
 		if (std::remove(target.c_str()) != 0)
-			throw ErrorExcept(401, "Unauthorized");
+			throw ErrorExcept(401, "Forbidden");
 	}
 	else
 		throw ErrorExcept(403, "Forbidden");
