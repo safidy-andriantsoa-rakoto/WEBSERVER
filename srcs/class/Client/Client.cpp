@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 10:44:31 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 11:39:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,7 +411,6 @@ void Client::stdGetRequest()
 	}
 	try
 	{
-		/*Parse HEADER accept to check if error 406*/
 		fileContent = readFileToString(filePath);
 		setStatusCodeResponse(200);
 		setRspOriginPath(filePath);

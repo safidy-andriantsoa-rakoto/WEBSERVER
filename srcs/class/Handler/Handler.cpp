@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:34:51 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 11:47:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void Handler::identifyFd(int const & fd, int & index, int & identifier)
 		{
 			(*itCgiFd)->setIsError(true);
 			identifier = CGI_FD_ERR;
-			throw ErrorExcept(500, "Bad gateway");
+			throw ErrorExcept(500, "Internal Servor Error");
 		}
 		index++;
 	}

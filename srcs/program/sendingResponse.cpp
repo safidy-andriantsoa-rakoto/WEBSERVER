@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 10:53:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:54:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 	{
 		epoll.epoll_update_event(fdCli, EPOLLIN);
-		// (*it).getObjRequest().set
+		(*it).getObjRequest().set_is_CRLF_header(false);
 	}
 	// std::cout << "		Rsp Stat = " << (*it).getResponseStat() << std::endl;
 }
@@ -74,7 +74,7 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)
 	{
         epoll.epoll_update_event(fdCli, EPOLLIN);
-		// (*it).getObjRequest()
+		(*it).getObjRequest().set_is_CRLF_header(false);
 	}
 	if (cgiStatus == OP_START)
 		(*it).updateCgiFdStatus(OP_ONGOING);
