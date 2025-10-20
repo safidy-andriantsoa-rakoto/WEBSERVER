@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 10:54:43 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:57:46 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -735,7 +735,6 @@ bool Client::get_pathfile()
 		{
 			std::cout << "\e[5m				SEARCH FILE POST PATH\e[0m" << std::endl;
 			size_t endFile = _request.get_Body().find("\n", findFile + 10);
-			// std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
 			std::string filename;
 
 			std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));

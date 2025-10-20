@@ -49,27 +49,30 @@
             <p>Test basic POST and DELETE for uploading and deleting file inside the webserv.</p>
             
             <div class="test-grid">
-                 <div class="test-card post file">
+                <div class="test-card post file">
                     <h3>POST Request</h3>
-                    <p>Upload files to the server</p>
-                    <form id="form" action="" method="post" enctype="multipart/form-data">
-                        <input type="email" name="mail" id="lol" placeholder="email">
-                        <input type="file" name="tr" id="12" placeholder="LOAD FILE">
-                        <input type="file" name="tr" id="12" placeholder="LOAD FILE">
-                        <input type="text" name="age1" id="ops1" placeholder="TEXT1">
-                        <button type="submit" class="submit-btn">Upload File</button>
-                    </form>
+                    <p class="info">Upload files to the server</p>
+                    <a id="post_file" class="submit-btn" href="./_upld/upload.html">POST FILE</a>
+                </div>
+                
+                <div class="test-card post file">
+                    <h3>POST Request FORM</h3>
+                    <p class="info">Write form...</p>
+                    <a id="post_file" class="submit-btn" href="./_post_form/post.html">POST FORM</a>
                 </div>
 
                 <div class="test-card delete file">
                     <h3>DELETE Request</h3>
-                    <p>Write the filename to be deleted.</p>
-                    <input id="pathInput" type="text" placeholder="/fichier.txt" />
-                    <button id="deleteBtn">Delete</button>
-                    <div id="result"></div>
+                    <p class="info">Write the filename to be deleted.</p>
+                    <div class="form-group">
+                        <input id="pathInput" type="text" placeholder="/fichier.txt" />
                     </div>
-            </div> <h2 id="cgi-test" style="margin-top: 60px;">CGI TEST</h2>
-            <p>Test CGI GET and POST using log.</p>
+                    <button id="deleteBtn" class="submit-btn" >Delete</button>
+                    <div id="result"></div>
+                </div>
+            </div>
+            <h2 id="cgi-test" style="margin-top: 60px;">CGI TEST</h2>
+                <p>Test CGI GET and POST using log.</p>
             <div class="test-grid">
                 <div class="test-card get">
                     <h3>GET Request (Welcome)</h3>
