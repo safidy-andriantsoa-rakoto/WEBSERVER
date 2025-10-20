@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 13:24:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:05:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -481,7 +481,6 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 	{
 		_fdType = STD_FILE;
 		stdPostRequest(header, opt);
-		// setSingleResponse(201);
 	}
 	else
 	{

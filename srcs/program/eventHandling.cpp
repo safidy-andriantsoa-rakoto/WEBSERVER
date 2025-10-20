@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:39:25 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 13:55:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,16 +106,19 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	}
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBuffer(bufferString);
-	std::cout << "				******** Buffer CGI = \n" << bufferString.size() << std::endl;
-	// std::cout << "				******** Buffer CGI END" << std::endl;
+	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
+	std::cout << "				******** Buffer CGI END" << std::endl;
 	(*it)->bufferParser();
-	(*it)->checkError();
 	// (*it)->displayBufferParsed();
 	if ((*it)->getStatus() == OP_OPEN)
 	{
 		(*it)->setStatus(OP_START);
 		fdCli = (*it)->getClientFd();
+	}
+	if (bufferString.find(EOF))
+	{
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
+		(*it)->checkError();
 	}
 }
 

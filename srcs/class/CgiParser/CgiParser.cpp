@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiParser.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:43:09 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:04:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ void CgiParser::parseCgiEnv(std::string const & requestTarget, std::string const
 	{
 		_query = vect[1];
 	}
-	_scriptName = vect[0];
+	size_t pos = vect[0].find_last_of("/");
+	_scriptName = vect[0].substr(pos, vect[0].size() - pos);
 	_scriptFileName = rootDirectory + _scriptName;
 }
 
