@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 10:00:08 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 13:12:59 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	if ((*it).getResponseStat() == OP_START)
 		(*it).setResponseStat(OP_ONGOING);
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
+	{
 		epoll.epoll_update_event(fdCli, EPOLLIN);
+		(*it).getObjRequest().set_is_CRLF_header(false);	
+	}
 	// std::cout << "		Rsp Stat = " << (*it).getResponseStat() << std::endl;
 }
 
@@ -69,7 +72,10 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	send_value(fdCli, rspString);
     (*it).getPtrCgiFd()->clearBuffer();
 	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)
+	{
         epoll.epoll_update_event(fdCli, EPOLLIN);
+		(*it).getObjRequest().set_is_CRLF_header(false);	
+	}
 	if (cgiStatus == OP_START)
 		(*it).updateCgiFdStatus(OP_ONGOING);
 }
