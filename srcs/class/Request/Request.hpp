@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 11:46:33 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:15:09 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,17 @@ class Request
 		// stringMap	_post_body;
 		std::string	_body;
 
-		MapSVectStr	_multipart_body;
 		size_t		_request_length;
 		bool		_autoIdx;
-		bool		_is_CRLF_header;
+	
 		//for post
+		MapSVectStr	_multipart_body;
 		size_t		_content_length;
 		size_t		_c_length_received;
 
 		bool		_isCgi;
 		CgiParser	_cgiParser;
+		bool		_is_CRLF_header;
 
 		void    	setRequestLine(std::string const & set);
 		void		setRequestBody(std::string const & requeststring, size_t const & pos);
@@ -69,9 +70,6 @@ class Request
 		const	MapSVectStr&	getpostMultipartData() const;
 
 		void 			Del_space(std::string &data);
-
-		void			set_is_CRLF_header(bool is_crlf);
-		bool			get_is_CRLF_header();
 		
 		bool			getAutoIdx() const;
 		void			setAutoIdx(bool const & autoIdx);
@@ -79,9 +77,9 @@ class Request
 		void			setRequestSize(ssize_t size);
 		ssize_t			getRequestSize();
 
-		void		set_Body(const std::string& body);
+		void			set_Body(const std::string& body);
 		std::string&	get_Body();
-		void		clear_body();
+		void			clear_body();
 		void			set_post_body(stringVect var, std::string content);
 
 		void			setRequestTarget(std::string const & target);
@@ -100,6 +98,9 @@ class Request
 		void 		set_content_length(size_t size);
 
 		void		delete_range_body_request(int start, int end);
+
+		void		set_is_CRLF_header(bool is_crlf);
+		bool		get_is_CRLF_header();
 };
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 09:50:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:38:24 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "RedirExcept.hpp"
 #include "LDirExcept.hpp"
 #include "../CgiParser/CgiParser.hpp"
+#include "../Mime/Mime.hpp"
 
 class Response
 {
@@ -31,11 +32,15 @@ class Response
 
 		int					_respCategory;
 
+		int					_respStat;
+		std::string			_originPath;
+		std::string			_originBody;
+		size_t				_pos;
+
 		static stringMap	_allStatusCode;
-		static std::string	_defaultErrPage;
 
 		void				setStatusLine();
-        // void 				setToDefaultErrorPage();
+		void				setDefaultErrorPage(std::string & content);
 		void				buildErrorPage(int const & statusCode, t_errPage & errPage, std::string & filePath, int & fdType);
 
 	public:
@@ -47,20 +52,36 @@ class Response
 		~Response();
 
 		int					getStatusCode() const;
+
+		std::string			getType() const;
 		void				setType(std::string const & type);
+
 		void				setStatusCode(int const & statusCode);
-		void				setCategory(int const & category);
+
+		size_t				getPosition() const;
+		void				setPosition(size_t const & newPos);
+
+		int					getRespStat() const;
+		void				setRespStat(int const & stat);
+
+		std::string			getOriginPath() const;
+		void				setOriginPath(std::string const & path);
 
 		void				addHeader(std::string const & header, std::string const & content);
 	
 		int					getRespCategory() const;
+		void				setRespCategory(int const & category);
+
 		std::string			getFullResponse();
+
 		std::string			getBody() const;
+		std::string			getOriginBody() const;
+		void				setOriginBody(std::string const & body);
 
 		void				clearResponse();
 
         void				generateStandardResponse(std::string const & body);
-		void				generateChunkedResponse(std::string const & body, int const & status);
+		void				generateChunkedResponse(std::string const & body);
 		void				generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status);
 		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);
 		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);

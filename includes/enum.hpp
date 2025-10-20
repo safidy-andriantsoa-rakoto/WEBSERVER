@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enum.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 08:56:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:24:43 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,14 @@ enum    e_identifier
 
 enum    e_fdCategory
 {
-    FD_PRINCIPAL,
+    FD_STDOUT,
     FD_STDERR,
     FD_STDIN
 };
 
 enum    e_fdRspType
 {
-    HTML_FILE,
+    STD_FILE,
     GET_PHP_SCRIPT,
     POST_PHP_SCRIPT
 };

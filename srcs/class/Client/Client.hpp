@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/17 15:01:02 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:52:57 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 #include "../Server/Server.hpp"
 #include "../Response/Response.hpp"
 #include "../CgiFd/CgiFd.hpp"
-#include <sys/time.h>
-#include <ctime>
 
 class Client : public Server
 {
@@ -35,7 +33,7 @@ class Client : public Server
 		Response	_response;
 		CgiFd		*_cgiFD;
 		int			_fdType;
-		std::string filepath;
+		std::string	filepath;
 
 		Client();
 
@@ -48,8 +46,8 @@ class Client : public Server
 		void		processRedirection(MyLoc const & location, Request & request);
 
 				//HTTP Method
-		void		get_request(uint32_t & opt, int *fd, std::string & content);
-		void		stdGetRequest(std::string & content);
+		void		get_request(uint32_t & opt, int *fd);
+		void		stdGetRequest();
 		void		cgiGetRequest(int *fd);
 
 		void		post_request(stringMap & header, uint32_t & opt, int *fd);
@@ -82,6 +80,14 @@ class Client : public Server
 		int			getFdType() const;
 		void		setFdType(int const & type);
 
+		int			getResponseStat() const;
+		void		setResponseStat(int const & stat);
+
+		std::string	getRspOriginPath() const;
+		void		setRspOriginPath(std::string const & path);
+
+		void		setRspType(std::string const & filePath);
+
 		CgiFd		*getPtrCgiFd();
 		void        setPtrCgiFd(CgiFd *cgiFd);
 		void		clearPtrCgiFd();
@@ -98,7 +104,7 @@ class Client : public Server
 		void		updateResponseCategory(int const & stat);
 		void		setCatchedResponse(AExcept & e);
 		void		setStandardResponse(std::string const & content);
-		void		setChunkedResponse(std::string const & content, std::string const & type, int const & status);
+		void		setChunkedResponse();
 		void		setCgiChunkedResponse();
 		void		setSingleResponse(int const & statusCode);
 
@@ -115,7 +121,7 @@ class Client : public Server
 				const char *what() const throw();
 		};
 
-		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, std::string & content);
+		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd);
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 

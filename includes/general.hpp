@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 08:56:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:44:56 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@
 #include "typedef.hpp"
 #include "define.hpp"
 #include "enum.hpp"
+#include <sys/time.h>
+#include <ctime>
 
 //Utils
     //fileUtils
@@ -57,6 +59,7 @@ std::string	getFileExtension(std::string const & fileName);
 int         openFile(std::string const & filePath);
 size_t	    getFileSize(std::string const & path);
 DIR*	    openDir(std::string const & dirPath);
+DIR*	    openDir(std::string const & dirPath);
 
     //stringUtils
 stringVect	strictSplit(std::string const & target, std::string const & sep);
@@ -67,6 +70,8 @@ void	    replaceString(std::string & text, std::string const & replaceText, std:
 std::string	checkLimitSize(std::string const & a, std::string const & b);
 void	    chunkingString(std::string & text, int const & status);
 void	    clearCharTable(char **tab);
+
+std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize);
 
     //Conversion
 std::string convertIntToString(ssize_t const & n);
@@ -101,3 +106,8 @@ bool        checkConfigDupli(stringVect file, size_t &start, size_t &end);
 // dirListing
 stringMap	listingDirectory(DIR* dir, std::string const & path);
 std::string	convertListing(stringMap & mapDir);
+
+//pipeUtils
+void	makeDup2(int const & fd1, int const & fd2, int const & fd3);
+void	makeDup2(int const & fd1, int const & fd2);
+void    dupStandardIO(int *stdFd, int const & n);

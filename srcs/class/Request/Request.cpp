@@ -6,13 +6,13 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 15:45:22 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:18:17 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _is_CRLF_header(false),  _content_length(0), _c_length_received(0), _isCgi(false)
+Request::Request(): _request_length(0), _autoIdx(false), _content_length(0), _c_length_received(0), _isCgi(false), _is_CRLF_header(false)
 {}
 
 Request::Request(Request const & other)
@@ -33,12 +33,12 @@ Request &Request::operator=(Request const & other)
 		_body = other._body;
 		_request_length = other._request_length;
 		_autoIdx = other._autoIdx;
-		_is_CRLF_header = other._is_CRLF_header;
 		_multipart_body = other._multipart_body;
 		_content_length = other._content_length;
 		_c_length_received = other._c_length_received;
 		_isCgi = other._isCgi;
 		_cgiParser = other._cgiParser;
+		_is_CRLF_header = other._is_CRLF_header;
 	}
 	return *this;
 }
@@ -125,16 +125,6 @@ void Request::Del_space(std::string &data)
 {
     while (-1 != static_cast<int>(data.find(' ')))
         data.erase(data.find(' '), 1);
-}
-
-void Request::set_is_CRLF_header(bool is_crlf)
-{
-	this->_is_CRLF_header = is_crlf;
-}
-
-bool Request::get_is_CRLF_header()
-{
-    return (this->_is_CRLF_header);
 }
 
 bool Request::getAutoIdx() const
@@ -258,11 +248,6 @@ void	Request::parseRequest(std::string const & requeststring)
 	setRequestBody(requeststring, pos + sep.size());
 	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")
 		this->_is_CRLF_header = true;
-	// if (this->_body_two.size())
-	// 	std::cout << "[" << _body_two[0] << "]" << std::endl;
-	// else
-	// 	std::cout << ""
-	
 }
 
 void Request::displayRequest() const
@@ -330,4 +315,15 @@ void Request::delete_range_body_request(int start, int end)
 		else
 			_body.erase(_body.begin() + start, _body.begin() + end);
 	}
+}
+
+
+void Request::set_is_CRLF_header(bool is_crlf)
+{
+	this->_is_CRLF_header = is_crlf;
+}
+
+bool Request::get_is_CRLF_header()
+{
+    return (this->_is_CRLF_header);
 }

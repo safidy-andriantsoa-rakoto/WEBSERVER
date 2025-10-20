@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 09:02:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:34:51 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Handler.hpp"
 
-Handler::Handler() : _programBreak(false){}
+Handler::Handler() : _programBreak(false), _isChildProcess(false){}
 
-Handler::Handler(vectServer &vectServer) : _vectServer(vectServer), _programBreak(false){}
+Handler::Handler(vectServer &vectServer) : _vectServer(vectServer), _programBreak(false), _isChildProcess(false){}
 
 Handler::Handler(Handler const & other) :
 	_vectServer(other._vectServer),
-	_vectClient(other._vectClient){}
+	_vectClient(other._vectClient), _programBreak(other._programBreak), _isChildProcess(other._isChildProcess){}
 
 Handler &Handler::operator=(Handler const & other)
 {
@@ -27,6 +27,7 @@ Handler &Handler::operator=(Handler const & other)
 		_vectServer = other._vectServer;
 		_vectClient = other._vectClient;
 		_programBreak = other._programBreak;
+		_isChildProcess = other._isChildProcess;
 	}
 	return *this;
 }
@@ -85,9 +86,13 @@ VClient &Handler::getVectClient(){ return _vectClient;}
 
 vectCgiFd &Handler::getVectCgiFd(){ return _vectCgiFd;}
 
-bool Handler::getProgramBreak() {return _programBreak;}
+bool Handler::getProgramBreak() const {return _programBreak;}
 
 void Handler::setProgramBreak(bool const &stat){_programBreak = stat;}
+
+bool Handler::getIsChildProcess() const{return _isChildProcess;}
+
+void Handler::setIsChildProcess(bool const &stat){ _isChildProcess = stat; }
 
 vectServerIt Handler::getServerIterator(int const &i){return _vectServer.begin() + i;}
 
@@ -192,28 +197,33 @@ void Handler::removeClient(VClientIt & it, EpollCreation & epoll)
 
 void	Handler::cleanFdAndAlloc()
 {
+	std::cout << "CLEAN FD AND ALLOC : " << _isChildProcess << std::endl;
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
 		(*itVect).clearAllFd();
 	for (vectCgiFdIt itCgiFd = _vectCgiFd.begin(); itCgiFd != _vectCgiFd.end(); itCgiFd++)
 	{
-		if ((*itCgiFd) && (*itCgiFd)->getOutputFd() != -1)
-			close((*itCgiFd)->getOutputFd());
-		if ((*itCgiFd) && (*itCgiFd)->getInputFd() != -1)
-			close((*itCgiFd)->getInputFd());
-		if ((*itCgiFd) && (*itCgiFd)->getErrFd() != -1)
-			close((*itCgiFd)->getErrFd());
+		if ((*itCgiFd) && _isChildProcess == false)
+		{
+			if ((*itCgiFd)->getOutputFd() != -1)
+				close((*itCgiFd)->getOutputFd());
+			if ((*itCgiFd)->getInputFd() != -1)
+				close((*itCgiFd)->getInputFd());
+			if ((*itCgiFd)->getErrFd() != -1)
+				close((*itCgiFd)->getErrFd());
+		}
 	}
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
 	{
 		if ((*itCli).get_clientFD() != -1)
 			close((*itCli).get_clientFD());
+		(*itCli).clearPtrCgiFd();
 	}
 }
 
 void Handler::displayHandlerStat()
 {
 	std::cout << "========================================== \n";
-	std::cout << "		HANDLER STATS \n";
+	std::cout << "		HANDLER STATS : " << _isChildProcess << std::endl;
 	std::cout << "Nb Server = " << _vectServer.size() << " [";
 	for(size_t i = 0; i < _vectServer.size(); i++)
 		std::cout << _vectServer[i].get_fdSocket() << " ";

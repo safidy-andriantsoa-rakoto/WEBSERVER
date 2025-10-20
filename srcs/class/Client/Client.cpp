@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/17 15:01:39 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:18:45 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,10 +94,23 @@ void Client::setStandardResponse(std::string const & content)
 	_response.generateStandardResponse(content);
 }
 
-void Client::setChunkedResponse(std::string const & content, std::string const & type, int const & status)
-{	
-	_response.setType(type);
-	_response.generateChunkedResponse(content, status);
+void Client::setChunkedResponse()
+{
+	std::string content;
+	size_t		pos;
+
+	if (_response.getRespStat() == OP_START)
+		_response.setPosition(0);
+	pos = _response.getPosition();
+	content = divideStringBySize(_response.getOriginBody(), pos, _BUFFER);
+	pos += _BUFFER;
+	if (pos > _response.getOriginBody().size())
+	{
+		_response.setRespStat(OP_CLOSE);
+		pos = 0;
+	}
+	_response.generateChunkedResponse(content);
+	_response.setPosition(pos);
 }
 
 void Client::setCgiChunkedResponse()
@@ -174,11 +187,26 @@ void Client::setStatusCodeResponse(int const &status){_response.setStatusCode(st
 
 void Client::clearResponse(){_response.clearResponse();}
 
-void Client::updateResponseCategory(int const &stat){_response.setCategory(stat);}
+void Client::updateResponseCategory(int const &stat){_response.setRespCategory(stat);}
 
 int Client::getFdType() const{return _fdType;}
 
 void Client::setFdType(int const &type){_fdType = type;}
+
+int Client::getResponseStat() const{return _response.getRespStat();}
+
+void Client::setResponseStat(int const &stat){_response.setRespStat(stat);}
+
+std::string Client::getRspOriginPath() const{return _response.getOriginPath();}
+
+void Client::setRspOriginPath(std::string const &path){_response.setOriginPath(path);}
+
+void Client::setRspType(std::string const &filePath)
+{
+	std::string	type = Mime::getFileType(filePath);
+
+	_response.setType(type);
+}
 
 const char *Client::Deconnect::what() const throw()
 {
@@ -199,7 +227,8 @@ void Client::processRequestWithConfig()
 	vectLocationIt	it;
 	std::string		target = _request.getRequestTarget();
 
-	checkContentLength(); //See with POST method [Safidy]
+	if (_request.getHttp() != "HTTP/1.1")
+		throw ErrorExcept(505, "Http version error");
 	if (target.find(".php", 0) != std::string::npos)
 	{
 		_request.clearCgiClass();
@@ -211,11 +240,12 @@ void Client::processRequestWithConfig()
 		_request.setRequestTarget(target);
 		return;
 	}
+	_request.setIsCgi(false);
 	if (_request.getMethod() == "POST" || _request.getMethod() == "DELETE")
 	{
+		checkContentLength(); //See with POST method [Safidy]
 		it = _config.findClassLocation("/upload");
 		std::string	newTarget = (*it).getRootDirectory();
-
 		if (_request.getMethod() == "DELETE")
 			newTarget += target;
 		_request.setRequestTarget(newTarget);
@@ -232,9 +262,11 @@ void Client::checkContentLength()
 
 	maxSize = 0;
 	requestSize = 0;
+	if (_request.getMethod() != "POST")
+		return ;
 	itFind = _request.getHeader().find("Content-Length");
 	if (itFind == _request.getHeader().end())
-		return ;
+		throw ErrorExcept(411, "Length required"); //Ask Safidy where to put this function !!!!!
 	maxSize = _config.getMaxSize();
 	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
 	if (requestSize > maxSize)
@@ -329,7 +361,7 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	redirect = location.getRedirect();
 	if (!redirect.size())
 		return ;
-	std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
+	// std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
 	redirect = location.getRedirect();
 	statusRedirect = convertStringToInt(redirect[0]);
 	newUri = redirect[1];
@@ -343,26 +375,27 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
-void Client::get_request(uint32_t & opt, int *fd, std::string & content)
+void Client::get_request(uint32_t & opt, int *fd)
 {
 	if (_request.getIsCgi() == false)
 	{
-		_fdType = HTML_FILE;
-		stdGetRequest(content);
+		_fdType = STD_FILE;
+		stdGetRequest();
 		opt = EPOLLOUT;
 	}
 	else
 	{
 		_fdType = GET_PHP_SCRIPT;
 		cgiGetRequest(fd);
+		setStatusCodeResponse(200);
 		opt = EPOLLIN;
 	}
-	setStatusCodeResponse(200);
 }
 
-void Client::stdGetRequest(std::string & content)
+void Client::stdGetRequest()
 {
 	std::string	filePath;
+	std::string	fileContent;
 	DIR*		dir;
 
 	filePath = _request.getRequestTarget();
@@ -378,7 +411,21 @@ void Client::stdGetRequest(std::string & content)
 	}
 	try
 	{
-		content = readFileToString(filePath);
+		/*Parse HEADER accept to check if error 406*/
+		fileContent = readFileToString(filePath);
+		setStatusCodeResponse(200);
+		setRspOriginPath(filePath);
+		setRspType(filePath);
+		if (fileContent.size() <= _BUFFER)
+		{
+			setResponseStat(OP_ONCE);
+			setStandardResponse(fileContent);
+		}
+		else
+		{
+			setResponseStat(OP_START);
+			getObjResponse().setOriginBody(fileContent);
+		}
 	}
 	catch(const std::exception& e)
 	{
@@ -391,31 +438,31 @@ void Client::cgiGetRequest(int *fd)
 	int	pipeFd[2];
 	int	pid;
 	int	errFd[2];
+	int	stdFd[2] = {-1, -1};
 
 	if (pipe(pipeFd) == -1)
 		throw std::runtime_error("Pipe fd error");
 	if (pipe(errFd) == -1)
 		throw std::runtime_error("Pipe err error");
-	std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
-	std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
+	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
+	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
 	pid = fork();
 	if (pid == -1)
 		throw std::runtime_error("Fork error");
 	if (pid == 0)
 	{
-		dup2(errFd[1], STDERR_FILENO);
-		close(errFd[0]);
-		close(errFd[1]);
-		dup2(pipeFd[1], STDOUT_FILENO);
-		close(pipeFd[0]);
-		close(pipeFd[1]);
+		dupStandardIO(stdFd, 2);
+		makeDup2(pipeFd[1], STDOUT_FILENO, pipeFd[0]);
+		makeDup2(errFd[1], STDERR_FILENO, errFd[0]);
 		try
 		{
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			fd[FD_PRINCIPAL] = -2;
+			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
+			fd[FD_STDOUT] = -2;
 			fd[FD_STDERR] = -2;
 		}
 	}
@@ -424,17 +471,16 @@ void Client::cgiGetRequest(int *fd)
 		close(errFd[1]);
 		close(pipeFd[1]);
 		_request.clearCgiClass();
-		fd[FD_PRINCIPAL] = pipeFd[0];
+		fd[FD_STDOUT] = pipeFd[0];
 		fd[FD_STDERR] = errFd[0];
 	}
 }
 
 void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 {
-	std::cout << "\e[5mPOST REQUEST FIRST\e[0m" << std::endl;
 	if (_request.getIsCgi() == false)
 	{
-		_fdType = HTML_FILE;
+		_fdType = STD_FILE;
 		stdPostRequest(header, opt);
 		// setSingleResponse(201);
 	}
@@ -449,8 +495,8 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 
 void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 {
+	
 	std::cout << "\e[5mPOST REQUEST STD\e[0m" << std::endl;
-
 	opt = EPOLLIN;
 	
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
@@ -504,110 +550,80 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 void Client::cgiPostRequest(int *fd)
 {
 	int	pid;
-	int	outFd[2];
-	int	inFd[2];
-	int	errFd[2];
+	int	pipeOutFd[2];
+	int	pipeInFd[2];
+	int	pipeErrFd[2];
+	int	stdFd[3] = {-1, -1, -1};
 
-	if (pipe(inFd) == -1)
+	if (pipe(pipeInFd) == -1)
 		throw std::runtime_error("input fd error");
-	if (pipe(outFd) == -1)
+	if (pipe(pipeOutFd) == -1)
 		throw std::runtime_error("output fd error");
-	if (pipe(errFd) == -1)
+	if (pipe(pipeErrFd) == -1)
 		throw std::runtime_error("error fd error");
-	std::cout << "inFd [0] = " << inFd[0] << " [1] = " << inFd[1] << std::endl;
-	std::cout << "outFd [0] = " << outFd[0] << " [1] = " << outFd[1] << std::endl;
-	std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
+	// std::cout << "inFd [0] = " << pipeInFd[0] << " [1] = " << pipeInFd[1] << std::endl;
+	// std::cout << "outFd [0] = " << pipeOutFd[0] << " [1] = " << pipeOutFd[1] << std::endl;
+	// std::cout << "errFd [0] = " << pipeErrFd[0] << " [1] = " << pipeErrFd[1] << std::endl;
 	pid = fork();
 	if (pid == -1)
 		throw std::runtime_error("Fork error");
 	if (pid == 0)
 	{
-		dup2(inFd[0], STDIN_FILENO);
-		close(inFd[0]);
-		close(inFd[1]);
-		dup2(outFd[1], STDOUT_FILENO);
-		close(outFd[0]);
-		close(outFd[1]);
-		dup2(errFd[1], STDERR_FILENO);
-		close(errFd[0]);
-		close(errFd[1]);
+		dupStandardIO(stdFd, 3);
+		makeDup2(pipeInFd[0], STDIN_FILENO, pipeInFd[1]);
+		makeDup2(pipeOutFd[1], STDOUT_FILENO, pipeOutFd[0]);
+		makeDup2(pipeErrFd[1], STDERR_FILENO, pipeErrFd[0]);
 		try
 		{
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			std::cout << "		THERE WAS AN ERROR!!!!!!!!!\n";
+			makeDup2(stdFd[FD_STDIN], STDIN_FILENO);
+			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDIN] = -2;
-			fd[FD_PRINCIPAL] = -2;
+			fd[FD_STDOUT] = -2;
 			fd[FD_STDERR] = -2;
 		}
 	}
 	else
 	{
-		close(inFd[0]);
-		close(outFd[1]);
-		close(errFd[1]);
+		close(pipeInFd[0]);
+		close(pipeOutFd[1]);
+		close(pipeErrFd[1]);
 		_request.clearCgiClass();
-		fd[FD_STDIN] = inFd[1];
-		fd[FD_PRINCIPAL] = outFd[0];
-		fd[FD_STDERR] = errFd[0];
+		fd[FD_STDIN] = pipeInFd[1];
+		fd[FD_STDOUT] = pipeOutFd[0];
+		fd[FD_STDERR] = pipeErrFd[0];
 	}
 }
 
 void Client::delete_request()
 {
-	// std::string		root;
-	// std::string		target;
-	// stringVectIt	_configIt;
-	// vectLocation	loc;
-
-	// target = _request.getRequestTarget();
-	// loc = _config.getClassLocation();
-	// if (!target.size())
-	// 	throw ErrorExcept(403, "Forbidden");
-	// if (loc.size())
-	// {
-	// 	root = loc[0].getRootDirectory();
-	// 	if (target.compare(0, root.size(), root) != 0)
-	// 		throw ErrorExcept(401, "Unauthorized");
-	// 	struct  stat s_stat;
-	// 	if (stat(target.c_str(), &s_stat) != 0)
-	// 		throw ErrorExcept(401, "Unauthorized");
-	// 	if (S_ISREG(s_stat.st_mode))
-	// 	{
-	// 		if (std::remove(target.c_str()) != 0)
-	// 			throw ErrorExcept(401, "Unauthorized");
-	// 	}
-	// 	else
-	// 		throw ErrorExcept(403, "Forbidden");
-	// }
-
 	/*	Check error for delete */
 	std::string	target;
 	struct stat	s_stat;
 
 	target = _request.getRequestTarget();
 	if (!target.size())
-		throw ErrorExcept(403, "Forbidden");
+		throw ErrorExcept(400, "Bad request");
 	if (stat(target.c_str(), &s_stat) != 0)
-		throw ErrorExcept(401, "Unauthorized");
+		throw ErrorExcept(403, "Forbidden");
 	if (S_ISREG(s_stat.st_mode))
 	{
 		if (std::remove(target.c_str()) != 0)
-			throw ErrorExcept(401, "Unauthorized");
+			throw ErrorExcept(401, "Forbidden");
 	}
 	else
 		throw ErrorExcept(403, "Forbidden");
-	_response.setCategory(SINGLE_RSP);
+	_response.setRespCategory(SINGLE_RSP);
 }
 
-void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, std::string & content)
+void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)
 {
 	stringMap	header;
-	std::string boundary;
 
-	boundary = "boundary=";
 	if (!_request.get_is_CRLF_header())
 	{
 		_request.parseRequest(clientRequest);
@@ -619,13 +635,11 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		_request.set_c_length_received(clientRequest.size());
 	}
 	header = _request.getHeader();
-	// _request.displayRequest();
+	_request.displayRequest();
 	if (_request.getMethod() == "GET")
-		get_request(opt, fd, content);
+		get_request(opt, fd);
 	else if (_request.getMethod() == "POST")
-	{
 		post_request(header, opt, fd);
-	}
 	else if (_request.getMethod() == "DELETE")
 	{
 		delete_request();
@@ -718,6 +732,7 @@ bool Client::get_pathfile()
 		body = _request.get_Body();
 		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
 		{
+			std::cout << "\e[5m				SEARCH FILE POST PATH\e[0m" << std::endl;
 			size_t endFile = _request.get_Body().find("\n", findFile + 10);
 			// std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
 			std::string filename;
@@ -727,8 +742,8 @@ bool Client::get_pathfile()
 			_request.delete_range_body_request(0, endFile + 4);
 			if (filename.size())
 			{
-				this->filepath = "upload/" + currentDateTimeString() + filename;
-				// std::cout << "PATH=["<< this->filepath <<"]" << std::endl;
+				this->filepath = _request.getRequestTarget() + "/" + currentDateTimeString() + filename;
+				std::cout << "\n\n\n		PATH=["<< this->filepath <<"]\n\n\n" << std::endl;
 				return (true);
 			}
 		}

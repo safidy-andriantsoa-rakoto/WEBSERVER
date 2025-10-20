@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiParser.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 14:16:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:43:09 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ CgiParser &CgiParser::operator=(CgiParser const &other)
 		_scriptFileName = other._scriptFileName;
 		_scriptName = other._scriptName;
 		_contentLength = other._contentLength;
-		_envp = other._envp; //Deep copy?
+		_envp = other._envp;
 	}
 	return *this;
 }
@@ -70,7 +70,7 @@ void CgiParser::configGetEnvp()
 	vect = splitString(ownedConfig, "\n");
 	clearCharTable(_envp);
 	_envp = convertStringVectToTable(vect);
-	displayCharTable(_envp, "ENVP GET TABLE");
+	// displayCharTable(_envp, "ENVP GET TABLE");
 	vect.clear();
 	ownedConfig.clear();
 }
@@ -80,7 +80,6 @@ void CgiParser::configPostEnvp()
 	std::string	ownedConfig = CgiParser::_cgiPostConfig;
 	stringVect	vect;
 
-	std::cout << "			CONFIG POST ENVP" << std::endl;
 	replaceString(ownedConfig, _reqMethod, "$1");
 	replaceString(ownedConfig, _scriptFileName, "$2");
 	replaceString(ownedConfig, _scriptName, "$3");
@@ -88,7 +87,7 @@ void CgiParser::configPostEnvp()
 	vect = splitString(ownedConfig, "\n");
 	clearCharTable(_envp);
 	_envp = convertStringVectToTable(vect);
-	displayCharTable(_envp, "ENVP POST TABLE");
+	// displayCharTable(_envp, "ENVP POST TABLE");
 	vect.clear();
 	ownedConfig.clear();
 }
@@ -146,6 +145,7 @@ void CgiParser::clearCgiClass()
 	_scriptName.clear();
 	_contentLength = 0;
 	clearCharTable(_envp);
+	_envp = NULL;
 }
 
 void CgiParser::displayCgiClass() const
@@ -165,16 +165,3 @@ void CgiParser::initCgiConfig(std::string const & getCgiPath, std::string const 
 	_cgiPostConfig = readFileToString(postCgiPath);
 	_cgiErrConfig = readFileToString(errCgiPath);
 }
-
-// char *argv[] = { "php-cgi", NULL };
-// char *envp[] = {
-//     "GATEWAY_INTERFACE=CGI/1.1",
-//     "REQUEST_METHOD=GET",
-//     "QUERY_STRING=username=Alice",
-//     "SCRIPT_FILENAME=/var/www/html/welcome.php",
-//     "SCRIPT_NAME=/welcome.php",
-//     "SERVER_PROTOCOL=HTTP/1.1",
-//     "CONTENT_LENGTH=0",
-//     "REDIRECT_STATUS=200",
-//     NULL
-// };

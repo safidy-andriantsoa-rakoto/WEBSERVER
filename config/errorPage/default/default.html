@@ -5,94 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Error</title>
     <style>
-        /* A modern, clean font from Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
+        /* Import a clean, modern font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-        /* Basic styles for the page */
+        /* Basic page styles */
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #121212; /* A dark, modern background */
-            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6; /* A soft, off-white background */
+            color: #333;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             text-align: center;
-            overflow: hidden; /* Hide scrollbars */
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        /* The main container for the content */
+        /* Main content container */
         .container {
-            z-index: 1; /* Ensure content is above the background effect */
+            max-width: 500px;
         }
 
-        /* Styling for the main "ERROR" text */
+        /* SVG graphic styling */
+        .error-graphic {
+            width: 150px;
+            height: auto;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Main heading */
         h1 {
-            font-size: 12rem; /* Make it very large */
-            font-weight: 900;
-            margin: 0;
-            letter-spacing: -0.05em; /* Tighten up the letters */
-            
-            /* A cool gradient effect for the text color */
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            
-            /* A subtle animation to make it pop */
-            animation: pulse 2s infinite ease-in-out;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem;
+            color: #2c3e50; /* A dark, muted blue */
         }
 
-        /* Styling for the helpful message below the error */
+        /* Descriptive paragraph */
         p {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #a0a0a0; /* A softer color for the subtext */
-            margin: 0.5em 0 1.5em;
+            font-size: 1.1rem;
+            color: #7f8c8d; /* A soft grey */
+            margin: 0 0 2rem;
         }
 
-        /* A simple, styled link to go back */
-        .home-link {
+        /* "Go Back" button styling */
+        .home-button {
             display: inline-block;
             text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
             color: #ffffff;
-            background-color: transparent;
-            border: 2px solid #ffffff;
-            padding: 12px 30px;
-            border-radius: 50px; /* Fully rounded corners */
-            font-weight: 700;
-            transition: background-color 0.3s, color 0.3s;
+            background-color: #3498db; /* A friendly blue */
+            padding: 14px 35px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .home-link:hover {
-            background-color: #ffffff;
-            color: #121212; /* Invert colors on hover */
+        .home-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
         }
 
-        /* The keyframe animation for the pulsing effect */
-        @keyframes pulse {
+        /* Keyframe animation for the floating effect */
+        @keyframes float {
             0% {
-                transform: scale(1);
-                text-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
+                transform: translateY(0px);
             }
             50% {
-                transform: scale(1.05);
-                text-shadow: 0 0 20px rgba(255, 75, 43, 0.7);
+                transform: translateY(-15px);
             }
             100% {
-                transform: scale(1);
-                text-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
+                transform: translateY(0px);
             }
         }
 
-        /* Make it responsive for smaller screens */
+        /* Responsive adjustments for smaller screens */
         @media (max-width: 600px) {
             h1 {
-                font-size: 6rem;
+                font-size: 2rem;
             }
             p {
                 font-size: 1rem;
+            }
+            .error-graphic {
+                width: 120px;
             }
         }
     </style>
@@ -100,9 +100,13 @@
 <body>
     <div class="container">
         
-        <h1>ERROR</h1>
-        <p>Oops! It seems we've hit a snag.</p>
-        <a href="/" class="home-link">Go to Homepage</a>
+        <svg class="error-graphic" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#e74c3c" d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2zm-1,15v-2h2v2h-2zm0-4V7h2v6h-2z"/>
+        </svg>
+
+        <h1>$status</h1>
+        <p>An unexpected error occurred. We're working to fix it, but in the meantime, you can return to safety.</p>
+        <a href="/" class="home-button">Go to Homepage</a>
     </div>
 </body>
 </html>

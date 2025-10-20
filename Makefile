@@ -69,7 +69,7 @@ CLASS = $(addprefix $(SERV_DIR), $(SERV)) \
 UTILS_DIR = utils/
 UTILS = stringUtils.cpp fileUtils.cpp displayUtils.cpp \
 		units.cpp conversion.cpp searchingUtils.cpp dirListing.cpp handleUtils.cpp \
-		CheckBraceClose.cpp ParseUtils.cpp
+		CheckBraceClose.cpp ParseUtils.cpp pipeUtils.cpp
 
 PRO_DIR = program/
 PRO = launchServer.cpp parseConfig.cpp eventHandling.cpp initServer.cpp sendingResponse.cpp
@@ -93,9 +93,9 @@ OBJ = $(OBJ_MAIN) $(OBJ_CLASS) $(OBJ_UTILS) $(OBJ_PRO)
 
 NAME = webserv
 
-UPLOAD = upload
+UPLOAD = ./site/upload
 
-LOG	= ./site/our_webserv/cgi-bin/nameLog.txt
+LOG	= ./site/cgi-bin/nameLog.txt
 
 all : $(NAME)
 

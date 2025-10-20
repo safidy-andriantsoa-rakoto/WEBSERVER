@@ -3,23 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 10:07:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:38:10 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
 stringMap	Response::_allStatusCode;
-std::string	Response::_defaultErrPage;
 
-Response::Response() : _respCategory(STD_RSP){}
+Response::Response() : _respCategory(STD_RSP), _pos(0){}
 
-Response::Response(int const & statusCode) : _statusCode(statusCode){}
+Response::Response(int const & statusCode) : _statusCode(statusCode), _pos(0){}
 
-Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type){}
+Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type), _pos(0){}
 
 Response::Response(Response const & other) :
 	_statusCode(other._statusCode),
@@ -28,7 +27,11 @@ Response::Response(Response const & other) :
 	_statusLine(other._statusLine),
 	_header(other._header),
 	_fullResponse(other._fullResponse),
-	_respCategory(other._respCategory){}
+	_respCategory(other._respCategory),
+	_respStat(other._respStat),
+	_originPath(other._originPath),
+	_originBody(other._originBody),
+	_pos(other._pos){}
 
 Response &Response::operator=(Response const & other)
 {
@@ -41,6 +44,10 @@ Response &Response::operator=(Response const & other)
 		_header = other._header;
 		_fullResponse = other._fullResponse;
 		_respCategory = other._respCategory;
+		_respStat = other._respStat;
+		_originPath = other._originPath;
+		_originBody = other._originBody;
+		_pos = other._pos;
 	}
 	return *this;
 }
@@ -57,14 +64,49 @@ void Response::setType(std::string const &type)
 	_type = type;
 }
 
+std::string Response::getType() const
+{
+    return _type;
+}
+
 void Response::setStatusCode(int const &statusCode)
 {
 	_statusCode = statusCode;
 }
 
-void Response::setCategory(int const &category)
+void Response::setRespCategory(int const &category)
 {
 	_respCategory = category;
+}
+
+size_t Response::getPosition() const
+{
+    return _pos;
+}
+
+void Response::setPosition(size_t const &newPos)
+{
+	_pos = newPos;
+}
+
+int Response::getRespStat() const
+{
+    return _respStat;
+}
+
+void Response::setRespStat(int const &stat)
+{
+	_respStat = stat;
+}
+
+std::string Response::getOriginPath() const
+{
+    return _originPath;
+}
+
+void Response::setOriginPath(std::string const &path)
+{
+	_originPath = path;
 }
 
 void Response::addHeader(std::string const &header, std::string const &content)
@@ -92,37 +134,65 @@ std::string Response::getBody() const
     return _body;
 }
 
+std::string Response::getOriginBody() const
+{
+    return _originBody;
+}
+
+void Response::setOriginBody(std::string const &body)
+{
+	_originBody = body;
+}
+
 void	Response::clearResponse()
 {
 	_fullResponse.clear();
 }
 
+void Response::setDefaultErrorPage(std::string & content)
+{
+	std::string	replace;
+
+	replace = convertIntToString(_statusCode);
+	replace += " : " + (*_allStatusCode.find(replace)).second;
+	replaceString(content, replace, "$status");
+}
+
 void Response::buildErrorPage(int const & status, t_errPage & errPage, std::string & filePath, int & fdType)
 {
 	stringVectIt	it;
+	std::string		content;
 
 	filePath = ERR_PATH;
-	fdType = HTML_FILE;
-	if (!errPage.listError.size())
+	fdType = STD_FILE;
+	if (errPage.listError.size())
 	{
-		fdType = HTML_FILE;
-		_body = readFileToString(filePath);
-		// execCgiDefaultScript(fd);
-		return;
+		it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
+		if (it != errPage.listError.end())
+			filePath = errPage.filePath;
 	}
-	it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
-	if (it != errPage.listError.end())
+	try
 	{
-		fdType = HTML_FILE;
-		filePath = errPage.filePath;
-		_body = readFileToString(filePath);
+		content = readFileToString(filePath);
+		if (filePath == ERR_PATH)
+			setDefaultErrorPage(content);
+		if (content.size() <= _BUFFER)
+		{
+			_body = content;
+			_respStat = OP_ONCE;
+		}
+		else
+		{
+			_originBody = content;
+			_respStat = OP_START;
+		}
+		_originPath = filePath;
 	}
-	else
+	catch(const std::exception& e)
 	{
-		fdType = HTML_FILE;
-		_body = readFileToString(filePath);
-		// execCgiDefaultScript(fd);
-	}	
+		/*MANAGE ERROR FOR ERROR PAGE*/
+		throw std::runtime_error("ERROR PAGE NOT FOUND");
+	}
 }
 
 void Response::setStatusLine()
@@ -140,11 +210,11 @@ void	Response::generateStandardResponse(std::string const &  body)
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::generateChunkedResponse(std::string const & body, int const & status)
+void Response::generateChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;
-	chunkingString(_body, status);
+	chunkingString(_body, _respStat);
 	_header.clear();
 	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
@@ -161,7 +231,6 @@ void Response::generateCgiChunkedResponse(std::string const & body, stringMap co
 		_header.clear();
 		_header["Connection"] = "keep-alive";
 		_header["Content-Type"] = (*header.find("Content-type")).second;
-		// _header["Content-Type"] = "text/html; charset=UTF-8";
 		_header["Transfer-Encoding"] = "chunked";
 	}
 }
@@ -179,11 +248,13 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::st
 		{
 			LDirExcept & dir = dynamic_cast<LDirExcept & >(e);
 			generateLDirResponse(dir);
+			_respStat = OP_ONCE;
 		}
 		else if (e._type == REDIR_RSP)
 		{
 			RedirExcept & redir = dynamic_cast<RedirExcept & >(e);
 			generateRedirectResponse(redir);
+			_respStat = OP_ONCE;
 		}
 	}
 	catch(const std::exception& e)
@@ -201,9 +272,7 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::
 	_statusCode = e._statusCode;
 	setStatusLine();
 	buildErrorPage(_statusCode, errPage, filePath, fdType);
-	_header["Content-Type"] = "text/html; charset=UTF-8";
-	_header["Content-Length"] = convertIntToString(_body.size());
-	_header["Connection"] = "keep-alive";
+	_type = Mime::getFileType(_originPath);
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)
@@ -235,6 +304,7 @@ void Response::generateSingleResponse(int const &statusCode)
 {
 	_statusCode = statusCode;
 	_respCategory = SINGLE_RSP;
+	_respStat = OP_ONCE;
 	_type = "text/html";
 	setStatusLine();
 	_header.clear();
@@ -275,7 +345,7 @@ void Response::execCgiDefaultScript(int *fd)
 		}
 		catch(const std::exception& e)
 		{
-			fd[FD_PRINCIPAL] = -1;
+			fd[FD_STDOUT] = -1;
 			fd[FD_STDERR] = -1;
 		}
 	}
@@ -284,7 +354,7 @@ void Response::execCgiDefaultScript(int *fd)
 		cgiParser.clearCgiClass();
 		close(errFd[1]);
 		close(pipeFd[1]);
-		fd[FD_PRINCIPAL] = pipeFd[0];
+		fd[FD_STDOUT] = pipeFd[0];
 		fd[FD_STDERR] = errFd[0];
 	}
 }

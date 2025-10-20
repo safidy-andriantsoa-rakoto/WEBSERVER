@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stringUtils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/08 07:26:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:47:00 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,4 +129,13 @@ void	clearCharTable(char **tab)
 		i++;
 	}
 	free(tmpAll);
+}
+
+std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize)
+{
+	size_t		endPos = startPos + bufferSize;
+	std::string	result;
+
+	result = target.substr(startPos, endPos - startPos);
+	return result;
 }
