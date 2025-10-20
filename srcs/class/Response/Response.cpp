@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:38:10 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:54:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,7 @@ void Response::generateCgiChunkedResponse(std::string const & body, stringMap co
 	{
 		_header.clear();
 		_header["Connection"] = "keep-alive";
-		_header["Content-Type"] = (*header.find("Content-type")).second;
+		_header["Content-Type"] = _type;
 		_header["Transfer-Encoding"] = "chunked";
 	}
 }

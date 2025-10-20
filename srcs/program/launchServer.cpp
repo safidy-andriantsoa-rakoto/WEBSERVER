@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 09:42:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:46:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,6 @@ void    launchServer(Handler & handler)
 			}
 			if (handler.getProgramBreak() == true)
 			{
-				std::cout << "HANDLER PROCESS = " << handler.getIsChildProcess() << std::endl;
 				throw std::runtime_error("Program break launched");
 			}
 		}

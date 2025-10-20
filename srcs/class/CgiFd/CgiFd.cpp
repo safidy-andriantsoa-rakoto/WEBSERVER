@@ -208,5 +208,5 @@ void CgiFd::checkError()
 	tmp = (*it).second;
 	vect = splitString(tmp, " ");
 	statusCode = convertStringToInt(vect[0]);
-	throw ErrorExcept(statusCode, "Error from cgi");
+	throw ErrorExcept(statusCode, "Error from cgi after check error");
 }

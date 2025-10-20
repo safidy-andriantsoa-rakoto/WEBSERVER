@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 13:25:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:55:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,14 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
         return;
     }
     std::cout << "\033[35mSending cgi chunked response to " << fdCli << " with status = " << cgiStatus << "\033[0m"<< std::endl;
+	std::string	type = (*it).getPtrCgiFd()->getHeader()["Content-Type"];
+	(*it).getObjResponse().setType(type);
 	(*it).setCgiChunkedResponse();
 	if (cgiStatus == OP_ONGOING || cgiStatus == OP_CLOSE)
 		rspString = (*it).getBodyResponse() + "\r\n";
 	else
 		rspString = (*it).getFullResponse();
-	std::cout <<"\e[45mCgi response sent : \n" << rspString.size() << "\e[0m" << std::endl;
+	std::cout <<"\e[45mCgi response sent : \n" << rspString << "\e[0m" << std::endl;
 	send_value(fdCli, rspString);
     (*it).getPtrCgiFd()->clearBuffer();
 	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)
