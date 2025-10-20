@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OUR WEBSERV</title>
     <link href="tooplate/tooplate-minimal-white-style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link href="style.css" rel="stylesheet">
 </head>
@@ -50,25 +51,21 @@
             
             <div class="test-grid">
                 <div class="test-card post file">
-                    <h3>POST Request</h3>
-                    <p class="info">Upload files to the server</p>
+                    <h3>POST Request file</h3>
+                    <p class="info">Upload file</p>
                     <a id="post_file" class="submit-btn" href="./_upld/upload.html">POST FILE</a>
                 </div>
                 
                 <div class="test-card post file">
-                    <h3>POST Request FORM</h3>
-                    <p class="info">Write form...</p>
+                    <h3>POST Request form</h3>
+                    <p class="info">Send form</p>
                     <a id="post_file" class="submit-btn" href="./_post_form/post.html">POST FORM</a>
                 </div>
 
-                <div class="test-card delete file">
-                    <h3>DELETE Request</h3>
-                    <p class="info">Write the filename to be deleted.</p>
-                    <div class="form-group">
-                        <input id="pathInput" type="text" placeholder="/fichier.txt" />
-                    </div>
-                    <button id="deleteBtn" class="submit-btn" >Delete</button>
-                    <div id="result"></div>
+                <div class="test-card post file">
+                    <h3 id="del">DELETE Request form</h3>
+                    <p class="info">Delete file</p>
+                    <a id="post_file" class="submit-btn delete" href="_delete/delete.html">POST FORM</a>
                 </div>
             </div>
             <h2 id="cgi-test" style="margin-top: 60px;">CGI TEST</h2>
@@ -76,7 +73,7 @@
             <div class="test-grid">
                 <div class="test-card get">
                     <h3>GET Request (Welcome)</h3>
-                    <p>Sends a name and receives a personalized HTML welcome page.</p>
+                    <p class="p">Sends a name and receives a personalized HTML welcome page.</p>
                     <form method="GET" action="script.php">
                         <div class="form-group">
                             <input type="text" name="user_name" placeholder=" " value="Alice" required>
@@ -88,7 +85,7 @@
 
                 <div class="test-card post">
                     <h3>POST Request (Register)</h3>
-                    <p>Registers the name in the log file if it doesn't exist. Receives an HTML page with status.</p>
+                    <p class="p">Registers the name in the log file if it doesn't exist. Receives an HTML page with status.</p>
                     <form method="POST" action="script.php">
                         <div class="form-group">
                             <input type="text" name="user_name" placeholder=" " value="Bob" required>

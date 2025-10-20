@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Delete Test</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --panel:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --danger:#ef4444;
+      --focus:#3b82f6;
+      --success:#22c55e;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: radial-gradient(1200px 800px at 70% -20%, #e2e8f0 0%, var(--bg) 40%), var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    .container{
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .panel{
+      background: var(--panel);
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    }
+    h1{
+      font-size: 2rem;
+      margin: 0 0 32px 0;
+      color: var(--text);
+      text-align: center;
+    }
+    .input-group{
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .text-input{
+      flex: 1;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.15);
+      background: #ffffff;
+      font-size: 16px;
+      transition: border-color .2s;
+    }
+    .text-input:focus{
+      outline: none;
+      border-color: var(--focus);
+    }
+    .text-input::placeholder{
+      color: var(--muted);
+    }
+    .delete-btn{
+      padding: 16px 32px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #ef4444, #dc2626);
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(239,68,68,.3);
+      white-space: nowrap;
+    }
+    .delete-btn:hover{
+      background: linear-gradient(180deg, #dc2626, #b91c1c);
+      box-shadow: 0 6px 18px rgba(239,68,68,.4);
+    }
+    .delete-btn:active{
+      transform: translateY(1px);
+    }
+    .result-box{
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 12px;
+      background: rgba(0,0,0,.02);
+      border: 1px solid rgba(0,0,0,.08);
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 100px;
+      font-size: 14px;
+    }
+    .result-box.success{
+      background: rgba(34,197,94,.05);
+      border-color: rgba(34,197,94,.3);
+      color: var(--success);
+    }
+    .result-box.error{
+      background: rgba(239,68,68,.05);
+      border-color: rgba(239,68,68,.3);
+      color: var(--danger);
+    }
+    .hint{
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 8px;
+      text-align: center;
+    }
+    @media (max-width: 560px){
+      .input-group{
+        flex-direction: column;
+      }
+      .panel{
+        padding: 24px;
+      }
+    }
+
+    .fa-trash {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <h1>Test DELETE</h1>
+      
+      <div class="input-group">
+        <input 
+          type="text" 
+          id="pathInput"
+          class="text-input" 
+          placeholder="Entrez le chemin (ex: /api/users/123)"
+        >
+        <button type="button" id="deleteBtn" class="delete-btn">
+            <i class="fas fa-trash">  </i>
+          DELETE
+        </button>
+      </div>
+      
+      <div class="hint">
+        Envoie une requête DELETE vers le chemin spécifié
+      </div>
+      
+      <div id="result" class="result-box">
+        Résultat...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DELETE button handler for the Simple Test section
+    document.getElementById('deleteBtn').addEventListener('click', function() {
+      var path = document.getElementById('pathInput').value.trim();
+      var resultElement = document.getElementById('result');
+    
+      if (!path) {
+        resultElement.textContent = 'Veuillez entrer un chemin.';
+        resultElement.className = 'result-box error';
+        return;
+      }
+      if (path[0] !== '/') path = '/' + path;
+    
+      var url = window.location.origin + path;
+      resultElement.textContent = 'URL for DELETE : ' + url + '...';
+      resultElement.className = 'result-box';
+    
+      fetch(url, { method: 'DELETE' })
+        .then(resp => resp.text().then(text => {
+          resultElement.textContent = 'Response : ' + resp.status + ' ' + resp.statusText + '\n' + text;
+          resultElement.className = 'result-box success';
+        }))
+        .catch(err => {
+          resultElement.textContent = 'Error !!!\n' + err;
+          resultElement.className = 'result-box error';
+        });
+    });
+
+    // Enter key support
+    document.getElementById('pathInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('deleteBtn').click();
+      }
+    });
+  </script>
+</body>
+</html>

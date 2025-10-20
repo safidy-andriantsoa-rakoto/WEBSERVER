@@ -1,26 +1,4 @@
-// DELETE button handler for the Simple Test section
-document.getElementById('deleteBtn').addEventListener('click', function() {
-    var path = document.getElementById('pathInput').value.trim();
-    var resultElement = document.getElementById('result');
-  
-    if (!path) {
-      resultElement.textContent = 'Veuillez entrer un chemin.';
-      return;
-    }
-    if (path[0] !== '/') path = '/' + path;
-  
-    var url = window.location.origin + path;
-    resultElement.textContent = 'URL for DELETE : ' + url + '...';
-  
-    fetch(url, { method: 'DELETE' })
-      .then(resp => resp.text().then(text => {
-        resultElement.textContent = 'Response : ' + resp.status + ' ' + resp.statusText + '\n' + text;
-      }))
-      .catch(err => {
-        resultElement.textContent = 'Error !!!';
-      });
-  });
-  
+
   // File Upload Handler (Stays here for form submission control)
   async function handleFileUpload(event) {
       event.preventDefault(); // Stop the default form submission
