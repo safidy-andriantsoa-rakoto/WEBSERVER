@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 11:39:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 13:24:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -727,14 +727,13 @@ bool Client::get_pathfile()
 	size_t findFile = _request.get_Body().find("filename=\"");
 	std::string body;
 
-	if (this->filepath.empty())
+	body = _request.get_Body();
+	while (this->filepath.empty())
 	{
-		body = _request.get_Body();
 		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
 		{
 			std::cout << "\e[5m				SEARCH FILE POST PATH\e[0m" << std::endl;
 			size_t endFile = _request.get_Body().find("\n", findFile + 10);
-			// std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
 			std::string filename;
 
 			std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
@@ -747,6 +746,17 @@ bool Client::get_pathfile()
 				return (true);
 			}
 		}
+		else
+		{
+			size_t end = _request.get_Body().find(this->_boundary_sep);
+			if (end != std::string::npos)
+				_request.delete_range_body_request(0, end + this->_boundary_sep.size() + 2);
+			else
+				_request.delete_range_body_request(0, _request.get_Body().size());
+		}	
+		findFile = _request.get_Body().find("filename=\"");
+		if (findFile == std::string::npos)
+			break ;
 	}
 	return (false);
 }
