@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 10:57:46 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 15:38:57 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -499,6 +499,8 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 	std::cout << "\e[5mPOST REQUEST STD\e[0m" << std::endl;
 	opt = EPOLLIN;
 	
+	if (header.find("Transfer-Encoding") != header.end())
+		throw ErrorExcept(501, "Not Implemented");
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
 		std::cout << "			BODY=>" << _request.get_Body() << "<=" << std::endl;
@@ -544,7 +546,7 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 		}
 	}
 	else
-		throw ErrorExcept(400, "Client-side error");
+		throw ErrorExcept(501, "Not implemented");
 }
 
 void Client::cgiPostRequest(int *fd)

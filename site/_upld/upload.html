@@ -124,6 +124,10 @@
     .error{ color: var(--danger); }
     .success{ color: var(--primary); }
 
+    .file-actions{
+      display:flex; gap:8px; align-items:center; justify-content: flex-end;
+    }
+
     footer{
       margin-top:32px; color: var(--muted); font-size: 13px; text-align:center;
     }
@@ -181,8 +185,7 @@
     const list = $('#list');
     const status = $('#status');
 
-    let currentFile = null;
-    let currentXHR = null;
+    let currentFiles = []; // Stocker plusieurs fichiers
 
     function fmtSize(bytes){
       if (bytes === 0) return '0 o';
@@ -199,11 +202,10 @@
     function resetUI(){
       list.innerHTML = '';
       status.textContent = '';
-      currentFile = null;
-      if (currentXHR) { currentXHR.abort(); currentXHR = null; }
+      currentFiles = [];
     }
 
-    function renderItem(file){
+    function renderItem(file, index){
       const extension = (file.name.split('.').pop() || 'file').slice(0,3).toUpperCase();
       const item = document.createElement('div');
       item.className = 'file-item';
@@ -216,13 +218,17 @@
           </div>
         </div>
         <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
-          <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
+          <div class="progress-wrap"><div class="progress" id="progressBar-${index}"></div></div>
+          <div class="file-actions">
+            <button class="btn primary upload-btn" data-index="${index}">Upload</button>
+          </div>
         </div>
       `;
       list.appendChild(item);
       return {
         item,
-        progress: item.querySelector('#progressBar')
+        progress: item.querySelector(`#progressBar-${index}`),
+        uploadBtn: item.querySelector('.upload-btn')
       };
     }
 
@@ -231,14 +237,18 @@
       status.className = 'status' + (type ? ' ' + type : '');
     }
 
-    function upload(file){
-      const { item, progress } = renderItem(file);
+    function upload(file, index){
+      const progress = document.getElementById(`progressBar-${index}`);
+      const uploadBtn = document.querySelector(`.upload-btn[data-index="${index}"]`);
+      
+      // Désactiver le bouton upload
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = 'Upload...';
 
       const form = new FormData();
       form.append('file', file, file.name);
 
       const xhr = new XMLHttpRequest();
-      currentXHR = xhr;
 
       xhr.open('POST', ENDPOINT, true);
 
@@ -255,44 +265,70 @@
             let res = {};
             try { res = JSON.parse(xhr.responseText || '{}'); } catch (e){}
             progress.style.width = '100%';
+            uploadBtn.textContent = '✓ Réussi';
+            uploadBtn.style.background = 'linear-gradient(180deg, #22c55e, #16a34a)';
             setStatus('Upload réussi' + (res.url ? ' • URL: '+res.url : ''), 'success');
           } else if (xhr.status === 0) {
             setStatus('Upload annulé.', 'error');
+            uploadBtn.textContent = 'Échec';
+            uploadBtn.style.background = 'linear-gradient(180deg, #ef4444, #dc2626)';
           } else {
             setStatus('Erreur serveur ('+xhr.status+'): '+ (xhr.responseText || '—'), 'error');
+            uploadBtn.textContent = 'Échec';
+            uploadBtn.style.background = 'linear-gradient(180deg, #ef4444, #dc2626)';
           }
         }
       };
 
       xhr.onerror = () => {
         setStatus('Erreur réseau lors de l\'upload.', 'error');
+        uploadBtn.textContent = 'Échec';
+        uploadBtn.style.background = 'linear-gradient(180deg, #ef4444, #dc2626)';
       };
 
       xhr.send(form);
     }
 
-    // Events
+    // Gestion des événements
     pickBtn.addEventListener('click', () => fileInput.click());
     clearBtn.addEventListener('click', resetUI);
 
     fileInput.addEventListener('change', (e) => {
       if (!e.target.files || !e.target.files[0]) return;
-      resetUI();
-      const file = e.target.files[0];
-      const chk = allowed(file);
-      if (!chk.ok) { setStatus(chk.msg, 'error'); return; }
-      currentFile = file;
-      // Render and auto-upload
-      upload(currentFile);
+      
+      const files = Array.from(e.target.files);
+      files.forEach((file, index) => {
+        const chk = allowed(file);
+        if (!chk.ok) {
+          setStatus(chk.msg, 'error');
+          return;
+        }
+        
+        // Ajouter le fichier à la liste
+        const fileIndex = currentFiles.length;
+        currentFiles.push(file);
+        
+        // Afficher le fichier avec bouton upload
+        const { uploadBtn } = renderItem(file, fileIndex);
+        
+        // Événement pour le bouton upload
+        uploadBtn.addEventListener('click', () => {
+          upload(file, fileIndex);
+        });
+      });
+      
       fileInput.value = '';
+      setStatus(`${files.length} fichier(s) prêt(s) pour l'upload. Cliquez sur "Upload" pour chaque fichier.`, 'success');
     });
 
+    // Gestion du drag and drop
     ;['dragenter','dragover'].forEach(evt => {
       dropzone.addEventListener(evt, (e) => {
         e.preventDefault(); e.stopPropagation();
         dropzone.classList.add('dragover');
       });
     });
+    
     ;['dragleave','drop'].forEach(evt => {
       dropzone.addEventListener(evt, (e) => {
         e.preventDefault(); e.stopPropagation();
@@ -301,14 +337,33 @@
     });
 
     dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
       dropzone.classList.remove('dragover');
-      const file = e.dataTransfer.files && e.dataTransfer.files[0];
-      if (!file) return;
-      resetUI();
-      const chk = allowed(file);
-      if (!chk.ok) { setStatus(chk.msg, 'error'); return; }
-      currentFile = file;
-      upload(currentFile);
+      
+      const files = Array.from(e.dataTransfer.files);
+      if (!files.length) return;
+      
+      files.forEach((file, index) => {
+        const chk = allowed(file);
+        if (!chk.ok) {
+          setStatus(chk.msg, 'error');
+          return;
+        }
+        
+        // Ajouter le fichier à la liste
+        const fileIndex = currentFiles.length;
+        currentFiles.push(file);
+        
+        // Afficher le fichier avec bouton upload
+        const { uploadBtn } = renderItem(file, fileIndex);
+        
+        // Événement pour le bouton upload
+        uploadBtn.addEventListener('click', () => {
+          upload(file, fileIndex);
+        });
+      });
+      
+      setStatus(`${files.length} fichier(s) déposé(s). Cliquez sur "Upload" pour chaque fichier.`, 'success');
     });
 
     // Accessibilité: permettre Enter/Espace pour ouvrir la sélection
