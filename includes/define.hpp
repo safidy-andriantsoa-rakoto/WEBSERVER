@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   define.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 14:13:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:23:17 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 #define _EMPTY_LINE "\n\r\n"
 #define _NB_CLIENT 10
 #define MAX_EVENT 2042
-#define _BUFFER 1000 
+#define _BUFFER 2000 
 #define _BUFFER_RECV 1024
 
 #endif

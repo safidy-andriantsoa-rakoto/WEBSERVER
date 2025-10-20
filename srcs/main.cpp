@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 10:44:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:27:20 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
 /*
+	Check every configFile needed by the program !!!
 	Check every configFile needed by the program !!!
 */
 static void	initProgram()
@@ -42,7 +43,7 @@ int main()
 	{
 		std::cerr << e.what() << std::endl;
 		handler.cleanFdAndAlloc();
-		return 1;
+		return -1;
 	}
 	return 0;
 }

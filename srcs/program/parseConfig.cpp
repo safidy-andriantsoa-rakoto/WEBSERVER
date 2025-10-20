@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parseConfig.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 10:19:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 11:16:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:42:38 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

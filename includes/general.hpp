@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 14:42:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 09:44:56 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@
 #include "typedef.hpp"
 #include "define.hpp"
 #include "enum.hpp"
+#include <sys/time.h>
+#include <ctime>
 
 //Utils
     //fileUtils
@@ -56,6 +58,7 @@ stringMap	splitFileToMapString(std::string const & filePath, std::string const &
 std::string	getFileExtension(std::string const & fileName);
 int         openFile(std::string const & filePath);
 size_t	    getFileSize(std::string const & path);
+DIR*	    openDir(std::string const & dirPath);
 DIR*	    openDir(std::string const & dirPath);
 
     //stringUtils

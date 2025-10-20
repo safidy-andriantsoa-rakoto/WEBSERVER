@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 14:07:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:18:17 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _content_length(0), _c_length_received(0), _isCgi(false)
+Request::Request(): _request_length(0), _autoIdx(false), _content_length(0), _c_length_received(0), _isCgi(false), _is_CRLF_header(false)
 {}
 
 Request::Request(Request const & other)
@@ -38,6 +38,7 @@ Request &Request::operator=(Request const & other)
 		_c_length_received = other._c_length_received;
 		_isCgi = other._isCgi;
 		_cgiParser = other._cgiParser;
+		_is_CRLF_header = other._is_CRLF_header;
 	}
 	return *this;
 }
@@ -245,6 +246,8 @@ void	Request::parseRequest(std::string const & requeststring)
 		headerVect.clear();
 	}
 	setRequestBody(requeststring, pos + sep.size());
+	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")
+		this->_is_CRLF_header = true;
 }
 
 void Request::displayRequest() const
@@ -301,4 +304,26 @@ size_t Request::get_content_length()
 void Request::set_content_length(size_t size)
 {
 	this->_content_length = size;
+}
+
+void Request::delete_range_body_request(int start, int end)
+{
+	if (_body.size() && start > -1 && end > -1 && end > start)
+	{
+		if ((size_t)(end) > _body.size())
+			_body.erase(_body.begin() + start, _body.end());
+		else
+			_body.erase(_body.begin() + start, _body.begin() + end);
+	}
+}
+
+
+void Request::set_is_CRLF_header(bool is_crlf)
+{
+	this->_is_CRLF_header = is_crlf;
+}
+
+bool Request::get_is_CRLF_header()
+{
+    return (this->_is_CRLF_header);
 }

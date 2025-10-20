@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 08:59:15 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:44:31 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,11 @@ const char *Client::RecvError::what() const throw()
 {
 	return ("Error RECV\nget Request from client");
 }
-
+/*
+	If method == POST or DELETE
+	Find "upload" in location or add upload (default) location : Config file (parsing) => TELL TSIKY !!!
+	set request target to root
+*/
 void Client::processRequestWithConfig()
 {
 	vectLocationIt	it;
@@ -472,12 +476,12 @@ void Client::cgiGetRequest(int *fd)
 	}
 }
 
-void Client::post_request(stringMap &header, std::string &boundary, uint32_t & opt, int *fd)
+void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 {
 	if (_request.getIsCgi() == false)
 	{
 		_fdType = STD_FILE;
-		stdPostRequest(header, boundary, opt);
+		stdPostRequest(header, opt);
 		// setSingleResponse(201);
 	}
 	else
@@ -489,72 +493,58 @@ void Client::post_request(stringMap &header, std::string &boundary, uint32_t & o
 	}
 }
 
-void Client::stdPostRequest(stringMap &header, std::string &boundary, uint32_t & opt)
+void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 {
-	int	fdPost = -1;
-	std::string	fullPath;
-
+	
+	std::cout << "\e[5mPOST REQUEST STD\e[0m" << std::endl;
+	opt = EPOLLIN;
+	
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
-		// if (!this->_fileFD)
-		// {
-			fullPath = _request.getRequestTarget() + "/" +  "storage_multi_form_data";
-
-			fdPost = open(fullPath.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fdPost== -1) {
-				perror("open file in POST");
-				throw ErrorExcept(404, "File can't be opened");
+		std::cout << "			BODY=>" << _request.get_Body() << "<=" << std::endl;
+		std::string body;
+		get_bounadary_from_header(header);
+		if (get_pathfile())
+		{
+			std::cout << "\e[5m				SEARCH FILE POST\e[0m->"<< this->filepath << std::endl;
+		}
+		if (this->filepath.size())
+		{
+			while (1)
+			{
+				if (this->filepath.empty())
+					break ;
+				write_in_file_post();
+				if (get_pathfile())
+					continue ;
+				break;
 			}
-			std::cout << "FD FILE->POST Multipart/data=" << fdPost << std::endl; 
-		// }
-		// else
-		// 	fdPost = -1;
-		std::string	getboundary = header.find("Content-Type")->second;
-		size_t pos = getboundary.find(boundary);
-		if (pos != std::string::npos)
-			this->_boundary_sep = getboundary.substr(pos + boundary.size());
-		// std::cout << "|<" << this->_boundary_sep << ">" << std::endl;
-		std::cout << "\nMULTIPART/FORM_DATA" << std::endl;
-		fdPost = -1;
+		}
+		std::cout << "	RECV=" << _request.get_c_length_received() << " / " << _request.get_content_length() << std::endl;
+		if (_request.get_c_length_received() == _request.get_content_length())
+		{
+			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
+			setSingleResponse(201);
+		}
 	}
 	else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 	{
-		std::cout << "\napplication/x-www-form-urlencoded\n" << std::endl;
-		// if (!_fileFD)
-		// {
-			fullPath = _request.getRequestTarget() + "/" +  "storage_app_xwfurlencoded";
-			fdPost = open(fullPath.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fdPost== -1) {
-				perror("open file in POST");
-				throw ErrorExcept(404, "File can't be opened");
-			}
-			std::cout << "FD FILE->POST APP/x-wwwfurlencode=" << fdPost << std::endl; 
-		// }
-		// fdPost = -1;
+		if (_request.get_c_length_received() == _request.get_content_length())
+		{
+			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
+			setSingleResponse(201);
+		}
 	}
 	else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 	{
-		// if (_request.get_Body().find("\r\n\r\n") != std::string::npos)
-		// {
-		// 	std::cout << "			VITA ZANY EEE" << std::endl;	
-		// 	_request.set_is_CRLF_header(false);
-		// }
-		std::cout << "\ntext/plain\n" << std::endl;
-		// if (!_fileFD)
-		// {
-			fullPath = _request.getRequestTarget() + "/" +  "storage_text_plain";
-			fdPost = open(fullPath.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fdPost== -1) {
-				perror("open file in POST");
-				throw ErrorExcept(404, "File can't be opened");
-			}
-			std::cout << "FD FILE->POST text/plain=" << fdPost << std::endl; 
-		// }
-		// fdPost = -1;
+		if (_request.get_c_length_received() == _request.get_content_length())
+		{
+			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
+			setSingleResponse(201);
+		}
 	}
 	else
-		std::cout << "          OAY EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
-	opt = EPOLLIN;
+		throw ErrorExcept(400, "Client-side error");
 }
 
 void Client::cgiPostRequest(int *fd)
@@ -618,6 +608,7 @@ void Client::delete_request()
 	target = _request.getRequestTarget();
 	if (!target.size())
 		throw ErrorExcept(400, "Bad request");
+	std::cout << "\e[5mDELETE REQUEST\e[0m ->"<< target << std::endl;
 	if (stat(target.c_str(), &s_stat) != 0)
 		throw ErrorExcept(403, "Forbidden");
 	if (S_ISREG(s_stat.st_mode))
@@ -633,17 +624,23 @@ void Client::delete_request()
 void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)
 {
 	stringMap	header;
-	std::string boundary;
 
-	boundary = "boundary=";
-	_request.parseRequest(clientRequest);
-	processRequestWithConfig();
+	if (!_request.get_is_CRLF_header())
+	{
+		_request.parseRequest(clientRequest);
+		processRequestWithConfig();
+	}
+	else
+	{
+		_request.set_Body(clientRequest);
+		_request.set_c_length_received(clientRequest.size());
+	}
 	header = _request.getHeader();
 	_request.displayRequest();
 	if (_request.getMethod() == "GET")
 		get_request(opt, fd);
 	else if (_request.getMethod() == "POST")
-		post_request(header, boundary, opt, fd);
+		post_request(header, opt, fd);
 	else if (_request.getMethod() == "DELETE")
 	{
 		delete_request();
@@ -699,15 +696,106 @@ int Client::creat_file_for_post(std::string path, uint32_t & opt)
 	return (fd);
 }
 
+// std::string Client::currentDateTimeString()
+// {
+// 	time_t now = time(0);
+// 	struct tm tstruct;
+// 	char buf[15];
+
+// 	tstruct = *localtime(&now);
+// 	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
+// 	return (buf);
+// }
+
 std::string Client::currentDateTimeString()
 {
-	time_t now = time(0);
-	struct tm tstruct;
-	char buf[15];
-
-	tstruct = *localtime(&now);
-	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
-	return (buf);
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    
+    struct tm tstruct;
+    char buf[20];
+    
+    tstruct = *localtime(&tv.tv_sec);
+    strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
+    std::string result(buf);
+    char msBuf[4];
+    snprintf(msBuf, sizeof(msBuf), "%03d", (int)(tv.tv_usec / 1000));
+    return (result += msBuf);
 }
 
-void Client::switch_modPostFile(bool stat){this->_modPostFile = stat;}
+bool Client::get_pathfile()
+{
+	size_t findFile = _request.get_Body().find("filename=\"");
+	std::string body;
+
+	if (this->filepath.empty())
+	{
+		body = _request.get_Body();
+		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
+		{
+			std::cout << "\e[5m				SEARCH FILE POST PATH\e[0m" << std::endl;
+			size_t endFile = _request.get_Body().find("\n", findFile + 10);
+			// std::cout << "START=" << findFile << " et " << "end=" << endFile << std::endl;
+			std::string filename;
+
+			std::copy(_request.get_Body().begin() + (findFile + 10), _request.get_Body().begin() + (endFile - 2), std::back_inserter(filename));
+			endFile = _request.get_Body().find("\r\n\r\n", endFile);
+			_request.delete_range_body_request(0, endFile + 4);
+			if (filename.size())
+			{
+				this->filepath = _request.getRequestTarget() + "/" + currentDateTimeString() + filename;
+				std::cout << "\n\n\n		PATH=["<< this->filepath <<"]\n\n\n" << std::endl;
+				return (true);
+			}
+		}
+	}
+	return (false);
+}
+
+void Client::get_bounadary_from_header(stringMap &header)
+{
+	if (this->_boundary_sep.empty())
+	{
+		std::string	getboundary = header.find("Content-Type")->second;
+		size_t pos = getboundary.find("boundary=");// get boundary
+		if (pos != std::string::npos)
+		{
+			getboundary.erase(0, pos + 9); 
+			this->_boundary_sep = "--" + getboundary;
+		}
+		std::cout << "		BOUNDARY=" << this->_boundary_sep << std::endl;
+	}
+}
+
+void Client::write_in_file_post()
+{
+	std::string body;
+	size_t		pos;
+	
+	if (this->filepath.size() && _request.get_Body().size())
+	{
+		body = _request.get_Body();
+		std::fstream file(this->filepath.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+		if (file.is_open())
+		{
+			pos = body.find(this->_boundary_sep);
+			if (pos != std::string::npos)
+			{
+				this->filepath.clear();
+				body = body.substr(0 , pos - 2);
+				_request.delete_range_body_request(0, pos + this->_boundary_sep.size() + 2);
+				std::cout << "		\033[43m\e[5mFILE WRITE DONE\033[0m\e[0m" << std::endl;
+			}
+			file << body;
+			if (file.bad() || file.fail())
+			{
+				file.close();
+				throw ErrorExcept(500, "Internal Server Error - Write in file failed");
+			}
+			else
+				file.close();
+		}
+		else
+			throw ErrorExcept(500, "Internal Server Error - Write in file failed");
+	}
+}

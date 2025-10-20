@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 10:27:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:53:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Request
 
 		bool		_isCgi;
 		CgiParser	_cgiParser;
+		bool		_is_CRLF_header;
 
 		void    	setRequestLine(std::string const & set);
 		void		setRequestBody(std::string const & requeststring, size_t const & pos);
@@ -94,6 +95,11 @@ class Request
 
 		size_t 		get_content_length();
 		void 		set_content_length(size_t size);
+
+		void		delete_range_body_request(int start, int end);
+
+		void		set_is_CRLF_header(bool is_crlf);
+		bool		get_is_CRLF_header();
 };
 
 #endif
