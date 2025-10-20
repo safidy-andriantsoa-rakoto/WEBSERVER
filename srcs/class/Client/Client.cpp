@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 10:18:45 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:44:31 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -608,6 +608,7 @@ void Client::delete_request()
 	target = _request.getRequestTarget();
 	if (!target.size())
 		throw ErrorExcept(400, "Bad request");
+	std::cout << "\e[5mDELETE REQUEST\e[0m ->"<< target << std::endl;
 	if (stat(target.c_str(), &s_stat) != 0)
 		throw ErrorExcept(403, "Forbidden");
 	if (S_ISREG(s_stat.st_mode))
@@ -786,7 +787,15 @@ void Client::write_in_file_post()
 				std::cout << "		\033[43m\e[5mFILE WRITE DONE\033[0m\e[0m" << std::endl;
 			}
 			file << body;
-			file.close();
+			if (file.bad() || file.fail())
+			{
+				file.close();
+				throw ErrorExcept(500, "Internal Server Error - Write in file failed");
+			}
+			else
+				file.close();
 		}
+		else
+			throw ErrorExcept(500, "Internal Server Error - Write in file failed");
 	}
 }
