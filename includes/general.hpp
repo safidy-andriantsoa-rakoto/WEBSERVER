@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 08:24:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:46:33 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ std::vector<int> containsExactWordInVector(const std::vector<std::string> &lines
 std::vector<std::string> getContentFile(std::string _path);
 bool        checkDuplicate(stringVect file, std::string name, size_t &start , size_t &end);
 bool        checkConfigDupli(stringVect file, size_t &start, size_t &end);
+bool        checkDuplicateValue(std::vector<Server> allserver,int value);
 
 // dirListing
 stringMap	listingDirectory(DIR* dir, std::string const & path);

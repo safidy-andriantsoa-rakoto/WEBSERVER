@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 14:03:07 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:09:47 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class ALocation
 		stringVect  getRedirect() const;
 		stringVect  getIndex() const;
 
-        // virtual void	myParseLocation(std::string const & locationString) = 0;
+        virtual void	myParseLocation(std::string const & locationString) = 0;
 		virtual void	parseLocation(const stringVect &file) = 0;
 
 		void			displayLocation() const;

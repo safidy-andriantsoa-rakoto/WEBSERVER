@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 11:31:06 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:49:57 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,5 +164,13 @@ void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
 			i++;
 		else
 			return ;
+	}
+}
+
+bool Server::checkDuplicateValue(std::vector<Server> allserver,int value)
+{
+	for(size_t i = 0;  i < allserver.size(); i++)
+	{
+		
 	}
 }

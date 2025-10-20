@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 11:28:43 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:49:30 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -315,6 +315,8 @@ bool checkDuplicate(stringVect file, std::string name, size_t &start, size_t &en
 	}
 	return (false);
 }
+
+
 
 bool checkConfigDupli(stringVect file, size_t &start, size_t &end)
 {
