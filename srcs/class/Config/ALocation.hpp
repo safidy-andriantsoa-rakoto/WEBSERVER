@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ALocation.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 09:27:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:03:07 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class ALocation
 		stringVect	_redirect;
 		stringVect	_index;
 		bool 		_checkStats;
+		size_t 		_endConfig;
 
 
 	public:
@@ -35,6 +36,7 @@ class ALocation
 		ALocation & operator=(ALocation const & other);
 		virtual	~ALocation(){};
 
+		void 		initializeValue(size_t value);
 		std::string	getAutoindex() const;
 		std::string	getLocation() const;
 		std::string	getRootDirectory() const;
@@ -42,7 +44,7 @@ class ALocation
 		stringVect  getRedirect() const;
 		stringVect  getIndex() const;
 
-        virtual void	parseLocation(std::string const & locationString) = 0;
+        // virtual void	myParseLocation(std::string const & locationString) = 0;
 		virtual void	parseLocation(const stringVect &file) = 0;
 
 		void			displayLocation() const;

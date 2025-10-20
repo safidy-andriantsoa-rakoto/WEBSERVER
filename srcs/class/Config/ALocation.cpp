@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ALocation.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:05:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 13:42:18 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,10 @@ stringVect ALocation::getIndex() const
     return _index;
 }
 
+void ALocation::initializeValue(size_t value)
+{
+    _endConfig = value;
+}
 void ALocation::displayLocation() const
 {
     std::cout << _locations << "{ \n";

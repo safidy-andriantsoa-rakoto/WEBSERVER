@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 14:28:34 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:02:12 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,18 +181,18 @@ size_t MyConf::findNotDigitError()
 		i++;
 	}
 	return (checkIndex);
-}
-vectLocation MyConf::createVectLocation(size_t countLocation)
-{
-	vectLocation tabLocation;
-	MyLoc loc;
-	for (size_t i = 0; i < countLocation; ++i)
-	{
-		loc = MyLoc();
-		tabLocation.push_back(loc);
-	}
-	return (tabLocation);
-}
+// }
+// vectLocation MyConf::createVectLocation(size_t countLocation)
+// {
+// 	vectLocation tabLocation;
+// 	MyLoc loc;
+// 	for (size_t i = 0; i < countLocation; ++i)
+// 	{
+// 		loc = MyLoc();
+// 		tabLocation.push_back(loc);
+// 	}
+// 	return (tabLocation);
+// }
 void MyConf::parseConfig(stringVect file)
 {
 	static size_t currentBlock(0), i(0), k(0);
@@ -209,6 +209,7 @@ void MyConf::parseConfig(stringVect file)
 	else
 		end = file.size();
 	_endLocation = end;
+	std::cout << "End location  :=> " << _endLocation << std::endl;
 	if (checkConfigDupli(file, start, end))
 	{
 		_checkStats = false;
@@ -228,6 +229,7 @@ void MyConf::parseConfig(stringVect file)
 	std::cout << "Location size" << _location.size() << std::endl;
 	while (k < _location.size())
 	{
+		_location[k].initializeValue(_endLocation);
 		_location[k].parseLocation(file);
 		if (_location[k].getStatus())
 			k++;

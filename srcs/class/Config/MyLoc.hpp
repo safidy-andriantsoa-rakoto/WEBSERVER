@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyLoc.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 08:14:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:02:29 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,12 @@ class MyLoc : public ALocation
 		MyLoc & operator=(MyLoc const & other);
 		~MyLoc();
 
-		void 	getElemetLocaton(const size_t &start, const size_t &end, const stringVect &file);
+		bool	getStatus();
+		void 	getElementLocation(const size_t &start, const size_t &end, const stringVect &file);
 
-		virtual void	parseLocation(std::string const & filePath);
 		virtual void	parseLocation(const stringVect &file);
-		bool getStatus();
+
+	
 };
 
 #endif

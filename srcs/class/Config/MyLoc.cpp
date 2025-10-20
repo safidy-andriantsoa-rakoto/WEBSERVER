@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 14:22:36 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/20 14:02:07 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,39 +28,39 @@ MyLoc &MyLoc::operator=(MyLoc const &other)
 
 MyLoc::~MyLoc() {}
 
-void MyLoc::parseLocation(std::string const &line)
-{
-    stringVect attr;
-    stringVect elt;
-    std::string topic;
+// void MyLoc::parseLocation(std::string const &line)
+// {
+//     stringVect attr;
+//     stringVect elt;
+//     std::string topic;
 
-    attr = splitString(line, " | ");
-    for (stringVectIt it = attr.begin(); it != attr.end(); it++)
-    {
-        elt = splitString(*it, " ");
-        topic = elt[0];
-        elt.erase(elt.begin());
-        if (topic == "location")
-            _location = elt;
-        if (topic == "root")
-            _root = elt;
-        if (topic == "autoindex")
-            _autoindex = elt;
-        if (topic == "method")
-            _method = elt;
-        if (topic == "redirect")
-            _redirect = elt;
-        if (topic == "index")
-            _index = elt;
-    }
-}
+//     attr = splitString(line, " | ");
+//     for (stringVectIt it = attr.begin(); it != attr.end(); it++)
+//     {
+//         elt = splitString(*it, " ");
+//         topic = elt[0];
+//         elt.erase(elt.begin());
+//         if (topic == "location")
+//             _location = elt;
+//         if (topic == "root")
+//             _root = elt;
+//         if (topic == "autoindex")
+//             _autoindex = elt;
+//         if (topic == "method")
+//             _method = elt;
+//         if (topic == "redirect")
+//             _redirect = elt;
+//         if (topic == "index")
+//             _index = elt;
+//     }
+// }
 
 bool MyLoc::getStatus()
 {
     return (_checkStats);
 }
 
-void MyLoc::getElemetLocaton(const size_t &start, const size_t &end, const stringVect &file)
+void MyLoc::getElementLocation(const size_t &start, const size_t &end, const stringVect &file)
 {
     for (size_t i = start; i < end; ++i)
     {
@@ -96,7 +96,7 @@ void MyLoc::getElemetLocaton(const size_t &start, const size_t &end, const strin
 
 void MyLoc::parseLocation(const stringVect &file)
 {
-    std::cout << "Hello" << std::endl;
+    std::cout << "End LOcation value = > " << _endConfig << std::endl;
     static intVect index = containsExactWordInVector(file, "location");
     // index.clear();
     // std::cout << 
@@ -109,12 +109,18 @@ void MyLoc::parseLocation(const stringVect &file)
     size_t end;
     // std::cout << "current block : " << currentBlock << std::endl;
     if (currentBlock + 1 < index.size())
+    {
         end = index[currentBlock + 1];
+        // if(index[index.size()])
+        //     end = _
+
+    }
+
     else
         end = file.size();
     std::cout << "start = " << start << " ; end = " << end << std::endl;
     // std::cout << "size = " << file.size();
-    getElemetLocaton(start, end, file);
+    getElementLocation(start, end, file);
     currentBlock++;
     _checkStats = true;
 }
