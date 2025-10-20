@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 14:07:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:27:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ class Request
 		std::string	_clientHttp;
 
 		stringMap	_header;
-		// stringMap	_post_body;
 		std::string	_body;
 
 		size_t		_request_length;
