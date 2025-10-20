@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 10:44:31 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/20 10:54:43 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -728,9 +728,9 @@ bool Client::get_pathfile()
 	size_t findFile = _request.get_Body().find("filename=\"");
 	std::string body;
 
-	if (this->filepath.empty())
+	body = _request.get_Body();
+	while (this->filepath.empty())
 	{
-		body = _request.get_Body();
 		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
 		{
 			std::cout << "\e[5m				SEARCH FILE POST PATH\e[0m" << std::endl;
@@ -748,6 +748,17 @@ bool Client::get_pathfile()
 				return (true);
 			}
 		}
+		else
+		{
+			size_t end = _request.get_Body().find(this->_boundary_sep);
+			if (end != std::string::npos)
+				_request.delete_range_body_request(0, end + this->_boundary_sep.size() + 2);
+			else
+				_request.delete_range_body_request(0, _request.get_Body().size());
+		}	
+		findFile = _request.get_Body().find("filename=\"");
+		if (findFile == std::string::npos)
+			break ;
 	}
 	return (false);
 }
