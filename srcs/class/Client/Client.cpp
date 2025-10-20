@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/18 16:15:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/20 08:59:15 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,8 +223,8 @@ void Client::processRequestWithConfig()
 	vectLocationIt	it;
 	std::string		target = _request.getRequestTarget();
 
-	if (_request.getHttp() != "1.1")
-		throw ErrorExcept(505, "Http version not supported");
+	if (_request.getHttp() != "HTTP/1.1")
+		throw ErrorExcept(505, "Http version error");
 	if (target.find(".php", 0) != std::string::npos)
 	{
 		_request.clearCgiClass();
@@ -242,7 +242,6 @@ void Client::processRequestWithConfig()
 		checkContentLength(); //See with POST method [Safidy]
 		it = _config.findClassLocation("/upload");
 		std::string	newTarget = (*it).getRootDirectory();
-
 		if (_request.getMethod() == "DELETE")
 			newTarget += target;
 		_request.setRequestTarget(newTarget);
@@ -408,6 +407,7 @@ void Client::stdGetRequest()
 	}
 	try
 	{
+		/*Parse HEADER accept to check if error 406*/
 		fileContent = readFileToString(filePath);
 		setStatusCodeResponse(200);
 		setRspOriginPath(filePath);
