@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 09:42:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/21 13:56:48 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,14 @@ void    launchServer(Handler & handler)
 	{
 		nb_event = epoll.epoll_wait_event();
 		handler.displayHandlerStat(); //Use for checking error
+		try
+		{
+			handler.check_client_timeout_all();
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
 		for (int i = 0; i < nb_event; i++)
 		{
 			fdEvent = epoll.get_fdEvent(i);

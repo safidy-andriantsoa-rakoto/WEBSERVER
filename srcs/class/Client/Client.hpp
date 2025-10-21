@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/21 09:20:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/21 10:09:10 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class Client : public Server
 		void		delete_request();
 
 		bool		_modPostFile;
+		int			_delay;
 		time_t		_last_time;
 		time_t		_time_now;
 
@@ -134,4 +135,8 @@ class Client : public Server
 		void 			get_bounadary_from_header(stringMap &header);
 		void			write_in_file_post();
 
+		void			set_last_time_activity();
+		void			set_time_activity();
+		bool			is_client_timeout();
+		void			set_delay(int delay);
 };

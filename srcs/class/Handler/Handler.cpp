@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:34:51 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/21 10:59:33 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,4 +243,21 @@ void Handler::displayHandlerStat()
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;
 	std::cout << "========================================== \n";
+}
+
+void Handler::check_client_timeout_all()
+{
+	for (VClientIt it = _vectClient.begin(); it != _vectClient.end(); )
+	{
+		try
+		{
+			(*it).is_client_timeout();
+			++it;
+		}
+		catch (const std::exception & e)
+		{
+			std::cerr << "			Error on client timeout check: " << e.what() << '\n';
+			it = _vectClient.erase(it);
+		}
+	}
 }

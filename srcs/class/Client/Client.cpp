@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/21 09:13:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/21 13:50:59 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	this->_clientRequest= "";
 	this->_to_send = 0;
 	this->_total_send = 0;
+	this->_delay = 0;
+	// this->_time_now = N;
+	// this->_last_time = 0;
 	if (_clientFD < 0)
 		throw std::runtime_error("Client constructor error");
 }
@@ -49,6 +52,9 @@ Client &Client::operator=(const Client &client)
 		this->_client_stat = client._client_stat;
 		this->_boundary_sep = client._boundary_sep;
 		this->_request = client._request;
+		this->_delay = client._delay;
+		this->_last_time = client._last_time;
+		this->_time_now = client._time_now;
 		setPtrCgiFd(client._cgiFD);
 	}
 	return (*this);
@@ -810,4 +816,30 @@ void Client::write_in_file_post()
 		else
 			throw ErrorExcept(500, "Internal Server Error - Write in file failed");
 	}
+}
+
+void Client::set_last_time_activity()
+{
+	this->_last_time = time(NULL);
+}
+
+void Client::set_time_activity()
+{
+	this->_time_now = time(NULL);
+}
+
+bool Client::is_client_timeout()
+{
+	if (difftime(this->_time_now, this->_last_time) > 30)
+	{
+		throw ErrorExcept(408, "Client Timeout");
+		return true;
+	}
+    return false;
+}
+
+void Client::set_delay(int delay)
+{
+	if (delay > 0)
+		this->_delay = delay;
 }
