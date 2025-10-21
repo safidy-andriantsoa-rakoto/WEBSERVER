@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 09:52:57 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/21 09:20:27 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ class Client : public Server
 		void		delete_request();
 
 		bool		_modPostFile;
+		time_t		_last_time;
+		time_t		_time_now;
 
 	public:
 		Client(const Client& client);
