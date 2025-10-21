@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 14:55:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/21 08:35:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	{
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
+		(*it).getObjRequest().setIsChunked(false);
 	}
 	// std::cout << "		Rsp Stat = " << (*it).getResponseStat() << std::endl;
 }

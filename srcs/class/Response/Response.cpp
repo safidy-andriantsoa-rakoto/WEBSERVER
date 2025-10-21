@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 14:54:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/21 07:54:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ void Response::generateChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;
-	chunkingString(_body, _respStat);
+	chunkString(_body, _respStat);
 	_header.clear();
 	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
@@ -225,7 +225,7 @@ void Response::generateCgiChunkedResponse(std::string const & body, stringMap co
 {
 	setStatusLine();
 	_body = body;
-	chunkingString(_body, status);
+	chunkString(_body, status);
 	if (header.size())
 	{
 		_header.clear();

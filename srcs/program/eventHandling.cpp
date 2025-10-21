@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 14:50:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/21 16:06:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,17 +109,14 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	// std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
 	// std::cout << "				******** Buffer CGI END" << std::endl;
 	(*it)->bufferParser();
-	(*it)->displayBufferParsed();
+	(*it)->checkError();
+	// (*it)->displayBufferParsed();
 	if ((*it)->getStatus() == OP_OPEN)
 	{
 		(*it)->setStatus(OP_START);
 		fdCli = (*it)->getClientFd();
 	}
-	// if (bufferString.find(EOF))
-	// {
-		(*it)->checkError();
-		epoll.epoll_update_event(fdCli, EPOLLOUT);
-	// }
+	epoll.epoll_update_event(fdCli, EPOLLOUT);
 }
 
 void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
@@ -129,17 +126,20 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 	vectCgiFdIt	it = handler.getCgiFdIterator(i);
 	VClientIt	clIt = findFdInClient(handler.getVectClient(), (*it)->getClientFd());
 
-	bufferString = (*clIt).getObjRequest().getBody();
 	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
-	// std::cout << "Buffer = " << bufferString << " => " << bufferString.size() << std::endl;
+	bufferString = (*clIt).getObjRequest().getBody();
+	std::cout << "Buffer = " << bufferString << std::endl;
 	bytesWritten = write((*it)->getInputFd(), bufferString.c_str(), bufferString.size());
 	if (bytesWritten <= 0)
 	{
 		std::cout << "Bytewritten = " << bytesWritten << std::endl;
 		/*Check for ERROR in write*/
-		epoll.epoll_clean((*it)->getInputFd());
-		throw std::runtime_error("Write operation error");
+		// epoll.epoll_clean((*it)->getInputFd());
+		// throw std::runtime_error("Write operation error");
+		return ;
 	}
+	if ((*clIt).getObjRequest().getIsChunked() == true && bufferString.find("\r\n") == std::string::npos)
+		return;
 	epoll.epoll_clean((*it)->getInputFd());
 	epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
 	epoll.epoll_control(EPOLLIN, (*it)->getErrFd());

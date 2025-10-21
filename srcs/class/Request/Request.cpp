@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 10:18:17 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/21 17:54:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _content_length(0), _c_length_received(0), _isCgi(false), _is_CRLF_header(false)
+Request::Request(): _request_length(0), _autoIdx(false), _isChunked(false), _content_length(0), _c_length_received(0), _isCgi(false), _is_CRLF_header(false)
 {}
 
 Request::Request(Request const & other)
@@ -33,6 +33,7 @@ Request &Request::operator=(Request const & other)
 		_body = other._body;
 		_request_length = other._request_length;
 		_autoIdx = other._autoIdx;
+		_isChunked = other._isChunked;
 		_multipart_body = other._multipart_body;
 		_content_length = other._content_length;
 		_c_length_received = other._c_length_received;
@@ -83,6 +84,16 @@ bool Request::getIsCgi() const
 void Request::setIsCgi(bool const &condition)
 {
 	_isCgi = condition;
+}
+
+bool Request::getIsChunked() const
+{
+    return _isChunked;
+}
+
+void Request::setIsChunked(bool const &stat)
+{
+	_isChunked = stat;
 }
 
 CgiParser Request::getCgiClass() const
@@ -205,17 +216,25 @@ void	Request::setRequestBody(std::string const & requeststring, size_t const & p
 	std::string	content;
 	stringMapIt	it;
 
-	length = 0;
-	it = _header.find("Content-Length");
-	if (it == _header.end())
-		return ;
-	length = atoi((*it).second.c_str());
+	if (_isChunked == true)
+	{
+		// size_t posEnd = requeststring.find_last_of("\r\n");
+		length = requeststring.size() - pos;
+	}
+	else
+	{
+		length = 0;
+		it = _header.find("Content-Length");
+		if (_isChunked ==false && it == _header.end())
+			return ;
+		length = atoi((*it).second.c_str());
+	}
 	content = requeststring.substr(pos, static_cast<size_t>(length));
 	_body = content;//alana @zay eee
 	_c_length_received += content.size();
 	_content_length = length;
-	
-	std::cout << "\nCONTENT_LENGTH=" << _content_length << " received =" << content.size() << "\n"<< std::endl;
+	std::cout << "\nBODY=\n" << _body << "\n"<< std::endl;
+	// std::cout << "\nCONTENT_LENGTH=" << _content_length << " \nreceived =" << content.size() << "\n"<< std::endl;
 }
 
 void	Request::parseRequest(std::string const & requeststring)
@@ -244,6 +263,12 @@ void	Request::parseRequest(std::string const & requeststring)
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();
+	}
+	stringMapIt	itMap = _header.find("Transfer-Encoding");
+	if (itMap != _header.end() && (*itMap).second == "chunked")
+	{
+		std::cout << "		TRANSFER ENCODING ON\n" << std::endl;
+		_isChunked = true;
 	}
 	setRequestBody(requeststring, pos + sep.size());
 	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")

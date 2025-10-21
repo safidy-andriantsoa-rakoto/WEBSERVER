@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:27:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/21 18:25:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
 /*
-	Check every configFile needed by the program !!!
 	Check every configFile needed by the program !!!
 */
 static void	initProgram()

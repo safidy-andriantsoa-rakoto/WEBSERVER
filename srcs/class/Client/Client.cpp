@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 14:05:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/21 17:58:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,18 +232,24 @@ void Client::processRequestWithConfig()
 	if (target.find(".php", 0) != std::string::npos)
 	{
 		_request.clearCgiClass();
+		if (_request.getIsChunked() == true)
+		{
+			// std::cout << "------------------UNCHUNK BODY" << std::endl;
+			std::string	unchunkedBody = unchunkString(_request.getBody());
+			_request.set_Body(unchunkedBody);
+		}
 		_request.setIsCgi(true);
 		it = _config.findClassLocation(".php");
 		processLocationOption(*it, _request);
 		_request.processCgiClass(target, (*it).getRootDirectory());
-		target = (*it).getRootDirectory() + target; //Review if request target needed ? normaly done during parsing Cgi
+		target = (*it).getRootDirectory() + target;
 		_request.setRequestTarget(target);
 		return;
 	}
 	_request.setIsCgi(false);
 	if (_request.getMethod() == "POST" || _request.getMethod() == "DELETE")
 	{
-		checkContentLength(); //See with POST method [Safidy]
+		checkContentLength();
 		it = _config.findClassLocation("/upload");
 		std::string	newTarget = (*it).getRootDirectory();
 		if (_request.getMethod() == "DELETE")
@@ -486,8 +492,11 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 	{
 		opt = EPOLLIN;
 		_fdType = POST_PHP_SCRIPT;
-		cgiPostRequest(fd);
-		setStatusCodeResponse(200);
+		if (!_cgiFD)
+		{
+			cgiPostRequest(fd);
+			setStatusCodeResponse(200);
+		}
 	}
 }
 
@@ -622,7 +631,8 @@ void Client::delete_request()
 void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)
 {
 	stringMap	header;
-
+	
+	std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << std::endl;
 	if (!_request.get_is_CRLF_header())
 	{
 		_request.parseRequest(clientRequest);
@@ -630,8 +640,17 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	}
 	else
 	{
-		_request.set_Body(clientRequest);
-		_request.set_c_length_received(clientRequest.size());
+		std::string	newBody;
+		if (_request.getMethod() == "POST" && _request.getIsChunked() == true)
+		{
+			newBody = unchunkString(clientRequest);
+			std::cout << "		ADD BODY TO POST CHUNKED\n" << newBody << std::endl;
+			_request.set_Body(newBody);
+			_request.set_c_length_received(newBody.size());
+			return ;
+		}
+		_request.set_Body(newBody);
+		_request.set_c_length_received(newBody.size());
 	}
 	header = _request.getHeader();
 	_request.displayRequest();
