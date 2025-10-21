@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 14:21:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/21 18:42:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,11 @@ void CgiParser::setReqMethod(std::string const &method)
 void CgiParser::setContentLength(size_t const &length)
 {
 	_contentLength = length;
+}
+
+std::string CgiParser::getScriptFileName() const
+{
+    return _scriptFileName;
 }
 
 void CgiParser::clearCgiClass()

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:11:42 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 14:08:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/21 18:42:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ class CgiParser
 
 		void	setReqMethod(std::string const & method);
 		void	setContentLength(size_t const & length);
+
+		std::string	getScriptFileName() const;
 
 		void	clearCgiClass();
 

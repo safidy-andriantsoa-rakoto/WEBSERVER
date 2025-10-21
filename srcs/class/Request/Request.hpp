@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 08:19:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/21 18:43:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ class Request
 		bool		getIsChunked() const;
 		void		setIsChunked(bool const & stat);
 
-		CgiParser	getCgiClass() const;
+		CgiParser	getCgiParser() const;
 		void		processCgiClass(std::string const & target, std::string const & rootDirectory);
 		void		setCgiClass(CgiParser const & cgi);
 		void		execCgiClass();

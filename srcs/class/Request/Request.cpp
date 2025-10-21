@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 17:54:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/21 18:43:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void Request::setIsChunked(bool const &stat)
 	_isChunked = stat;
 }
 
-CgiParser Request::getCgiClass() const
+CgiParser Request::getCgiParser() const
 {
     return _cgiParser;
 }

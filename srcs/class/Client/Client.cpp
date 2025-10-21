@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/21 17:58:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/21 18:43:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,7 @@ void Client::processRequestWithConfig()
 		it = _config.findClassLocation(".php");
 		processLocationOption(*it, _request);
 		_request.processCgiClass(target, (*it).getRootDirectory());
-		target = (*it).getRootDirectory() + target;
+		target = _request.getCgiParser().getScriptFileName();
 		_request.setRequestTarget(target);
 		return;
 	}
@@ -632,7 +632,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 {
 	stringMap	header;
 	
-	std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << std::endl;
+	// std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << std::endl;
 	if (!_request.get_is_CRLF_header())
 	{
 		_request.parseRequest(clientRequest);
