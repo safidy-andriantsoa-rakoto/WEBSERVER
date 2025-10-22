@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 14:22:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 14:28:09 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	int			fdCli = (*it).get_clientFD();
 	
 	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
-	{
 		manageRequestFromClient(it, fdCli, epoll, handler);
-		std::cout << "-----------------CRLF HEADER MANAGE = " << (*it).getObjRequest().get_is_CRLF_header() << std::endl;
-	}
 	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
 		sendingResponseToClient(it, fdCli, epoll);
 	else
