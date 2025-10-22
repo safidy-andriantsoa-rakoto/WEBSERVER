@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AConfig.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 09:55:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:44:23 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ AConfig::AConfig(){}
 
 AConfig::AConfig(AConfig const &other) : 
 	_port(other._port),
+	_ports(other._ports),
 	_maxSize(other._maxSize),
 	_host(other._host),
 	_serverName(other._serverName),
@@ -29,6 +30,7 @@ AConfig &AConfig::operator=(AConfig const &other)
     if (this != &other)
     {
         _port       = other._port;
+		_ports  = other._ports;
         _maxSize    = other._maxSize;
         _host       = other._host;
         _serverName = other._serverName;
@@ -44,6 +46,12 @@ int AConfig::getServPort() const
 {
 	return _port;
 }
+
+intVect AConfig::getServerPort() const
+{
+	return _ports;
+}
+
 
 float	AConfig::getMaxSize() const
 {

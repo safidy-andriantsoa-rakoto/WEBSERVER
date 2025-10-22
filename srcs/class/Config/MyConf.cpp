@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 14:34:01 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:42:45 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,12 @@ void MyConf::displayConfig() const
 {
 	std::cout << "------------------------------------------" << std::endl;
 	std::cout << "Host " << _host << std::endl
-			  << "Port " << _port << std::endl;
+	 << "Port ";
+	for(size_t i = 0; i < _ports.size() ; i++)
+	{
+		std::cout << _ports[i] << " ";
+	}
+	std::cout << std::endl;
 	if (_serverName.size())
 		displayStringVect(_serverName, "Server name");
 	if (_errPage.listError.size())
@@ -129,8 +134,10 @@ void MyConf::getElemetConfig(const size_t &start, const size_t &end, const strin
 			{
 				if (name == "host")
 					_host = word;
+				// if(name == "port")
+				// 	_port = atoi(word.c_str());
 				if (name == "port")
-					_port = atoi(word.c_str());
+					_ports.push_back(atoi(word.c_str())); 
 				if (name == "server_names")
 					_serverName.push_back(word);
 				if (name == "size")

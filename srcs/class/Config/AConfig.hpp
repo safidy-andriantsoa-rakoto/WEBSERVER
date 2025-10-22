@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AConfig.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 08:19:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:43:43 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ class AConfig
 {
 	protected:
 
-		int				_port;
+		int 			_port;
+		intVect			_ports;
 		float			_maxSize;
 		std::string		_host;
 		stringVect		_serverName;
@@ -51,6 +52,7 @@ class AConfig
 		AConfig &		operator=(AConfig const &other);
 
 		int				getServPort() const;
+		intVect			getServerPort() const;
 		float			getMaxSize() const;
 		std::string		getServHost() const;
 		stringVect		getServName() const;
