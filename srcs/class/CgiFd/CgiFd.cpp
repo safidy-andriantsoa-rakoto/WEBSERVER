@@ -17,7 +17,7 @@ CgiFd::CgiFd(){}
 CgiFd::CgiFd(int const &CgiFd, int const &clientFd) : 
 	_outputFd(CgiFd),
 	_clientFd(clientFd),
-	_status(OP_OPEN)
+	_readStat(OP_OPEN)
 	{
 		_isError = false;
 		_isHeader = false;
@@ -29,8 +29,9 @@ CgiFd::CgiFd(int const &outputFd, int const & errorFd, int const & inputFd, int 
 	_errorFd(errorFd),
 	_inputFd(inputFd),
 	_clientFd(clientFd),
-	_status(OP_OPEN)
+	_readStat(OP_OPEN)
 	{
+		_writeStat = OP_START;
 		_isError = false;
 		_isHeader = false;
 		_statusCode = -1;
@@ -49,13 +50,16 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 		_outputFd = other._outputFd;
 		_errorFd = other._errorFd;
 		_inputFd = other._inputFd;
-		_buffer = other._buffer;
-		_status = other._status;
+		_bufferRead = other._bufferRead;
+		_readStat = other._readStat;
 		_isError = other._isError;
 		_statusCode = other._statusCode;
 		_isHeader = other._isHeader;
 		_header = other._header;
 		_body = other._body;
+		_bufferWrite = other._bufferWrite;
+		_writeStat = other._writeStat;
+		_pos = other._pos;
 	}
 	return *this;
 }
@@ -89,17 +93,17 @@ int CgiFd::getClientFd() const
 
 std::string CgiFd::getBuffer() const
 {
-    return _buffer;
+    return _bufferRead;
 }
 
-int CgiFd::getStatus() const
+int CgiFd::getReadStat() const
 {
-    return _status;
+    return _readStat;
 }
 
-void CgiFd::setStatus(int const &status)
+void CgiFd::setReadStat(int const &status)
 {
-	_status = status;
+	_readStat = status;
 }
 
 bool CgiFd::getIsError() const
@@ -112,12 +116,12 @@ void CgiFd::setIsError(bool const &stat)
 	_isError = stat;
 }
 
-void CgiFd::setBuffer(std::string const &content)
+void CgiFd::setBufferRead(std::string const &content)
 {
-	_buffer = content;
+	_bufferRead = content;
 }
 
-void CgiFd::bufferParser()
+void CgiFd::bufferReadParser()
 {
 	size_t		pos;
 	size_t		startPos;
@@ -129,29 +133,29 @@ void CgiFd::bufferParser()
 	_body.clear();
 	if (_isHeader == true)
 	{
-		_body = _buffer;
+		_body = _bufferRead;
 		return;
 	}
 	startPos = 0;
 	pos = 0;
 	while (pos != std::string::npos)
 	{
-		pos = _buffer.find(sep, startPos);
+		pos = _bufferRead.find(sep, startPos);
 		if (pos == startPos)
 			break ;
-		line = _buffer.substr(startPos, pos - startPos);
+		line = _bufferRead.substr(startPos, pos - startPos);
 		headerVect = strictSplit(line, ": ");
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();
 	}
 	_isHeader = true;
-	_body = _buffer.substr(pos, _buffer.size() - pos);
+	_body = _bufferRead.substr(pos, _bufferRead.size() - pos);
 }
 
-void CgiFd::clearBuffer()
+void CgiFd::clearBufferRead()
 {
-	_buffer.clear();
+	_bufferRead.clear();
 	_body.clear();
 	_header.clear();
 }
@@ -159,6 +163,36 @@ void CgiFd::clearBuffer()
 std::string CgiFd::getBody() const
 {
     return _body;
+}
+
+std::string CgiFd::getBufferWrite() const
+{
+    return _bufferWrite;
+}
+
+void CgiFd::setBufferWrite(std::string const &buff)
+{
+	_bufferWrite = buff;
+}
+
+int CgiFd::getWriteStat() const
+{
+    return _writeStat;
+}
+
+void CgiFd::setWriteStat(int const &stat)
+{
+	_writeStat = stat;
+}
+
+size_t CgiFd::getPos() const
+{
+    return _pos;
+}
+
+void CgiFd::setPos(size_t const &position)
+{
+	_pos = position;
 }
 
 stringMap CgiFd::getHeader() const
@@ -186,7 +220,7 @@ void CgiFd::setIsHeader(bool const &stat)
 	_isHeader = stat;
 }
 
-void CgiFd::displayBufferParsed() const
+void CgiFd::displayBufferReadParsed() const
 {
 	std::cout << "\033[44m==================BUFFER PARSING==================" << std::endl
 	<< "==== Header field ===" << std::endl;
@@ -209,4 +243,23 @@ void CgiFd::checkError()
 	vect = splitString(tmp, " ");
 	statusCode = convertStringToInt(vect[0]);
 	throw ErrorExcept(statusCode, "Error from cgi after check error");
+}
+
+std::string CgiFd::getBufferToWrite()
+{
+	std::string content;
+	size_t		actualPos;
+
+	if (_writeStat == OP_START)
+		_pos = 0;
+	actualPos = _pos;
+	content = divideStringBySize(_bufferWrite, actualPos, _BUFFER);
+	actualPos += _BUFFER;
+	if (actualPos > _bufferWrite.size())
+	{
+		_writeStat = OP_CLOSE;
+		actualPos = 0;
+	}
+	_pos = actualPos;
+    return content;
 }

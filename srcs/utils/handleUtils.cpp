@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handleUtils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:39:56 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 10:46:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int c
 	else if ((*it).getFdType() == POST_PHP_SCRIPT)
 	{
 		handler.addToVectCgiFd(it, fd[FD_STDOUT], fd[FD_STDERR], fd[FD_STDIN]);
-		epoll.epoll_control(EPOLLOUT, fd[FD_STDIN]);
+		// epoll.epoll_control(EPOLLOUT, fd[FD_STDIN]);
 	}
 }
 

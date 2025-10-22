@@ -6,13 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 18:43:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 10:56:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 
-Request::Request(): _request_length(0), _autoIdx(false), _isChunked(false), _content_length(0), _c_length_received(0), _isCgi(false), _is_CRLF_header(false)
+Request::Request(): _request_length(0), _autoIdx(false), _isChunked(false), _isEOF(false), _content_length(0), _c_length_received(0), _isCgi(false), _is_CRLF_header(false)
 {}
 
 Request::Request(Request const & other)
@@ -34,6 +34,7 @@ Request &Request::operator=(Request const & other)
 		_request_length = other._request_length;
 		_autoIdx = other._autoIdx;
 		_isChunked = other._isChunked;
+		_isEOF = other._isEOF;
 		_multipart_body = other._multipart_body;
 		_content_length = other._content_length;
 		_c_length_received = other._c_length_received;
@@ -96,6 +97,16 @@ void Request::setIsChunked(bool const &stat)
 	_isChunked = stat;
 }
 
+bool Request::getIsEOF() const
+{
+    return _isEOF;
+}
+
+void Request::setIsEOF(bool const &stat)
+{
+	_isEOF = stat;
+}
+
 CgiParser Request::getCgiParser() const
 {
     return _cgiParser;
@@ -106,6 +117,9 @@ void Request::processCgiClass(std::string const &target, std::string const & roo
 	_cgiParser.parseCgiEnv(target, rootDirectory);
 	_cgiParser.setReqMethod(_method);
 	_cgiParser.setContentLength(_body.size());
+	stringMapIt it = _header.find("Content-Type");
+	if (it != _header.end())
+		_cgiParser.setContentType((*it).second);
 	if (_method == "GET")
 		_cgiParser.configGetEnvp();
 	else
@@ -210,7 +224,7 @@ void Request::setRequestLine(std::string const & replacement)
 	_originalRequestTarget = _requestTarget;
 }
 
-void	Request::setRequestBody(std::string const & requeststring, size_t const & pos)
+void	Request::addRequestBody(std::string const & requeststring, size_t const & pos)
 {
 	int			length;
 	std::string	content;
@@ -233,7 +247,7 @@ void	Request::setRequestBody(std::string const & requeststring, size_t const & p
 	_body = content;//alana @zay eee
 	_c_length_received += content.size();
 	_content_length = length;
-	std::cout << "\nBODY=\n" << _body << "\n"<< std::endl;
+	// std::cout << "\nBODY=\n" << _body << "\n"<< std::endl;
 	// std::cout << "\nCONTENT_LENGTH=" << _content_length << " \nreceived =" << content.size() << "\n"<< std::endl;
 }
 
@@ -270,7 +284,7 @@ void	Request::parseRequest(std::string const & requeststring)
 		std::cout << "		TRANSFER ENCODING ON\n" << std::endl;
 		_isChunked = true;
 	}
-	setRequestBody(requeststring, pos + sep.size());
+	addRequestBody(requeststring, pos + sep.size());
 	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")
 		this->_is_CRLF_header = true;
 }

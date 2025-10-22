@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 18:43:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 10:56:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Request
 		size_t		_request_length;
 		bool		_autoIdx;
 		bool		_isChunked;
+		bool		_isEOF;
 
 		//for post
 		MapSVectStr	_multipart_body;
@@ -42,7 +43,7 @@ class Request
 		bool		_is_CRLF_header;
 
 		void    	setRequestLine(std::string const & set);
-		void		setRequestBody(std::string const & requeststring, size_t const & pos);
+		void		addRequestBody(std::string const & requeststring, size_t const & pos);
 
 	public:
 		Request();
@@ -63,6 +64,9 @@ class Request
 
 		bool		getIsChunked() const;
 		void		setIsChunked(bool const & stat);
+
+		bool		getIsEOF() const;
+		void		setIsEOF(bool const & stat);
 
 		CgiParser	getCgiParser() const;
 		void		processCgiClass(std::string const & target, std::string const & rootDirectory);

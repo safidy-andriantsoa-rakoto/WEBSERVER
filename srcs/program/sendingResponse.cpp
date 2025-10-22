@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 08:35:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:27:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		rspString = (*it).getBodyResponse() + "\r\n";
 	else
 		rspString = (*it).getFullResponse();
-	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
-	// std::cout << rspString << std::endl;
+	// std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
+	std::cout << rspString << std::endl;
 	send_value(fdCli, rspString);
 	if ((*it).getResponseStat() == OP_START)
 		(*it).setResponseStat(OP_ONGOING);
@@ -64,8 +64,11 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
         return;
     }
     std::cout << "\033[35mSending cgi chunked response to " << fdCli << " with status = " << cgiStatus << "\033[0m"<< std::endl;
-	std::string	type = (*it).getPtrCgiFd()->getHeader()["Content-Type"];
-	(*it).getObjResponse().setType(type);
+	if (cgiStatus == OP_START)
+	{
+		std::string	type = (*it).getPtrCgiFd()->getHeader()["Content-type"];
+		(*it).getObjResponse().setType(type);
+	}
 	(*it).setCgiChunkedResponse();
 	if (cgiStatus == OP_ONGOING || cgiStatus == OP_CLOSE)
 		rspString = (*it).getBodyResponse() + "\r\n";
@@ -73,7 +76,7 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		rspString = (*it).getFullResponse();
 	std::cout <<"\e[45mCgi response sent : \n" << rspString << "\e[0m" << std::endl;
 	send_value(fdCli, rspString);
-    (*it).getPtrCgiFd()->clearBuffer();
+    (*it).getPtrCgiFd()->clearBufferRead();
 	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)
 	{
         epoll.epoll_update_event(fdCli, EPOLLIN);
@@ -93,7 +96,7 @@ void send_value(int const & _acceptStatus, std::string & _send_content)
     size_t to_send = _send_content.size();
 
     // std::cout << "Size to send = " << _send_content.size() << std::endl;
-    // std::cout << "Sent = " << _send_content << std::endl;
+    std::cout << "Sent = " << _send_content << std::endl;
     if (_acceptStatus < 0)
         throw std::runtime_error("Invalid fd to send");
     const char *resp =  _send_content.c_str();

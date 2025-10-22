@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 18:25:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 10:48:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void	initProgram()
 	Response::initAllStatusCode(STAT_PATH);
 	Mime::initMapMime(MIME_PATH);
 	LDirExcept::initPart(LDIR_PATH);
-	CgiParser::initCgiConfig(CGI_GET_PATH, CGI_POST_PATH, CGI_ERR_PATH);
+	CgiParser::initCgiConfig(CGI_GET_PATH, CGI_POST_PATH);
 	int fd = openFile(ERR_PATH);
 	close(fd);
 	DIR *dir = openDir(UPLOAD_PATH);
@@ -37,6 +37,7 @@ int main()
 		vectServer	allServer = myParseConfigFile();
 		handler.setVectServer(allServer);
 		launchServer(handler);
+		handler.cleanFdAndAlloc();
 	}
 	catch(const std::exception & e)
 	{

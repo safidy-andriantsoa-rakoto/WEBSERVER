@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiFd.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:29:14 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:30:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,19 @@ class CgiFd
 		int			_errorFd;
 		int			_inputFd;
 		int			_clientFd;
-		int			_status;
 
 		bool		_isError;
 
-		std::string	_buffer;
+		int			_readStat;
+		std::string	_bufferRead;
 		int			_statusCode;
 		stringMap	_header;
 		bool		_isHeader;
 		std::string	_body;
+
+		std::string	_bufferWrite;
+		int			_writeStat;
+		size_t		_pos;
 
 		CgiFd();
 
@@ -49,17 +53,26 @@ class CgiFd
 		int			getInputFd() const;
 		int			getClientFd() const;
 		std::string	getBuffer() const;
-		int			getStatus() const;
-		void		setStatus(int const & status);
+		int			getReadStat() const;
+		void		setReadStat(int const & status);
 
 		bool		getIsError() const;
 		void		setIsError(bool const & stat);
 
-		void		setBuffer(std::string const & content);
-		void		bufferParser();
-		void		clearBuffer();
+		void		setBufferRead(std::string const & content);
+		void		bufferReadParser();
+		void		clearBufferRead();
 
 		std::string	getBody() const;
+
+		std::string	getBufferWrite() const;
+		void		setBufferWrite(std::string const & buff);
+
+		int			getWriteStat() const;
+		void		setWriteStat(int const & stat);
+
+		size_t		getPos() const;
+		void		setPos(size_t const & position);
 
 		stringMap	getHeader() const;
 
@@ -69,9 +82,11 @@ class CgiFd
 		bool		getIsHeader();
 		void		setIsHeader(bool const & stat);
 	
-		void		displayBufferParsed() const;
+		void		displayBufferReadParsed() const;
 
 		void		checkError();
+
+		std::string	getBufferToWrite();
 };
 
 #endif

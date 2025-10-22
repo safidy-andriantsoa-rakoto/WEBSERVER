@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/21 18:43:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:25:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void Client::setChunkedResponse()
 void Client::setCgiChunkedResponse()
 {
 	if (_cgiFD)
-		_response.generateCgiChunkedResponse(_cgiFD->getBody(), _cgiFD->getHeader(), _cgiFD->getStatus());
+		_response.generateCgiChunkedResponse(_cgiFD->getBody(), _cgiFD->getHeader(), _cgiFD->getReadStat());
 }
 
 void Client::setSingleResponse(int const &statusCode)
@@ -169,9 +169,9 @@ void Client::clearPtrCgiFd()
 	_cgiFD = NULL;
 }
 
-int Client::getCgiFdStatus(){return _cgiFD->getStatus();}
+int Client::getCgiFdStatus(){return _cgiFD->getReadStat();}
 
-void Client::updateCgiFdStatus(int const &status){_cgiFD->setStatus(status);}
+void Client::updateCgiFdStatus(int const &status){_cgiFD->setReadStat(status);}
 
 Response & Client::getObjResponse(){return (this->_response);}
 
@@ -232,11 +232,12 @@ void Client::processRequestWithConfig()
 	if (target.find(".php", 0) != std::string::npos)
 	{
 		_request.clearCgiClass();
-		if (_request.getIsChunked() == true)
+		if (_request.getIsChunked() == true && _request.getBody().find("0\r\n") != std::string::npos)
 		{
 			// std::cout << "------------------UNCHUNK BODY" << std::endl;
 			std::string	unchunkedBody = unchunkString(_request.getBody());
 			_request.set_Body(unchunkedBody);
+			_request.setIsEOF(true);
 		}
 		_request.setIsCgi(true);
 		it = _config.findClassLocation(".php");
@@ -304,17 +305,17 @@ void Client::buildRequestTarget()
 		return ;
 	}
 	loc = _config.getClassLocation();
-	if (target.find(".php", 0) != std::string::npos)
-	{
-		_request.clearCgiClass();
-		_request.setIsCgi(true);
-		it = _config.findClassLocation(".php");
-		processLocationOption(*it, _request);
-		_request.processCgiClass(target, (*it).getRootDirectory());
-		target = (*it).getRootDirectory() + target; //Review if request target needed ? normally done during parsing Cgi
-	}
-	else
-	{
+	// if (target.find(".php", 0) != std::string::npos)
+	// {
+	// 	_request.clearCgiClass();
+	// 	_request.setIsCgi(true);
+	// 	it = _config.findClassLocation(".php");
+	// 	processLocationOption(*it, _request);
+	// 	_request.processCgiClass(target, (*it).getRootDirectory());
+	// 	target = (*it).getRootDirectory() + target; //Review if request target needed ? normally done during parsing Cgi
+	// }
+	// else
+	// {
 		it = findLongestMatch(target, loc);
 		processLocationOption(*it, _request);
 		std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
@@ -322,7 +323,7 @@ void Client::buildRequestTarget()
 			target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 		else
 			target = (*it).getRootDirectory() + target;
-	}
+	// }
 	_request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
 }
@@ -494,6 +495,7 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 		_fdType = POST_PHP_SCRIPT;
 		if (!_cgiFD)
 		{
+			std::cout << "		PARSE CGI\n" << std::endl;
 			cgiPostRequest(fd);
 			setStatusCodeResponse(200);
 		}
@@ -632,25 +634,36 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 {
 	stringMap	header;
 	
-	// std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << std::endl;
+	// std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
 	if (!_request.get_is_CRLF_header())
 	{
 		_request.parseRequest(clientRequest);
 		processRequestWithConfig();
+		_request.setIsEOF(false);
 	}
 	else
 	{
-		std::string	newBody;
-		if (_request.getMethod() == "POST" && _request.getIsChunked() == true)
+		std::string	body;
+		if (_request.getIsCgi() == true)
 		{
-			newBody = unchunkString(clientRequest);
-			std::cout << "		ADD BODY TO POST CHUNKED\n" << newBody << std::endl;
-			_request.set_Body(newBody);
-			_request.set_c_length_received(newBody.size());
-			return ;
+			body = _request.getBody() + clientRequest;
+			/*UNCHUNK WHEN ALL THE BODY IS HERE*/
+			if (_request.getIsChunked() == true && body.find("0\r\n") != std::string::npos)
+			{
+				std::string	newBody;
+				std::cout << "		BODY\n" << body << std::endl;
+				newBody = unchunkString(body);
+				std::cout << "		NEW BODY\n" << newBody << std::endl;
+				_request.set_Body(newBody);
+				_request.set_c_length_received(newBody.size());
+				_request.setIsEOF(true);
+				return ;
+			}
 		}
-		_request.set_Body(newBody);
-		_request.set_c_length_received(newBody.size());
+		else
+			body = clientRequest;
+		_request.set_Body(body);
+		_request.set_c_length_received(body.size());
 	}
 	header = _request.getHeader();
 	_request.displayRequest();
