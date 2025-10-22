@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 10:18:17 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:43:11 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,7 +252,7 @@ void	Request::parseRequest(std::string const & requeststring)
 
 void Request::displayRequest() const
 {
-	std::cout << "\033[44m==================REQUEST PARSING==================" << std::endl
+	std::cout << "\033[2J\033[H\033[44m==================REQUEST PARSING==================" << std::endl
 	<< "==== Request Line ===" << std::endl;
 	std::cout << "Method = ["<< _method << "]" << std::endl
 	<< "Request target = [" << _requestTarget << "]" << std::endl
@@ -267,7 +267,7 @@ void Request::displayRequest() const
 void Request::displayRequestMultipartData()
 {
 
-	std::cout << "==============================MULTIPARTDATA================================" << std::endl;
+	std::cout << "\033[2J\033[H==============================MULTIPARTDATA================================" << std::endl;
 	for (MapSVectStrIt it = _multipart_body.begin(); it != _multipart_body.end(); it++)
 	{
 		std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;

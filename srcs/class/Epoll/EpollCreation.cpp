@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/22 10:04:50 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 11:25:56 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int EpollCreation::get_fdEvent(int index)
 
 int EpollCreation::epoll_wait_event()
 {
-    int _nb = epoll_wait(this->efds, this->max_event, MAX_EVENT, 5000);
+    int _nb = epoll_wait(this->efds, this->max_event, MAX_EVENT, 1000);
     if (_nb < 0)
     {
         std::string error(strerror(errno));
