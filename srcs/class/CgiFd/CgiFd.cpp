@@ -245,7 +245,7 @@ void CgiFd::checkError()
 	throw ErrorExcept(statusCode, "Error from cgi after check error");
 }
 
-std::string CgiFd::getBufferToWrite()
+std::string CgiFd::operateOnBufferToWrite()
 {
 	std::string content;
 	size_t		actualPos;

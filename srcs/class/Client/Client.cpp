@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/22 11:25:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 13:57:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -634,7 +634,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 {
 	stringMap	header;
 	
-	// std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
+	std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
 	if (!_request.get_is_CRLF_header())
 	{
 		_request.parseRequest(clientRequest);
@@ -644,26 +644,30 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	else
 	{
 		std::string	body;
-		if (_request.getIsCgi() == true)
-		{
-			body = _request.getBody() + clientRequest;
-			/*UNCHUNK WHEN ALL THE BODY IS HERE*/
-			if (_request.getIsChunked() == true && body.find("0\r\n") != std::string::npos)
-			{
-				std::string	newBody;
-				std::cout << "		BODY\n" << body << std::endl;
-				newBody = unchunkString(body);
-				std::cout << "		NEW BODY\n" << newBody << std::endl;
-				_request.set_Body(newBody);
-				_request.set_c_length_received(newBody.size());
-				_request.setIsEOF(true);
-				return ;
-			}
-		}
-		else
+		// if (_request.getIsCgi() == true)
+		// {
+		// 	body = _request.getBody() + clientRequest;
+		// 	/*UNCHUNK WHEN ALL THE BODY IS HERE*/
+		// 	if (_request.getIsChunked() == true && body.find("0\r\n") != std::string::npos)
+		// 	{
+		// 		std::string	newBody;
+		// 		std::cout << "		BODY\n" << body << std::endl;
+		// 		newBody = unchunkString(body);
+		// 		std::cout << "		NEW BODY\n" << newBody << std::endl;
+		// 		_request.set_Body(newBody);
+		// 		_request.set_c_length_received(newBody.size());
+		// 		_request.setIsEOF(true);
+		// 		return ;
+		// 	}
+		// }
+		// else
 			body = clientRequest;
 		_request.set_Body(body);
+		_cgiFD->setBufferWrite(_request.getBody());
 		_request.set_c_length_received(body.size());
+		if (_request.get_c_length_received() == _request.get_content_length())
+			_cgiFD->setWriteStat(OP_CLOSE);
+		opt = EPOLLOUT;
 	}
 	header = _request.getHeader();
 	_request.displayRequest();
@@ -676,6 +680,8 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		delete_request();
 		setSingleResponse(204);
 	}
+	std::cout << "------------------------CRLF HEADER = " << _request.get_is_CRLF_header() << std::endl;
+
 }
 
 vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation & location)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 11:30:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 13:37:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ class CgiFd
 
 		void		checkError();
 
-		std::string	getBufferToWrite();
+		std::string	operateOnBufferToWrite();
 };
 
 #endif

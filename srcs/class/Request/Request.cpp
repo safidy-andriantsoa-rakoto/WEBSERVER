@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 10:56:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 14:23:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,7 @@ void	Request::addRequestBody(std::string const & requeststring, size_t const & p
 	_c_length_received += content.size();
 	_content_length = length;
 	// std::cout << "\nBODY=\n" << _body << "\n"<< std::endl;
-	// std::cout << "\nCONTENT_LENGTH=" << _content_length << " \nreceived =" << content.size() << "\n"<< std::endl;
+	std::cout << "\nCONTENT_LENGTH=" << _content_length << " \nreceived =" << content.size() << "\n"<< std::endl;
 }
 
 void	Request::parseRequest(std::string const & requeststring)

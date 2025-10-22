@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 11:40:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 14:22:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,12 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	try
 	{
 		(*it).processRequest(client_request, epollOpt, fdCgi);
-		if ((*it).getObjRequest().getIsCgi() == true && (*it).getObjRequest().getIsEOF() == true)
-		{
-			epoll.epoll_control(EPOLLOUT, (*it).getPtrCgiFd()->getInputFd());
-			(*it).getPtrCgiFd()->setBufferWrite((*it).getObjRequest().getBody());
-			return;
-		}
+		// if ((*it).getObjRequest().getIsChunked() == true && (*it).getObjRequest().getIsEOF() == true)
+		// {
+		// 	epoll.epoll_control(EPOLLOUT, (*it).getPtrCgiFd()->getInputFd());
+		// 	(*it).getPtrCgiFd()->setBufferWrite((*it).getObjRequest().getBody());
+		// 	return;
+		// }
 	}
 	catch(AExcept & e)
 	{
@@ -59,8 +59,12 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		epollOpt = EPOLLOUT;
 	}
 	if ((*it).getObjRequest().getIsCgi() == true)
+	{
 		createCgiFd(it, handler, epoll, epollOpt, fdCgi);
-	else if ((*it).getPtrCgiFd() == NULL)
+		if ((*it).getObjRequest().get_c_length_received() == (*it).getObjRequest().get_content_length())
+			(*it).getPtrCgiFd()->setWriteStat(OP_CLOSE);
+	}
+	else
 		epoll.epoll_update_event(fdCli, epollOpt);
 }
 
@@ -81,7 +85,10 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	int			fdCli = (*it).get_clientFD();
 	
 	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
+	{
 		manageRequestFromClient(it, fdCli, epoll, handler);
+		std::cout << "-----------------CRLF HEADER MANAGE = " << (*it).getObjRequest().get_is_CRLF_header() << std::endl;
+	}
 	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
 		sendingResponseToClient(it, fdCli, epoll);
 	else
@@ -112,8 +119,8 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	}
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBufferRead(bufferString);
-	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
-	std::cout << "				******** Buffer CGI END" << std::endl;
+	// std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
+	// std::cout << "				******** Buffer CGI END" << std::endl;
 	(*it)->bufferReadParser();
 	(*it)->checkError();
 	// (*it)->displayBufferReadParsed();
@@ -131,11 +138,11 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 	int			bytesWritten;
 	std::string	bufferString;
 	vectCgiFdIt	it = handler.getCgiFdIterator(i);
-	// VClientIt	clIt = findFdInClient(handler.getVectClient(), (*it)->getClientFd());
+	VClientIt	clIt = findFdInClient(handler.getVectClient(), (*it)->getClientFd());
 
 	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
-	// bufferString = (*clIt).getObjRequest().getBody();
-	bufferString = (*it)->getBufferToWrite();
+	bufferString = (*clIt).getObjRequest().getBody();
+	// bufferString = (*it)->getBufferWrite();
 	std::cout << "Buffer = " << bufferString << std::endl;
 	bytesWritten = write((*it)->getInputFd(), bufferString.c_str(), bufferString.size());
 	if (bytesWritten <= 0)
@@ -154,4 +161,5 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 		epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
 		epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
 	}
+	epoll.epoll_update_event((*it)->getClientFd(), EPOLLIN);
 }
