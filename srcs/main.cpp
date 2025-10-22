@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:27:20 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 10:43:34 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ int main()
 		vectServer	allServer = myParseConfigFile();
 		handler.setVectServer(allServer);
 		launchServer(handler);
+		std::cout << "\n\n\n\nWebserv shutting down..." << std::endl;
+		handler.cleanFdAndAlloc();
 	}
 	catch(const std::exception & e)
 	{

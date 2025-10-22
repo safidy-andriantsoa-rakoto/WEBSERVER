@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/21 13:56:48 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 10:41:42 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,17 +81,28 @@ void    launchServer(Handler & handler)
 	launchEpoll(handler.getVectServer(), epoll);
 	while (SIGINT != sign.getSigNum())
 	{
-		nb_event = epoll.epoll_wait_event();
-		handler.displayHandlerStat(); //Use for checking error
+		// std::cout << "\n\n\n\e[5m\033[41mCHECKING CLIENT TIMEOUTS\033[0m\e[0m\n\n" << std::endl;
 		try
 		{
-			handler.check_client_timeout_all();
+			nb_event = epoll.epoll_wait_event();
 		}
 		catch(const std::exception& e)
 		{
 			std::cerr << e.what() << '\n';
+			nb_event = -1;
 		}
-		for (int i = 0; i < nb_event; i++)
+		handler.displayHandlerStat(); //Use for checking error
+		try
+		{
+			// std::cout << "\n\n\n\e[5m\033[41mCHECKING CLIENT TIMEOUTS\033[0m\e[0m\n\n" << std::endl;
+			handler.check_client_timeout_all(epoll);
+		}
+		catch(const std::exception& e)
+		{
+			// std::cout << "\n\n\n\e[5m\033[41m		TIMEOUTS\033[0m\e[0m\n\n" << std::endl;
+			std::cerr << e.what() << '\n';
+		}
+		for (int i = 0; i < nb_event; i++) //ligne 104 dans mmon code
 		{
 			fdEvent = epoll.get_fdEvent(i);
 			std::cout << "\033[47;30m		FD EVENT = " << fdEvent << " : " << handler.getIsChildProcess() << "\033[0m" << std::endl;

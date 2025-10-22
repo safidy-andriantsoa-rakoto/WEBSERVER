@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 10:59:33 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 10:13:24 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,7 +245,7 @@ void Handler::displayHandlerStat()
 	std::cout << "========================================== \n";
 }
 
-void Handler::check_client_timeout_all()
+void Handler::check_client_timeout_all(EpollCreation& epoll)
 {
 	for (VClientIt it = _vectClient.begin(); it != _vectClient.end(); )
 	{
@@ -257,7 +257,12 @@ void Handler::check_client_timeout_all()
 		catch (const std::exception & e)
 		{
 			std::cerr << "			Error on client timeout check: " << e.what() << '\n';
-			it = _vectClient.erase(it);
+			// it = _vectClient.erase(it);
+			int fdrm = (*it).get_clientFD();
+			this->removeClient(it, epoll);
+			if (fdrm > -1)
+				epoll.epoll_clean(fdrm);
+			// this->removeClient(it,);
 		}
 	}
 }

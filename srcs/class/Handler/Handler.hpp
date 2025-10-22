@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 10:27:42 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 10:11:20 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ class Handler
 		void			cleanFdAndAlloc();
 		
 		void			displayHandlerStat();
-		void			check_client_timeout_all();
+		void			check_client_timeout_all(EpollCreation& epoll);
 };
 
 #endif

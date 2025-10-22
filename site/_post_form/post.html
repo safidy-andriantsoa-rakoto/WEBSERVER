@@ -169,7 +169,7 @@
     <main class="panel">
       <div id="message" style="display: none;"></div>
 
-      <form id="contactForm" class="form-group">
+      <form id="contactForm" class="form-group" method="post" action="/submit">
         <div class="form-row">
           <div class="form-field">
             <label for="firstName" class="required">Prénom</label>
@@ -220,7 +220,7 @@
     </main>
 
     <footer>
-      Formulaire avec JavaScript • Action POST vers /submit
+      Formulaire avec JavaScript • Action POST vers /submit (URL encoded)
     </footer>
   </div>
 
@@ -233,6 +233,18 @@
       const remaining = 500 - this.value.length;
       charCount.textContent = remaining;
     });
+
+    // Fonction pour encoder les données en format x-www-form-urlencoded
+    function urlEncodeFormData(formData) {
+      const params = new URLSearchParams();
+      
+      // Ajouter chaque paire clé-valeur
+      for (const [key, value] of formData.entries()) {
+        params.append(key, value);
+      }
+      
+      return params.toString();
+    }
 
     // Gestion de la soumission du formulaire
     const contactForm = document.getElementById('contactForm');
@@ -252,25 +264,32 @@
       try {
         // Récupérer les données du formulaire
         const formData = new FormData(this);
-        const data = Object.fromEntries(formData);
+        
+        // Encoder les données en format x-www-form-urlencoded
+        const encodedData = urlEncodeFormData(formData);
 
-        // Envoyer la requête POST
+        // Afficher les données envoyées pour debug
+        console.log('Données envoyées:', encodedData);
+
+        // Envoyer la requête POST avec x-www-form-urlencoded
         const response = await fetch('/submit', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
           },
-          body: JSON.stringify(data)
+          body: encodedData
         });
 
         // Vérifier si la réponse est OK
         if (response.ok) {
-          const result = await response.json();
+          const result = await response.text();
           
           // Succès
           resultElement.textContent = '✅ SUCCÈS!\n\n' + 
             'Status: ' + response.status + ' ' + response.statusText + '\n' +
-            'Réponse: ' + JSON.stringify(result, null, 2);
+            'Content-Type: application/x-www-form-urlencoded\n' +
+            'Données envoyées: ' + encodedData + '\n\n' +
+            'Réponse du serveur: ' + result;
           resultElement.className = 'result-box success';
           
           // Afficher message de succès
@@ -280,14 +299,16 @@
           setTimeout(() => {
             contactForm.reset();
             charCount.textContent = '500';
-          }, 2000);
+          }, 10000);
           
         } else {
           // Erreur HTTP
           const errorText = await response.text();
           resultElement.textContent = '❌ ERREUR!\n\n' +
             'Status: ' + response.status + ' ' + response.statusText + '\n' +
-            'Message: ' + errorText;
+            'Content-Type: application/x-www-form-urlencoded\n' +
+            'Données envoyées: ' + encodedData + '\n\n' +
+            'Message d\'erreur: ' + errorText;
           resultElement.className = 'result-box error';
           
           showMessage('❌ Erreur lors de l\'envoi du formulaire.', 'error');
@@ -315,7 +336,7 @@
       // Cacher le message après 5 secondes
       setTimeout(() => {
         messageElement.style.display = 'none';
-      }, 5000);
+      }, 10000);
     }
 
     // Gestion de la réinitialisation
@@ -325,6 +346,39 @@
       messageElement.style.display = 'none';
       charCount.textContent = '500';
     });
+
+    // Alternative: version avec XMLHttpRequest pour plus de compatibilité
+    function submitFormXHR(formData) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        const encodedData = urlEncodeFormData(formData);
+        
+        xhr.open('POST', '/submit');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onload = function() {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve({
+              status: xhr.status,
+              statusText: xhr.statusText,
+              responseText: xhr.responseText
+            });
+          } else {
+            reject({
+              status: xhr.status,
+              statusText: xhr.statusText,
+              responseText: xhr.responseText
+            });
+          }
+        };
+        
+        xhr.onerror = function() {
+          reject(new Error('Erreur réseau'));
+        };
+        
+        xhr.send(encodedData);
+      });
+    }
   </script>
 </body>
 </html>

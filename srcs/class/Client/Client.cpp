@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/21 13:50:59 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 10:28:07 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	this->_to_send = 0;
 	this->_total_send = 0;
 	this->_delay = 0;
-	// this->_time_now = N;
-	// this->_last_time = 0;
+	this->_time_now = time(NULL);
+	this->_last_time = this->_time_now;
 	if (_clientFD < 0)
 		throw std::runtime_error("Client constructor error");
 }
@@ -135,6 +135,7 @@ void Client::receiveClientRequest()
 	char response[_BUFFER_RECV];
 
 	std::cout << "\033[045m			GETTING REQUEST FROM FD = " << this->_clientFD << "\033[0m" << std::endl;
+	set_last_time_activity();
 	this->_receivedSize = recv(this->get_clientFD(), response, sizeof(response), 0);
 	if (_receivedSize == 0)
 		this->_connect = false;
@@ -505,8 +506,6 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 	std::cout << "\e[5mPOST REQUEST STD\e[0m" << std::endl;
 	opt = EPOLLIN;
 	
-	if (header.find("Transfer-Encoding") != header.end())
-		throw ErrorExcept(501, "Not Implemented");
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
 		std::cout << "			BODY=>" << _request.get_Body() << "<=" << std::endl;
@@ -551,8 +550,19 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 			setSingleResponse(201);
 		}
 	}
+	else if (header.find("Content-Type")->second.find("application/json") != std::string::npos)
+	{
+		if (_request.get_c_length_received() == _request.get_content_length())
+		{
+			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
+			setSingleResponse(201);
+		}
+	}
 	else
+	{
+		std::cout  << "			UNKNOWN CONTENT-TYPE\e[0m" << std::endl;	
 		throw ErrorExcept(501, "Not implemented");
+	}
 }
 
 void Client::cgiPostRequest(int *fd)
@@ -704,17 +714,6 @@ int Client::creat_file_for_post(std::string path, uint32_t & opt)
 	return (fd);
 }
 
-// std::string Client::currentDateTimeString()
-// {
-// 	time_t now = time(0);
-// 	struct tm tstruct;
-// 	char buf[15];
-
-// 	tstruct = *localtime(&now);
-// 	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
-// 	return (buf);
-// }
-
 std::string Client::currentDateTimeString()
 {
     struct timeval tv;
@@ -830,6 +829,7 @@ void Client::set_time_activity()
 
 bool Client::is_client_timeout()
 {
+	set_time_activity();
 	if (difftime(this->_time_now, this->_last_time) > 30)
 	{
 		throw ErrorExcept(408, "Client Timeout");
