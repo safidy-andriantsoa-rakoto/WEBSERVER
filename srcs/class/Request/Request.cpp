@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 14:27:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 09:34:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,9 +118,11 @@ CgiParser Request::getCgiParser() const
     return _cgiParser;
 }
 
-void Request::processCgiClass(std::string const &target, std::string const & rootDirectory)
+void Request::processCgiClass(std::string & target)
 {
-	_cgiParser.parseCgiEnv(target, rootDirectory);
+	clearCgiClass();
+	setIsCgi(true);
+	_cgiParser.parseCgiEnv(target);
 	_cgiParser.setReqMethod(_method);
 	_cgiParser.setContentLength(_body.size());
 	stringMapIt it = _header.find("Content-Type");
@@ -130,6 +132,7 @@ void Request::processCgiClass(std::string const &target, std::string const & roo
 		_cgiParser.configGetEnvp();
 	else
 		_cgiParser.configPostEnvp();
+	target = _cgiParser.getScriptFileName();
 }
 
 void Request::setCgiClass(CgiParser const &cgi)

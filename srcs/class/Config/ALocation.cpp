@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:05:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 09:39:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 ALocation::ALocation()
 {
     _autoindex.push_back("OFF");
+    _cgiExtension.push_back("OFF");
 }
 
 ALocation::ALocation(ALocation const &other) :
@@ -25,6 +26,7 @@ ALocation::ALocation(ALocation const &other) :
         _method(other._method),
         _redirect(other._redirect),
         _index(other._index),
+        _cgiExtension(other._cgiExtension),
         _checkStats(other._checkStats){}
 
 ALocation &ALocation::operator=(ALocation const &other)
@@ -39,6 +41,7 @@ ALocation &ALocation::operator=(ALocation const &other)
         _redirect = other._redirect;
         _index = other._index;
         _checkStats = other._checkStats;
+        _cgiExtension = other._cgiExtension;
     }
     return *this;
 }
@@ -71,6 +74,11 @@ stringVect ALocation::getRedirect() const
 stringVect ALocation::getIndex() const
 {
     return _index;
+}
+
+std::string ALocation::getCgiExt() const
+{
+    return _cgiExtension[0];
 }
 
 void ALocation::displayLocation() const

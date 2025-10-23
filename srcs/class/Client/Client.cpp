@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/22 13:57:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 09:50:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,26 +229,8 @@ void Client::processRequestWithConfig()
 
 	if (_request.getHttp() != "HTTP/1.1")
 		throw ErrorExcept(505, "Http version error");
-	if (target.find(".php", 0) != std::string::npos)
-	{
-		_request.clearCgiClass();
-		if (_request.getIsChunked() == true && _request.getBody().find("0\r\n") != std::string::npos)
-		{
-			// std::cout << "------------------UNCHUNK BODY" << std::endl;
-			std::string	unchunkedBody = unchunkString(_request.getBody());
-			_request.set_Body(unchunkedBody);
-			_request.setIsEOF(true);
-		}
-		_request.setIsCgi(true);
-		it = _config.findClassLocation(".php");
-		processLocationOption(*it, _request);
-		_request.processCgiClass(target, (*it).getRootDirectory());
-		target = _request.getCgiParser().getScriptFileName();
-		_request.setRequestTarget(target);
-		return;
-	}
-	_request.setIsCgi(false);
-	if (_request.getMethod() == "POST" || _request.getMethod() == "DELETE")
+	buildRequestTarget();
+	if (_request.getIsCgi() == false && (_request.getMethod() == "POST" || _request.getMethod() == "DELETE"))
 	{
 		checkContentLength();
 		it = _config.findClassLocation("/upload");
@@ -256,9 +238,7 @@ void Client::processRequestWithConfig()
 		if (_request.getMethod() == "DELETE")
 			newTarget += target;
 		_request.setRequestTarget(newTarget);
-		return;
 	}
-	buildRequestTarget();
 }
 
 void Client::checkContentLength()
@@ -284,38 +264,24 @@ void Client::buildRequestTarget()
 {
 	vectLocationIt	it;
 	std::string		target;
+	std::string		originTarget;
 	vectLocation	loc;
 
 	target = _request.getRequestTarget();
+	originTarget = target;
 	_request.setIsCgi(false);
 	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
 	if (target == "/")
 	{
 		processLocationOption(_config.getClassLocation()[0], _request);
 		it = _config.findClassLocation("/");
-		if ((*it).getAutoindex() == "ON")
-		{
-			_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory());
-		}
-		else
-		{
-			_request.setRequestTarget(_config.getClassLocation()[0].getRootDirectory() + "/" + "index.html");
-		}
-		std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
-		return ;
+		target = _config.getClassLocation()[0].getRootDirectory();
+		if ((*it).getAutoindex() == "OFF")
+			target += "/index.html";
 	}
-	loc = _config.getClassLocation();
-	// if (target.find(".php", 0) != std::string::npos)
-	// {
-	// 	_request.clearCgiClass();
-	// 	_request.setIsCgi(true);
-	// 	it = _config.findClassLocation(".php");
-	// 	processLocationOption(*it, _request);
-	// 	_request.processCgiClass(target, (*it).getRootDirectory());
-	// 	target = (*it).getRootDirectory() + target; //Review if request target needed ? normally done during parsing Cgi
-	// }
-	// else
-	// {
+	else
+	{
+		loc = _config.getClassLocation();
 		it = findLongestMatch(target, loc);
 		processLocationOption(*it, _request);
 		std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
@@ -323,9 +289,26 @@ void Client::buildRequestTarget()
 			target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
 		else
 			target = (*it).getRootDirectory() + target;
-	// }
+	}
 	_request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
+	/*	
+		CHECK CGI EXTENSION
+		check that the last section is file.php !!!
+	*/
+	if (target.find(".php", 0) != std::string::npos)
+	{
+		if ((*it).getCgiExt() == "OFF")
+			throw ErrorExcept(403, "Cgi extension is OFF");
+		if (_request.getIsChunked() == true && _request.getBody().find("0\r\n") != std::string::npos)
+		{
+			// std::cout << "------------------UNCHUNK BODY" << std::endl;
+			std::string	unchunkedBody = unchunkString(_request.getBody());
+			_request.set_Body(unchunkedBody);
+			_request.setIsEOF(true);
+		}
+		_request.processCgiClass(target);
+	}
 }
 
 void Client::processLocationOption(MyLoc const & location, Request & request)

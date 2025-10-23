@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 10:56:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 09:34:20 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ class Request
 		void		setIsEOF(bool const & stat);
 
 		CgiParser	getCgiParser() const;
-		void		processCgiClass(std::string const & target, std::string const & rootDirectory);
+		void		processCgiClass(std::string & target);
 		void		setCgiClass(CgiParser const & cgi);
 		void		execCgiClass();
 		void		clearCgiClass();

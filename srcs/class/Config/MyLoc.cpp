@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:44:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 08:57:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void MyLoc::myParseLocation(std::string const &line)
             _redirect = elt;
         if (topic == "index")
             _index = elt;
+        if (topic == "cgi")
+            _cgiExtension = elt;
     }
 }
 

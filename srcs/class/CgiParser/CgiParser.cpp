@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 09:52:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 09:42:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ char **CgiParser::getEnvp()
 	return _envp;
 }
 
-void CgiParser::parseCgiEnv(std::string const & requestTarget, std::string const & rootDirectory)
+void CgiParser::parseCgiEnv(std::string const & requestTarget)
 {
 	stringVect	vect;
 
@@ -57,7 +57,7 @@ void CgiParser::parseCgiEnv(std::string const & requestTarget, std::string const
 	size_t pos = vect[0].find_last_of("/");
 	_scriptName = vect[0].substr(pos, vect[0].size() - pos);
 	// _scriptFileName = rootDirectory + vect[0];
-	_scriptFileName = rootDirectory + _scriptName;
+	_scriptFileName = vect[0];
 	std::cout << "CGI SCRIPT = " << _scriptFileName << " ; " << _scriptName << std::endl;
 }
 

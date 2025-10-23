@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:11:42 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 09:52:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 09:22:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class CgiParser
 
 		char**	getEnvp();
 
-		void    parseCgiEnv(std::string const & requestTarget, std::string const & rootDirectory);
+		void    parseCgiEnv(std::string const & requestTarget);
 		void	configGetEnvp();
 		void	configPostEnvp();
 		void	configErrEnvp(int const & statusCode, std::string const & statusCodePhrase);
