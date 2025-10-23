@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/22 11:25:56 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/23 15:25:11 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,16 +99,6 @@ void EpollCreation::epoll_update_event(int &fd, uint32_t event)
         throw std::runtime_error("\033[31m[ERROR]~Epoll_ctl(update):" + error + "\033[0m");
     }
 }
-
-// void EpollCreation::no_blocking_fd(int fd)
-// {
-//     int flags = fcntl(fd, F_GETFL, 0);
-// 	if (flags < 0 || fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0)
-//     {
-//         std::string error(strerror(errno));
-//         throw std::runtime_error("\033[31m[ERROR]~fcntl:" + error + "\033[0m");
-//     }
-// }
 
 uint32_t EpollCreation::getEvent(int const &index)
 {

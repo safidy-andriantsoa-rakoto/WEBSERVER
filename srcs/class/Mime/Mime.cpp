@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mime.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/14 14:23:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 15:24:53 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,16 +34,12 @@ void Mime::trim_space(std::string &data)
         data.erase(data.find(' '), 1);
 }
 
-/*
-    What status code if file not supported, especially with POST request? [Safidy]
-*/
 std::string Mime::getFileType(std::string const &file)
 {
     std::string extFile;
     stringMapIt it;
     std::string type;
 
-	// std::cout << "		BON TRAVAIL EEE" << std::endl;
     extFile = getFileExtension(file);
     it = _mime.find(extFile);
     if (extFile == "/")
