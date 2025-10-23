@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 11:52:06 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/22 22:33:29 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ class Server
         int 		wait_connexion_from_client();
         int 		accept_client_connexion();
         std::string get_client_request();
+		static std::vector<int> stockPort(std::vector<Server> &allServer);
 
 		void		clearAllFd();
 
@@ -62,7 +63,7 @@ class Server
 		void simpleInit(std::string const & servPath, std::string const & locationPath);
 
 		static void getParsAllServer(std::vector<Server> &allServer, stringVect file);
-		bool        checkDuplicateValue(std::vector<Server> allserver);
+		static bool        checkDuplicateValue(std::vector<Server> allserver);
 };
 
 #endif

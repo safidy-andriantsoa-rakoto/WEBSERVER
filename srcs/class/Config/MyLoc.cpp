@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 14:30:55 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/23 03:10:39 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,21 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                 if (name == "method")
                     _method.push_back(word);
                 if (name == "redirect")
+                {
                     _redirect.push_back(word);
+                    if (_redirect[0] == "300" || _redirect[0] == "307" || _redirect[0] == "308")
+                    {
+                        _redirection.error = atoi(_redirect[0].c_str());
+                    }
+                    else
+                        throw std::runtime_error("Error : redirection failed ");
+                }
             }
         }
+    }
+    for(size_t i = 1; i < _redirect.size(); i++)
+    {
+        _redirection.filePath =_redirect[i];
     }
 }
 
@@ -107,6 +119,10 @@ void MyLoc::parseLocation(const stringVect &file)
         end = index[currentBlock + 1];
     else
         end = file.size();
+    if (checkDuplicate2(file, "autoindex", start, end) || checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end))
+    {
+        throw std::runtime_error("Error : duplicate setting find or not find setting");
+    }
     getElementLocation(start, end, file);
     currentBlock++;
     _checkStats = true;

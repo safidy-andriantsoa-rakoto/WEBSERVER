@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 14:09:47 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/23 01:13:20 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 # define ALOCATION_HPP
 
 #include "general.hpp"
+
+
+struct s_redirection
+{
+	std::string filePath;
+	int error;
+};
 
 class ALocation
 {
@@ -28,6 +35,7 @@ class ALocation
 		stringVect	_index;
 		bool 		_checkStats;
 		size_t 		_endConfig;
+		t_redirection _redirection;
 
 
 	public:
@@ -42,6 +50,7 @@ class ALocation
 		std::string	getRootDirectory() const;
 		stringVect  getAvailableMethod() const;
 		stringVect  getRedirect() const;
+		t_redirection getRedirection() const;
 		stringVect  getIndex() const;
 
         virtual void	myParseLocation(std::string const & locationString) = 0;

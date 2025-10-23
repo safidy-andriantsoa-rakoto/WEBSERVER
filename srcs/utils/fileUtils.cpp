@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 11:41:43 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/23 02:57:49 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,7 +285,7 @@ bool checkCountWord2(const std::vector<std::string> &lines, const std::string &w
 
 bool checkNumberAllContent(std::vector<std::string> &file)
 {
-	if (!checkCountWord(file, "host", 2) || !checkCountWord(file, "size", 3) || !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2) || !checkCountWord(file, "SRCIPT_FILENAME", 2) || !checkCountWord(file, "autoindex", 2))
+	if (!checkCountWord(file, "host", 2) || !checkCountWord(file, "size", 3) || !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2) || !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "autoindex", 2))
 		return (false);
 	if (!checkCountWord2(file, "method", 4) || !checkCountWord2(file, "error_page", 6 )|| !checkCountWord2(file, "port", 4) )
 	{
@@ -322,7 +322,28 @@ bool checkConfigDupli(stringVect file, size_t &start, size_t &end)
 {
 	if (checkDuplicate(file, "host", start, end) || checkDuplicate(file, "port", start, end) || checkDuplicate(file, "server_names", start, end) || checkDuplicate(file, "error_page", start, end) || checkDuplicate(file, "size", start, end))
 	{
-		std::cerr << "Error : duplicate setting find or not find setting" << std::endl;
+		// std::cerr << "Error : duplicate setting find or not find setting" << std::endl;
+		return (true);
+	}
+	return (false);
+}
+bool checkDuplicate2(stringVect file, std::string name, size_t &start, size_t &end)
+{
+	int count = 0;
+
+	for (size_t i = start; i < end; ++i)
+	{
+		std::istringstream iss(file[i]);
+		std::string word;
+		while (iss >> word)
+		{
+			if (name == word)
+				count++;
+		}
+	}
+	if( count < 0 || count >1)
+	{
+		std::cout << "Name of duplicate => " << name << std::endl;
 		return (true);
 	}
 	return (false);

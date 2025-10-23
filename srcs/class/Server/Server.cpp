@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 11:52:31 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/22 23:06:15 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ Server::Server()
 	_fdSocket = -1;
 }
 
-Server::Server(Server const & other)
+Server::Server(Server const &other)
 {
 	_fdClient = -1;
 	_fdSocket = -1;
 	*this = other;
 }
 
-Server &Server::operator=(Server const & other) 
+Server &Server::operator=(Server const &other)
 {
 	if (this != &other)
 	{
@@ -38,7 +38,7 @@ Server &Server::operator=(Server const & other)
 	return *this;
 }
 
-Server::~Server(){}
+Server::~Server() {}
 
 MyConf Server::getConfig() const
 {
@@ -52,15 +52,15 @@ int Server::get_fdClient() const
 
 int Server::get_fdSocket() const
 {
-    return _fdSocket;
+	return _fdSocket;
 }
 
-SockAddrIn & Server::get_confSockAddrIn()
+SockAddrIn &Server::get_confSockAddrIn()
 {
-    return (_sockaddrIn);
+	return (_sockaddrIn);
 }
 
-//Afaka atao throw
+// Afaka atao throw
 int Server::create_socket()
 {
 	int opt = 1;
@@ -74,7 +74,7 @@ int Server::create_socket()
 	if (this->_fdSocket == -1)
 	{
 		std::cout << "Error\ncreate an endpoint for communication" << std::endl;
-		return (0); 
+		return (0);
 	}
 	return (1);
 }
@@ -87,10 +87,10 @@ void Server::configure_sockaddrin(int port)
 	this->_size_sockaddrin = sizeof(_sockaddrIn);
 }
 
-//Afaka atao throw
+// Afaka atao throw
 int Server::link_socket_adress()
 {
-	int     status;
+	int status;
 
 	status = bind(this->_fdSocket, (sockaddr *)&(this->_sockaddrIn), this->_size_sockaddrin);
 	if (status == -1)
@@ -108,7 +108,7 @@ int Server::wait_connexion_from_client()
 	if (this->_fdClient == -1)
 	{
 		std::cout << "Error\nlisten for connections on a socket" << std::endl;
-		return (0);    
+		return (0);
 	}
 	return (1);
 }
@@ -144,7 +144,7 @@ void Server::clearAllFd()
 		close(_fdSocket);
 }
 
-void Server::simpleInit(std::string const & servPath, std::string const & locationPath)
+void Server::simpleInit(std::string const &servPath, std::string const &locationPath)
 {
 	MyConf conf;
 
@@ -156,33 +156,67 @@ void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
 {
 	size_t i(0);
 	std::cout << "Server size => " << allServer.size() << std::endl;
-	while(i < allServer.size())
+	while (i < allServer.size())
 	{
 		allServer[i]._config.parseConfig(file);
 		allServer[i]._config.displayConfig();
-		if(allServer[i]._config.getStatus() == true)
+		if (allServer[i]._config.getStatus() == true)
 			i++;
 		else
-			return ;
+			return;
 	}
+}
+
+std::vector<int> Server::stockPort(std::vector<Server> &allServer)
+{
+	size_t i(0);
+	intVect tabPort;
+	intVect port;
+	while (i < allServer.size())
+	{
+		port = allServer[i]._config.getServerPort();
+		for (size_t i = 0; i < port.size(); i++)
+		{
+			tabPort.push_back(port[i]);
+		}
+		i++;
+	}
+
+	return (tabPort);
 }
 
 // bool checkDup()
 
-// bool Server::checkDuplicateValue(std::vector<Server> allserver)
-// {
-// 	intVect port;
-// 	size_t i(0);
-// 	int count(0);
-// 	while( i < allserver.size())
-// 	{
-// 		port = allserver[i]._config.getServerPort();
-// 		for(size_t i = 0; i < port.size(); i++)
-// 		{
-// 			if()
-// 		}
+bool Server::checkDuplicateValue(std::vector<Server> allserver)
+{
+	intVect port;
+	size_t i(0), j(0);
 
-// 	}
+	port = Server::stockPort(allserver);
+	std::cout << "Port list ";
+	while (i < port.size())
+	{
+		j = i + 1;
+		while (j < port.size())
+		{
+			// std::cout << port[i] << " " << port[j] << std::endl;
+			if (port[i] == port[j])
+			{
+				std::cerr << "Error : find duplicate port " << port[i] << std::endl;
+				return (false);
+			}
+			j++;
+		}
+		i++;
+	}
+
+	for (size_t i = 0; i < port.size(); i++)
+	{
+		std::cout << port[i] << " ";
+	}
+
+	std::cout << std::endl;
+	return (true);
+}
 // 	return(true);
 // }
-

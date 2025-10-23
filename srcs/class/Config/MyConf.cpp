@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 11:42:45 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/23 00:58:04 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,8 @@ void MyConf::displayConfig() const
 {
 	std::cout << "------------------------------------------" << std::endl;
 	std::cout << "Host " << _host << std::endl
-	 << "Port ";
-	for(size_t i = 0; i < _ports.size() ; i++)
+			  << "Port ";
+	for (size_t i = 0; i < _ports.size(); i++)
 	{
 		std::cout << _ports[i] << " ";
 	}
@@ -134,10 +134,13 @@ void MyConf::getElemetConfig(const size_t &start, const size_t &end, const strin
 			{
 				if (name == "host")
 					_host = word;
-				// if(name == "port")
-				// 	_port = atoi(word.c_str());
 				if (name == "port")
-					_ports.push_back(atoi(word.c_str())); 
+				{
+					for (size_t i = 0; i < word.size(); i++)
+					if (!isdigit(word[i]))
+						throw std::runtime_error ("Error : Find not digit element");
+					_ports.push_back(atoi(word.c_str()));
+				}
 				if (name == "server_names")
 					_serverName.push_back(word);
 				if (name == "size")
@@ -231,7 +234,10 @@ void MyConf::parseConfig(stringVect file)
 		if (_location[k].getStatus())
 			k++;
 		else
+		{
+			_checkStats = false;
 			return;
+		}
 	}
 	_checkStats = true;
 	currentBlock++;

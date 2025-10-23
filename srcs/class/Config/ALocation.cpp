@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 13:42:18 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/23 01:13:34 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,12 @@ stringVect ALocation::getRedirect() const
 {
     return _redirect;
 }
+
+t_redirection ALocation::getRedirection() const
+{
+    return _redirection;
+}
+
 
 stringVect ALocation::getIndex() const
 {

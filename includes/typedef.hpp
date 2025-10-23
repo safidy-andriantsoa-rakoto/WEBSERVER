@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   typedef.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/22 16:01:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/23 01:10:36 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct sockaddr_in		SockAddrIn;
 typedef struct epoll_event		SEpollEvent;
 
 typedef struct s_errPage        t_errPage;
+typedef struct s_redirection      t_redirection;
 typedef std::vector<t_errPage>  errVect;
 typedef errVect::iterator       errIt;
 

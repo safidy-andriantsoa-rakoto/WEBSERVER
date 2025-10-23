@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:14:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 22:48:32 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ int main(int argc, char **argv)
 			return (1);
 		vectServer	allServer = getServer(file);
 		Server::getParsAllServer(allServer, file);
+		if(!Server::checkDuplicateValue(allServer))
+			return (1);
 		// handler.setVectServer(allServer);
 		// launchServer(handler);
 	}
