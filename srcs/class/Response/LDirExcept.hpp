@@ -25,7 +25,7 @@ class LDirExcept : public AExcept
 		virtual ~LDirExcept() throw();
 
 		static stringVect	_part;
-		static void			initPart(std::string const & path);
+		static void			initPart();
 };
 
 #endif

@@ -24,10 +24,8 @@ LDirExcept::LDirExcept(int const &status, DIR *dir, std::string const & path, st
 
 LDirExcept::~LDirExcept() throw() {}
 
-void LDirExcept::initPart(std::string const & path)
+void LDirExcept::initPart()
 {
-    std::string htmlFile;
-
-	htmlFile = readFileToString(path);
-	_part = splitString(htmlFile, "$");
+    _part.push_back("<!DOCTYPE html></head><body><h1>LISTING DIRECTORY</h1><div><ul>");
+    _part.push_back("</ul></div></body></html>");
 }

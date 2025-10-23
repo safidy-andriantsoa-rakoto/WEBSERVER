@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:11:42 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 10:28:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 15:01:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ class CgiParser
 		char**	getEnvp();
 
 		void    parseCgiEnv(std::string const & requestTarget);
-		void	configGetEnvp();
-		void	configPostEnvp();
+		void	buildEnvp();
 		void    execCgi();
 
 		void	setCgiExecPath(std::string const & path);
@@ -52,9 +51,9 @@ class CgiParser
 
 		void	displayCgiClass() const;
 
-		static std::string	_cgiGetConfig;
+		static std::string	_cgiEnvConfig;
 		static std::string	_cgiPostConfig;
-		static void			initCgiConfig(std::string const & getCgiPath, std::string const & postCgiPath);
+		static void			initCgiEnvpConfig();
 };
 
 #endif

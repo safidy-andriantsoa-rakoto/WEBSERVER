@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 14:12:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 14:07:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	else
 		rspString = (*it).getFullResponse();
 	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
-	// std::cout << rspString << std::endl;
+	std::cout << rspString << std::endl;
 	send_value(fdCli, rspString);
 	if ((*it).getResponseStat() == OP_START)
 		(*it).setResponseStat(OP_ONGOING);
@@ -47,9 +47,8 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	{
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
-		(*it).getObjRequest().setIsChunked(false);
 	}
-	// std::cout << "		Rsp Stat = " << (*it).getResponseStat() << std::endl;
+		// std::cout << "		Rsp Stat = " << (*it).getResponseStat() << std::endl;
 }
 
 void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)

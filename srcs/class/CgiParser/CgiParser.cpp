@@ -6,13 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 10:42:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 15:01:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CgiParser.hpp"
 
-std::string CgiParser::_cgiGetConfig;
+std::string CgiParser::_cgiEnvConfig;
 std::string CgiParser::_cgiPostConfig;
 
 CgiParser::CgiParser() : _envp(NULL){}
@@ -39,10 +39,7 @@ CgiParser &CgiParser::operator=(CgiParser const &other)
 
 CgiParser::~CgiParser(){}
 
-char **CgiParser::getEnvp()
-{
-	return _envp;
-}
+char **CgiParser::getEnvp(){return _envp;}
 
 void CgiParser::parseCgiEnv(std::string const & requestTarget)
 {
@@ -59,45 +56,22 @@ void CgiParser::parseCgiEnv(std::string const & requestTarget)
 	std::cout << "CGI SCRIPT = " << _scriptFileName << " ; " << _scriptName << std::endl;
 }
 
-void CgiParser::configGetEnvp()
+void CgiParser::buildEnvp()
 {
-	std::string	ownedConfig = CgiParser::_cgiGetConfig;
-	stringVect	vect;
-
-	replaceString(ownedConfig, _reqMethod, "$1");
-	replaceString(ownedConfig, _query, "$2");
-	replaceString(ownedConfig, _scriptFileName, "$3");
-	replaceString(ownedConfig, _scriptName, "$4");
-	replaceString(ownedConfig, "http:localhost", "$5");
-	vect = splitString(ownedConfig, "\n");
-	clearCharTable(_envp);
-	_envp = convertStringVectToTable(vect);
-	displayCharTable(_envp, "ENVP GET TABLE");
-	vect.clear();
-	ownedConfig.clear();
-}
-
-void CgiParser::configPostEnvp()
-{
-	std::string	ownedConfig = CgiParser::_cgiPostConfig;
+	std::string	ownedConfig = CgiParser::_cgiEnvConfig;
 	stringVect	vect;
 
 	replaceString(ownedConfig, _reqMethod, "$1");
 	replaceString(ownedConfig, _scriptFileName, "$2");
 	replaceString(ownedConfig, _scriptName, "$3");
-	replaceString(ownedConfig, convertIntToString(_contentLength), "$4");
-	if (_contentType.size())
-		replaceString(ownedConfig, _contentType, "$5");
-	else
-	{
-		std::string cType = "CONTENT-TYPE=$5";
-		ownedConfig.erase(ownedConfig.find(cType.c_str()), cType.size());
-	}
-	replaceString(ownedConfig, "http:localhost", "$6");
+	replaceString(ownedConfig, "http:localhost", "$4"); // REVIEW REQUEST_URI IF NECESSARY
+	replaceString(ownedConfig, _query, "$5");
+	replaceString(ownedConfig, convertIntToString(_contentLength), "$6");
+	replaceString(ownedConfig, _contentType, "$7");
 	vect = splitString(ownedConfig, "\n");
 	clearCharTable(_envp);
 	_envp = convertStringVectToTable(vect);
-	displayCharTable(_envp, "ENVP POST TABLE");
+	// displayCharTable(_envp, "ENVP TABLE");
 	vect.clear();
 	ownedConfig.clear();
 }
@@ -117,30 +91,15 @@ void CgiParser::execCgi()
 	}
 }
 
-void CgiParser::setCgiExecPath(std::string const &path)
-{
-	_execPath = path;
-}
+void CgiParser::setCgiExecPath(std::string const &path){_execPath = path;}
 
-void CgiParser::setReqMethod(std::string const &method)
-{
-	_reqMethod = method;
-}
+void CgiParser::setReqMethod(std::string const &method){_reqMethod = method;}
 
-void CgiParser::setContentLength(size_t const &length)
-{
-	_contentLength = length;
-}
+void CgiParser::setContentLength(size_t const &length){_contentLength = length;}
 
-void CgiParser::setContentType(std::string const &type)
-{
-	_contentType = type;
-}
+void CgiParser::setContentType(std::string const &type){_contentType = type;}
 
-std::string CgiParser::getScriptFileName() const
-{
-    return _scriptFileName;
-}
+std::string CgiParser::getScriptFileName() const{return _scriptFileName;}
 
 void CgiParser::clearCgiClass()
 {
@@ -148,6 +107,8 @@ void CgiParser::clearCgiClass()
 	_query.clear();
 	_scriptFileName.clear();
 	_scriptName.clear();
+	_contentType.clear();
+	_execPath.clear();
 	_contentLength = 0;
 	clearCharTable(_envp);
 	_envp = NULL;
@@ -164,8 +125,17 @@ void CgiParser::displayCgiClass() const
 	std::cout << "==============END OF CGI COMPONENT=============\033[0m" << std::endl;
 }
 
-void CgiParser::initCgiConfig(std::string const & getCgiPath, std::string const & postCgiPath)
+void CgiParser::initCgiEnvpConfig()
 {
-	_cgiGetConfig = readFileToString(getCgiPath);
-	_cgiPostConfig = readFileToString(postCgiPath);
+	_cgiEnvConfig += "REQUEST_METHOD=$1\n"
+						"SCRIPT_FILENAME=$2\n"
+						"SCRIPT_NAME=$3\n"
+						"REQUEST_URI=$4\n"
+						"QUERY_STRING=$5\n"
+						"CONTENT_LENGTH=$6\n"
+						"CONTENT_TYPE=$7\n"
+						"GATEWAY_INTERFACE=CGI/1.1\n"
+						"SERVER_PROTOCOL=HTTP/1.1\n"
+						"REDIRECT_STATUS=200\n"
+						"REMOTE_ADDR=10.11.5.6\n";
 }

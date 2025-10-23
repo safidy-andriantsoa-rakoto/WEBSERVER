@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 10:30:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 14:53:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,7 @@ void Request::processCgiClass(std::string & target, std::string const & execPath
 	stringMapIt it = _header.find("Content-Type");
 	if (it != _header.end())
 		_cgiParser.setContentType((*it).second);
-	if (_method == "GET")
-		_cgiParser.configGetEnvp();
-	else
-		_cgiParser.configPostEnvp();
+	_cgiParser.buildEnvp();
 	target = _cgiParser.getScriptFileName();
 }
 

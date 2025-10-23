@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 10:45:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 15:57:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,10 @@
 */
 static void	initProgram()
 {
-	Response::initAllStatusCode(STAT_PATH);
+	LDirExcept::initPart();
+	CgiParser::initCgiEnvpConfig();
+	Response::initSpareDefErrPage();
 	Mime::initMapMime(MIME_PATH);
-	LDirExcept::initPart(LDIR_PATH);
-	CgiParser::initCgiConfig(CGI_GET_PATH, CGI_POST_PATH);
-	int fd = openFile(ERR_PATH);
-	close(fd);
 	DIR *dir = openDir(UPLOAD_PATH);
 	closedir(dir);
 }
