@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 03:10:39 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/10/23 05:48:40 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,19 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
             {
                 stringVect tab = splitString(value, " ");
                 _locations = tab[0];
+                // try
+                // {
+                //     if (tab.at(1) != "{")
+                //         throw std::runtime_error("Error: of parsing");
+                // }
+                // catch (const std::out_of_range &e)
+                // {
+                //     std::cerr << "Error : " << e.what() << std::endl;
+                // }
+                // catch (const std::runtime_error &e)
+                // {
+                //     std::cerr << "Error: " << e.what() << std::endl;
+                // }
             }
             while (s >> word)
             {
@@ -93,16 +106,20 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                     if (_redirect[0] == "300" || _redirect[0] == "307" || _redirect[0] == "308")
                     {
                         _redirection.error = atoi(_redirect[0].c_str());
+                        try
+                        {
+                            _redirection.filePath = _redirect.at(1);
+                        }
+                        catch (const std::out_of_range &e)
+                        {
+                            std::cerr << "Error : " << e.what() << std::endl;
+                        }
                     }
                     else
                         throw std::runtime_error("Error : redirection failed ");
                 }
             }
         }
-    }
-    for(size_t i = 1; i < _redirect.size(); i++)
-    {
-        _redirection.filePath =_redirect[i];
     }
 }
 
