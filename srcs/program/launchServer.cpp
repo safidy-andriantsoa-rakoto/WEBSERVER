@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/22 10:53:08 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/23 15:05:35 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void    launchServer(Handler & handler)
 		{
 			std::cerr << e.what() << '\n';
 		}
-		for (int i = 0; i < nb_event; i++) //ligne 104 dans mmon code
+		for (int i = 0; i < nb_event; i++)
 		{
 			fdEvent = epoll.get_fdEvent(i);
 			std::cout << "\033[47;30m		FD EVENT = " << fdEvent << " : " << handler.getIsChildProcess() << "\033[0m" << std::endl;

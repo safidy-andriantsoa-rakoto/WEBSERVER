@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 11:41:41 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/23 10:21:36 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,8 @@ void	Handler::cleanFdAndAlloc()
 
 void Handler::displayHandlerStat()
 {
-	std::cout << "\033[2J\033[H========================================== \n";
+	std::cout << "========================================== \n";
+	// std::cout << "\033[2J\033[H========================================== \n";
 	std::cout << "		HANDLER STATS : " << _isChildProcess << std::endl;
 	std::cout << "Nb Server = " << _vectServer.size() << " [";
 	for(size_t i = 0; i < _vectServer.size(); i++)
@@ -242,7 +243,7 @@ void Handler::displayHandlerStat()
 	}
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;
-	std::cout << "========================================== \n" << std::flush;
+	std::cout << "========================================== \n" << std::endl;
 }
 
 void Handler::check_client_timeout_all(EpollCreation& epoll)

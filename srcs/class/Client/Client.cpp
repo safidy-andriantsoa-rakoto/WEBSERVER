@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/22 10:28:07 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/23 15:23:04 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -502,67 +502,29 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 
 void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 {
-	
-	std::cout << "\e[5mPOST REQUEST STD\e[0m" << std::endl;
 	opt = EPOLLIN;
-	
+
+	if (header.find("Content-Length") == header.end())
+		throw ErrorExcept(411, "Length required");
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
-		std::cout << "			BODY=>" << _request.get_Body() << "<=" << std::endl;
-		std::string body;
 		get_bounadary_from_header(header);
-		if (get_pathfile())
-		{
-			std::cout << "\e[5m				SEARCH FILE POST\e[0m->"<< this->filepath << std::endl;
-		}
-		if (this->filepath.size())
-		{
-			while (1)
-			{
-				if (this->filepath.empty())
-					break ;
-				write_in_file_post();
-				if (get_pathfile())
-					continue ;
-				break;
-			}
-		}
-		std::cout << "	RECV=" << _request.get_c_length_received() << " / " << _request.get_content_length() << std::endl;
+		process_multipart_data();
 		if (_request.get_c_length_received() == _request.get_content_length())
-		{
-			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
 			setSingleResponse(201);
-		}
 	}
 	else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 	{
 		if (_request.get_c_length_received() == _request.get_content_length())
-		{
-			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
-			setSingleResponse(201);
-		}
+			setSingleResponse(200);
 	}
 	else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 	{
 		if (_request.get_c_length_received() == _request.get_content_length())
-		{
-			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
-			setSingleResponse(201);
-		}
-	}
-	else if (header.find("Content-Type")->second.find("application/json") != std::string::npos)
-	{
-		if (_request.get_c_length_received() == _request.get_content_length())
-		{
-			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
-			setSingleResponse(201);
-		}
+			setSingleResponse(200);
 	}
 	else
-	{
-		std::cout  << "			UNKNOWN CONTENT-TYPE\e[0m" << std::endl;	
 		throw ErrorExcept(501, "Not implemented");
-	}
 }
 
 void Client::cgiPostRequest(int *fd)
@@ -814,6 +776,24 @@ void Client::write_in_file_post()
 		}
 		else
 			throw ErrorExcept(500, "Internal Server Error - Write in file failed");
+	}
+}
+
+void Client::process_multipart_data()
+{
+	if (get_pathfile())
+		std::cout << "\e[5mNEW FILE\e[0m->"<< this->filepath << std::endl;
+	if (this->filepath.size())
+	{
+		while (1)
+		{
+			if (this->filepath.empty())
+				break ;
+			write_in_file_post();
+			if (get_pathfile())
+				continue ;
+			break;
+		}
 	}
 }
 
