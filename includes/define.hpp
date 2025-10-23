@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   define.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:23:17 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/23 11:46:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@
 #define MIME_PATH "./config/ext"
 #define CGI_GET_PATH  "./config/cgiConf/cgiGet.conf"
 #define CGI_POST_PATH  "./config/cgiConf/cgiPost.conf"
-#define CGI_ERR_PATH  "./config/cgiConf/cgiErr.conf"
-#define PHP_CGI_PATH "/usr/bin/php-cgi"
 #define UPLOAD_PATH "./site/upload"
 
 #define DEF_UPLOAD_LOCATION "location /upload | root ./site/upload | method GET POST DELETE | autoindex ON"
@@ -38,7 +36,7 @@
 #define _EMPTY_LINE "\n\r\n"
 #define _NB_CLIENT 10
 #define MAX_EVENT 2042
-#define _BUFFER 2000 
+#define _BUFFER 1000
 #define _BUFFER_RECV 1024
 
 #endif

@@ -1,5 +1,5 @@
-location / | root ./site | method GET
+location / | root ./site | method GET POST DELETE
 location /about | root ./site/about | method GET | autoindex ON
 location /tooplate | root ./site/tooplate | method GET | autoindex ON
 location /custom | root ./config/errorPage/custom | method GET
-location /cgi-bin | root ./site/cgi-bin | method GET POST DELETE | autoindex ON | cgi ON
+location /cgi-bin | root ./site/cgi-bin | method GET POST DELETE | autoindex ON | cgi ON /usr/bin/php-cgi

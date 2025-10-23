@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 10:48:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 10:45:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,9 @@ int main()
 	}
 	catch(const std::exception & e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Main catched exception :" << e.what() << std::endl;
 		handler.cleanFdAndAlloc();
-		return -1;
+		return 1;
 	}
 	return 0;
 }

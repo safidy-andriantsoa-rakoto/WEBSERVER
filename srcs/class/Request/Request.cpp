@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 09:34:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 10:30:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,13 +118,14 @@ CgiParser Request::getCgiParser() const
     return _cgiParser;
 }
 
-void Request::processCgiClass(std::string & target)
+void Request::processCgiClass(std::string & target, std::string const & execPath)
 {
 	clearCgiClass();
 	setIsCgi(true);
 	_cgiParser.parseCgiEnv(target);
 	_cgiParser.setReqMethod(_method);
 	_cgiParser.setContentLength(_body.size());
+	_cgiParser.setCgiExecPath(execPath);
 	stringMapIt it = _header.find("Content-Type");
 	if (it != _header.end())
 		_cgiParser.setContentType((*it).second);
@@ -286,12 +287,6 @@ void	Request::parseRequest(std::string const & requeststring)
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();
-	}
-	stringMapIt	itMap = _header.find("Transfer-Encoding");
-	if (itMap != _header.end() && (*itMap).second == "chunked")
-	{
-		std::cout << "		TRANSFER ENCODING ON\n" << std::endl;
-		_isChunked = true;
 	}
 	addRequestBody(requeststring, pos + sep.size());
 	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")

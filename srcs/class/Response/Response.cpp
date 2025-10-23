@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 07:54:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 10:40:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,52 +311,6 @@ void Response::generateSingleResponse(int const &statusCode)
 	_body.clear();
 	_header["Connection"] = "keep-alive";
 	_header["Content-Length"] = "0";
-}
-
-void Response::execCgiDefaultScript(int *fd)
-{
-	int			pid;
-	int			pipeFd[2];
-	int			errFd[2];
-	CgiParser	cgiParser;
-	std::string	statusCodePhrase = _allStatusCode[convertIntToString(_statusCode)];
-
-	cgiParser.configErrEnvp(_statusCode, statusCodePhrase);
-	if (pipe(pipeFd) == -1)
-		throw std::runtime_error("Pipe fd error");
-	if (pipe(errFd) == -1)
-		throw std::runtime_error("Pipe err error");
-	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
-	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
-	pid = fork();
-	if (pid == -1)
-		throw std::runtime_error("Fork error");
-	if (pid == 0)
-	{
-		dup2(errFd[1], STDERR_FILENO);
-		close(errFd[0]);
-		close(errFd[1]);
-		dup2(pipeFd[1], STDOUT_FILENO);
-		close(pipeFd[0]);
-		close(pipeFd[1]);
-		try
-		{
-			cgiParser.execCgi();
-		}
-		catch(const std::exception& e)
-		{
-			fd[FD_STDOUT] = -1;
-			fd[FD_STDERR] = -1;
-		}
-	}
-	else
-	{
-		cgiParser.clearCgiClass();
-		close(errFd[1]);
-		close(pipeFd[1]);
-		fd[FD_STDOUT] = pipeFd[0];
-		fd[FD_STDERR] = errFd[0];
-	}
 }
 
 void Response::initAllStatusCode(std::string const & statPath)

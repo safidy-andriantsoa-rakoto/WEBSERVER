@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/23 09:50:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 10:33:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,7 +262,7 @@ void Client::checkContentLength()
 
 void Client::buildRequestTarget()
 {
-	vectLocationIt	it;
+	vectLocationIt	itLoc;
 	std::string		target;
 	std::string		originTarget;
 	vectLocation	loc;
@@ -274,21 +274,22 @@ void Client::buildRequestTarget()
 	if (target == "/")
 	{
 		processLocationOption(_config.getClassLocation()[0], _request);
-		it = _config.findClassLocation("/");
+		itLoc = _config.findClassLocation("/");
 		target = _config.getClassLocation()[0].getRootDirectory();
-		if ((*it).getAutoindex() == "OFF")
+		/*INDEX ???*/
+		if ((*itLoc).getAutoindex() == "OFF")
 			target += "/index.html";
 	}
 	else
 	{
 		loc = _config.getClassLocation();
-		it = findLongestMatch(target, loc);
-		processLocationOption(*it, _request);
-		std::cout << "\033[96mLOCATION SELECTED = " << (*it).getLocation() << " => " << (*it).getRootDirectory() << "\033[0m" << std::endl;
-		if ((*it).getLocation() != "/")
-			target.replace(target.find((*it).getLocation(), 0), (*it).getLocation().size(), (*it).getRootDirectory());
+		itLoc = findLongestMatch(target, loc);
+		processLocationOption(*itLoc, _request);
+		std::cout << "\033[96mLOCATION SELECTED = " << (*itLoc).getLocation() << " => " << (*itLoc).getRootDirectory() << "\033[0m" << std::endl;
+		if ((*itLoc).getLocation() != "/")
+			target.replace(target.find((*itLoc).getLocation(), 0), (*itLoc).getLocation().size(), (*itLoc).getRootDirectory());
 		else
-			target = (*it).getRootDirectory() + target;
+			target = (*itLoc).getRootDirectory() + target;
 	}
 	_request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
@@ -298,16 +299,9 @@ void Client::buildRequestTarget()
 	*/
 	if (target.find(".php", 0) != std::string::npos)
 	{
-		if ((*it).getCgiExt() == "OFF")
+		if ((*itLoc).getCgiActivation() == "OFF")
 			throw ErrorExcept(403, "Cgi extension is OFF");
-		if (_request.getIsChunked() == true && _request.getBody().find("0\r\n") != std::string::npos)
-		{
-			// std::cout << "------------------UNCHUNK BODY" << std::endl;
-			std::string	unchunkedBody = unchunkString(_request.getBody());
-			_request.set_Body(unchunkedBody);
-			_request.setIsEOF(true);
-		}
-		_request.processCgiClass(target);
+		_request.processCgiClass(target, (*itLoc).getCgiExecPath());
 	}
 }
 
@@ -616,6 +610,7 @@ void Client::delete_request()
 void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)
 {
 	stringMap	header;
+	std::string	body;
 	
 	std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
 	if (!_request.get_is_CRLF_header())
@@ -626,31 +621,16 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	}
 	else
 	{
-		std::string	body;
-		// if (_request.getIsCgi() == true)
-		// {
-		// 	body = _request.getBody() + clientRequest;
-		// 	/*UNCHUNK WHEN ALL THE BODY IS HERE*/
-		// 	if (_request.getIsChunked() == true && body.find("0\r\n") != std::string::npos)
-		// 	{
-		// 		std::string	newBody;
-		// 		std::cout << "		BODY\n" << body << std::endl;
-		// 		newBody = unchunkString(body);
-		// 		std::cout << "		NEW BODY\n" << newBody << std::endl;
-		// 		_request.set_Body(newBody);
-		// 		_request.set_c_length_received(newBody.size());
-		// 		_request.setIsEOF(true);
-		// 		return ;
-		// 	}
-		// }
-		// else
-			body = clientRequest;
+		body = clientRequest;
 		_request.set_Body(body);
-		_cgiFD->setBufferWrite(_request.getBody());
 		_request.set_c_length_received(body.size());
-		if (_request.get_c_length_received() == _request.get_content_length())
-			_cgiFD->setWriteStat(OP_CLOSE);
-		opt = EPOLLOUT;
+		if (_request.getIsCgi() == true)
+		{
+			_cgiFD->setBufferWrite(_request.getBody());
+			if (_request.get_c_length_received() == _request.get_content_length())
+				_cgiFD->setWriteStat(OP_CLOSE);
+			opt = EPOLLOUT;
+		}
 	}
 	header = _request.getHeader();
 	_request.displayRequest();

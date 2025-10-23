@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 09:39:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/23 10:32:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,14 @@ stringVect ALocation::getIndex() const
     return _index;
 }
 
-std::string ALocation::getCgiExt() const
+std::string ALocation::getCgiActivation() const
 {
     return _cgiExtension[0];
+}
+
+std::string ALocation::getCgiExecPath() const
+{
+    return _cgiExtension[1];
 }
 
 void ALocation::displayLocation() const
