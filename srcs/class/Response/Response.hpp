@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 15:55:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:06:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,6 @@ class Response
 		std::string			_originPath;
 		std::string			_originBody;
 		size_t				_pos;
-
-		static std::string	_spareDefErrPage;
 
 		void				setStatusLine();
 		void				addStatusCode(std::string & content);
@@ -88,9 +86,6 @@ class Response
 		void				generateRedirectResponse(RedirExcept & r);
 		void				generateLDirResponse(LDirExcept & d);
 		void				generateSingleResponse(int const & statusCode);
-
-		static void			initSpareDefErrPage();
-		static std::string	getSpareDefErrPage();
 
 		static std::string	getReasonPhrase(int const & statusCode);
 };

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:11:42 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 15:01:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:01:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,6 @@ class CgiParser
 		void	clearCgiClass();
 
 		void	displayCgiClass() const;
-
-		static std::string	_cgiEnvConfig;
-		static std::string	_cgiPostConfig;
-		static void			initCgiEnvpConfig();
 };
 
 #endif

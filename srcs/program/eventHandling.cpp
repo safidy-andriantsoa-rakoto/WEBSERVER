@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 14:28:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:11:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,6 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	try
 	{
 		(*it).processRequest(client_request, epollOpt, fdCgi);
-		// if ((*it).getObjRequest().getIsChunked() == true && (*it).getObjRequest().getIsEOF() == true)
-		// {
-		// 	epoll.epoll_control(EPOLLOUT, (*it).getPtrCgiFd()->getInputFd());
-		// 	(*it).getPtrCgiFd()->setBufferWrite((*it).getObjRequest().getBody());
-		// 	return;
-		// }
 	}
 	catch(AExcept & e)
 	{
@@ -105,31 +99,29 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 		return;
 	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bytesRead = read((*it)->getOutputFd(), buffer, _BUFFER);
-	if (bytesRead <= 0)
+	if (!bytesRead)
 	{
 		std::cout << "Nothing to read from CGI OUTPUT : " << bytesRead << std::endl;
 		(*it)->setReadStat(OP_CLOSE);
 		(*it)->clearBufferRead();
-		epoll.epoll_clean((*it)->getOutputFd()); //Find a way to change outputFd = -1 if it is going to be closed
+		epoll.epoll_clean((*it)->getOutputFd());
 		(*it)->setOutputFd(-1);
 		return ;
 	}
+	if (bytesRead == -1)
+		throw ErrorExcept(500, "Read error on cgi");
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBufferRead(bufferString);
 	// std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
 	// std::cout << "				******** Buffer CGI END" << std::endl;
 	(*it)->bufferReadParser();
-	(*it)->checkError();
+	(*it)->checkCgiOutput();
 	// (*it)->displayBufferReadParsed();
 	if ((*it)->getReadStat() == OP_OPEN)
 		(*it)->setReadStat(OP_START);
 	epoll.epoll_update_event(fdCli, EPOLLOUT);
 }
 
-/*
-	NEED TO REVIEW WRITING BECAUSE BODY MIGHT BE HIGHER THAN BUFFER
-	USE THE SAME SYSTEM AS SEND RESPONSE
-*/
 void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 {
 	int			bytesWritten;
@@ -139,19 +131,15 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 
 	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bufferString = (*clIt).getObjRequest().getBody();
-	// bufferString = (*it)->getBufferWrite();
-	std::cout << "Buffer = " << bufferString << std::endl;
 	bytesWritten = write((*it)->getInputFd(), bufferString.c_str(), bufferString.size());
-	if (bytesWritten <= 0)
+	// std::cout << "Bytewritten = " << bytesWritten << std::endl;
+	if (!bytesWritten)
 	{
-		std::cout << "Bytewritten = " << bytesWritten << std::endl;
-		/*Check for ERROR in write*/
 		epoll.epoll_clean((*it)->getInputFd());
-		throw std::runtime_error("Write operation error");
-		// return ;
+		return ;
 	}
-	// if ((*clIt).getObjRequest().getIsChunked() == true && bufferString.find("\r\n") == std::string::npos)
-	// 	return;
+	if (bytesWritten == -1)
+		throw ErrorExcept(500, "Write CGI error");
 	if ((*it)->getWriteStat() == OP_CLOSE)
 	{
 		epoll.epoll_clean((*it)->getInputFd());

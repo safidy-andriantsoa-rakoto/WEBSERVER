@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/23 10:33:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 13:44:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,9 @@ Client &Client::operator=(const Client &client)
 
 Client::~Client(){}
 
-size_t Client::getToSendSize() {return (this->_to_send);}
+size_t Client::getToSendSize(){return (this->_to_send);}
 
-size_t Client::getTotalSendSize() {return (this->_total_send);}
+size_t Client::getTotalSendSize(){return (this->_total_send);}
 
 bool Client::is_finishedSendContent()
 {
@@ -228,7 +228,7 @@ void Client::processRequestWithConfig()
 	std::string		target = _request.getRequestTarget();
 
 	if (_request.getHttp() != "HTTP/1.1")
-		throw ErrorExcept(505, "Http version error");
+		throw ErrorExcept(505, "This server only support HTTP/1.1\n", "Http version error");
 	buildRequestTarget();
 	if (_request.getIsCgi() == false && (_request.getMethod() == "POST" || _request.getMethod() == "DELETE"))
 	{
@@ -253,7 +253,7 @@ void Client::checkContentLength()
 		return ;
 	itFind = _request.getHeader().find("Content-Length");
 	if (itFind == _request.getHeader().end())
-		throw ErrorExcept(411, "Length required"); //Ask Safidy where to put this function !!!!!
+		throw ErrorExcept(411, "Length required"); //No transfer encoding accepted
 	maxSize = _config.getMaxSize();
 	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
 	if (requestSize > maxSize)
@@ -387,7 +387,7 @@ void Client::stdGetRequest()
 	if (!dir && errno == EACCES)
 		throw ErrorExcept(403, "Directory forbidden");
 	if (dir && _request.getAutoIdx() == true)
-		throw LDirExcept(300, dir, _request.getOriginalRequestTarget(), "Listing directory");
+		throw LDirExcept(200, dir, _request.getOriginalRequestTarget(), "Listing directory");
 	if (dir && _request.getAutoIdx() == false)
 	{
 		filePath += "/index.html";
@@ -487,12 +487,12 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 	
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
-		std::cout << "			BODY=>" << _request.get_Body() << "<=" << std::endl;
+		// std::cout << "			BODY=>" << _request.get_Body() << "<=" << std::endl;
 		std::string body;
 		get_bounadary_from_header(header);
 		if (get_pathfile())
 		{
-			std::cout << "\e[5m				SEARCH FILE POST\e[0m->"<< this->filepath << std::endl;
+			// std::cout << "\e[5m				SEARCH FILE POST\e[0m->"<< this->filepath << std::endl;
 		}
 		if (this->filepath.size())
 		{
@@ -506,10 +506,10 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 				break;
 			}
 		}
-		std::cout << "	RECV=" << _request.get_c_length_received() << " / " << _request.get_content_length() << std::endl;
+		// std::cout << "	RECV=" << _request.get_c_length_received() << " / " << _request.get_content_length() << std::endl;
 		if (_request.get_c_length_received() == _request.get_content_length())
 		{
-			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
+			// std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
 			setSingleResponse(201);
 		}
 	}
@@ -517,7 +517,7 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 	{
 		if (_request.get_c_length_received() == _request.get_content_length())
 		{
-			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
+			// std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
 			setSingleResponse(201);
 		}
 	}
@@ -525,7 +525,7 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 	{
 		if (_request.get_c_length_received() == _request.get_content_length())
 		{
-			std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
+			// std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
 			setSingleResponse(201);
 		}
 	}
@@ -600,7 +600,7 @@ void Client::delete_request()
 	if (S_ISREG(s_stat.st_mode))
 	{
 		if (std::remove(target.c_str()) != 0)
-			throw ErrorExcept(401, "Forbidden");
+			throw ErrorExcept(403, "Forbidden");
 	}
 	else
 		throw ErrorExcept(403, "Forbidden");

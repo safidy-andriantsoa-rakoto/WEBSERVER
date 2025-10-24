@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 15:57:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:10:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,6 @@
 */
 static void	initProgram()
 {
-	LDirExcept::initPart();
-	CgiParser::initCgiEnvpConfig();
-	Response::initSpareDefErrPage();
 	Mime::initMapMime(MIME_PATH);
 	DIR *dir = openDir(UPLOAD_PATH);
 	closedir(dir);
@@ -39,7 +36,7 @@ int main()
 	}
 	catch(const std::exception & e)
 	{
-		std::cerr << "Main catched exception :" << e.what() << std::endl;
+		std::cerr << "Main exception :" << e.what() << std::endl;
 		handler.cleanFdAndAlloc();
 		return 1;
 	}

@@ -6,14 +6,11 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 15:01:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:01:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CgiParser.hpp"
-
-std::string CgiParser::_cgiEnvConfig;
-std::string CgiParser::_cgiPostConfig;
 
 CgiParser::CgiParser() : _envp(NULL){}
 
@@ -53,12 +50,12 @@ void CgiParser::parseCgiEnv(std::string const & requestTarget)
 	size_t pos = vect[0].find_last_of("/");
 	_scriptName = vect[0].substr(pos, vect[0].size() - pos);
 	_scriptFileName = vect[0];
-	std::cout << "CGI SCRIPT = " << _scriptFileName << " ; " << _scriptName << std::endl;
+	// std::cout << "CGI SCRIPT = " << _scriptFileName << " ; " << _scriptName << std::endl;
 }
 
 void CgiParser::buildEnvp()
 {
-	std::string	ownedConfig = CgiParser::_cgiEnvConfig;
+	std::string	ownedConfig = CGI_ENVP_CONF;
 	stringVect	vect;
 
 	replaceString(ownedConfig, _reqMethod, "$1");
@@ -125,17 +122,3 @@ void CgiParser::displayCgiClass() const
 	std::cout << "==============END OF CGI COMPONENT=============\033[0m" << std::endl;
 }
 
-void CgiParser::initCgiEnvpConfig()
-{
-	_cgiEnvConfig += "REQUEST_METHOD=$1\n"
-						"SCRIPT_FILENAME=$2\n"
-						"SCRIPT_NAME=$3\n"
-						"REQUEST_URI=$4\n"
-						"QUERY_STRING=$5\n"
-						"CONTENT_LENGTH=$6\n"
-						"CONTENT_TYPE=$7\n"
-						"GATEWAY_INTERFACE=CGI/1.1\n"
-						"SERVER_PROTOCOL=HTTP/1.1\n"
-						"REDIRECT_STATUS=200\n"
-						"REMOTE_ADDR=10.11.5.6\n";
-}

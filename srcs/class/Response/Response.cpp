@@ -6,13 +6,11 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 15:59:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:06:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
-
-std::string	Response::_spareDefErrPage;
 
 Response::Response() : _respCategory(STD_RSP), _pos(0){}
 
@@ -155,6 +153,8 @@ void Response::addStatusCode(std::string & content)
 
 	replace = convertIntToString(_statusCode);
 	replace += " : " + getReasonPhrase(_statusCode);
+	if (_statusCode == 505)
+		replace += "\n" + _body; //NEED TO TEST FOR ERROR 505
 	replaceString(content, replace, "$status");
 }
 
@@ -180,10 +180,9 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 	}
 	catch(const std::exception& e)
 	{
-		std::cout << "Error on error page" << std::endl;
-		content = _spareDefErrPage;
+		content = BACKUP_ERR_PAGE;
 		addStatusCode(content);
-		_originPath = "sparedefaultpage.html";
+		_originPath = "backup.html";
 	}
 	if (content.size() <= _BUFFER)
 	{
@@ -196,6 +195,7 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 	{
 		_originBody = content;
 		_respStat = OP_START;
+		_type = Mime::getFileType(_originPath);
 	}
 }
 
@@ -263,9 +263,6 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::st
 	}
 	catch(const std::exception& e)
 	{
-		/*
-			What to do when an error occurs when errorPage file is corrupted? Stop the program? [barandri]
-		*/
 		throw std::runtime_error("AExcept error");
 	}
 	_respCategory = e._type;
@@ -276,7 +273,6 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::
 	_statusCode = e._statusCode;
 	setStatusLine();
 	buildErrorPage(_statusCode, errPage, filePath, fdType);
-	_type = Mime::getFileType(_originPath);
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)
@@ -299,7 +295,7 @@ void Response::generateLDirResponse(LDirExcept &d)
 	_type = "text/html";
 	setStatusLine();
 	_header.clear();
-	_body = LDirExcept::_part[0] + list + LDirExcept::_part[1];
+	_body = HEAD_LDIR + list + TAIL_LDIR;
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Connection"] = "keep-alive";
 }
@@ -317,164 +313,40 @@ void Response::generateSingleResponse(int const &statusCode)
 	_header["Content-Length"] = "0";
 }
 
-void Response::initSpareDefErrPage()
-{
-	_spareDefErrPage += "<!DOCTYPE html><html><head>"
-							"<meta charset=\"UTF-8\">"
-							"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-							"<title>Default error page</title>"
-							"<style>body {min-height: 100vh;margin: 0;font-family: sans-serif;background-color: white;color: black;display: flex;justify-content: center;align-items: center;}"
-							".content {padding: 40px;background-color: #f0f0f0;border: 1px solid black;max-width: 90%;text-align: center;}"
-							"h1 {margin-bottom: 10px;}</style>"
-							"</head><body><div class=\"content\"><h1>ERROR</h1><h2>$status</h2></div></body></html>";
-}
-
-std::string Response::getSpareDefErrPage()
-{
-    return _spareDefErrPage;
-}
-
 std::string Response::getReasonPhrase(int const &statusCode)
 {
 	std::string result;
 
     switch (statusCode)
 	{
-		case 100:
-			result = "Continue";
-		break;
-		case 101:
-			result = "Switching protocols";
-		break;
-		case 200:
-			result = "OK";
-		break;
-		case 201:
-			result = "Created";
-		break;
-		case 202:
-			result = "Accepted";
-		break;
-		case 203:
-			result = "Non-Authoritative Information";
-		break;
-		case 204:
-			result = "No Content";
-		break;
-		case 205:
-			result = "Reset Content";
-		break;
-		case 206:
-			result = "Partial Content";
-		break;
-		case 300:
-			result = "Multiple Choices";
-		break;
-		case 301:
-			result = "Moved Permanently";
-		break;
-		case 302:
-			result = "Found";
-		break;
-		case 303:
-			result = "See Other";
-		break;	
-		case 304:
-			result = "Not Modified";
-		break;
-		case 305:
-			result = "Use Proxy";
-		break;
-		case 307:
-			result = "Temporary Redirect";
-		break;
-		case 308:
-			result = "Permanent Redirect";
-		break;
-		case 400:
-			result = "Bad Request";
-		break;
-		case 401:
-			result = "Unauthorized";
-		break;
-		case 402:
-			result = "Payment Required";
-		break;
-		case 403:
-			result = "Forbidden";
-		break;
-		case 404:
-			result = "Not Found";
-		break;
-		case 405:
-			result = "Method Not Allowed";
-		break;
-		case 406:
-			result = "Not Acceptable";
-		break;
-		case 407:
-			result = "Proxy Authentication required";
-		break;
-		case 408:
-			result = "Request Timeout";
-		break;
-		case 409:
-			result = "Conflict";
-		break;
-		case 410:
-			result = "Gone";
-		break;
-		case 411:
-			result = "Length Required";
-			break;
-		case 412:
-			result = "Precondition Failed";
-		break;
-		case 413:
-			result = "URI Too Long";
-		break;
-		case 414:
-			result = "Content Too Large";
-		break;
-		case 415:
-			result = "Unsupported Media Type";
-		break;
-		case 416:
-			result = "Range Not Satisfiable";
-		break;
-		case 417:
-			result = "Expectation Failed";
-		break;
-		case 421:
-			result = "Misdirected Request";
-		break;
-		case 422:
-			result = "Unprocessable Content";
-		break;
-		case 426:
-			result = "Upgrade required";
-		break;
-		case 500:
-			result = "Internal Server Error";
-		break;
-		case 501:
-			result = "Not Implemented";
-		break;
-		case 502:
-			result = "Bad Gateway";
-		break;
-		case 503:
-			result = "Service Unavailable";
-		break;
-		case 504:
-			result = "Gateway Timeout";
-		break;
-		case 505:
-			result = "HTTP Version Not Supported";
-		break;
-		default:
-			throw std::runtime_error("NO STATUS CODE");
-		break;
+		case 200: result = "OK"; break;
+		case 201: result = "Created"; break;
+		case 204: result = "No Content"; break;
+		case 301: result = "Moved Permanently"; break;
+		case 302: result = "Found"; break;	
+		case 307: result = "Temporary Redirect"; break;
+		case 308: result = "Permanent Redirect"; break;
+		case 400: result = "Bad Request"; break;
+		case 403: result = "Forbidden"; break;
+		case 404: result = "Not Found"; break;
+		case 405: result = "Method Not Allowed"; break;
+		case 406: result = "Not Acceptable"; break;
+		case 408: result = "Request Timeout"; break;
+		case 409: result = "Conflict"; break;
+		case 411: result = "Length Required"; break;
+		case 412: result = "Precondition Failed"; break;
+		case 413: result = "URI Too Long"; break;
+		case 414: result = "Content Too Large"; break;
+		case 415: result = "Unsupported Media Type"; break;
+		case 417: result = "Expectation Failed"; break;
+		case 421: result = "Misdirected Request"; break;
+		case 500: result = "Internal Server Error"; break;
+		case 501: result = "Not Implemented"; break;
+		case 502: result = "Bad Gateway"; break;
+		case 503: result = "Service Unavailable"; break;
+		case 504: result = "Gateway Timeout"; break;
+		case 505: result = "HTTP Version Not Supported"; break;
+		default: throw std::runtime_error("NO STATUS CODE"); break;
 	}
 	return result;
 }
