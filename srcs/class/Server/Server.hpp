@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 08:37:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:17:30 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ class Server
         int     	_fdClient;
         socklen_t  	_size_sockaddrin;
         SockAddrIn	_sockaddrIn;
+		struct addrinfo	_addrinfo;
+		struct addrinfo	*_resp;
+		// struct sockaddinfo	*_hints;
 
 	protected :
 		MyConf		_config;
@@ -52,6 +55,7 @@ class Server
         int 		create_socket();
         void 		configure_sockaddrin(int port);
         int 		link_socket_adress();
+		int			resolve_host(std::string const & host, int const & port);
         int 		wait_connexion_from_client();
         int 		accept_client_connexion();
         std::string get_client_request();

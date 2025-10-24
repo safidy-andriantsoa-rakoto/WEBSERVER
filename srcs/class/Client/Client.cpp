@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/23 15:23:04 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:33:30 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -489,7 +489,6 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 	{
 		_fdType = STD_FILE;
 		stdPostRequest(header, opt);
-		// setSingleResponse(201);
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:44:56 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:15:42 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@
 #include "enum.hpp"
 #include <sys/time.h>
 #include <ctime>
+#include <netdb.h>
+
 
 //Utils
     //fileUtils

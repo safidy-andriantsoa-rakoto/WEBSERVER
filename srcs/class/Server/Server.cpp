@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 10:17:02 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/24 16:01:26 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Server::Server()
 {
 	_fdClient = -1;
 	_fdSocket = -1;
+	_resp = NULL;
 }
 
 Server::Server(Server const & other)
@@ -34,6 +35,8 @@ Server &Server::operator=(Server const & other)
 		_fdClient = other._fdClient;
 		_size_sockaddrin = other._size_sockaddrin;
 		_sockaddrIn = other._sockaddrIn;
+		_addrinfo = other._addrinfo;
+		// *_resp = *other._resp;
 	}
 	return *this;
 }
@@ -92,13 +95,39 @@ int Server::link_socket_adress()
 {
 	int     status;
 
-	status = bind(this->_fdSocket, (sockaddr *)&(this->_sockaddrIn), this->_size_sockaddrin);
+	if (!_resp)
+		return (0);
+	this->_size_sockaddrin = sizeof(this->_resp->ai_addr);
+	status = bind(this->_fdSocket, (sockaddr *)&(this->_resp->ai_addr), this->_size_sockaddrin);
 	if (status == -1)
 	{
 		std::cout << "Error\nbind a name to a socket" << std::endl;
 		return (0);
 	}
 	return (1);
+}
+
+int Server::resolve_host(std::string const &host, int const &port) //pour resoudre localhost / ip 0.0.0.0/1.1.1.1/....
+{
+	memset(&_addrinfo, 0, sizeof(_addrinfo));
+	_addrinfo.ai_family = AF_INET;
+	_addrinfo.ai_socktype = SOCK_STREAM;
+
+	std::stringstream port_stream;
+	port_stream << port;
+	std::string port_str = port_stream.str();
+	
+	if (getaddrinfo(host.c_str(), port_str.c_str(), &_addrinfo, &_resp) != 0)
+	{
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(errno));
+		return (0);
+	}
+	// if (_resp && _resp->ai_family == AF_INET)
+	// {
+	// 	// memcpy(&_sockaddrIn, _resp->ai_addr, _resp->ai_addrlen);
+	// 	return (1);
+	// }
+    return (0);
 }
 
 int Server::wait_connexion_from_client()

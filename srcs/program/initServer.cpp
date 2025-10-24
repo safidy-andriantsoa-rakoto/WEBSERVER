@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 09:29:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/02 13:39:48 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:50:01 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@ void	launchEpoll(vectServer & vectServer, EpollCreation &epoll)
 		int fd = ((*it).get_fdSocket());
 		std::cout << "\033[046mSERVER FD= " << fd << "\033[0m" << std::endl;
 		epoll.epoll_control(EPOLLIN, fd);
-		(*it).configure_sockaddrin((*it).getConfig().getServPort());
+		int port = (*it).getConfig().getServPort();
+		(*it).resolve_host("12.12.13.42", port);
+		// (*it).configure_sockaddrin((*it).getConfig().getServPort());
 		if (!(*it).link_socket_adress())
 			throw std::runtime_error("Failed to load server");
 		if (!(*it).wait_connexion_from_client())

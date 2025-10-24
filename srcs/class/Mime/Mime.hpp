@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:28 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/10 10:14:39 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/24 13:17:14 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ class Mime
 		Mime(stringVect &path);
 		MapMime get_mime() const;
 		~Mime();
-
+		void check_content_type();
+		
 		static void			initMapMime(std::string const & path);
 		static MapMime &	getMapMime();
 		static std::string	getFileType(std::string const & file);
