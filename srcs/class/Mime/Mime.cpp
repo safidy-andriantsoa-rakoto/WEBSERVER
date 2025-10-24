@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/23 15:24:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/24 13:14:44 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,15 +62,26 @@ void Mime::get_file_content_mime(std::ifstream &fd)
     while (getline(fd, line))
     {
         trim_space(line);
+        if (line.empty())
+            continue;
         int pos = line.find_first_of("|");
+        if (pos == -1)
+            throw std::runtime_error("Mime file error: missing |");
         std::string ext = line.substr(pos + 1, line.size());
+        if (ext.empty())
+            throw std::runtime_error("Mime file error: empty extension");
         line.erase(pos, line.size());
+        if (line.empty() || ext.empty())
+            throw std::runtime_error("Mime file error: empty line or extension");
         pos = ext.find_first_of(",");
         if (pos != -1)
         {
             while (pos != -1)
             {
-                _mime[ext.substr(0, pos)] = line;
+                std::string _ext = ext.substr(0, pos);
+                if (_ext.empty())
+                    throw std::runtime_error("Mime file error: empty extension before ,");
+                _mime[_ext] = line;
                 ext.erase(0, pos + 1);
                 pos = ext.find_first_of(",");
             }
@@ -88,18 +99,27 @@ void Mime::initMapMime(std::string const &path)
     stringVect      pathVect;
     std::ifstream   fileStream;
     struct dirent*  entry;
+    int             count = 0;
 
     DIR* dir = opendir(path.c_str());
 	if (!dir)
         throw (std::runtime_error("No directory for Mime"));
     while ((entry = readdir(dir)) != NULL)
 	{
+        count++;
 		std::string name(entry->d_name);
 		if (!name.compare(".") || !name.compare(".."))
 			continue;
+        if (name != "app.conf" && name != "audio.conf" && name != "image.conf" && name != "text.conf" && name != "video.conf")
+        {
+            closedir(dir);
+            throw std::runtime_error("ERROR: Invalid mime file in mime directory");
+        }
 		pathVect.push_back("./" + path + "/" + name);
     }
     closedir(dir);
+    if (count != 7)
+        throw std::runtime_error("ERROR: Missing mime file(s) or extra file(s) in mime directory");
     for (size_t i = 0; i < pathVect.size(); i++)
     {
         fileStream.open(pathVect[i].c_str());
@@ -110,6 +130,19 @@ void Mime::initMapMime(std::string const &path)
         }
         else
             throw std::runtime_error("Mime file error");
+    }
+    if (_mime.size() != 122)
+        throw std::runtime_error("ERROR: Incorrect number of mime types loaded");
+    for (stringMapIt it = _mime.begin(); it != _mime.end(); ++it)
+    {
+        if (it->first.empty() || it->second.empty())
+            throw std::runtime_error("Mime file error: empty key or value in mime map");
+        if (it->second.find("application/") == std::string::npos
+            && it->second.find("audio/") == std::string::npos
+            && it->second.find("video/") == std::string::npos
+            && it->second.find("text/") == std::string::npos
+            && it->second.find("image/") == std::string::npos)
+            throw std::runtime_error("Mime file error: invalid mime type format");
     }
 }
 
