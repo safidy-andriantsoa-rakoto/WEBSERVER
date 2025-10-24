@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:32:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:53:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class AConfig
 {
 	protected:
 
-		int				_port;
+		intVect			_port;
 		float			_maxSize;
 		std::string		_host;
 		stringVect		_serverName;
@@ -50,7 +50,7 @@ class AConfig
 		AConfig(AConfig const & other);
 		AConfig &		operator=(AConfig const &other);
 
-		int				getServPort() const;
+		intVect			getServPort() const;
 		float			getMaxSize() const;
 		std::string		getServHost() const;
 		stringVect		getServName() const;
@@ -61,7 +61,7 @@ class AConfig
 
 		virtual 		~AConfig(){};
 
-		virtual void	locationParsing(std::string const & filePath) = 0;
+		virtual void	myParseLoc(std::string const & filePath) = 0;
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:35:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:06:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ MyConf &MyConf::operator=(MyConf const &other)
 
 MyConf::~MyConf(){}
 
-void MyConf::locationParsing(std::string const & filePath)
+void MyConf::myParseLoc(std::string const & filePath)
 {
 	std::ifstream	file;
 	std::string		line;
@@ -70,7 +70,7 @@ void MyConf::myParseConfig(std::string const &servPath, std::string const &locPa
 		if (vect[0] == "host")
 			_host = vect[1];
 		else if (vect[0] == "port")
-			_port = convertStringToInt(vect[1]);
+			_port[0] = convertStringToInt(vect[1]);
 		else if (vect[0] == "server_names")
 		{
 			vect.erase(vect.begin());
@@ -90,14 +90,16 @@ void MyConf::myParseConfig(std::string const &servPath, std::string const &locPa
 		vect.clear();
 		line.clear();
 	}
-	locationParsing(locPath);
+	myParseLoc(locPath);
 }
 
 void	MyConf::displayConfig() const
 {
 	std::cout << "------------------------------------------" << std::endl;
-	std::cout << "Host " << _host << std::endl
-	<< "Port " << _port << std::endl;
+	std::cout << "Host " << _host << std::endl;
+	std::cout << "Port " << std::endl;
+	for (intVectIt itInt = _port.begin(); itInt != _port.end(); itInt++)
+		std::cout << (*itInt) << " " << std::endl;
 	if (_serverName.size())
 		displayStringVect(_serverName, "Server name");
 	if (_errPage.listError.size())
@@ -112,10 +114,11 @@ void	MyConf::displayConfig() const
 	}
 }
 
-void MyConf::getElemetConfig(const size_t &start, const size_t &end, const stringVect &file)
+void MyConf::getElementConfig(const size_t &start, const size_t &end, const stringVect &file)
 {
 	int countLoc = 0;
-	for (size_t i = start; i < end; ++i)
+	_countLocation = 0;
+	for (size_t i = start; i < end; i++)
 	{
 		std::istringstream iss(file[i]);
 		std::string name, value;
@@ -129,7 +132,12 @@ void MyConf::getElemetConfig(const size_t &start, const size_t &end, const strin
 				if (name == "host")
 					_host = word;
 				if (name == "port")
-					_port = atoi(word.c_str());
+				{
+					for (size_t i = 0; i < word.size(); i++)
+					if (!isdigit(word[i]))
+						throw std::runtime_error ("Error : Find not digit element");
+					_port.push_back(atoi(word.c_str()));
+				}
 				if (name == "server_names")
 					_serverName.push_back(word);
 				if (name == "size")
@@ -137,13 +145,13 @@ void MyConf::getElemetConfig(const size_t &start, const size_t &end, const strin
 				if (name == "error_page")
 					_errPage.strError.push_back(word);
 			}
-			if (name == "location")
-				_countLocation = countLoc++;
 		}
+		if (name == "location")
+			countLoc++;
 	}
-	for (size_t i = 0; i < _errPage.strError.size(); ++i)
-		std::cout << "- " << _errPage.strError[i] << std::endl;
+	_countLocation = countLoc;
 }
+
 bool MyConf::getStatus()
 {
     return _checkStats;
@@ -197,7 +205,7 @@ void MyConf::parseConfig(stringVect file)
 		_checkStats = false;
 		return;
 	}
-	getElemetConfig(start, end, file);
+	getElementConfig(start, end, file);
 	i = findNotDigitError();
 	if (i > 0 && ((_errPage.strError.size() - i > 1)))
 	{

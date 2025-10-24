@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 10:32:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:26:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ ALocation::ALocation(ALocation const &other) :
         _redirect(other._redirect),
         _index(other._index),
         _cgiExtension(other._cgiExtension),
-        _checkStats(other._checkStats){}
+        _checkStats(other._checkStats),
+        _redirection(other._redirection){}
 
 ALocation &ALocation::operator=(ALocation const &other)
 {
@@ -42,6 +43,7 @@ ALocation &ALocation::operator=(ALocation const &other)
         _index = other._index;
         _checkStats = other._checkStats;
         _cgiExtension = other._cgiExtension;
+        _redirection = other._redirection;
     }
     return *this;
 }

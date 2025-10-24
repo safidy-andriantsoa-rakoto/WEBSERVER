@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 13:50:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:53:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int const & epollOpt, int *fd)
 {
 	// std::cout << "Create CGI FD" << std::endl;
-	std::cout << fd[FD_STDIN] << " " << fd[FD_STDOUT] << " " << fd[FD_STDERR] << std::endl;
+	// std::cout << fd[FD_STDIN] << " " << fd[FD_STDOUT] << " " << fd[FD_STDERR] << std::endl;
 	if (fd[FD_STDOUT] < 0)
 	{
 		if (fd[FD_STDOUT] == -2)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:32:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:17:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,4 +164,54 @@ void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
 		else
 			return ;
 	}
+}
+
+std::vector<int> Server::stockPort(std::vector<Server> &allServer)
+{
+	size_t i(0);
+	intVect tabPort;
+	intVect port;
+	while (i < allServer.size())
+	{
+		port = allServer[i]._config.getServPort();
+		for (size_t i = 0; i < port.size(); i++)
+		{
+			tabPort.push_back(port[i]);
+		}
+		i++;
+	}
+
+	return (tabPort);
+}
+
+bool Server::checkDuplicateValue(std::vector<Server> allserver)
+{
+	intVect port;
+	size_t i(0), j(0);
+
+	port = Server::stockPort(allserver);
+	std::cout << "Port list ";
+	while (i < port.size())
+	{
+		j = i + 1;
+		while (j < port.size())
+		{
+			// std::cout << port[i] << " " << port[j] << std::endl;
+			if (port[i] == port[j])
+			{
+				std::cerr << "Error : find duplicate port " << port[i] << std::endl;
+				return (false);
+			}
+			j++;
+		}
+		i++;
+	}
+
+	for (size_t i = 0; i < port.size(); i++)
+	{
+		std::cout << port[i] << " ";
+	}
+
+	std::cout << std::endl;
+	return (true);
 }

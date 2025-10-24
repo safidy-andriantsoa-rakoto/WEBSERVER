@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 08:57:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:55:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,13 +84,38 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                     _root.push_back(word);
                 if (name == "autoindex")
                 {
+                    std::cout << "autoindex === " << word << std::endl;
                     if (word == "ON")
                         _autoindex[0] = word;
+                }
+                if (name == "cgi")
+                {
+                    if (word == "ON")
+                    {
+                        _cgiExtension[0] = word;
+                        // Add exec path !!!!
+                    }
                 }
                 if (name == "method")
                     _method.push_back(word);
                 if (name == "redirect")
+                {
                     _redirect.push_back(word);
+                    if (_redirect[0] == "301" || _redirect[0] == "302" || _redirect[0] == "307" || _redirect[0] == "308")
+                    {
+                        _redirection.error = atoi(_redirect[0].c_str());
+                        try
+                        {
+                            _redirection.filePath = _redirect.at(1);
+                        }
+                        catch (const std::out_of_range &e)
+                        {
+                            std::cerr << "Error : " << e.what() << std::endl;
+                        }
+                    }
+                    else
+                        throw std::runtime_error("Error : redirection failed ");
+                }
             }
         }
     }
@@ -104,13 +129,16 @@ void MyLoc::parseLocation(const stringVect &file)
         return;
     size_t start = index[currentBlock];
     size_t end;
-    std::cout << "current block : " << currentBlock << std::endl;
+    std::cout << "Index size = " << index.size() << std::endl;
+    index[index.size() - 1] = _endConfig; //Ask Tsiky
     if (currentBlock + 1 < index.size())
         end = index[currentBlock + 1];
     else
         end = file.size();
-    std::cout << "start = " << start << " ; end = " << end << std::endl;
-    std::cout << "size = " << file.size();
+    if (checkDuplicate2(file, "autoindex", start, end) || checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end))
+    {
+        throw std::runtime_error("Error : duplicate setting find or not find setting");
+    }
     getElementLocation(start, end, file);
     currentBlock++;
     _checkStats = true;

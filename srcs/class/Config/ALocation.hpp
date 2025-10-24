@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 10:32:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:44:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,26 @@
 
 #include "general.hpp"
 
+struct s_redirection
+{
+	std::string filePath;
+	int error;
+};
+
 class ALocation
 {
 	protected:
-
-		stringVect	_autoindex;
-		stringVect	_location;
-		std::string _locations;
-		stringVect	_root;
-		stringVect	_method;
-		stringVect	_redirect;
-		stringVect	_index;
-		stringVect	_cgiExtension;
-		bool 		_checkStats;
+		stringVect		_autoindex;
+		stringVect		_location;
+		std::string 	_locations;
+		stringVect		_root;
+		stringVect		_method;
+		stringVect		_redirect;
+		stringVect		_index;
+		stringVect		_cgiExtension;
+		bool 			_checkStats;
+		size_t 			_endConfig;
+		t_redirection	_redirection;
 
 
 	public:

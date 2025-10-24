@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/24 13:44:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:50:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,9 +276,9 @@ void Client::buildRequestTarget()
 		processLocationOption(_config.getClassLocation()[0], _request);
 		itLoc = _config.findClassLocation("/");
 		target = _config.getClassLocation()[0].getRootDirectory();
-		/*INDEX ???*/
-		if ((*itLoc).getAutoindex() == "OFF")
-			target += "/index.html";
+		// /*INDEX ???*/
+		// if ((*itLoc).getAutoindex() == "OFF")
+		target += "/index.html";
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 08:37:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 15:16:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,10 @@ class Server
 
 		//For testing only !!!!
 		void simpleInit(std::string const & servPath, std::string const & locationPath);
-
+		
+		static std::vector<int> stockPort(std::vector<Server> &allServer);
 		static void getParsAllServer(std::vector<Server> &allServer, stringVect file);
+		static bool checkDuplicateValue(std::vector<Server> allserver);
 };
 
 #endif
