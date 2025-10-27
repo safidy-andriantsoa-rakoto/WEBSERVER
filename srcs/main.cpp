@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 15:43:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:54:54 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 		if(!Server::checkDuplicateValue(allServer))
 			return (1);
 		handler.setVectServer(allServer);
-		launchServer(handler);
+		// launchServer(handler);
 	}
 	catch(const std::exception & e)
 	{

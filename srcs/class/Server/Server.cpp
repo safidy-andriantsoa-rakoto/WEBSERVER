@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 15:17:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:16:05 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,6 @@ bool Server::checkDuplicateValue(std::vector<Server> allserver)
 		j = i + 1;
 		while (j < port.size())
 		{
-			// std::cout << port[i] << " " << port[j] << std::endl;
 			if (port[i] == port[j])
 			{
 				std::cerr << "Error : find duplicate port " << port[i] << std::endl;

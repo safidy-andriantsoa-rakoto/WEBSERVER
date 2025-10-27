@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:43:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:52:00 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,10 @@ std::vector<std::string> getContentFile(std::string _path);
 bool        checkDuplicate(stringVect file, std::string name, size_t &start , size_t &end);
 bool        checkConfigDupli(stringVect file, size_t &start, size_t &end);
 bool        checkDuplicate2(stringVect file, std::string name, size_t &start, size_t &end);
-
+bool        checkValuePort(intVect &vect);
+bool        checkDuplicationStr(stringVect &str);
+bool        checkDuplicationInt(intVect &Int);
+bool        checkValueMethod(stringVect &str);
 // dirListing
 stringMap	listingDirectory(DIR* dir, std::string const & path);
 std::string	convertListing(stringMap & mapDir);

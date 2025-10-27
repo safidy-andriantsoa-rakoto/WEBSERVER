@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyLoc.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/26 19:37:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 17:49:25 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,10 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                     }
                 }
                 if (name == "method")
+                {
                     _method.push_back(word);
+
+                }
                 if (name == "redirect")
                 {
                     _redirect.push_back(word);
@@ -120,6 +123,10 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
             }
         }
     }
+    if(checkDuplicationStr(_method) == false || checkValueMethod(_method) == false)
+         throw std::runtime_error("Error : invalid methode ");
+     if(checkDuplicationStr(_location) == false)
+         throw std::runtime_error("Error : invalid methode ");
 }
 
 void MyLoc::parseLocation(const stringVect &file)
@@ -130,18 +137,15 @@ void MyLoc::parseLocation(const stringVect &file)
         return;
     size_t start = index[currentBlock];
     size_t end;
-    std::cout << "Index size = " << index.size() << std::endl;
-    // index[index.size()] = _endConfig; /* Ask if the updated version is ok ? invalid write if size = 1 */
-    index[index.size() - 1] = _endConfig;
+
     if (currentBlock + 1 < index.size())
         end = index[currentBlock + 1];
     else
         end = file.size();
-    if (checkDuplicate2(file, "autoindex", start, end) || checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end))
-    {
-        throw std::runtime_error("Error : duplicate setting find or not find setting");
-    }
     getElementLocation(start, end, file);
+    // if(_location[0] != "cgi-bin" || _location[0] != "template")
+        if (checkDuplicate2(file, "autoindex", start, end) || checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end))
+            throw std::runtime_error("Error : duplicate setting find or not find setting");
     currentBlock++;
     _checkStats = true;
 }

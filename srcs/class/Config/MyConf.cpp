@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 15:06:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:29:18 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,12 @@ void MyConf::getElementConfig(const size_t &start, const size_t &end, const stri
 		if (name == "location")
 			countLoc++;
 	}
+	if(checkValuePort(_port) == false)
+		throw std::runtime_error ("Error : Port invalid");
+	if(checkDuplicationStr(_serverName) == false)
+		throw std::runtime_error ("Error : server name invalid");
+	if(checkDuplicationStr(_errPage.strError) == false)
+		throw std::runtime_error ("Error : server name invalid");
 	_countLocation = countLoc;
 }
 
