@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/27 11:14:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 14:48:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -365,7 +365,7 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
-void Client::get_request(uint32_t & opt, int *fd)
+void Client::get_request(uint32_t & opt, int *fd, pid_t & childPid)
 {
 	if (_request.getIsCgi() == false)
 	{
@@ -376,7 +376,7 @@ void Client::get_request(uint32_t & opt, int *fd)
 	else
 	{
 		_fdType = GET_PHP_SCRIPT;
-		cgiGetRequest(fd);
+		cgiGetRequest(fd, childPid);
 		setStatusCodeResponse(200);
 		opt = EPOLLIN;
 	}
@@ -419,12 +419,11 @@ void Client::stdGetRequest()
 	}
 }
 
-void Client::cgiGetRequest(int *fd)
+void Client::cgiGetRequest(int *fd, pid_t & childPid)
 {
-	int	pipeFd[2];
-	int	pid;
-	int	errFd[2];
-	int	stdFd[2] = {-1, -1};
+	int		pipeFd[2];
+	int		errFd[2];
+	int		stdFd[2] = {-1, -1};
 
 	if (pipe(pipeFd) == -1)
 		throw std::runtime_error("Pipe fd error");
@@ -432,10 +431,10 @@ void Client::cgiGetRequest(int *fd)
 		throw std::runtime_error("Pipe err error");
 	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
 	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
-	pid = fork();
-	if (pid == -1)
+	childPid = fork();
+	if (childPid == -1)
 		throw std::runtime_error("Fork error");
-	if (pid == 0)
+	if (childPid == 0)
 	{
 		dupStandardIO(stdFd, 2);
 		makeDup2(pipeFd[1], STDOUT_FILENO, pipeFd[0]);
@@ -462,7 +461,7 @@ void Client::cgiGetRequest(int *fd)
 	}
 }
 
-void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
+void Client::post_request(stringMap &header, uint32_t & opt, int *fd, pid_t & childPid)
 {
 	if (_request.getIsCgi() == false)
 	{
@@ -476,7 +475,7 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 		if (!_cgiFD)
 		{
 			std::cout << "		PARSE CGI\n" << std::endl;
-			cgiPostRequest(fd);
+			cgiPostRequest(fd, childPid);
 			setStatusCodeResponse(200);
 		}
 	}
@@ -509,9 +508,8 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 		throw ErrorExcept(501, "Not implemented");
 }
 
-void Client::cgiPostRequest(int *fd)
+void Client::cgiPostRequest(int *fd, pid_t & childPid)
 {
-	int	pid;
 	int	pipeOutFd[2];
 	int	pipeInFd[2];
 	int	pipeErrFd[2];
@@ -526,10 +524,10 @@ void Client::cgiPostRequest(int *fd)
 	// std::cout << "inFd [0] = " << pipeInFd[0] << " [1] = " << pipeInFd[1] << std::endl;
 	// std::cout << "outFd [0] = " << pipeOutFd[0] << " [1] = " << pipeOutFd[1] << std::endl;
 	// std::cout << "errFd [0] = " << pipeErrFd[0] << " [1] = " << pipeErrFd[1] << std::endl;
-	pid = fork();
-	if (pid == -1)
+	childPid = fork();
+	if (childPid == -1)
 		throw std::runtime_error("Fork error");
-	if (pid == 0)
+	if (childPid == 0)
 	{
 		dupStandardIO(stdFd, 3);
 		makeDup2(pipeInFd[0], STDIN_FILENO, pipeInFd[1]);
@@ -583,12 +581,12 @@ void Client::delete_request()
 	_response.setRespCategory(SINGLE_RSP);
 }
 
-void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd)
+void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, pid_t & childPid)
 {
 	stringMap	header;
 	std::string	body;
 	
-	std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
+	// std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
 	if (!_request.get_is_CRLF_header())
 	{
 		_request.parseRequest(clientRequest);
@@ -611,9 +609,9 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	header = _request.getHeader();
 	_request.displayRequest();
 	if (_request.getMethod() == "GET")
-		get_request(opt, fd);
+		get_request(opt, fd, childPid);
 	else if (_request.getMethod() == "POST")
-		post_request(header, opt, fd);
+		post_request(header, opt, fd, childPid);
 	else if (_request.getMethod() == "DELETE")
 	{
 		delete_request();

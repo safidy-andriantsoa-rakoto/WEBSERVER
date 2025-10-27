@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 10:03:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 13:35:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,14 +66,13 @@ class Handler
 		void			setVectServer(vectServer & vectServer);
 
 		void			addToVectClient(Server const & server, int const & fd);
-		void			addToVectCgiFd(VClientIt &it, int const &fdOut, int const & fdErr, int const & fdIn);
+		void			addToVectCgiFd(VClientIt &it, int *fd, pid_t const & childPid);
 
 		void			removeClient(int const & index, EpollCreation & epoll);
 		void			removeClient(VClientIt & it, EpollCreation & epoll);
 			
 		void			removeCgiFd(int const & index);
 		void			removeCgiFd(vectCgiFdIt & it);
-		void			checkAndRemoveCgiFd(CgiFd *ptr, EpollCreation & epoll);
 		vectCgiFdIt		findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd);
 		vectCgiFdIt		findPtrInCgiFd(vectCgiFd & allCgiFd, CgiFd *ptr);
 		

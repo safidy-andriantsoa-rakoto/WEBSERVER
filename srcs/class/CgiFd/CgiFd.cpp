@@ -14,29 +14,19 @@
 
 CgiFd::CgiFd(){}
 
-CgiFd::CgiFd(int const &CgiFd, int const &clientFd) : 
-	_outputFd(CgiFd),
+CgiFd::CgiFd(int *fd, pid_t const & childPid, int const & clientFd) : 
+	_outputFd(fd[FD_STDOUT]),
+	_errorFd(fd[FD_STDERR]),
+	_inputFd(fd[FD_STDIN]),
 	_clientFd(clientFd),
-	_readStat(OP_OPEN)
-	{
-		_isError = false;
-		_isHeader = false;
-		_statusCode = -1;
-	}
-
-CgiFd::CgiFd(int const &outputFd, int const & errorFd, int const & inputFd, int const &clientFd) : 
-	_outputFd(outputFd),
-	_errorFd(errorFd),
-	_inputFd(inputFd),
-	_clientFd(clientFd),
-	_readStat(OP_OPEN)
-	{
-		_writeStat = OP_START;
-		_isError = false;
-		_isHeader = false;
-		_statusCode = -1;
-		_startTime = time(NULL);
-	}
+	_isError(false),
+	_readStat(OP_OPEN),
+	_statusCode(-1),
+	_isHeader(false),
+	_writeStat(OP_START),
+	_startTime(time(NULL)),
+	_childPid(childPid),
+	_isChildAlive(true){}
 
 CgiFd::CgiFd(CgiFd const & other)
 {
@@ -62,6 +52,8 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 		_writeStat = other._writeStat;
 		_pos = other._pos;
 		_startTime = other._startTime;
+		_childPid = other._childPid;
+		_isChildAlive = other._isChildAlive;
 	}
 	return *this;
 }
@@ -114,16 +106,21 @@ void CgiFd::bufferReadParser()
 	while (pos != std::string::npos)
 	{
 		pos = _bufferRead.find(sep, startPos);
-		if (pos == startPos)
+		if (pos == startPos || pos == std::string::npos)
 			break ;
 		line = _bufferRead.substr(startPos, pos - startPos);
+		std::cout << line << std::endl;
 		headerVect = strictSplit(line, ": ");
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();
 	}
 	_isHeader = true;
-	_body = _bufferRead.substr(pos, _bufferRead.size() - pos);
+	if (pos < _bufferRead.size())
+	{
+		_body = _bufferRead.substr(pos, _bufferRead.size() - pos);
+		/* NEED TO APPEND BODY BEFORE SENDING !!!!!!!!!*/
+	}
 }
 
 void CgiFd::clearBufferRead()
@@ -210,7 +207,15 @@ void CgiFd::checkTimeOut()
 
 	if (difftime(currentTime, _startTime) > CGI_MAX_TIME)
 	{
-		// std::cout << "			CGI TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
+		std::cout << "			CGI TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
+		kill(_childPid, SIGTERM);
+		_isChildAlive = false;
 		throw ErrorExcept(504, "CGI Took too long");
 	}
 }
+
+pid_t CgiFd::getChildPid() const{return _childPid;}
+
+bool CgiFd::getIsChildAlive() const{ return _isChildAlive;}
+
+void CgiFd::setIsChildAlive(bool const &stat){ _isChildAlive = stat; }

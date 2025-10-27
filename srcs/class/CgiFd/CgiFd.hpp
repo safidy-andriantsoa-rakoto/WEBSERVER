@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 10:59:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 14:11:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,13 @@ class CgiFd
 		size_t		_pos;
 
 		time_t		_startTime;
+		pid_t		_childPid;
+		bool		_isChildAlive;
 
 		CgiFd();
 
 	public:
-		CgiFd(int const & cgiFd, int const & clientFd);
-		CgiFd(int const &outputFd, int const & errorFd, int const & inputFd, int const &clientFd);
+		CgiFd(int *fd, pid_t const & childPid, int const & clientFd);
 		CgiFd(CgiFd const & other);
 		CgiFd & operator=(CgiFd const & other);
 		~CgiFd();
@@ -95,6 +96,10 @@ class CgiFd
 		std::string	operateOnBufferToWrite();
 
 		void		checkTimeOut();
+
+		pid_t		getChildPid() const;
+		bool		getIsChildAlive() const;
+		void		setIsChildAlive(bool const & stat);
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 10:56:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 14:27:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 #define MAX_EVENT 2042
 #define _BUFFER 1000
 #define _BUFFER_RECV 1024
-#define	CLIENT_MAX_TIME 30
+#define	CLIENT_MAX_TIME 50
 #define	CGI_MAX_TIME 10
 
 //Listing directory

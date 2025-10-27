@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 11:18:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:04:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll, in
 	handler.removeCgiFd(i);
 }
 
-void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int const & epollOpt, int *fd)
+void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *fd, pid_t const & childPid)
 {
-	// std::cout << "Create CGI FD" << std::endl;
-	// std::cout << fd[FD_STDIN] << " " << fd[FD_STDOUT] << " " << fd[FD_STDERR] << std::endl;
+	std::cout << "Create CGI FD" << std::endl;
+	std::cout << fd[FD_STDIN] << " " << fd[FD_STDOUT] << " " << fd[FD_STDERR] << " => " << childPid << std::endl;
 	if (fd[FD_STDOUT] < 0)
 	{
 		if (fd[FD_STDOUT] == -2)
@@ -34,14 +34,13 @@ void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int c
 	}
 	if ((*it).getFdType() == GET_PHP_SCRIPT)
 	{
-		handler.addToVectCgiFd(it, fd[FD_STDOUT], fd[FD_STDERR], fd[FD_STDIN]);
-		epoll.epoll_control(EPOLLOUT, fd[FD_STDERR]);
-		epoll.epoll_control(epollOpt, fd[FD_STDOUT]);
+		handler.addToVectCgiFd(it, fd, childPid);
+		epoll.epoll_control(EPOLLIN, fd[FD_STDOUT]);
+		epoll.epoll_control(EPOLLIN, fd[FD_STDERR]);
 	}
 	else if ((*it).getFdType() == POST_PHP_SCRIPT)
 	{
-		handler.addToVectCgiFd(it, fd[FD_STDOUT], fd[FD_STDERR], fd[FD_STDIN]);
-		// if ((*it).getObjRequest().getIsChunked() == false)
+		handler.addToVectCgiFd(it, fd, childPid);
 			epoll.epoll_control(EPOLLOUT, fd[FD_STDIN]);
 		int fdCli = (*it).get_clientFD();
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
@@ -66,6 +65,13 @@ int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)
 	bufferString.append(buffer, bytesRead);
 	std::cout << "				***************BUFFER ERROR \n" << bufferString << std::endl;
 	std::cout << "				***************BUFFER ERROR END" << std::endl;
+	if (bufferString.find("Valgrind"))
+	{
+		std::cout << "Valgrind Error \n";
+		epoll.epoll_clean((*itCgi)->getErrFd());
+		(*itCgi)->setErrFd(-1);
+		return 0;	
+	}
 	return bytesRead;
 }
 

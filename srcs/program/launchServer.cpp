@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/27 10:08:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:06:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 		}
 		catch(const std::exception& e1)
 		{
-			std::cerr << "			Error on casting " << e1.what() << '\n';
+			std::cerr << "			Error on CGI exception " << e1.what() << '\n';
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/27 10:00:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 13:50:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,13 @@ class Client : public Server
 		void		processRedirection(MyLoc const & location, Request & request);
 
 				//HTTP Method
-		void		get_request(uint32_t & opt, int *fd);
+		void		get_request(uint32_t & opt, int *fd, pid_t & childPid);
 		void		stdGetRequest();
-		void		cgiGetRequest(int *fd);
+		void		cgiGetRequest(int *fd, pid_t & childPid);
 
-		void		post_request(stringMap & header, uint32_t & opt, int *fd);
+		void		post_request(stringMap & header, uint32_t & opt, int *fd, pid_t & childPid);
 		void		stdPostRequest(stringMap & header, uint32_t & opt);
-		void		cgiPostRequest(int *fd);
+		void		cgiPostRequest(int *fd, pid_t & childPid);
 		void		delete_request();
 
 	public:
@@ -124,7 +124,7 @@ class Client : public Server
 				const char *what() const throw();
 		};
 
-		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd);
+		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, pid_t & childPid);
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 

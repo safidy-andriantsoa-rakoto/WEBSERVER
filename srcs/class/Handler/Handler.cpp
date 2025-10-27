@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 11:21:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 14:53:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void Handler::identifyFd(int const & fd, int & index, int & identifier)
 			(*itCgiFd)->setIsError(true);
 			identifier = CGI_FD_ERR;
 			throw ErrorExcept(500, "Internal Servor Error");
+			return;
 		}
 		index++;
 	}
@@ -107,10 +108,10 @@ void Handler::addToVectClient(Server const & server, int const & fd)
 	_vectClient.push_back(Client(server, fd, true));
 }
 
-void Handler::addToVectCgiFd(VClientIt &it, int const &fdOut, int const & fdErr, int const & fdIn)
+void Handler::addToVectCgiFd(VClientIt &it, int *fd, pid_t const & childPid)
 {
 	int	fdCli = (*it).get_clientFD();
-	CgiFd *cgiFd = new CgiFd(fdOut, fdErr, fdIn, fdCli);
+	CgiFd *cgiFd = new CgiFd(fd, childPid, fdCli);
 
 	(*it).setPtrCgiFd(cgiFd);
 	_vectCgiFd.push_back(cgiFd);
@@ -152,29 +153,6 @@ void Handler::removeCgiFd(vectCgiFdIt &it)
 	_vectCgiFd.erase(it);
 }
 
-void Handler::checkAndRemoveCgiFd(CgiFd *ptr, EpollCreation & epoll)
-{
-	vectCgiFdIt	it = findPtrInCgiFd(_vectCgiFd, ptr);
-	int			cgiFd[3];
-
-	std::cout << "Check and remove cgi Fd" << std::endl;
-	cgiFd[FD_STDOUT] = (*it)->getOutputFd();
-	cgiFd[FD_STDERR] = (*it)->getErrFd();
-	cgiFd[FD_STDIN] = (*it)->getInputFd();
-	for(int i = 0; i < 3; i++)
-	{
-		if (cgiFd[i] > 0)
-		{
-			epoll.epoll_clean(cgiFd[i]);
-		}
-	}
-	(*it)->setOutputFd(-1);
-	(*it)->setErrFd(-1);
-	(*it)->setInputFd(-1);
-	if (it != _vectCgiFd.end())
-		removeCgiFd(it);
-}
-
 void Handler::removeClient(int const & index, EpollCreation & epoll)
 {
 	VClientIt		it = _vectClient.begin() + index;
@@ -194,6 +172,7 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 				epoll.epoll_clean(cgiFd[i]);
 		}
 		removeCgiFd(itCgi);
+		(*it).clearPtrCgiFd();
 	}
 	_vectClient.erase(it);
 }

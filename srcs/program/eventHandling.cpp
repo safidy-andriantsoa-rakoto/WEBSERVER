@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 11:50:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:28:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,15 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	uint32_t	epollOpt;
 	std::string client_request;
 	int			fdCgi[3] = {-1, -1, -1};
+	pid_t		childPid;
 
 	(*it).receiveClientRequest();
 	client_request = (*it).getClientRequest();
 	if (client_request.size() == 0)
-	{
-		handler.checkAndRemoveCgiFd((*it).getPtrCgiFd(), epoll);
-		(*it).clearPtrCgiFd();
-		throw std::runtime_error("ManageRequestFromClient - request size = 0");
-	}
+		throw std::runtime_error("Request from client size = 0");
 	try
 	{
-		(*it).processRequest(client_request, epollOpt, fdCgi);
+		(*it).processRequest(client_request, epollOpt, fdCgi, childPid);
 	}
 	catch(AExcept & e)
 	{
@@ -54,7 +51,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	if ((*it).getObjRequest().getIsCgi() == true)
 	{
-		createCgiFd(it, handler, epoll, epollOpt, fdCgi);
+		createCgiFd(it, handler, epoll, fdCgi, childPid);
 		if ((*it).getObjRequest().get_c_length_received() == (*it).getObjRequest().get_content_length())
 			(*it).getPtrCgiFd()->setWriteStat(OP_CLOSE);
 	}
@@ -106,6 +103,8 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 		(*it)->clearBufferRead();
 		epoll.epoll_clean((*it)->getOutputFd());
 		(*it)->setOutputFd(-1);
+		// epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
+		(*it)->setIsChildAlive(false);
 		return ;
 	}
 	if (bytesRead == -1)
@@ -116,7 +115,7 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	// std::cout << "				******** Buffer CGI END" << std::endl;
 	(*it)->bufferReadParser();
 	(*it)->checkCgiOutput();
-	// (*it)->displayBufferReadParsed();
+	(*it)->displayBufferReadParsed();
 	if ((*it)->getReadStat() == OP_OPEN)
 		(*it)->setReadStat(OP_START);
 	epoll.epoll_update_event(fdCli, EPOLLOUT);
@@ -136,6 +135,7 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 	if (!bytesWritten)
 	{
 		epoll.epoll_clean((*it)->getInputFd());
+		(*it)->setInputFd(-1);
 		return ;
 	}
 	if (bytesWritten == -1)

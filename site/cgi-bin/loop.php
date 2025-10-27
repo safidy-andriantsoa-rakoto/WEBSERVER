@@ -1,7 +1,7 @@
 <?php
 
 $counter = 0;
-$countMax = 30;
+$countMax = 20;
 
 echo "Starting infinite loop...\n";
 while (true) {

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:15:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:28:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		return;
     if (cgiStatus == OP_ONGOING && (*it).getPtrCgiFd()->getBuffer().size() == 0)
     {
-        std::cout << "          Nothing inside the buffer yet !!!!!\n";
+        // std::cout << "          Nothing inside the buffer yet !!!!!\n";
         return;
     }
     std::cout << "\033[35mSending cgi chunked response to " << fdCli << " with status = " << cgiStatus << "\033[0m"<< std::endl;
@@ -75,7 +75,7 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		rspString = (*it).getBodyResponse() + "\r\n";
 	else
 		rspString = (*it).getFullResponse();
-	// std::cout <<"\e[45mCgi response sent : \n" << rspString << "\e[0m" << std::endl;
+	std::cout <<"\e[45mCgi response sent : \n" << rspString << "\e[0m" << std::endl;
 	send_value(fdCli, rspString);
     (*it).getPtrCgiFd()->clearBufferRead();
 	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)

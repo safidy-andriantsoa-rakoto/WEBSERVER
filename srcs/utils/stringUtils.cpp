@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 17:46:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:37:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ stringVect	strictSplit(std::string const & target, std::string const & sep)
 
 	pos = target.find_first_of(sep);
 	if (pos == std::string::npos)
-		throw std::runtime_error("Strict split error 1");
+		throw std::runtime_error("Strict split error");
 	result.push_back(target.substr(0, pos));
 	pos += sep.size();
 	result.push_back(target.substr(pos, target.size() - pos));
