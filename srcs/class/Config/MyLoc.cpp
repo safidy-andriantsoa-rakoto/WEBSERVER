@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/26 19:37:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 11:36:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                     _root.push_back(word);
                 if (name == "autoindex")
                 {
-                    std::cout << "autoindex === " << word << std::endl;
                     if (word == "ON")
                         _autoindex[0] = word;
                 }
@@ -95,6 +94,7 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                     {
                         _cgiExtension[0] = word;
                         /* Then Check for the execution path at _cgiExtension[1] */
+                        _cgiExtension.push_back("/usr/bin/php-cgi"); //Temporary line
                     }
                 }
                 if (name == "method")
@@ -131,8 +131,10 @@ void MyLoc::parseLocation(const stringVect &file)
     size_t start = index[currentBlock];
     size_t end;
     std::cout << "Index size = " << index.size() << std::endl;
-    // index[index.size()] = _endConfig; /* Ask if the updated version is ok ? invalid write if size = 1 */
-    index[index.size() - 1] = _endConfig;
+    if (index.size() % 2)
+        index[index.size() - 1] = _endConfig;
+    else
+        index[index.size()] = _endConfig; /* Ask if the updated version is ok ? invalid write if size = 1 */
     if (currentBlock + 1 < index.size())
         end = index[currentBlock + 1];
     else

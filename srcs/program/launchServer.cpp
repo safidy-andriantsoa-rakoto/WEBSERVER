@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 14:46:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:08:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,24 @@ void    launchServer(Handler & handler)
 	launchEpoll(handler.getVectServer(), epoll);
 	while (SIGINT != sign.getSigNum())
 	{
-		nb_event = epoll.epoll_wait_event();
+		try
+		{
+			nb_event = epoll.epoll_wait_event();
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+			nb_event = -1;
+		}
 		handler.displayHandlerStat(); //Use for checking error
+		try
+		{
+			handler.check_client_timeout_all(epoll);
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
 		for (int i = 0; i < nb_event; i++)
 		{
 			fdEvent = epoll.get_fdEvent(i);

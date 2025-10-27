@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/20 09:52:57 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:00:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,11 @@ class Client : public Server
 		int			_fdType;
 		std::string	filepath;
 
+		bool		_modPostFile;
+		int			_delay;
+		time_t		_last_time;
+		time_t		_time_now;
+
 		Client();
 
 		void		processRequestWithConfig();
@@ -54,8 +59,6 @@ class Client : public Server
 		void		stdPostRequest(stringMap & header, uint32_t & opt);
 		void		cgiPostRequest(int *fd);
 		void		delete_request();
-
-		bool		_modPostFile;
 
 	public:
 		Client(const Client& client);
@@ -131,5 +134,11 @@ class Client : public Server
 		bool			get_pathfile();
 		void 			get_bounadary_from_header(stringMap &header);
 		void			write_in_file_post();
+		void			process_multipart_data();
+
+		void			set_last_time_activity();
+		void			set_time_activity();
+		bool			is_client_timeout();
+		void			set_delay(int delay);
 
 };

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:08:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:56:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 #define MAX_EVENT 2042
 #define _BUFFER 1000
 #define _BUFFER_RECV 1024
+#define	CLIENT_MAX_TIME 30
+#define	CGI_MAX_TIME 10
 
 //Listing directory
 #define HEAD_LDIR "<!DOCTYPE html></head><body><h1>LISTING DIRECTORY</h1><div><ul>"
@@ -56,5 +58,16 @@
                         ".content {padding: 40px;background-color: #f0f0f0;border: 1px solid black;max-width: 90%;text-align: center;}" \
                         "h1 {margin-bottom: 10px;}</style>" \
                         "</head><body><div class=\"content\"><h1>ERROR</h1><h2>$status</h2></div></body></html>"
+
+#define DEFAULT_CONFIG "server {\n" \
+						"host localhost\n" \
+						"port 2003\n" \
+						"server_names localhost\n" \
+						"size 200 MB\n" \
+						"location / {\n" \
+						"	root ./site\n" \
+						"	method GET POST DELETE\n" \
+						"	autoindex ON\n" \
+						"	cgi	ON /usr/bin/php-cgi\n	}\n}"
 
 #endif

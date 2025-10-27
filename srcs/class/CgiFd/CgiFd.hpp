@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 13:01:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:59:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ class CgiFd
 		int			_writeStat;
 		size_t		_pos;
 
+		time_t		_startTime;
+
 		CgiFd();
 
 	public:
@@ -50,7 +52,11 @@ class CgiFd
 		void		setOutputFd(int const & fd);
 	
 		int			getErrFd() const;
+		void		setErrFd(int const & fd);
+	
 		int			getInputFd() const;
+		void		setInputFd(int const & fd);
+
 		int			getClientFd() const;
 		std::string	getBuffer() const;
 		int			getReadStat() const;
@@ -87,6 +93,8 @@ class CgiFd
 		void		checkCgiOutput();
 
 		std::string	operateOnBufferToWrite();
+
+		void		checkTimeOut();
 };
 
 #endif

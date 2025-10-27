@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/24 15:50:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 11:14:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	this->_clientRequest= "";
 	this->_to_send = 0;
 	this->_total_send = 0;
+	this->_delay = 0;
+	this->_time_now = time(NULL);
+	this->_last_time = this->_time_now;
 	if (_clientFD < 0)
 		throw std::runtime_error("Client constructor error");
 }
@@ -49,6 +52,8 @@ Client &Client::operator=(const Client &client)
 		this->_client_stat = client._client_stat;
 		this->_boundary_sep = client._boundary_sep;
 		this->_request = client._request;
+		this->_last_time = client._last_time;
+		this->_time_now = client._time_now;
 		setPtrCgiFd(client._cgiFD);
 	}
 	return (*this);
@@ -129,6 +134,7 @@ void Client::receiveClientRequest()
 	char response[_BUFFER_RECV];
 
 	std::cout << "\033[045m			GETTING REQUEST FROM FD = " << this->_clientFD << "\033[0m" << std::endl;
+	set_last_time_activity();
 	this->_receivedSize = recv(this->get_clientFD(), response, sizeof(response), 0);
 	if (_receivedSize == 0)
 		this->_connect = false;
@@ -389,10 +395,7 @@ void Client::stdGetRequest()
 	if (dir && _request.getAutoIdx() == true)
 		throw LDirExcept(200, dir, _request.getOriginalRequestTarget(), "Listing directory");
 	if (dir && _request.getAutoIdx() == false)
-	{
 		filePath += "/index.html";
-		closedir(dir);
-	}
 	try
 	{
 		fileContent = readFileToString(filePath);
@@ -481,56 +484,29 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd)
 
 void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 {
-	
-	std::cout << "\e[5mPOST REQUEST STD\e[0m" << std::endl;
 	opt = EPOLLIN;
-	
+
+	if (header.find("Content-Length") == header.end())
+		throw ErrorExcept(411, "Length required");
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
-		// std::cout << "			BODY=>" << _request.get_Body() << "<=" << std::endl;
-		std::string body;
 		get_bounadary_from_header(header);
-		if (get_pathfile())
-		{
-			// std::cout << "\e[5m				SEARCH FILE POST\e[0m->"<< this->filepath << std::endl;
-		}
-		if (this->filepath.size())
-		{
-			while (1)
-			{
-				if (this->filepath.empty())
-					break ;
-				write_in_file_post();
-				if (get_pathfile())
-					continue ;
-				break;
-			}
-		}
-		// std::cout << "	RECV=" << _request.get_c_length_received() << " / " << _request.get_content_length() << std::endl;
+		process_multipart_data();
 		if (_request.get_c_length_received() == _request.get_content_length())
-		{
-			// std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
 			setSingleResponse(201);
-		}
 	}
 	else if (header.find("Content-Type")->second.find("application/x-www-form-urlencoded") != std::string::npos)
 	{
 		if (_request.get_c_length_received() == _request.get_content_length())
-		{
-			// std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
-			setSingleResponse(201);
-		}
+			setSingleResponse(200);
 	}
 	else if (header.find("Content-Type")->second.find("text/plain") != std::string::npos)
 	{
 		if (_request.get_c_length_received() == _request.get_content_length())
-		{
-			// std::cout << "			VITA EEEEEEEEEEEEEEEE" << std::endl;
-			setSingleResponse(201);
-		}
+			setSingleResponse(200);
 	}
 	else
-		throw ErrorExcept(400, "Client-side error");
+		throw ErrorExcept(501, "Not implemented");
 }
 
 void Client::cgiPostRequest(int *fd)
@@ -807,4 +783,50 @@ void Client::write_in_file_post()
 		else
 			throw ErrorExcept(500, "Internal Server Error - Write in file failed");
 	}
+}
+
+void Client::process_multipart_data()
+{
+	if (get_pathfile())
+		std::cout << "\e[5mNEW FILE\e[0m->"<< this->filepath << std::endl;
+	if (this->filepath.size())
+	{
+		while (1)
+		{
+			if (this->filepath.empty())
+				break ;
+			write_in_file_post();
+			if (get_pathfile())
+				continue ;
+			break;
+		}
+	}
+}
+
+void Client::set_last_time_activity()
+{
+	this->_last_time = time(NULL);
+}
+
+void Client::set_time_activity()
+{
+	this->_time_now = time(NULL);
+}
+
+bool Client::is_client_timeout()
+{
+	set_time_activity();
+	if (difftime(this->_time_now, this->_last_time) > CLIENT_MAX_TIME)
+	{
+		std::cout << "			CLIENT TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
+		throw ErrorExcept(408, "Client Timeout");
+		// return true;
+	}
+    return false;
+}
+
+void Client::set_delay(int delay)
+{
+	if (delay > 0)
+		this->_delay = delay;
 }

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:11:42 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:01:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:58:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class CgiParser
 		void	buildEnvp();
 		void    execCgi();
 
+		
 		void	setCgiExecPath(std::string const & path);
 		void	setReqMethod(std::string const & method);
 		void	setContentLength(size_t const & length);

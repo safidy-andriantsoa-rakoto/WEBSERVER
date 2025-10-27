@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:11:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 11:50:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	client_request = (*it).getClientRequest();
 	if (client_request.size() == 0)
 	{
-		handler.checkAndRemoveCgiFd((*it).getPtrCgiFd());
+		handler.checkAndRemoveCgiFd((*it).getPtrCgiFd(), epoll);
 		(*it).clearPtrCgiFd();
 		throw std::runtime_error("ManageRequestFromClient - request size = 0");
 	}
@@ -94,7 +94,7 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	vectCgiFdIt	it = handler.getCgiFdIterator(i);
 	int			fdCli = (*it)->getClientFd();
 
-
+	(*it)->checkTimeOut();
 	if ((*it)->getReadStat() == OP_START) //See if necessary
 		return;
 	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
@@ -132,7 +132,7 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bufferString = (*clIt).getObjRequest().getBody();
 	bytesWritten = write((*it)->getInputFd(), bufferString.c_str(), bufferString.size());
-	// std::cout << "Bytewritten = " << bytesWritten << std::endl;
+	std::cout << "Bytewritten = " << bytesWritten << std::endl;
 	if (!bytesWritten)
 	{
 		epoll.epoll_clean((*it)->getInputFd());
@@ -142,7 +142,9 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 		throw ErrorExcept(500, "Write CGI error");
 	if ((*it)->getWriteStat() == OP_CLOSE)
 	{
+		std::cout << "Ending writing" << std::endl;
 		epoll.epoll_clean((*it)->getInputFd());
+		(*it)->setInputFd(-1);
 		epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
 		epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
 	}

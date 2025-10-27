@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 15:06:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 08:44:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,10 +96,11 @@ void MyConf::myParseConfig(std::string const &servPath, std::string const &locPa
 void	MyConf::displayConfig() const
 {
 	std::cout << "------------------------------------------" << std::endl;
-	std::cout << "Host " << _host << std::endl;
-	std::cout << "Port " << std::endl;
+	std::cout << "Host :" << _host << std::endl;
+	std::cout << "Port :";
 	for (intVectIt itInt = _port.begin(); itInt != _port.end(); itInt++)
-		std::cout << (*itInt) << " " << std::endl;
+		std::cout << " " << (*itInt);
+	std::cout << std::endl;
 	if (_serverName.size())
 		displayStringVect(_serverName, "Server name");
 	if (_errPage.listError.size())
@@ -187,7 +188,6 @@ size_t MyConf::findNotDigitError()
 }
 void MyConf::parseConfig(stringVect file)
 {
-
 	static size_t currentBlock(0), i(0), k(0);
 	static intVect index = containsExactWordInVector(file, "server");
 

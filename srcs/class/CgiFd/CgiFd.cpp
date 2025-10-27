@@ -35,6 +35,7 @@ CgiFd::CgiFd(int const &outputFd, int const & errorFd, int const & inputFd, int 
 		_isError = false;
 		_isHeader = false;
 		_statusCode = -1;
+		_startTime = time(NULL);
 	}
 
 CgiFd::CgiFd(CgiFd const & other)
@@ -60,6 +61,7 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 		_bufferWrite = other._bufferWrite;
 		_writeStat = other._writeStat;
 		_pos = other._pos;
+		_startTime = other._startTime;
 	}
 	return *this;
 }
@@ -72,7 +74,11 @@ void CgiFd::setOutputFd(int const &fd){_outputFd = fd;}
 
 int CgiFd::getErrFd() const { return _errorFd;}
 
+void CgiFd::setErrFd(int const &fd){ _errorFd = fd; }
+
 int CgiFd::getInputFd() const{ return _inputFd;}
+
+void CgiFd::setInputFd(int const &fd){ _inputFd = fd;}
 
 int CgiFd::getClientFd() const { return _clientFd;}
 
@@ -196,4 +202,15 @@ std::string CgiFd::operateOnBufferToWrite()
 	}
 	_pos = actualPos;
     return content;
+}
+
+void CgiFd::checkTimeOut()
+{
+	time_t	currentTime = time(NULL);
+
+	if (difftime(currentTime, _startTime) > CGI_MAX_TIME)
+	{
+		// std::cout << "			CGI TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
+		throw ErrorExcept(504, "CGI Took too long");
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/22 14:11:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 11:21:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,10 +152,25 @@ void Handler::removeCgiFd(vectCgiFdIt &it)
 	_vectCgiFd.erase(it);
 }
 
-void Handler::checkAndRemoveCgiFd(CgiFd *ptr)
+void Handler::checkAndRemoveCgiFd(CgiFd *ptr, EpollCreation & epoll)
 {
 	vectCgiFdIt	it = findPtrInCgiFd(_vectCgiFd, ptr);
+	int			cgiFd[3];
 
+	std::cout << "Check and remove cgi Fd" << std::endl;
+	cgiFd[FD_STDOUT] = (*it)->getOutputFd();
+	cgiFd[FD_STDERR] = (*it)->getErrFd();
+	cgiFd[FD_STDIN] = (*it)->getInputFd();
+	for(int i = 0; i < 3; i++)
+	{
+		if (cgiFd[i] > 0)
+		{
+			epoll.epoll_clean(cgiFd[i]);
+		}
+	}
+	(*it)->setOutputFd(-1);
+	(*it)->setErrFd(-1);
+	(*it)->setInputFd(-1);
 	if (it != _vectCgiFd.end())
 		removeCgiFd(it);
 }
@@ -164,15 +179,20 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 {
 	VClientIt		it = _vectClient.begin() + index;
 	vectCgiFdIt		itCgi;
-	int				fdFile;
-	int				cgiFd;
+	int				cgiFd[3];
 
 	std::cout << "REMOVING CLIENT " << index << std::endl;
 	if ((*it).getPtrCgiFd())
 	{
-		cgiFd = (*it).getPtrCgiFd()->getOutputFd();
-		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd);
-		epoll.epoll_clean(fdFile);
+		cgiFd[FD_STDOUT] = (*it).getPtrCgiFd()->getOutputFd();
+		cgiFd[FD_STDERR] = (*it).getPtrCgiFd()->getErrFd();
+		cgiFd[FD_STDIN] = (*it).getPtrCgiFd()->getInputFd();
+		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd[FD_STDOUT]);
+		for(int i = 0; i < 3; i++)
+		{
+			if (cgiFd[i] > 0)
+				epoll.epoll_clean(cgiFd[i]);
+		}
 		removeCgiFd(itCgi);
 	}
 	_vectClient.erase(it);
@@ -181,16 +201,20 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 void Handler::removeClient(VClientIt & it, EpollCreation & epoll)
 {
 	vectCgiFdIt		itCgi;
-	int				fdFile;
-	int				cgiFd;
+	int				cgiFd[3];
 
 	std::cout << "REMOVING CLIENT FROM ITERATOR" << std::endl;
 	if ((*it).getPtrCgiFd())
 	{
-		cgiFd = (*it).getPtrCgiFd()->getOutputFd();
-		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd);
-		epoll.epoll_clean(fdFile);
-		removeCgiFd(itCgi);
+		cgiFd[FD_STDOUT] = (*it).getPtrCgiFd()->getOutputFd();
+		cgiFd[FD_STDERR] = (*it).getPtrCgiFd()->getErrFd();
+		cgiFd[FD_STDIN] = (*it).getPtrCgiFd()->getInputFd();
+		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd[FD_STDOUT]);
+		for(int i = 0; i < 3; i++)
+		{
+			if (cgiFd[i] > 0)
+				epoll.epoll_clean(cgiFd[i]);
+		}
 	}
 	_vectClient.erase(it);
 }
@@ -243,4 +267,26 @@ void Handler::displayHandlerStat()
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;
 	std::cout << "========================================== \n";
+}
+
+void Handler::check_client_timeout_all(EpollCreation& epoll)
+{
+	for (VClientIt it = _vectClient.begin(); it != _vectClient.end(); )
+	{
+		try
+		{
+			(*it).is_client_timeout();
+			++it;
+		}
+		catch (const std::exception & e)
+		{
+			std::cerr << "			Error on client timeout check: " << e.what() << '\n';
+			// it = _vectClient.erase(it);
+			int fdrm = (*it).get_clientFD();
+			this->removeClient(it, epoll);
+			if (fdrm > -1)
+				epoll.epoll_clean(fdrm);
+			// this->removeClient(it,);
+		}
+	}
 }

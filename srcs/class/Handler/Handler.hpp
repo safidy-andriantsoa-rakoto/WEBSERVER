@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:35:25 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:03:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,13 +73,14 @@ class Handler
 			
 		void			removeCgiFd(int const & index);
 		void			removeCgiFd(vectCgiFdIt & it);
-		void			checkAndRemoveCgiFd(CgiFd *ptr);
+		void			checkAndRemoveCgiFd(CgiFd *ptr, EpollCreation & epoll);
 		vectCgiFdIt		findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd);
 		vectCgiFdIt		findPtrInCgiFd(vectCgiFd & allCgiFd, CgiFd *ptr);
 		
 		void			cleanFdAndAlloc();
 		
 		void			displayHandlerStat();
+		void			check_client_timeout_all(EpollCreation& epoll);
 };
 
 #endif
