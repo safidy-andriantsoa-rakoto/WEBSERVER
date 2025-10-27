@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 16:01:26 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:18:32 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,17 +90,14 @@ void Server::configure_sockaddrin(int port)
 	this->_size_sockaddrin = sizeof(_sockaddrIn);
 }
 
-//Afaka atao throw
 int Server::link_socket_adress()
 {
 	int     status;
 
-	if (!_resp)
-		return (0);
-	this->_size_sockaddrin = sizeof(this->_resp->ai_addr);
-	status = bind(this->_fdSocket, (sockaddr *)&(this->_resp->ai_addr), this->_size_sockaddrin);
+	status = bind(this->_fdSocket, (sockaddr *)&(this->_sockaddrIn), this->_size_sockaddrin);
 	if (status == -1)
 	{
+		perror(strerror(errno));
 		std::cout << "Error\nbind a name to a socket" << std::endl;
 		return (0);
 	}
@@ -116,17 +113,22 @@ int Server::resolve_host(std::string const &host, int const &port) //pour resoud
 	std::stringstream port_stream;
 	port_stream << port;
 	std::string port_str = port_stream.str();
-	
-	if (getaddrinfo(host.c_str(), port_str.c_str(), &_addrinfo, &_resp) != 0)
+	int stat = getaddrinfo(host.c_str(), port_str.c_str(), &_addrinfo, &_resp);
+	if (stat != 0)
 	{
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(errno));
 		return (0);
 	}
-	// if (_resp && _resp->ai_family == AF_INET)
-	// {
-	// 	// memcpy(&_sockaddrIn, _resp->ai_addr, _resp->ai_addrlen);
-	// 	return (1);
-	// }
+	if (_resp && _resp->ai_family == AF_INET)
+	{
+		memset(&_sockaddrIn, 0, sizeof(_sockaddrIn));
+		_sockaddrIn.sin_addr = ((SockAddrIn *)_resp->ai_addr)->sin_addr;
+		_sockaddrIn.sin_family = AF_INET;
+		_sockaddrIn.sin_port = htons(port);
+		_size_sockaddrin = sizeof(_sockaddrIn);
+		freeaddrinfo(_resp);
+		return (1);
+	}
     return (0);
 }
 

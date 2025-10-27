@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 09:29:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 15:50:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:30:54 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,16 @@ void	launchEpoll(vectServer & vectServer, EpollCreation &epoll)
 		std::cout << "\033[046mSERVER FD= " << fd << "\033[0m" << std::endl;
 		epoll.epoll_control(EPOLLIN, fd);
 		int port = (*it).getConfig().getServPort();
-		(*it).resolve_host("12.12.13.42", port);
-		// (*it).configure_sockaddrin((*it).getConfig().getServPort());
-		if (!(*it).link_socket_adress())
+		if (!(*it).resolve_host("c1r4s3.42antananarivo.mg", port)) //hostname
 			throw std::runtime_error("Failed to load server");
+		if (!(*it).link_socket_adress())
+		{
+			std::cout << "\033[31mFAILED TO BIND ON IP: ... \033[0m" << std::endl;
+			std::cout << "\033[32mRedirecting to: default(0.0.0.0)\033[0m" << std::endl;
+			(*it).configure_sockaddrin(port);
+			if ((*it).link_socket_adress() == 0)
+				throw std::runtime_error("Failed to load server");
+		}
 		if (!(*it).wait_connexion_from_client())
 			throw std::runtime_error("Failed to load server");
 	}
