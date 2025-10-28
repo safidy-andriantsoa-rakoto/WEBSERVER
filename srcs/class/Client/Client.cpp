@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 09:33:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 11:24:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -422,13 +422,13 @@ void Client::stdGetRequest()
 void Client::cgiGetRequest(int *fd, pid_t & childPid)
 {
 	int		pipeFd[2];
-	int		errFd[2];
+	// int		errFd[2];
 	int		stdFd[2] = {-1, -1};
 
 	if (pipe(pipeFd) == -1)
 		throw std::runtime_error("Pipe fd error");
-	if (pipe(errFd) == -1)
-		throw std::runtime_error("Pipe err error");
+	// if (pipe(errFd) == -1)
+	// 	throw std::runtime_error("Pipe err error");
 	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
 	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
 	childPid = fork();
@@ -438,26 +438,29 @@ void Client::cgiGetRequest(int *fd, pid_t & childPid)
 	{
 		dupStandardIO(stdFd, 2);
 		makeDup2(pipeFd[1], STDOUT_FILENO, pipeFd[0]);
-		makeDup2(errFd[1], STDERR_FILENO, errFd[0]);
+		// makeDup2(errFd[1], STDERR_FILENO, errFd[0]);
 		try
 		{
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
-			makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
+			std::cout << "EXECVE ERROR" << std::endl;
+			// makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			std::cout << "STDOUT RESTORED\n";
+			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDOUT] = -2;
-			fd[FD_STDERR] = -2;
+			close(stdFd[FD_STDOUT]);
+			// fd[FD_STDERR] = -2;
 		}
 	}
 	else
 	{
-		close(errFd[1]);
+		// close(errFd[1]);
 		close(pipeFd[1]);
 		_request.clearCgiClass();
 		fd[FD_STDOUT] = pipeFd[0];
-		fd[FD_STDERR] = errFd[0];
+		// fd[FD_STDERR] = errFd[0];
 	}
 }
 
@@ -512,15 +515,15 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 {
 	int	pipeOutFd[2];
 	int	pipeInFd[2];
-	int	pipeErrFd[2];
+	// int	pipeErrFd[2];
 	int	stdFd[3] = {-1, -1, -1};
 
 	if (pipe(pipeInFd) == -1)
 		throw std::runtime_error("input fd error");
 	if (pipe(pipeOutFd) == -1)
 		throw std::runtime_error("output fd error");
-	if (pipe(pipeErrFd) == -1)
-		throw std::runtime_error("error fd error");
+	// if (pipe(pipeErrFd) == -1)
+	// 	throw std::runtime_error("error fd error");
 	// std::cout << "inFd [0] = " << pipeInFd[0] << " [1] = " << pipeInFd[1] << std::endl;
 	// std::cout << "outFd [0] = " << pipeOutFd[0] << " [1] = " << pipeOutFd[1] << std::endl;
 	// std::cout << "errFd [0] = " << pipeErrFd[0] << " [1] = " << pipeErrFd[1] << std::endl;
@@ -532,7 +535,7 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 		dupStandardIO(stdFd, 3);
 		makeDup2(pipeInFd[0], STDIN_FILENO, pipeInFd[1]);
 		makeDup2(pipeOutFd[1], STDOUT_FILENO, pipeOutFd[0]);
-		makeDup2(pipeErrFd[1], STDERR_FILENO, pipeErrFd[0]);
+		// makeDup2(pipeErrFd[1], STDERR_FILENO, pipeErrFd[0]);
 		try
 		{
 			_request.execCgiClass();
@@ -540,22 +543,29 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 		catch(const std::exception& e)
 		{
 			makeDup2(stdFd[FD_STDIN], STDIN_FILENO);
-			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
-			makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
+			// makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDIN] = -2;
 			fd[FD_STDOUT] = -2;
-			fd[FD_STDERR] = -2;
+			// fd[FD_STDERR] = -2;
+			std::cout << "EXECVE ERROR" << std::endl;
+			// makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			std::cout << "STDOUT RESTORED\n";
+			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
+			fd[FD_STDOUT] = -2;
+			close(stdFd[FD_STDOUT]);
+			// fd[FD_STDERR] = -2;
 		}
 	}
 	else
 	{
 		close(pipeInFd[0]);
 		close(pipeOutFd[1]);
-		close(pipeErrFd[1]);
+		// close(pipeErrFd[1]);
 		_request.clearCgiClass();
 		fd[FD_STDIN] = pipeInFd[1];
 		fd[FD_STDOUT] = pipeOutFd[0];
-		fd[FD_STDERR] = pipeErrFd[0];
+		// fd[FD_STDERR] = pipeErrFd[0];
 	}
 }
 
@@ -601,6 +611,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		if (_request.getIsCgi() == true)
 		{
 			_cgiFD->setBufferWrite(_request.getBody());
+			std::cout << _request.get_c_length_received() << " VS " << _request.get_content_length() << std::endl;
 			if (_request.get_c_length_received() == _request.get_content_length())
 				_cgiFD->setWriteStat(OP_CLOSE);
 			opt = EPOLLOUT;

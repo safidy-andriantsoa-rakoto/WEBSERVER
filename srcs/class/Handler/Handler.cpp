@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 07:44:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 10:03:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,11 +166,10 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 		cgiFd[FD_STDERR] = (*it).getPtrCgiFd()->getErrFd();
 		cgiFd[FD_STDIN] = (*it).getPtrCgiFd()->getInputFd();
 		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd[FD_STDOUT]);
-		for(int i = 0; i < 3; i++)
-		{
-			if (cgiFd[i] > 0)
-				epoll.epoll_clean(cgiFd[i]);
-		}
+		if (cgiFd[FD_STDOUT] > 0)
+			epoll.epoll_clean(cgiFd[FD_STDOUT]);
+		if (cgiFd[FD_STDIN] > 0)
+			epoll.epoll_clean(cgiFd[FD_STDIN]);
 		removeCgiFd(itCgi);
 		(*it).clearPtrCgiFd();
 	}

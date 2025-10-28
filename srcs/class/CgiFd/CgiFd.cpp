@@ -16,7 +16,7 @@ CgiFd::CgiFd(){}
 
 CgiFd::CgiFd(int *fd, pid_t const & childPid, int const & clientFd) : 
 	_outputFd(fd[FD_STDOUT]),
-	_errorFd(fd[FD_STDERR]),
+	_errorFd(-1),
 	_inputFd(fd[FD_STDIN]),
 	_clientFd(clientFd),
 	_isError(false),
@@ -94,6 +94,8 @@ void CgiFd::bufferReadParser()
 	std::string	line;
 	stringVect	headerVect;
 
+	if (_bufferRead.find("EXECVE") != std::string::npos)
+		throw ErrorExcept(500, "Execution of child process error");
 	_header.clear();
 	_body.clear();
 	if (_isHeader == true)
@@ -225,6 +227,8 @@ void CgiFd::checkChildProcess()
 	int	waitReturn;
 	int	stat;
 
+	if (_isChildAlive == false)
+		return;
 	waitReturn = waitpid(_childPid, &stat, WNOHANG);
 	if (waitReturn == 0)
 	{
@@ -235,12 +239,13 @@ void CgiFd::checkChildProcess()
 	{
 		/*Child process exited normally with status*/
 		std::cout << "			*****CHILD DONE" << std::endl;
-
+		_isChildAlive = false;
 	}
 	else if (waitReturn < 0)
 	{
 		/*Error on child process*/
 		std::cout << "			*****CHILD PROCESS ERROR" << std::endl;
+		_isChildAlive =false;
 		throw(ErrorExcept(500, "Child process error"));
 	}
 }
