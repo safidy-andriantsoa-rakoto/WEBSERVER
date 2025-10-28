@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 14:53:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 07:44:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void Handler::identifyFd(int const & fd, int & index, int & identifier)
 			(*itCgiFd)->setIsError(true);
 			identifier = CGI_FD_ERR;
 			throw ErrorExcept(500, "Internal Servor Error");
-			return;
+			// return;
 		}
 		index++;
 	}

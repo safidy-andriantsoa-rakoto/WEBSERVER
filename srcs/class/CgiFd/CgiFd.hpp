@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 14:11:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:26:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ class CgiFd
 		pid_t		getChildPid() const;
 		bool		getIsChildAlive() const;
 		void		setIsChildAlive(bool const & stat);
+		void		checkChildProcess();
+
 };
 
 #endif

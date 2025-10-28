@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 15:28:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:38:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,12 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	if ((*it).getObjRequest().getIsCgi() == true)
 	{
+		if (fdCgi[FD_STDOUT] == -2)
+		{
+			handler.setProgramBreak(true);
+			handler.setIsChildProcess(true);
+			return;
+		}
 		createCgiFd(it, handler, epoll, fdCgi, childPid);
 		if ((*it).getObjRequest().get_c_length_received() == (*it).getObjRequest().get_content_length())
 			(*it).getPtrCgiFd()->setWriteStat(OP_CLOSE);
@@ -92,6 +98,7 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	int			fdCli = (*it)->getClientFd();
 
 	(*it)->checkTimeOut();
+	(*it)->checkChildProcess(); /*Check for error*/
 	if ((*it)->getReadStat() == OP_START) //See if necessary
 		return;
 	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
@@ -128,6 +135,7 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 	vectCgiFdIt	it = handler.getCgiFdIterator(i);
 	VClientIt	clIt = findFdInClient(handler.getVectClient(), (*it)->getClientFd());
 
+	(*it)->checkChildProcess(); /*Check for error*/
 	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bufferString = (*clIt).getObjRequest().getBody();
 	bytesWritten = write((*it)->getInputFd(), bufferString.c_str(), bufferString.size());
@@ -146,7 +154,7 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 		epoll.epoll_clean((*it)->getInputFd());
 		(*it)->setInputFd(-1);
 		epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
-		epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
+		// epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
 	}
 	epoll.epoll_update_event((*it)->getClientFd(), EPOLLIN);
 }

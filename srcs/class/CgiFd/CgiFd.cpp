@@ -219,3 +219,28 @@ pid_t CgiFd::getChildPid() const{return _childPid;}
 bool CgiFd::getIsChildAlive() const{ return _isChildAlive;}
 
 void CgiFd::setIsChildAlive(bool const &stat){ _isChildAlive = stat; }
+
+void CgiFd::checkChildProcess()
+{
+	int	waitReturn;
+	int	stat;
+
+	waitReturn = waitpid(_childPid, &stat, WNOHANG);
+	if (waitReturn == 0)
+	{
+		/*Child process still going on*/
+		std::cout << "			*****CHILD PROCESS NOT DONE YET" << std::endl;
+	}
+	else if (waitReturn > 0)
+	{
+		/*Child process exited normally with status*/
+		std::cout << "			*****CHILD DONE" << std::endl;
+
+	}
+	else if (waitReturn < 0)
+	{
+		/*Error on child process*/
+		std::cout << "			*****CHILD PROCESS ERROR" << std::endl;
+		throw(ErrorExcept(500, "Child process error"));
+	}
+}

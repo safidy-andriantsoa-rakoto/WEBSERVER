@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 15:04:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:39:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,12 @@ void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *
 {
 	std::cout << "Create CGI FD" << std::endl;
 	std::cout << fd[FD_STDIN] << " " << fd[FD_STDOUT] << " " << fd[FD_STDERR] << " => " << childPid << std::endl;
-	if (fd[FD_STDOUT] < 0)
-	{
-		if (fd[FD_STDOUT] == -2)
-		{
-			handler.setProgramBreak(true);
-			handler.setIsChildProcess(true);
-		}
-		return;
-	}
+
 	if ((*it).getFdType() == GET_PHP_SCRIPT)
 	{
 		handler.addToVectCgiFd(it, fd, childPid);
 		epoll.epoll_control(EPOLLIN, fd[FD_STDOUT]);
-		epoll.epoll_control(EPOLLIN, fd[FD_STDERR]);
+		// epoll.epoll_control(EPOLLIN, fd[FD_STDERR]);
 	}
 	else if ((*it).getFdType() == POST_PHP_SCRIPT)
 	{
@@ -65,7 +57,7 @@ int	readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll)
 	bufferString.append(buffer, bytesRead);
 	std::cout << "				***************BUFFER ERROR \n" << bufferString << std::endl;
 	std::cout << "				***************BUFFER ERROR END" << std::endl;
-	if (bufferString.find("Valgrind"))
+	if (bufferString.find("Valgrind") != std::string::npos)
 	{
 		std::cout << "Valgrind Error \n";
 		epoll.epoll_clean((*itCgi)->getErrFd());
@@ -82,6 +74,7 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 	int fdCli = (*itCgi)->getClientFd();
 	VClientIt	it = findFdInClient(handler.getVectClient(), fdCli);
 
+	/*Not needed anymore*/
 	if (identifier == CGI_FD_ERR)
 	{
 		bytesRead = readCgiStdError(itCgi, epoll);

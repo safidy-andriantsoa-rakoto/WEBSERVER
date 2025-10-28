@@ -8,3 +8,9 @@ PEER QUESTIONS :
 
 TEAM :
     - server_name not necessary ? We won't implement virtual host
+
+
+
+CGI Error :
+STDOUT :
+    PHP Warning:  Unknown: Failed to open stream: Permission denied in Unknown on line 0
