@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:43:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 13:29:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,3 +113,9 @@ std::string	convertListing(stringMap & mapDir);
 void	makeDup2(int const & fd1, int const & fd2, int const & fd3);
 void	makeDup2(int const & fd1, int const & fd2);
 void    dupStandardIO(int *stdFd, int const & n);
+
+//ParseUtils
+bool checkValuePort(intVect &vect);
+bool checkDuplicationStr(stringVect &str);
+bool checkDuplicationInt(intVect &Int);
+bool checkValueMethod(stringVect &str);

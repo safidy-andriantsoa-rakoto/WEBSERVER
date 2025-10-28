@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 08:44:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 13:28:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,12 @@ void MyConf::getElementConfig(const size_t &start, const size_t &end, const stri
 		if (name == "location")
 			countLoc++;
 	}
+	if(checkValuePort(_port) == false)
+		throw std::runtime_error ("Error : Port invalid");
+	if(checkDuplicationStr(_serverName) == false)
+		throw std::runtime_error ("Error : server name invalid");
+	if(checkDuplicationStr(_errPage.strError) == false)
+		throw std::runtime_error ("Error : server name invalid");
 	_countLocation = countLoc;
 }
 
@@ -188,18 +194,18 @@ size_t MyConf::findNotDigitError()
 }
 void MyConf::parseConfig(stringVect file)
 {
-	static size_t currentBlock(0), i(0), k(0);
+	static size_t currentBlock(0);
+	size_t i(0), k(0);
 	static intVect index = containsExactWordInVector(file, "server");
-
 	if (currentBlock >= index.size())
 		return;
-
 	size_t start = index[currentBlock];
 	size_t end;
 	if (currentBlock + 1 < index.size())
 		end = index[currentBlock + 1];
 	else
 		end = file.size();
+	_endLocation = end;
 	if (checkConfigDupli(file, start, end))
 	{
 		_checkStats = false;
@@ -214,16 +220,18 @@ void MyConf::parseConfig(stringVect file)
 	}
 	else if (i > 0 && i < _errPage.strError.size())
 		_errPage.filePath = _errPage.strError[i];
-	_location = createVectLocation(_countLocation);
+	this->_location = createVectLocation(_countLocation);
 	while (k < _location.size())
 	{
 		_location[k].parseLocation(file);
 		if (_location[k].getStatus())
 			k++;
 		else
+		{
+			_checkStats = false;
 			return;
+		}
 	}
-	_countLocation = 0;
 	_checkStats = true;
 	currentBlock++;
 }

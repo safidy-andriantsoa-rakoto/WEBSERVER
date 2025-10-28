@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 14:49:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 13:34:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,7 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
 void    send_value(int const & _acceptStatus, std::string & _send_content);
 
 vectServer getServer(stringVect file);
-vectLocation getLocation(size_t countLocation);
+
+
+
 #endif
