@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 09:29:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:51:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:54:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	launchEpoll(vectServer & vectServer, EpollCreation &epoll)
 		int fd = ((*it).get_fdSocket());
 		std::cout << "\033[046mSERVER FD= " << fd << "\033[0m" << std::endl;
 		epoll.epoll_control(EPOLLIN, fd);
-		int port = (*it).getConfig().getServPort();
+		int port = (*it).getConfig().getServPort()[0];
 		if (!(*it).resolve_host("c1r4s3.42antananarivo.mg", port)) //hostname
 			throw std::runtime_error("Failed to load server");
 		if (!(*it).link_socket_adress())

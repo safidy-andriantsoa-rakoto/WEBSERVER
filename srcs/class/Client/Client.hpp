@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 09:49:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:53:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,11 +135,6 @@ class Client : public Server
 		void 			get_bounadary_from_header(stringMap &header);
 		void			write_in_file_post();
 		void			process_multipart_data();
-
-		void			set_last_time_activity();
-		void			set_time_activity();
-		bool			is_client_timeout();
-		void			set_delay(int delay);
 
 		void			set_last_time_activity();
 		void			set_time_activity();
