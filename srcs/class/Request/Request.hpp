@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 10:15:09 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/23 10:30:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,13 @@ class Request
 		std::string	_clientHttp;
 
 		stringMap	_header;
-		// stringMap	_post_body;
 		std::string	_body;
 
 		size_t		_request_length;
 		bool		_autoIdx;
-	
+		bool		_isChunked;
+		bool		_isEOF;
+
 		//for post
 		MapSVectStr	_multipart_body;
 		size_t		_content_length;
@@ -42,7 +43,7 @@ class Request
 		bool		_is_CRLF_header;
 
 		void    	setRequestLine(std::string const & set);
-		void		setRequestBody(std::string const & requeststring, size_t const & pos);
+		void		addRequestBody(std::string const & requeststring, size_t const & pos);
 
 	public:
 		Request();
@@ -61,8 +62,14 @@ class Request
 		bool		getIsCgi() const;
 		void		setIsCgi(bool const & condition);
 
-		CgiParser	getCgiClass() const;
-		void		processCgiClass(std::string const & target, std::string const & rootDirectory);
+		bool		getIsChunked() const;
+		void		setIsChunked(bool const & stat);
+
+		bool		getIsEOF() const;
+		void		setIsEOF(bool const & stat);
+
+		CgiParser	getCgiParser() const;
+		void		processCgiClass(std::string & target, std::string const & execPath);
 		void		setCgiClass(CgiParser const & cgi);
 		void		execCgiClass();
 		void		clearCgiClass();

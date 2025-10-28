@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/23 15:05:35 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:51:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 		}
 		catch(const std::exception& e1)
 		{
-			std::cerr << "			Error on casting " << e1.what() << '\n';
+			std::cerr << "			Error on CGI exception " << e1.what() << '\n';
 		}
 	}
 }
@@ -116,7 +116,6 @@ void    launchServer(Handler & handler)
 			}
 			if (handler.getProgramBreak() == true)
 			{
-				std::cout << "HANDLER PROCESS = " << handler.getIsChildProcess() << std::endl;
 				throw std::runtime_error("Program break launched");
 			}
 		}

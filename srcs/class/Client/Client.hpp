@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/23 15:21:38 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:49:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,11 @@ class Client : public Server
 		int			_fdType;
 		std::string	filepath;
 
+		bool		_modPostFile;
+		int			_delay;
+		time_t		_last_time;
+		time_t		_time_now;
+
 		Client();
 
 		void		processRequestWithConfig();
@@ -46,19 +51,14 @@ class Client : public Server
 		void		processRedirection(MyLoc const & location, Request & request);
 
 				//HTTP Method
-		void		get_request(uint32_t & opt, int *fd);
+		void		get_request(uint32_t & opt, int *fd, pid_t & childPid);
 		void		stdGetRequest();
-		void		cgiGetRequest(int *fd);
+		void		cgiGetRequest(int *fd, pid_t & childPid);
 
-		void		post_request(stringMap & header, uint32_t & opt, int *fd);
+		void		post_request(stringMap & header, uint32_t & opt, int *fd, pid_t & childPid);
 		void		stdPostRequest(stringMap & header, uint32_t & opt);
-		void		cgiPostRequest(int *fd);
+		void		cgiPostRequest(int *fd, pid_t & childPid);
 		void		delete_request();
-
-		bool		_modPostFile;
-		int			_delay;
-		time_t		_last_time;
-		time_t		_time_now;
 
 	public:
 		Client(const Client& client);
@@ -124,7 +124,7 @@ class Client : public Server
 				const char *what() const throw();
 		};
 
-		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd);
+		void			processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, pid_t & childPid);
 
 		vectLocationIt	findLongestMatch(std::string const & text, vectLocation & location);
 
@@ -135,6 +135,11 @@ class Client : public Server
 		void 			get_bounadary_from_header(stringMap &header);
 		void			write_in_file_post();
 		void			process_multipart_data();
+
+		void			set_last_time_activity();
+		void			set_time_activity();
+		bool			is_client_timeout();
+		void			set_delay(int delay);
 
 		void			set_last_time_activity();
 		void			set_time_activity();

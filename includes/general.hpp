@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 15:15:42 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:46:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ stringVect	splitString(std::string const & target, std::string const & sep);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
 std::string	checkLimitSize(std::string const & a, std::string const & b);
-void	    chunkingString(std::string & text, int const & status);
+void	    chunkString(std::string & text, int const & status);
+std::string	unchunkString(std::string const & text);
 void	    clearCharTable(char **tab);
 
 std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize);
@@ -104,6 +105,7 @@ std::vector<int> containsExactWordInVector(const std::vector<std::string> &lines
 std::vector<std::string> getContentFile(std::string _path);
 bool        checkDuplicate(stringVect file, std::string name, size_t &start , size_t &end);
 bool        checkConfigDupli(stringVect file, size_t &start, size_t &end);
+bool        checkDuplicate2(stringVect file, std::string name, size_t &start, size_t &end);
 
 // dirListing
 stringMap	listingDirectory(DIR* dir, std::string const & path);

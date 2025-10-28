@@ -12,8 +12,6 @@
 
 #include "LDirExcept.hpp"
 
-stringVect  LDirExcept::_part;
-
 LDirExcept::LDirExcept(int const &status, DIR *dir, std::string const & path, std::string const & errMsg)
 {
     _type = LDIR_RSP;
@@ -23,11 +21,3 @@ LDirExcept::LDirExcept(int const &status, DIR *dir, std::string const & path, st
 }
 
 LDirExcept::~LDirExcept() throw() {}
-
-void LDirExcept::initPart(std::string const & path)
-{
-    std::string htmlFile;
-
-	htmlFile = readFileToString(path);
-	_part = splitString(htmlFile, "$");
-}

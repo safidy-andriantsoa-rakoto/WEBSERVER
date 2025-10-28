@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:25:40 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/01 08:49:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/22 14:18:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ class EpollCreation
         int             get_fdEvent(int index);
         int             epoll_wait_event();
         SEpollEvent&    getEvent_struct(int index);
-        void            epoll_update_event(int &fd, uint32_t event);
+        void            epoll_update_event(int const & fd, uint32_t event);
         uint32_t        getEvent(int const &index);
 };

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enum.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 08:26:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:24:43 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/22 13:26:20 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,12 @@ enum    e_fdRspType
     STD_FILE,
     GET_PHP_SCRIPT,
     POST_PHP_SCRIPT
+};
+
+enum    e_writing
+{
+    ON_WRITTING,
+    OFF_WRITTING
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:46:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:53:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ AConfig &AConfig::operator=(AConfig const &other)
     return *this;
 }
 
-int AConfig::getServPort() const
+intVect AConfig::getServPort() const
 {
 	return _port;
 }

@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:38:10 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/27 15:36:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
-
-stringMap	Response::_allStatusCode;
 
 Response::Response() : _respCategory(STD_RSP), _pos(0){}
 
@@ -149,12 +147,14 @@ void	Response::clearResponse()
 	_fullResponse.clear();
 }
 
-void Response::setDefaultErrorPage(std::string & content)
+void Response::addStatusCode(std::string & content)
 {
 	std::string	replace;
 
 	replace = convertIntToString(_statusCode);
-	replace += " : " + (*_allStatusCode.find(replace)).second;
+	replace += " : " + getReasonPhrase(_statusCode);
+	if (_statusCode == 505)
+		replace += "\n" + _body; //NEED TO TEST FOR ERROR 505
 	replaceString(content, replace, "$status");
 }
 
@@ -175,29 +175,33 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 	{
 		content = readFileToString(filePath);
 		if (filePath == ERR_PATH)
-			setDefaultErrorPage(content);
-		if (content.size() <= _BUFFER)
-		{
-			_body = content;
-			_respStat = OP_ONCE;
-		}
-		else
-		{
-			_originBody = content;
-			_respStat = OP_START;
-		}
+			addStatusCode(content);
 		_originPath = filePath;
 	}
 	catch(const std::exception& e)
 	{
-		/*MANAGE ERROR FOR ERROR PAGE*/
-		throw std::runtime_error("ERROR PAGE NOT FOUND");
+		content = BACKUP_ERR_PAGE;
+		addStatusCode(content);
+		_originPath = "backup.html";
+	}
+	if (content.size() <= _BUFFER)
+	{
+		_body = content;
+		_respStat = OP_ONCE;
+		_type = Mime::getFileType(_originPath);
+		generateStandardResponse(content);
+	}
+	else
+	{
+		_originBody = content;
+		_respStat = OP_START;
+		_type = Mime::getFileType(_originPath);
 	}
 }
 
 void Response::setStatusLine()
 {
-	_statusLine = "HTTP/1.1 " + convertIntToString(_statusCode) + " " + _allStatusCode[convertIntToString(_statusCode)];
+	_statusLine = "HTTP/1.1 " + convertIntToString(_statusCode) + " " + getReasonPhrase(_statusCode);
 }
 
 void	Response::generateStandardResponse(std::string const &  body)
@@ -214,7 +218,7 @@ void Response::generateChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;
-	chunkingString(_body, _respStat);
+	chunkString(_body, _respStat);
 	_header.clear();
 	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
@@ -225,12 +229,12 @@ void Response::generateCgiChunkedResponse(std::string const & body, stringMap co
 {
 	setStatusLine();
 	_body = body;
-	chunkingString(_body, status);
+	chunkString(_body, status);
 	if (header.size())
 	{
 		_header.clear();
 		_header["Connection"] = "keep-alive";
-		_header["Content-Type"] = (*header.find("Content-type")).second;
+		_header["Content-Type"] = _type;
 		_header["Transfer-Encoding"] = "chunked";
 	}
 }
@@ -259,9 +263,6 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::st
 	}
 	catch(const std::exception& e)
 	{
-		/*
-			What to do when an error occurs when errorPage file is corrupted? Stop the program? [barandri]
-		*/
 		throw std::runtime_error("AExcept error");
 	}
 	_respCategory = e._type;
@@ -272,7 +273,6 @@ void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::
 	_statusCode = e._statusCode;
 	setStatusLine();
 	buildErrorPage(_statusCode, errPage, filePath, fdType);
-	_type = Mime::getFileType(_originPath);
 }
 
 void Response::generateRedirectResponse(RedirExcept & r)
@@ -295,7 +295,7 @@ void Response::generateLDirResponse(LDirExcept &d)
 	_type = "text/html";
 	setStatusLine();
 	_header.clear();
-	_body = LDirExcept::_part[0] + list + LDirExcept::_part[1];
+	_body = HEAD_LDIR + list + TAIL_LDIR;
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Connection"] = "keep-alive";
 }
@@ -313,58 +313,40 @@ void Response::generateSingleResponse(int const &statusCode)
 	_header["Content-Length"] = "0";
 }
 
-void Response::execCgiDefaultScript(int *fd)
+std::string Response::getReasonPhrase(int const &statusCode)
 {
-	int			pid;
-	int			pipeFd[2];
-	int			errFd[2];
-	CgiParser	cgiParser;
-	std::string	statusCodePhrase = _allStatusCode[convertIntToString(_statusCode)];
+	std::string result;
 
-	cgiParser.configErrEnvp(_statusCode, statusCodePhrase);
-	if (pipe(pipeFd) == -1)
-		throw std::runtime_error("Pipe fd error");
-	if (pipe(errFd) == -1)
-		throw std::runtime_error("Pipe err error");
-	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
-	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
-	pid = fork();
-	if (pid == -1)
-		throw std::runtime_error("Fork error");
-	if (pid == 0)
+    switch (statusCode)
 	{
-		dup2(errFd[1], STDERR_FILENO);
-		close(errFd[0]);
-		close(errFd[1]);
-		dup2(pipeFd[1], STDOUT_FILENO);
-		close(pipeFd[0]);
-		close(pipeFd[1]);
-		try
-		{
-			cgiParser.execCgi();
-		}
-		catch(const std::exception& e)
-		{
-			fd[FD_STDOUT] = -1;
-			fd[FD_STDERR] = -1;
-		}
+		case 200: result = "OK"; break;
+		case 201: result = "Created"; break;
+		case 204: result = "No Content"; break;
+		case 301: result = "Moved Permanently"; break;
+		case 302: result = "Found"; break;	
+		case 307: result = "Temporary Redirect"; break;
+		case 308: result = "Permanent Redirect"; break;
+		case 400: result = "Bad Request"; break;
+		case 403: result = "Forbidden"; break;
+		case 404: result = "Not Found"; break;
+		case 405: result = "Method Not Allowed"; break;
+		case 406: result = "Not Acceptable"; break;
+		case 408: result = "Request Timeout"; break;
+		case 409: result = "Conflict"; break;
+		case 411: result = "Length Required"; break;
+		case 412: result = "Precondition Failed"; break;
+		case 413: result = "URI Too Long"; break;
+		case 414: result = "Content Too Large"; break;
+		case 415: result = "Unsupported Media Type"; break;
+		case 417: result = "Expectation Failed"; break;
+		case 421: result = "Misdirected Request"; break;
+		case 500: result = "Internal Server Error"; break;
+		case 501: result = "Not Implemented"; break;
+		case 502: result = "Bad Gateway"; break;
+		case 503: result = "Service Unavailable"; break;
+		case 504: result = "Gateway Timeout"; break;
+		case 505: result = "HTTP Version Not Supported"; break;
+		default: throw std::runtime_error("NO STATUS CODE"); break;
 	}
-	else
-	{
-		cgiParser.clearCgiClass();
-		close(errFd[1]);
-		close(pipeFd[1]);
-		fd[FD_STDOUT] = pipeFd[0];
-		fd[FD_STDERR] = errFd[0];
-	}
-}
-
-void Response::initAllStatusCode(std::string const & statPath)
-{
-	_allStatusCode = splitFileToMapString(statPath, " | ");
-}
-
-stringMap Response::getAllStatusCode()
-{
-    return _allStatusCode;
+	return result;
 }

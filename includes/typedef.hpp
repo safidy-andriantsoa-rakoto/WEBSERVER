@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   typedef.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 13:52:08 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:46:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ typedef std::pair<std::string, std::string>	   stringPair;
 typedef std::vector<std::string>	stringVect;
 typedef stringVect::iterator        stringVectIt;
 
-typedef std::vector<int>			intVect;
+typedef std::vector<int>		intVect;
+typedef intVect::const_iterator	intVectIt;
 
 typedef std::list<std::string>	stringList;
 typedef std::list<int>			intList;
@@ -45,5 +46,7 @@ typedef errVect::iterator       errIt;
 
 typedef std::map<stringVect, std::string>   MapSVectStr;
 typedef MapSVectStr::iterator               MapSVectStrIt;
+
+typedef struct s_redirection      t_redirection;
 
 #endif

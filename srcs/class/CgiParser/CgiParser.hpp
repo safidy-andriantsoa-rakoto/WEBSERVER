@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:11:42 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 14:08:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/27 10:58:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ class CgiParser
 		std::string _query;
 		std::string _scriptFileName;
 		std::string _scriptName;
+		std::string	_contentType;
+		std::string	_execPath;
 		size_t		_contentLength;
 
 		char**		_envp;
@@ -34,23 +36,21 @@ class CgiParser
 
 		char**	getEnvp();
 
-		void    parseCgiEnv(std::string const & requestTarget, std::string const & rootDirectory);
-		void	configGetEnvp();
-		void	configPostEnvp();
-		void	configErrEnvp(int const & statusCode, std::string const & statusCodePhrase);
+		void    parseCgiEnv(std::string const & requestTarget);
+		void	buildEnvp();
 		void    execCgi();
 
+		
+		void	setCgiExecPath(std::string const & path);
 		void	setReqMethod(std::string const & method);
 		void	setContentLength(size_t const & length);
+		void	setContentType(std::string const & type);
+
+		std::string	getScriptFileName() const;
 
 		void	clearCgiClass();
 
 		void	displayCgiClass() const;
-
-		static std::string	_cgiGetConfig;
-		static std::string	_cgiPostConfig;
-		static std::string	_cgiErrConfig;
-		static void			initCgiConfig(std::string const & getCgiPath, std::string const & postCgiPath, std::string const & errCgiPath);
 };
 
 #endif

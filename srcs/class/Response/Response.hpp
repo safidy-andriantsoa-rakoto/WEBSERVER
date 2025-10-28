@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/20 09:38:24 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/24 14:06:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,8 @@ class Response
 		std::string			_originBody;
 		size_t				_pos;
 
-		static stringMap	_allStatusCode;
-
 		void				setStatusLine();
-		void				setDefaultErrorPage(std::string & content);
+		void				addStatusCode(std::string & content);
 		void				buildErrorPage(int const & statusCode, t_errPage & errPage, std::string & filePath, int & fdType);
 
 	public:
@@ -89,10 +87,7 @@ class Response
 		void				generateLDirResponse(LDirExcept & d);
 		void				generateSingleResponse(int const & statusCode);
 
-		void				execCgiDefaultScript(int *fd);
-
-		static void			initAllStatusCode(std::string const & statPath);
-		static stringMap	getAllStatusCode();
+		static std::string	getReasonPhrase(int const & statusCode);
 };
 
 #endif

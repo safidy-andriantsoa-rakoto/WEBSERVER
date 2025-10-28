@@ -14,27 +14,19 @@
 
 CgiFd::CgiFd(){}
 
-CgiFd::CgiFd(int const &CgiFd, int const &clientFd) : 
-	_outputFd(CgiFd),
+CgiFd::CgiFd(int *fd, pid_t const & childPid, int const & clientFd) : 
+	_outputFd(fd[FD_STDOUT]),
+	_errorFd(fd[FD_STDERR]),
+	_inputFd(fd[FD_STDIN]),
 	_clientFd(clientFd),
-	_status(OP_OPEN)
-	{
-		_isError = false;
-		_isHeader = false;
-		_statusCode = -1;
-	}
-
-CgiFd::CgiFd(int const &outputFd, int const & errorFd, int const & inputFd, int const &clientFd) : 
-	_outputFd(outputFd),
-	_errorFd(errorFd),
-	_inputFd(inputFd),
-	_clientFd(clientFd),
-	_status(OP_OPEN)
-	{
-		_isError = false;
-		_isHeader = false;
-		_statusCode = -1;
-	}
+	_isError(false),
+	_readStat(OP_OPEN),
+	_statusCode(-1),
+	_isHeader(false),
+	_writeStat(OP_START),
+	_startTime(time(NULL)),
+	_childPid(childPid),
+	_isChildAlive(true){}
 
 CgiFd::CgiFd(CgiFd const & other)
 {
@@ -49,75 +41,52 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 		_outputFd = other._outputFd;
 		_errorFd = other._errorFd;
 		_inputFd = other._inputFd;
-		_buffer = other._buffer;
-		_status = other._status;
+		_bufferRead = other._bufferRead;
+		_readStat = other._readStat;
 		_isError = other._isError;
 		_statusCode = other._statusCode;
 		_isHeader = other._isHeader;
 		_header = other._header;
 		_body = other._body;
+		_bufferWrite = other._bufferWrite;
+		_writeStat = other._writeStat;
+		_pos = other._pos;
+		_startTime = other._startTime;
+		_childPid = other._childPid;
+		_isChildAlive = other._isChildAlive;
 	}
 	return *this;
 }
 
 CgiFd::~CgiFd(){}
 
-int CgiFd::getOutputFd() const
-{
-    return _outputFd;
-}
+int CgiFd::getOutputFd() const { return _outputFd;}
 
-void CgiFd::setOutputFd(int const &fd)
-{
-	_outputFd = fd;
-}
+void CgiFd::setOutputFd(int const &fd){_outputFd = fd;}
 
-int CgiFd::getErrFd() const
-{
-    return _errorFd;
-}
+int CgiFd::getErrFd() const { return _errorFd;}
 
-int CgiFd::getInputFd() const
-{
-    return _inputFd;
-}
+void CgiFd::setErrFd(int const &fd){ _errorFd = fd; }
 
-int CgiFd::getClientFd() const
-{
-    return _clientFd;
-}
+int CgiFd::getInputFd() const{ return _inputFd;}
 
-std::string CgiFd::getBuffer() const
-{
-    return _buffer;
-}
+void CgiFd::setInputFd(int const &fd){ _inputFd = fd;}
 
-int CgiFd::getStatus() const
-{
-    return _status;
-}
+int CgiFd::getClientFd() const { return _clientFd;}
 
-void CgiFd::setStatus(int const &status)
-{
-	_status = status;
-}
+std::string CgiFd::getBuffer() const { return _bufferRead;}
 
-bool CgiFd::getIsError() const
-{
-    return _isError;
-}
+int CgiFd::getReadStat() const { return _readStat;}
 
-void CgiFd::setIsError(bool const &stat)
-{
-	_isError = stat;
-}
+void CgiFd::setReadStat(int const &status){_readStat = status;}
 
-void CgiFd::setBuffer(std::string const &content)
-{
-	_buffer = content;
-}
+bool CgiFd::getIsError() const { return _isError;}
 
-void CgiFd::bufferParser()
+void CgiFd::setIsError(bool const &stat){_isError = stat;}
+
+void CgiFd::setBufferRead(std::string const &content){_bufferRead = content;}
+
+void CgiFd::bufferReadParser()
 {
 	size_t		pos;
 	size_t		startPos;
@@ -129,64 +98,63 @@ void CgiFd::bufferParser()
 	_body.clear();
 	if (_isHeader == true)
 	{
-		_body = _buffer;
+		_body = _bufferRead;
 		return;
 	}
 	startPos = 0;
 	pos = 0;
 	while (pos != std::string::npos)
 	{
-		pos = _buffer.find(sep, startPos);
-		if (pos == startPos)
+		pos = _bufferRead.find(sep, startPos);
+		if (pos == startPos || pos == std::string::npos)
 			break ;
-		line = _buffer.substr(startPos, pos - startPos);
+		line = _bufferRead.substr(startPos, pos - startPos);
+		std::cout << line << std::endl;
 		headerVect = strictSplit(line, ": ");
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();
 	}
 	_isHeader = true;
-	_body = _buffer.substr(pos, _buffer.size() - pos);
+	if (pos < _bufferRead.size())
+	{
+		_body = _bufferRead.substr(pos, _bufferRead.size() - pos);
+		/* NEED TO APPEND BODY BEFORE SENDING !!!!!!!!!*/
+	}
 }
 
-void CgiFd::clearBuffer()
+void CgiFd::clearBufferRead()
 {
-	_buffer.clear();
+	_bufferRead.clear();
 	_body.clear();
 	_header.clear();
 }
 
-std::string CgiFd::getBody() const
-{
-    return _body;
-}
+std::string CgiFd::getBody() const{return _body;}
 
-stringMap CgiFd::getHeader() const
-{
-    return _header;
-}
+std::string CgiFd::getBufferWrite() const{return _bufferWrite;}
 
-int CgiFd::getStatusCode()
-{
-    return _statusCode;
-}
+void CgiFd::setBufferWrite(std::string const &buff){_bufferWrite = buff;}
 
-void CgiFd::setStatusCode(int const &statusCode)
-{
-	_statusCode = statusCode;
-}
+int CgiFd::getWriteStat() const{return _writeStat;}
 
-bool CgiFd::getIsHeader()
-{
-    return _isHeader;
-}
+void CgiFd::setWriteStat(int const &stat){_writeStat = stat;}
 
-void CgiFd::setIsHeader(bool const &stat)
-{
-	_isHeader = stat;
-}
+size_t CgiFd::getPos() const{return _pos;}
 
-void CgiFd::displayBufferParsed() const
+void CgiFd::setPos(size_t const &position){_pos = position;}
+
+stringMap CgiFd::getHeader() const{return _header;}
+
+int CgiFd::getStatusCode(){return _statusCode;}
+
+void CgiFd::setStatusCode(int const &statusCode){_statusCode = statusCode;}
+
+bool CgiFd::getIsHeader(){return _isHeader;}
+
+void CgiFd::setIsHeader(bool const &stat){_isHeader = stat;}
+
+void CgiFd::displayBufferReadParsed() const
 {
 	std::cout << "\033[44m==================BUFFER PARSING==================" << std::endl
 	<< "==== Header field ===" << std::endl;
@@ -196,17 +164,83 @@ void CgiFd::displayBufferParsed() const
 	std::cout << "==============END OF BUFFER PARSING=============\033[0m" << std::endl;
 }
 
-void CgiFd::checkError()
+void CgiFd::checkCgiOutput()
 {
 	stringMapIt	it = _header.find("Status");
 	int			statusCode;
 	std::string	tmp;
 	stringVect	vect;
 
+	if (_writeStat == OP_OPEN && !_header.size())
+		throw ErrorExcept(502, "No header from the cgi");
+	/*Error 504 if TIMEOUT => CHECK WITH SIGNAL HANDLING*/
 	if (it == _header.end())
 		return;
 	tmp = (*it).second;
 	vect = splitString(tmp, " ");
 	statusCode = convertStringToInt(vect[0]);
-	throw ErrorExcept(statusCode, "Error from cgi");
+	throw ErrorExcept(statusCode, "Error from cgi after check error");
+}
+
+std::string CgiFd::operateOnBufferToWrite()
+{
+	std::string content;
+	size_t		actualPos;
+
+	if (_writeStat == OP_START)
+		_pos = 0;
+	actualPos = _pos;
+	content = divideStringBySize(_bufferWrite, actualPos, _BUFFER);
+	actualPos += _BUFFER;
+	if (actualPos > _bufferWrite.size())
+	{
+		_writeStat = OP_CLOSE;
+		actualPos = 0;
+	}
+	_pos = actualPos;
+    return content;
+}
+
+void CgiFd::checkTimeOut()
+{
+	time_t	currentTime = time(NULL);
+
+	if (difftime(currentTime, _startTime) > CGI_MAX_TIME)
+	{
+		std::cout << "			CGI TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
+		kill(_childPid, SIGTERM);
+		_isChildAlive = false;
+		throw ErrorExcept(504, "CGI Took too long");
+	}
+}
+
+pid_t CgiFd::getChildPid() const{return _childPid;}
+
+bool CgiFd::getIsChildAlive() const{ return _isChildAlive;}
+
+void CgiFd::setIsChildAlive(bool const &stat){ _isChildAlive = stat; }
+
+void CgiFd::checkChildProcess()
+{
+	int	waitReturn;
+	int	stat;
+
+	waitReturn = waitpid(_childPid, &stat, WNOHANG);
+	if (waitReturn == 0)
+	{
+		/*Child process still going on*/
+		std::cout << "			*****CHILD PROCESS NOT DONE YET" << std::endl;
+	}
+	else if (waitReturn > 0)
+	{
+		/*Child process exited normally with status*/
+		std::cout << "			*****CHILD DONE" << std::endl;
+
+	}
+	else if (waitReturn < 0)
+	{
+		/*Error on child process*/
+		std::cout << "			*****CHILD PROCESS ERROR" << std::endl;
+		throw(ErrorExcept(500, "Child process error"));
+	}
 }

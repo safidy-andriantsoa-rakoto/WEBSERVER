@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/21 10:20:03 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/28 09:51:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,15 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	uint32_t	epollOpt;
 	std::string client_request;
 	int			fdCgi[3] = {-1, -1, -1};
+	pid_t		childPid;
 
 	(*it).receiveClientRequest();
 	client_request = (*it).getClientRequest();
 	if (client_request.size() == 0)
-	{
-		handler.checkAndRemoveCgiFd((*it).getPtrCgiFd());
-		(*it).clearPtrCgiFd();
-		throw std::runtime_error("ManageRequestFromClient - request size = 0");
-	}
+		throw std::runtime_error("Request from client size = 0");
 	try
 	{
-		(*it).processRequest(client_request, epollOpt, fdCgi);
+		(*it).processRequest(client_request, epollOpt, fdCgi, childPid);
 	}
 	catch(AExcept & e)
 	{
@@ -53,7 +50,17 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		epollOpt = EPOLLOUT;
 	}
 	if ((*it).getObjRequest().getIsCgi() == true)
-		createCgiFd(it, handler, epoll, epollOpt, fdCgi);
+	{
+		if (fdCgi[FD_STDOUT] == -2)
+		{
+			handler.setProgramBreak(true);
+			handler.setIsChildProcess(true);
+			return;
+		}
+		createCgiFd(it, handler, epoll, fdCgi, childPid);
+		if ((*it).getObjRequest().get_c_length_received() == (*it).getObjRequest().get_content_length())
+			(*it).getPtrCgiFd()->setWriteStat(OP_CLOSE);
+	}
 	else
 		epoll.epoll_update_event(fdCli, epollOpt);
 }
@@ -84,39 +91,41 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 
 void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 {
-	int			fdCli;
 	int			bytesRead;
 	char		buffer[_BUFFER];
 	std::string	bufferString;
 	vectCgiFdIt	it = handler.getCgiFdIterator(i);
+	int			fdCli = (*it)->getClientFd();
 
-
-	if ((*it)->getStatus() == OP_START) //See if necessary
+	(*it)->checkTimeOut();
+	(*it)->checkChildProcess(); /*Check for error*/
+	if ((*it)->getReadStat() == OP_START) //See if necessary
 		return;
-	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
+	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bytesRead = read((*it)->getOutputFd(), buffer, _BUFFER);
-	if (bytesRead <= 0)
+	if (!bytesRead)
 	{
 		std::cout << "Nothing to read from CGI OUTPUT : " << bytesRead << std::endl;
-		(*it)->setStatus(OP_CLOSE);
-		(*it)->clearBuffer();
-		epoll.epoll_clean((*it)->getOutputFd()); //Find a way to change outputFd = -1 if it is going to be closed
+		(*it)->setReadStat(OP_CLOSE);
+		(*it)->clearBufferRead();
+		epoll.epoll_clean((*it)->getOutputFd());
 		(*it)->setOutputFd(-1);
+		// epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
+		(*it)->setIsChildAlive(false);
 		return ;
 	}
+	if (bytesRead == -1)
+		throw ErrorExcept(500, "Read error on cgi");
 	bufferString.append(buffer, bytesRead);
-	(*it)->setBuffer(bufferString);
-	std::cout << "				******** Buffer CGI = \n" << bufferString.size() << std::endl;
+	(*it)->setBufferRead(bufferString);
+	// std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
 	// std::cout << "				******** Buffer CGI END" << std::endl;
-	(*it)->bufferParser();
-	(*it)->checkError();
-	// (*it)->displayBufferParsed();
-	if ((*it)->getStatus() == OP_OPEN)
-	{
-		(*it)->setStatus(OP_START);
-		fdCli = (*it)->getClientFd();
-		epoll.epoll_update_event(fdCli, EPOLLOUT);
-	}
+	(*it)->bufferReadParser();
+	(*it)->checkCgiOutput();
+	(*it)->displayBufferReadParsed();
+	if ((*it)->getReadStat() == OP_OPEN)
+		(*it)->setReadStat(OP_START);
+	epoll.epoll_update_event(fdCli, EPOLLOUT);
 }
 
 void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
@@ -126,18 +135,26 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 	vectCgiFdIt	it = handler.getCgiFdIterator(i);
 	VClientIt	clIt = findFdInClient(handler.getVectClient(), (*it)->getClientFd());
 
+	(*it)->checkChildProcess(); /*Check for error*/
+	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bufferString = (*clIt).getObjRequest().getBody();
-	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getStatus() << "\033[0m" << std::endl;
-	// std::cout << "Buffer = " << bufferString << " => " << bufferString.size() << std::endl;
 	bytesWritten = write((*it)->getInputFd(), bufferString.c_str(), bufferString.size());
-	if (bytesWritten <= 0)
+	std::cout << "Bytewritten = " << bytesWritten << std::endl;
+	if (!bytesWritten)
 	{
-		std::cout << "Bytewritten = " << bytesWritten << std::endl;
-		/*Check for ERROR in write*/
 		epoll.epoll_clean((*it)->getInputFd());
-		throw std::runtime_error("Write operation error");
+		(*it)->setInputFd(-1);
+		return ;
 	}
-	epoll.epoll_clean((*it)->getInputFd());
-	epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
-	epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
+	if (bytesWritten == -1)
+		throw ErrorExcept(500, "Write CGI error");
+	if ((*it)->getWriteStat() == OP_CLOSE)
+	{
+		std::cout << "Ending writing" << std::endl;
+		epoll.epoll_clean((*it)->getInputFd());
+		(*it)->setInputFd(-1);
+		epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
+		// epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
+	}
+	epoll.epoll_update_event((*it)->getClientFd(), EPOLLIN);
 }

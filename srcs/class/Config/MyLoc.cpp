@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/15 10:44:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 07:56:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void MyLoc::myParseLocation(std::string const &line)
             _redirect = elt;
         if (topic == "index")
             _index = elt;
+        if (topic == "cgi")
+            _cgiExtension = elt;
     }
 }
 
@@ -85,10 +87,36 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                     if (word == "ON")
                         _autoindex[0] = word;
                 }
+                if (name == "cgi")
+                {
+                    /*Add the cgi extension inside parsing : need two elt, ON/OFF + execution path*/
+                    if (word == "ON")
+                    {
+                        _cgiExtension[0] = word;
+                        /* Then Check for the execution path at _cgiExtension[1] */
+                        _cgiExtension.push_back("/usr/bin/php-cgi"); //Temporary line
+                    }
+                }
                 if (name == "method")
                     _method.push_back(word);
                 if (name == "redirect")
+                {
                     _redirect.push_back(word);
+                    if (_redirect[0] == "301" || _redirect[0] == "302" || _redirect[0] == "307" || _redirect[0] == "308")
+                    {
+                        _redirection.error = atoi(_redirect[0].c_str());
+                        try
+                        {
+                            _redirection.filePath = _redirect.at(1);
+                        }
+                        catch (const std::out_of_range &e)
+                        {
+                            std::cerr << "Error : " << e.what() << std::endl;
+                        }
+                    }
+                    else
+                        throw std::runtime_error("Error : redirection failed ");
+                }
             }
         }
     }
@@ -102,13 +130,19 @@ void MyLoc::parseLocation(const stringVect &file)
         return;
     size_t start = index[currentBlock];
     size_t end;
-    std::cout << "current block : " << currentBlock << std::endl;
+    std::cout << "Index size = " << index.size() << std::endl;
+    if (index.size() % 2)
+        index[index.size() - 1] = _endConfig;
+    else
+        index[index.size()] = _endConfig; /* Ask if the updated version is ok ? invalid write if size = 1 */
     if (currentBlock + 1 < index.size())
         end = index[currentBlock + 1];
     else
         end = file.size();
-    std::cout << "start = " << start << " ; end = " << end << std::endl;
-    std::cout << "size = " << file.size();
+    if (checkDuplicate2(file, "autoindex", start, end) || checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end))
+    {
+        throw std::runtime_error("Error : duplicate setting find or not find setting");
+    }
     getElementLocation(start, end, file);
     currentBlock++;
     _checkStats = true;

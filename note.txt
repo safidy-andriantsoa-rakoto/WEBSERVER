@@ -2,18 +2,15 @@ ERROR VERIFICATION :
     - main function : argv, argc - default.conf
     - CGI-POST error
 
-MODIFICATIONS :
-    - EOF for CGI read? Check in the code
-
 PEER QUESTIONS :
 [subject]: 
-    - default error pages as script CGI? Mety sa tsia?
-    - Listen to multiple ports?
-    - multiple website served by program?
-
     - redirection : how about after $uri???
-    - default file to serve when resource is a directory??? (other than listing directory)
-    - chunked request for CGI?
 
 TEAM :
     - server_name not necessary ? We won't implement virtual host
+
+
+
+CGI Error :
+STDOUT :
+    PHP Warning:  Unknown: Failed to open stream: Permission denied in Unknown on line 0
