@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 08:26:04 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/30 08:30:22 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@
 						"	autoindex ON\n" \
 						"	cgi	ON /usr/bin/php-cgi\n	}\n" \
 						"location /upload {\n" \
-						"	root /home/rsafidy-/CURSUS\n" \
+						"	root ./site/upload\n" \
 						"	method GET POST DELETE\n" \
 						"	}\n}"
 						
