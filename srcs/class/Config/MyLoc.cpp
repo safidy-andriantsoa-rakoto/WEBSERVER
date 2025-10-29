@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyLoc.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 07:56:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 15:51:17 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,10 +131,10 @@ void MyLoc::parseLocation(const stringVect &file)
     size_t start = index[currentBlock];
     size_t end;
     std::cout << "Index size = " << index.size() << std::endl;
-    if (index.size() % 2)
-        index[index.size() - 1] = _endConfig;
-    else
-        index[index.size()] = _endConfig; /* Ask if the updated version is ok ? invalid write if size = 1 */
+    // if (index.size() % 2)
+    //     index[index.size() - 1] = _endConfig;
+    // else
+    //     index[index.size()] = _endConfig; /* Ask if the updated version is ok ? invalid write if size = 1 */
     if (currentBlock + 1 < index.size())
         end = index[currentBlock + 1];
     else
