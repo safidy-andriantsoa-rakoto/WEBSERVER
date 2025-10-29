@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 14:01:07 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/29 15:41:40 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,7 +252,7 @@ void	Request::addRequestBody(std::string const & requeststring, size_t const & p
 	}
 	content = requeststring.substr(pos, static_cast<size_t>(length));
 	_body = content;//alana @zay eee
-	_c_length_received += content.size();
+	_c_length_received = content.size(); //novaina (mbola mila jerena ny olana ateran @Post tsotra)
 	_content_length = length;
 	// std::cout << "\nBODY=\n" << _body << "\n"<< std::endl;
 	std::cout << "\nCONTENT_LENGTH=" << _content_length << " \nreceived =" << content.size() << "\n"<< std::endl;
