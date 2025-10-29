@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:49:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 08:20:15 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class MyConf : public AConfig
 		void 			parseConfig(stringVect file);
 		size_t			findNotDigitError();
 		vectLocation	createVectLocation(size_t countLocation);
-
+		void			setHostName(std::string host);
 		//For testing
 		virtual void	displayConfig() const;
 

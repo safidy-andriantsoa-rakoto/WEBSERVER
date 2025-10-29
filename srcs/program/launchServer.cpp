@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 09:51:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/28 10:28:52 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void    launchServer(Handler & handler)
 	Signal			sign;
 	EpollCreation	epoll;
 
-	initServer(handler.getVectServer());
+	initServer(handler.getVectServer());// check multi port
 	launchEpoll(handler.getVectServer(), epoll);
 	while (SIGINT != sign.getSigNum())
 	{

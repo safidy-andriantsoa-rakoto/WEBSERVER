@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 08:44:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 08:20:44 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,4 +238,10 @@ vectLocation MyConf::createVectLocation(size_t countLocation)
             tabLocation.push_back(loc);
         }
     return (tabLocation);
+}
+
+void MyConf::setHostName(std::string host)
+{
+	if (host.size())
+		this->_host = host;
 }

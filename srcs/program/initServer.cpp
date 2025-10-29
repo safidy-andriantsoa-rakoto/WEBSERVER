@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initServer.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 09:29:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:54:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 08:21:27 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,13 @@ void	launchEpoll(vectServer & vectServer, EpollCreation &epoll)
 		std::cout << "\033[046mSERVER FD= " << fd << "\033[0m" << std::endl;
 		epoll.epoll_control(EPOLLIN, fd);
 		int port = (*it).getConfig().getServPort()[0];
-		if (!(*it).resolve_host("c1r4s3.42antananarivo.mg", port)) //hostname
+		if (!(*it).resolve_host((*it).getConfig().getServHost(), port)) //hostname
 			throw std::runtime_error("Failed to load server");
 		if (!(*it).link_socket_adress())
 		{
 			std::cout << "\033[31mFAILED TO BIND ON IP: ... \033[0m" << std::endl;
 			std::cout << "\033[32mRedirecting to: default(0.0.0.0)\033[0m" << std::endl;
+			(*it).getConfig().setHostName("0.0.0.0");
 			(*it).configure_sockaddrin(port);
 			if ((*it).link_socket_adress() == 0)
 				throw std::runtime_error("Failed to load server");
