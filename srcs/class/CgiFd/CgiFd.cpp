@@ -86,7 +86,16 @@ bool CgiFd::getIsError() const { return _isError;}
 
 void CgiFd::setIsError(bool const &stat){_isError = stat;}
 
-void CgiFd::setBufferRead(std::string const &content){_bufferRead = content;}
+void CgiFd::setBufferRead(std::string const &content)
+{
+	/* NEED TO REVIEW THIS */
+	std::string	res = _bufferRead + content;
+
+	if (_isHeader == true)
+		_bufferRead = content;
+	else
+		_bufferRead += content;
+}
 
 void CgiFd::bufferReadParser()
 {
@@ -96,8 +105,8 @@ void CgiFd::bufferReadParser()
 	std::string	line;
 	stringVect	headerVect;
 
-	if (_bufferRead.find("EXECVE") != std::string::npos)
-		throw ErrorExcept(500, "Execution of child process error");
+	if (_isHeader == false && _bufferRead.find("\n\r\n") == std::string::npos)
+		return;
 	_header.clear();
 	_body.clear();
 	if (_isHeader == true)
@@ -123,7 +132,6 @@ void CgiFd::bufferReadParser()
 	if (pos < _bufferRead.size())
 	{
 		_body = _bufferRead.substr(pos, _bufferRead.size() - pos);
-		/* NEED TO APPEND BODY BEFORE SENDING !!!!!!!!!*/
 	}
 }
 
@@ -236,29 +244,41 @@ void CgiFd::setIsChildAlive(bool const &stat){ _isChildAlive = stat; }
 void CgiFd::checkChildProcess()
 {
 	int	waitReturn;
-	int	stat;
+	int	status;
 
+	std::cout << "			*****CHECK CHILD PROCESS ************" << std::endl;
 	if (_isChildAlive == false)
+	{
+		std::cout << "		No child alive anymore " << std::endl;
 		return;
-	waitReturn = waitpid(_childPid, &stat, WNOHANG);
+	}
+	waitReturn = waitpid(_childPid, &status, WNOHANG);
 	if (waitReturn == 0)
 	{
 		/*Child process still going on*/
 		std::cout << "			*****CHILD PROCESS NOT DONE YET" << std::endl;
+		return ;
 	}
-	else if (waitReturn > 0)
-	{
-		/*Child process exited normally with status*/
-		std::cout << "			*****CHILD DONE" << std::endl;
-		_isChildAlive = false;
-	}
-	else if (waitReturn < 0)
+	else if (waitReturn == -1)
 	{
 		/*Error on child process*/
-		std::cout << "			*****CHILD PROCESS ERROR" << std::endl;
+		std::cout << "			*****WAITPID ERROR" << std::endl;
 		_isChildAlive =false;
-		throw(ErrorExcept(500, "Child process error"));
+		throw(ErrorExcept(500, "Waitpid error"));
 	}
+	if (WIFEXITED(status)) 
+	{
+		int exit_status = WEXITSTATUS(status);
+		std::cout << "			*****CHILD DONE WITH EXIT STATUS : " << exit_status << std::endl;
+		if (exit_status == 42)
+		{
+			std::cout << "			***** EXECVE ERROR RECEIVED" << std::endl;
+			throw(ErrorExcept(500, "Child process error"));
+		}
+		_isChildAlive = false;
+	}
+	else
+		std::cout << "status not exited" << std::endl;
 }
 
 bool CgiFd::getCheckFirstError() const{return _firstCheckError;}

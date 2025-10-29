@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 13:27:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 20:29:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ int main(int argc, char **argv)
 	catch(const std::exception & e)
 	{
 		std::cerr << e.what() << std::endl;
+		std::string error = e.what();
+		if (error == "Execve error")
+			return 42;
 		handler.cleanFdAndAlloc();
 		return 1;
 	}

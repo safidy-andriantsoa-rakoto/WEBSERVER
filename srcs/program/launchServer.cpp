@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 09:35:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 19:54:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 {
 	if (identifier == CLIENT)
 	{
+		std::string error = e.what();
+		if (error == "Execve error")
+			throw std::runtime_error(e.what());
 		handler.removeClient(index, epoll);
 		epoll.epoll_clean(fdEvent);
 	}

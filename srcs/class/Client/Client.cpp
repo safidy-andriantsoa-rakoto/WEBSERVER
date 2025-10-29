@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/29 15:14:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 20:02:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -445,12 +445,12 @@ void Client::cgiGetRequest(int *fd, pid_t & childPid)
 		}
 		catch(const std::exception& e)
 		{
-			std::cout << "EXECVE ERROR" << std::endl;
+			// std::cout << "EXECVE ERROR" << std::endl;
 			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
 			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDOUT] = -2;
-			close(stdFd[FD_STDOUT]);
 			// fd[FD_STDERR] = -2;
+			throw std::runtime_error("Execve error");
 		}
 	}
 	else
@@ -541,15 +541,13 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 		}
 		catch(const std::exception& e)
 		{
-			std::cout << "EXECVE ERROR" << std::endl;
+			// std::cout << "EXECVE ERROR" << std::endl;
 			makeDup2(stdFd[FD_STDIN], STDIN_FILENO);
 			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
 			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDIN] = -2;
 			fd[FD_STDOUT] = -2;
-			// fd[FD_STDERR] = -2;
-			fd[FD_STDOUT] = -2;
-			close(stdFd[FD_STDOUT]);
+			throw std::runtime_error("Execve error");
 		}
 	}
 	else

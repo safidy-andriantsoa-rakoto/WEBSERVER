@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 15:18:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 20:36:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	catch(AExcept & e)
 	{
 		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
+		std::string	error = e.what();
+		if (error == "Execve error")
+			throw std::runtime_error(e.what());
 		(*it).setCatchedResponse(e);
 		epollOpt = EPOLLOUT;
 	}
@@ -97,6 +100,7 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	int			fdCli = (*it)->getClientFd();
 
 	(*it)->checkTimeOut();
+	(*it)->checkChildProcess();
 	if ((*it)->getReadStat() == OP_START)
 		return;
 	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
@@ -104,11 +108,14 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	if (!bytesRead)
 	{
 		std::cout << "Nothing to read from CGI OUTPUT : " << bytesRead << std::endl;
-		(*it)->setReadStat(OP_CLOSE);
-		(*it)->clearBufferRead();
-		epoll.epoll_clean((*it)->getOutputFd());
-		(*it)->setOutputFd(-1);
-		(*it)->setIsChildAlive(false);
+		if ((*it)->getReadStat() == OP_ONGOING)
+		{
+			(*it)->setReadStat(OP_CLOSE);
+			(*it)->clearBufferRead();
+			epoll.epoll_clean((*it)->getOutputFd());
+			(*it)->setOutputFd(-1);
+			(*it)->setIsChildAlive(false);
+		}
 		return ;
 	}
 	if (bytesRead == -1)
@@ -160,7 +167,7 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 	}
 	if ((*clIt).getObjRequest().checkContentReceived() == true)
 	{
-		std::cout << "		Ending writing" << std::endl;
+		// std::cout << "		Ending writing" << std::endl;
 		(*it)->setWriteStat(OP_CLOSE);
 		epoll.epoll_clean((*it)->getInputFd());
 		(*it)->setInputFd(-1);
