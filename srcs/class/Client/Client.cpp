@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 09:48:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 12:21:19 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -695,7 +695,7 @@ bool Client::get_pathfile()
 	{
 		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
 		{
-			std::cout << "\e[5m				SEARCH FILE POST PATH\e[0m" << std::endl;
+			// std::cout << "\e[5m				SEARCH FILE POST PATH\e[0m" << std::endl;
 			size_t endFile = _request.get_Body().find("\n", findFile + 10);
 			std::string filename;
 
@@ -705,7 +705,7 @@ bool Client::get_pathfile()
 			if (filename.size())
 			{
 				this->filepath = _request.getRequestTarget() + "/" + currentDateTimeString() + filename;
-				std::cout << "\n\n\n		PATH=["<< this->filepath <<"]\n\n\n" << std::endl;
+				// std::cout << "\n\n\n		PATH=["<< this->filepath <<"]\n\n\n" << std::endl;
 				return (true);
 			}
 		}
