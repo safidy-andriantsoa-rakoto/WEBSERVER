@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:26:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 08:25:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ class CgiFd
 		time_t		_startTime;
 		pid_t		_childPid;
 		bool		_isChildAlive;
+
+		bool		_firstCheckError;
 
 		CgiFd();
 
@@ -101,6 +103,9 @@ class CgiFd
 		bool		getIsChildAlive() const;
 		void		setIsChildAlive(bool const & stat);
 		void		checkChildProcess();
+
+		bool		getCheckFirstError() const;
+		void		setCheckFirstError(bool const & stat);
 
 };
 

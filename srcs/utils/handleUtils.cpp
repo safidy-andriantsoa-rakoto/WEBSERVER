@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 11:30:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 08:26:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,11 @@ void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *
 	else if ((*it).getFdType() == POST_PHP_SCRIPT)
 	{
 		handler.addToVectCgiFd(it, fd, childPid);
-		epoll.epoll_control(EPOLLOUT, fd[FD_STDIN]);
+		epoll.epoll_control(EPOLLIN, fd[FD_STDOUT]); //Check for error cgi first by readCgiOutput()
+		(*it).getPtrCgiFd()->setCheckFirstError(true);
+		// epoll.epoll_control(EPOLLOUT, fd[FD_STDIN]);
 		int fdCli = (*it).get_clientFD();
-		epoll.epoll_update_event(fdCli, EPOLLOUT);
+		epoll.epoll_update_event(fdCli, EPOLLOUT); //Block the client in epoll
 		(*it).getPtrCgiFd()->setBufferWrite((*it).getObjRequest().getBody());
 	}
 }

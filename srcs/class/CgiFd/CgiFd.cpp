@@ -26,7 +26,8 @@ CgiFd::CgiFd(int *fd, pid_t const & childPid, int const & clientFd) :
 	_writeStat(OP_START),
 	_startTime(time(NULL)),
 	_childPid(childPid),
-	_isChildAlive(true){}
+	_isChildAlive(true),
+	_firstCheckError(false){}
 
 CgiFd::CgiFd(CgiFd const & other)
 {
@@ -54,6 +55,7 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 		_startTime = other._startTime;
 		_childPid = other._childPid;
 		_isChildAlive = other._isChildAlive;
+		_firstCheckError = other._firstCheckError;
 	}
 	return *this;
 }
@@ -249,3 +251,7 @@ void CgiFd::checkChildProcess()
 		throw(ErrorExcept(500, "Child process error"));
 	}
 }
+
+bool CgiFd::getCheckFirstError() const{return _firstCheckError;}
+
+void CgiFd::setCheckFirstError(bool const &stat){ _firstCheckError = stat;}

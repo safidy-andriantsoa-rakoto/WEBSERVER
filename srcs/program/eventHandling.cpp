@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 11:46:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 08:32:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,14 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	(*it)->bufferReadParser();
 	(*it)->checkCgiOutput();
 	(*it)->displayBufferReadParsed();
+	/*If POST, and first check error() in cgi output, activate writeCgiOutput() now and close this outputFd*/
+	if ((*it)->getCheckFirstError() == true)
+	{
+		std::cout << "			FIRST CHECK ERROR DONE FOR POST" << std::endl;
+		epoll.epoll_control(EPOLLOUT, (*it)->getInputFd());
+		epoll.epoll_update_event((*it)->getOutputFd(), EPOLLOUT);
+		return ;
+	}
 	if ((*it)->getReadStat() == OP_OPEN)
 		(*it)->setReadStat(OP_START);
 	epoll.epoll_update_event(fdCli, EPOLLOUT);
@@ -162,9 +170,12 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 		std::cout << "Ending writing" << std::endl;
 		epoll.epoll_clean((*it)->getInputFd());
 		(*it)->setInputFd(-1);
-		epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
+		// epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
+		epoll.epoll_update_event((*it)->getOutputFd(), EPOLLIN);
 		// epoll.epoll_control(EPOLLIN, (*it)->getErrFd());
 	}
 	epoll.epoll_update_event((*it)->getClientFd(), EPOLLIN);
+	if ((*it)->getCheckFirstError() == true)
+		(*it)->setCheckFirstError(false);
 	// epoll.epoll_update_event((*it)->getInputFd(), EPOLLIN);
 }
