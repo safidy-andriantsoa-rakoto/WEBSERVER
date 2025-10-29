@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/29 12:21:19 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/29 14:05:39 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,21 +249,21 @@ void Client::processRequestWithConfig()
 
 void Client::checkContentLength()
 {
-	float		maxSize;
-	float		requestSize;
+	// float		maxSize;
+	// float		requestSize;
 	stringMapIt	itFind;
 
-	maxSize = 0;
-	requestSize = 0;
+	// maxSize = 0;
+	// requestSize = 0;
 	if (_request.getMethod() != "POST")
 		return ;
 	itFind = _request.getHeader().find("Content-Length");
 	if (itFind == _request.getHeader().end())
 		throw ErrorExcept(411, "Length required"); //No transfer encoding accepted
-	maxSize = _config.getMaxSize();
-	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
-	if (requestSize > maxSize)
-		throw ErrorExcept(413, "Size limit not respected");
+	// maxSize = _config.getMaxSize();
+	// requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
+	// if (requestSize > maxSize)// Mila jerena oooooh
+	// 	throw ErrorExcept(413, "Size limit not respected");
 }
 
 void Client::buildRequestTarget()

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   define.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 14:27:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 14:11:12 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,16 @@
 						"host localhost\n" \
 						"port 2003\n" \
 						"server_names localhost\n" \
-						"size 200 MB\n" \
+						"size 200000000 MB\n" \
 						"location / {\n" \
 						"	root ./site\n" \
 						"	method GET POST DELETE\n" \
 						"	autoindex ON\n" \
-						"	cgi	ON /usr/bin/php-cgi\n	}\n}"
+						"	cgi	ON /usr/bin/php-cgi\n	}\n" \
+						"location /upload {\n" \
+						"	root ./site\n" \
+						"	method GET POST DELETE\n" \
+						"	}\n}"
+						
 
 #endif
