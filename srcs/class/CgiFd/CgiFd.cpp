@@ -218,6 +218,15 @@ void CgiFd::checkTimeOut()
 	}
 }
 
+bool CgiFd::checkFirstCheckErrorTimeOut()
+{
+	time_t	currentTime = time(NULL);
+
+	if (difftime(currentTime, _startTime) > CGI_MAX_RSP_TIME)
+		return true;
+	return false;
+}
+
 pid_t CgiFd::getChildPid() const{return _childPid;}
 
 bool CgiFd::getIsChildAlive() const{ return _isChildAlive;}

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 08:25:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 14:32:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ class CgiFd
 		std::string	operateOnBufferToWrite();
 
 		void		checkTimeOut();
+		bool		checkFirstCheckErrorTimeOut();
 
 		pid_t		getChildPid() const;
 		bool		getIsChildAlive() const;

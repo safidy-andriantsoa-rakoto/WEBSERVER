@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 11:32:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 12:43:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void EpollCreation::epoll_update_event(int const &fd, uint32_t event)
     up.data.fd = fd;
     up.events = event;
 
-    std::cout << "Epoll update event for " << fd << std::endl;
+    // std::cout << "Epoll update event for " << fd << std::endl;
     if (epoll_ctl(this->efds, EPOLL_CTL_MOD, fd, &up) < 0)
     {
         std::string error(strerror(errno));

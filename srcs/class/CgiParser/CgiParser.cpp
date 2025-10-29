@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 08:08:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 14:56:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void CgiParser::execCgi()
 	{
 		perror("Execve");
 		clearCgiClass();
+		// exit(1);
 		throw std::runtime_error("Execve error");
 	}
 }

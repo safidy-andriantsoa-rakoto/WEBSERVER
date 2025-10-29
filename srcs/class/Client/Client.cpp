@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 11:24:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 15:14:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -446,8 +446,7 @@ void Client::cgiGetRequest(int *fd, pid_t & childPid)
 		catch(const std::exception& e)
 		{
 			std::cout << "EXECVE ERROR" << std::endl;
-			// makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
-			std::cout << "STDOUT RESTORED\n";
+			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
 			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDOUT] = -2;
 			close(stdFd[FD_STDOUT]);
@@ -542,19 +541,15 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 		}
 		catch(const std::exception& e)
 		{
+			std::cout << "EXECVE ERROR" << std::endl;
 			makeDup2(stdFd[FD_STDIN], STDIN_FILENO);
-			// makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
 			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDIN] = -2;
 			fd[FD_STDOUT] = -2;
 			// fd[FD_STDERR] = -2;
-			std::cout << "EXECVE ERROR" << std::endl;
-			// makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
-			std::cout << "STDOUT RESTORED\n";
-			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDOUT] = -2;
 			close(stdFd[FD_STDOUT]);
-			// fd[FD_STDERR] = -2;
 		}
 	}
 	else
@@ -611,9 +606,6 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		if (_request.getIsCgi() == true)
 		{
 			_cgiFD->setBufferWrite(_request.getBody());
-			std::cout << _request.get_c_length_received() << " VS " << _request.get_content_length() << std::endl;
-			if (_request.get_c_length_received() == _request.get_content_length())
-				_cgiFD->setWriteStat(OP_CLOSE);
 			opt = EPOLLOUT;
 		}
 	}
@@ -628,7 +620,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		delete_request();
 		setSingleResponse(204);
 	}
-	std::cout << "------------------------CRLF HEADER = " << _request.get_is_CRLF_header() << std::endl;
+	// std::cout << "------------------------CRLF HEADER = " << _request.get_is_CRLF_header() << std::endl;
 
 }
 

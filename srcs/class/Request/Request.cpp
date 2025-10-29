@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 14:53:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 13:51:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,8 +251,8 @@ void	Request::addRequestBody(std::string const & requeststring, size_t const & p
 		length = atoi((*it).second.c_str());
 	}
 	content = requeststring.substr(pos, static_cast<size_t>(length));
-	_body = content;//alana @zay eee
-	_c_length_received += content.size();
+	_body = content;
+	_c_length_received = content.size();
 	_content_length = length;
 	// std::cout << "\nBODY=\n" << _body << "\n"<< std::endl;
 	std::cout << "\nCONTENT_LENGTH=" << _content_length << " \nreceived =" << content.size() << "\n"<< std::endl;
@@ -334,6 +334,7 @@ void Request::set_c_length_received(size_t received)
 {
 	if ((int)received > -1)
 		this->_c_length_received += received;
+	std::cout << "			ACTUAL RECEIVED === " << _c_length_received << std::endl;
 }
 
 size_t Request::get_content_length()
@@ -344,6 +345,13 @@ size_t Request::get_content_length()
 void Request::set_content_length(size_t size)
 {
 	this->_content_length = size;
+}
+
+bool Request::checkContentReceived() const
+{
+	if (_c_length_received != _content_length)
+    	return false;
+	return true;
 }
 
 void Request::delete_range_body_request(int start, int end)

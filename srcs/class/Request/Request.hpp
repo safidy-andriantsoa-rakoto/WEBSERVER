@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 10:30:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 13:51:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ class Request
 
 		size_t 		get_content_length();
 		void 		set_content_length(size_t size);
+
+		bool		checkContentReceived() const;
 
 		void		delete_range_body_request(int start, int end);
 

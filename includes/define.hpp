@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 14:27:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/29 14:33:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #define _BUFFER_RECV 1024
 #define	CLIENT_MAX_TIME 50
 #define	CGI_MAX_TIME 10
+#define CGI_MAX_RSP_TIME 1
 
 //Listing directory
 #define HEAD_LDIR "<!DOCTYPE html></head><body><h1>LISTING DIRECTORY</h1><div><ul>"
