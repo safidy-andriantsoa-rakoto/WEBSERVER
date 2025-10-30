@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/29 14:05:39 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/30 08:07:36 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -566,11 +566,14 @@ void Client::delete_request()
 	struct stat	s_stat;
 
 	target = _request.getRequestTarget();
+	std::cout << "		TARGET=" << target << std::endl;
 	if (!target.size())
 		throw ErrorExcept(400, "Bad request");
+	if (target[target.size() - 1] == '/')
+		throw ErrorExcept(403, "Forbidden");
 	std::cout << "\e[5mDELETE REQUEST\e[0m ->"<< target << std::endl;
 	if (stat(target.c_str(), &s_stat) != 0)
-		throw ErrorExcept(403, "Forbidden");
+		throw ErrorExcept(404, "Not found");
 	if (S_ISREG(s_stat.st_mode))
 	{
 		if (std::remove(target.c_str()) != 0)
