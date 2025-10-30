@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/30 08:18:59 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/30 10:11:32 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -805,7 +805,7 @@ void Client::set_time_activity()
 bool Client::is_client_timeout()
 {
 	set_time_activity();
-	if (difftime(this->_time_now, this->_last_time) > 30)
+	if (difftime(this->_time_now, this->_last_time) > 60)
 	{
 		throw ErrorExcept(408, "Client Timeout");
 		return true;
