@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 20:36:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 08:53:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, 
 	uint32_t	event = epoll.getEvent(eventIdx);
 	VClientIt	it = handler.getClientIterator(i);
 	int			fdCli = (*it).get_clientFD();
-	
+
 	if ((event & EPOLLIN) && (*it).getConnexionStat() == true)
 		manageRequestFromClient(it, fdCli, epoll, handler);
 	else if ((event & EPOLLOUT) && (*it).getConnexionStat() == true)
@@ -103,7 +103,7 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	(*it)->checkChildProcess();
 	if ((*it)->getReadStat() == OP_START)
 		return;
-	std::cout << "\033[43mCgiFd EPOLLIN : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
+	std::cout << "\033[43mCgiFd READ IN OUTPUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bytesRead = read((*it)->getOutputFd(), buffer, _BUFFER);
 	if (!bytesRead)
 	{
@@ -122,14 +122,17 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 		throw ErrorExcept(500, "Read error on cgi");
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBufferRead(bufferString);
-	// std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
-	// std::cout << "				******** Buffer CGI END" << std::endl;
+	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
+	std::cout << "				******** Buffer CGI END" << std::endl;
 	(*it)->bufferReadParser();
 	(*it)->checkCgiOutput();
 	(*it)->displayBufferReadParsed();
-	if ((*it)->getReadStat() == OP_OPEN)
+	if ((*it)->getReadStat() == OP_OPEN && (*it)->getIsHeader() == true)
+	{
 		(*it)->setReadStat(OP_START);
-	epoll.epoll_update_event(fdCli, EPOLLOUT);
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
+	}
+	// if ((*it)->getIsHeader() == true)
 }
 
 void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
@@ -147,7 +150,7 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 		epoll.epoll_control(EPOLLIN, (*it)->getOutputFd());
 		return;
 	}
-	std::cout << "\033[43mCgiFd EPOLLOUT : " << (*it)->getInputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
+	std::cout << "\033[43mCgiFd WRITE IN INPUT : " << (*it)->getInputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bufferString = (*clIt).getObjRequest().getBody();
 	// std::cout << "				******** Buffer CGI TO WRITE = \n" << bufferString << std::endl;
 	// std::cout << "				******** Buffer CGI END TO WRITE" << std::endl;

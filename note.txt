@@ -14,3 +14,19 @@ TEAM :
 CGI Error :
 STDOUT :
     PHP Warning:  Unknown: Failed to open stream: Permission denied in Unknown on line 0
+
+
+#define DEFAULT_CONFIG "server {\n" \
+						"host localhost\n" \
+						"port 2003\n" \
+						"server_names localhost\n" \
+						"size 200 MB\n" \
+						"location / {\n" \
+						"	root ./site\n" \
+						"	method GET POST DELETE\n" \
+						"	autoindex ON\n" \
+						"	cgi	ON /usr/bin/php-cgi\n	}" \
+						"location /upload {\n" \
+						"	root ./site/upload\n" \
+						"	method GET POST DELETE\n" \
+						"	autoindex ON\n}\n}"

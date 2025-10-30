@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 14:33:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 08:55:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 #define MAX_EVENT 2042
 #define _BUFFER 1000
 #define _BUFFER_RECV 1024
-#define	CLIENT_MAX_TIME 50
+#define	CLIENT_MAX_TIME 5
 #define	CGI_MAX_TIME 10
 #define CGI_MAX_RSP_TIME 1
 
@@ -69,6 +69,10 @@
 						"	root ./site\n" \
 						"	method GET POST DELETE\n" \
 						"	autoindex ON\n" \
-						"	cgi	ON /usr/bin/php-cgi\n	}\n}"
+						"	cgi	ON /usr/bin/php-cgi\n	}\n" \
+						"location /upload {\n" \
+						"	root ./site/upload\n" \
+						"	method GET POST DELETE\n" \
+						"	autoindex ON\n} \n}"
 
 #endif

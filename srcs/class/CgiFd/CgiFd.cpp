@@ -105,15 +105,20 @@ void CgiFd::bufferReadParser()
 	std::string	line;
 	stringVect	headerVect;
 
-	if (_isHeader == false && _bufferRead.find("\n\r\n") == std::string::npos)
+	if (_isHeader == false && _bufferRead.find("\r\n\r\n") == std::string::npos)
+	{
+		std::cout << "		GROUP BODY " << std::endl;
 		return;
+	}
 	_header.clear();
 	_body.clear();
 	if (_isHeader == true)
 	{
+		std::cout << "		ADDING BODY" << std::endl;
 		_body = _bufferRead;
 		return;
 	}
+	std::cout << "		PARSE THE HEADER AND BODY" << std::endl;
 	startPos = 0;
 	pos = 0;
 	while (pos != std::string::npos)
@@ -246,10 +251,10 @@ void CgiFd::checkChildProcess()
 	int	waitReturn;
 	int	status;
 
-	std::cout << "			*****CHECK CHILD PROCESS ************" << std::endl;
+	// std::cout << "			*****CHECK CHILD PROCESS ************" << std::endl;
 	if (_isChildAlive == false)
 	{
-		std::cout << "		No child alive anymore " << std::endl;
+		std::cout << "		******No child alive anymore " << std::endl;
 		return;
 	}
 	waitReturn = waitpid(_childPid, &status, WNOHANG);
@@ -278,7 +283,7 @@ void CgiFd::checkChildProcess()
 		_isChildAlive = false;
 	}
 	else
-		std::cout << "status not exited" << std::endl;
+		std::cout << "	*********status not exited" << std::endl;
 }
 
 bool CgiFd::getCheckFirstError() const{return _firstCheckError;}

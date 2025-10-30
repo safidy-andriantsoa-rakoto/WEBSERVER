@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 13:22:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 08:38:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,12 +258,10 @@ void Handler::check_client_timeout_all(EpollCreation& epoll)
 		catch (const std::exception & e)
 		{
 			std::cerr << "			Error on client timeout check: " << e.what() << '\n';
-			// it = _vectClient.erase(it);
 			int fdrm = (*it).get_clientFD();
 			this->removeClient(it, epoll);
 			if (fdrm > -1)
 				epoll.epoll_clean(fdrm);
-			// this->removeClient(it,);
 		}
 	}
 }
