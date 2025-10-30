@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 19:47:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:20:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@
 
 //Utils
     //fileUtils
-void        checkFileExtension(std::string const & fileName, std::string extension);
+bool        checkFileExtension(std::string const & fileName, std::string extension);
 void	    printFileContent(std::string const & path);
 std::string	readFileToString(std::string _path);
 stringMap	splitFileToMapString(std::string const & filePath, std::string const & sep);

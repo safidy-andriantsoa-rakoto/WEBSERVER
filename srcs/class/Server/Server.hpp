@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 15:16:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:48:55 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,13 @@
 #include "general.hpp"
 #include "typedef.hpp"
 #include "../Mime/Mime.hpp"
-// #include "Handler.hpp"
 
 class Server
 {
 	private:
 	// For socket
-	    int     	_fdSocket;
         int     	_fdClient;
+	    int     	_fdSocket;
         socklen_t  	_size_sockaddrin;
         SockAddrIn	_sockaddrIn;
 

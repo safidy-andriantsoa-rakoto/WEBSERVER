@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 13:34:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:09:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,17 @@ VClientIt		findFdInClient(VClient & allClient, int const & fd);
 // Server main
 void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & identifier, int const & fdEvent, int const & index, std::exception & e);
 void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int const & identifier, int const & i);
-void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier);
-int		readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll);
 void    launchServer(Handler & handler);
 
 //Waiting for real parser
 vectServer	myParseConfigFile();
 
 //HandleUtils
-void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & fd);
+void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll);
 void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *fd, pid_t const & childPid);
-int     readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll);
-void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier);
+void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err);
 bool	hasSingleResponse(int const & respStat);
+std::string	getIdentifier(int const & identifier);
 
 //MessageUtils
 void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);

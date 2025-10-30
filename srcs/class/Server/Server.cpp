@@ -6,17 +6,13 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 15:17:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:50:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server()
-{
-	_fdClient = -1;
-	_fdSocket = -1;
-}
+Server::Server() : _fdClient(-1), _fdSocket(-1){}
 
 Server::Server(Server const & other)
 {
@@ -40,27 +36,14 @@ Server &Server::operator=(Server const & other)
 
 Server::~Server(){}
 
-MyConf Server::getConfig() const
-{
-	return _config;
-}
+MyConf Server::getConfig() const{return _config;}
 
-int Server::get_fdClient() const
-{
-	return (this->_fdClient);
-}
+int Server::get_fdClient() const{return (this->_fdClient);}
 
-int Server::get_fdSocket() const
-{
-    return _fdSocket;
-}
+int Server::get_fdSocket() const{return _fdSocket;}
 
-SockAddrIn & Server::get_confSockAddrIn()
-{
-    return (_sockaddrIn);
-}
+SockAddrIn & Server::get_confSockAddrIn(){return (_sockaddrIn);}
 
-//Afaka atao throw
 int Server::create_socket()
 {
 	int opt = 1;
@@ -87,7 +70,6 @@ void Server::configure_sockaddrin(int port)
 	this->_size_sockaddrin = sizeof(_sockaddrIn);
 }
 
-//Afaka atao throw
 int Server::link_socket_adress()
 {
 	int     status;

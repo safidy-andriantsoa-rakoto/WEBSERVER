@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 08:53:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:38:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll)
 void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll, Handler & handler)
 {
 	uint32_t	epollOpt;
-	std::string client_request;
-	int			fdCgi[3] = {-1, -1, -1};
 	pid_t		childPid;
+	std::string client_request;
+	int			fdCgi[2] = {-1, -1};
 
 	(*it).receiveClientRequest();
 	client_request = (*it).getClientRequest();
@@ -105,9 +105,9 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 		return;
 	std::cout << "\033[43mCgiFd READ IN OUTPUT : " << (*it)->getOutputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bytesRead = read((*it)->getOutputFd(), buffer, _BUFFER);
-	if (!bytesRead)
+	if (bytesRead == 0)
 	{
-		std::cout << "Nothing to read from CGI OUTPUT : " << bytesRead << std::endl;
+		// std::cout << "Nothing to read from CGI OUTPUT : " << bytesRead << std::endl;
 		if ((*it)->getReadStat() == OP_ONGOING)
 		{
 			(*it)->setReadStat(OP_CLOSE);
@@ -122,8 +122,7 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 		throw ErrorExcept(500, "Read error on cgi");
 	bufferString.append(buffer, bytesRead);
 	(*it)->setBufferRead(bufferString);
-	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl;
-	std::cout << "				******** Buffer CGI END" << std::endl;
+	// std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl << "				******** Buffer CGI END" << std::endl;
 	(*it)->bufferReadParser();
 	(*it)->checkCgiOutput();
 	(*it)->displayBufferReadParsed();
@@ -132,7 +131,6 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 		(*it)->setReadStat(OP_START);
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
-	// if ((*it)->getIsHeader() == true)
 }
 
 void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
@@ -152,25 +150,18 @@ void writeCgiInput(Handler &handler, int const &i, EpollCreation &epoll)
 	}
 	std::cout << "\033[43mCgiFd WRITE IN INPUT : " << (*it)->getInputFd() << " ; OP = " << (*it)->getReadStat() << "\033[0m" << std::endl;
 	bufferString = (*clIt).getObjRequest().getBody();
-	// std::cout << "				******** Buffer CGI TO WRITE = \n" << bufferString << std::endl;
-	// std::cout << "				******** Buffer CGI END TO WRITE" << std::endl;
+	// std::cout << "				******** Buffer CGI TO WRITE = \n" << bufferString << std::endl << "				******** Buffer CGI END TO WRITE" << std::endl;
 	bytesWritten = write((*it)->getInputFd(), bufferString.c_str(), bufferString.size());
-	std::cout << "Bytewritten = " << bytesWritten << std::endl;
-	if (!bytesWritten)
+	if (bytesWritten < 0)
 	{
 		epoll.epoll_clean((*it)->getInputFd());
 		(*it)->setInputFd(-1);
+		if (bytesWritten == -1)
+			throw ErrorExcept(500, "Write CGI error");
 		return ;
-	}
-	if (bytesWritten == -1)
-	{
-		epoll.epoll_clean((*it)->getInputFd());
-		(*it)->setInputFd(-1);
-		throw ErrorExcept(500, "Write CGI error");
 	}
 	if ((*clIt).getObjRequest().checkContentReceived() == true)
 	{
-		// std::cout << "		Ending writing" << std::endl;
 		(*it)->setWriteStat(OP_CLOSE);
 		epoll.epoll_clean((*it)->getInputFd());
 		(*it)->setInputFd(-1);

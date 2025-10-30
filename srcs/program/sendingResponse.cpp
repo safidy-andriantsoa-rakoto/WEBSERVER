@@ -6,15 +6,12 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 08:19:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:51:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-/*
-	See other cases of response, for successfull response
-*/
 void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
 	std::string	rspString;
@@ -48,7 +45,6 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
 	}
-		// std::cout << "		Rsp Stat = " << (*it).getResponseStat() << std::endl;
 }
 
 void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
@@ -87,9 +83,6 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		(*it).updateCgiFdStatus(OP_ONGOING);
 }
 
-/*
-    Review Error status Code !!!
-*/
 void send_value(int const & fd, std::string & _send_content)
 {
 
@@ -107,6 +100,6 @@ void send_value(int const & fd, std::string & _send_content)
         throw ErrorExcept(500, "Send_value error");
     }
     else if (sent == 0)
-        throw ErrorExcept(400, "Connection closed by peer");
+        throw ErrorExcept(400, "Connection closed by peer"); //400?
     _send_content.clear();
 }

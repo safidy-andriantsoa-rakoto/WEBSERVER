@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 13:51:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 09:09:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,7 @@ class Request
 
 		size_t		_request_length;
 		bool		_autoIdx;
-		bool		_isChunked;
-		bool		_isEOF;
 
-		//for post
 		MapSVectStr	_multipart_body;
 		size_t		_content_length;
 		size_t		_c_length_received;
@@ -64,9 +61,6 @@ class Request
 
 		bool		getIsChunked() const;
 		void		setIsChunked(bool const & stat);
-
-		bool		getIsEOF() const;
-		void		setIsEOF(bool const & stat);
 
 		CgiParser	getCgiParser() const;
 		void		processCgiClass(std::string & target, std::string const & execPath);

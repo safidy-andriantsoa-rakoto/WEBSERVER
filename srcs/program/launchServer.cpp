@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/30 08:56:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:10:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,18 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 		handler.removeClient(index, epoll);
 		epoll.epoll_clean(fdEvent);
 	}
-	if (identifier == CGI_FD_OUTPUT || identifier == CGI_FD_ERR)
+	if (identifier == CGI_FD_OUTPUT || identifier == CGI_FD_INPUT)
 	{
 		std::cerr << "CGI error identified" << std::endl;
 		try
 		{
 			ErrorExcept	& err = dynamic_cast<ErrorExcept &>(e);
-			handleCgiError(handler, index, epoll, err, identifier);
+			handleCgiError(handler, index, epoll, err);
 		}
 		catch(const std::exception& e1)
 		{
 			std::cerr << "			Error on CGI exception " << e1.what() << '\n';
+			// closeCgiFdEvent(handler, index, epoll);
 		}
 	}
 }
@@ -84,15 +85,7 @@ void    launchServer(Handler & handler)
 	launchEpoll(handler.getVectServer(), epoll);
 	while (SIGINT != sign.getSigNum())
 	{
-		try
-		{
-			nb_event = epoll.epoll_wait_event();
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-			nb_event = -1;
-		}
+		nb_event = epoll.epoll_wait_event(); //No need for try catch
 		handler.displayHandlerStat(); //Use for checking error
 		handler.check_client_timeout_all(epoll);
 		for (int i = 0; i < nb_event; i++)
@@ -106,14 +99,12 @@ void    launchServer(Handler & handler)
 			}
 			catch(std::exception & e)
 			{
-				std::cerr << "\033[41m" << fdEvent << " , idt = " << identifier << " => Error on epoll event loop : " << e.what() << "\033[0m" << std::endl;
+				std::cerr << "\033[41m" << fdEvent << " , idt = " << getIdentifier(identifier) << " => Error on epoll event loop : " << e.what() << "\033[0m" << std::endl;
 				manageEpollLoopError(handler, epoll, identifier, fdEvent, index, e);
 				break ;
 			}
 			if (handler.getProgramBreak() == true)
-			{
 				throw std::runtime_error("Program break launched");
-			}
 		}
 	}
 }

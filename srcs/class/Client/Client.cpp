@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/30 08:50:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 11:21:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,10 +94,7 @@ void Client::setCatchedResponse(AExcept & e)
 	_request.setRequestTarget(filePath);
 }
 
-void Client::setStandardResponse(std::string const & content)
-{
-	_response.generateStandardResponse(content);
-}
+void Client::setStandardResponse(std::string const & content){_response.generateStandardResponse(content);}
 
 void Client::setChunkedResponse()
 {
@@ -124,10 +121,7 @@ void Client::setCgiChunkedResponse()
 		_response.generateCgiChunkedResponse(_cgiFD->getBody(), _cgiFD->getHeader(), _cgiFD->getReadStat());
 }
 
-void Client::setSingleResponse(int const &statusCode)
-{
-	_response.generateSingleResponse(statusCode);
-}
+void Client::setSingleResponse(int const &statusCode){_response.generateSingleResponse(statusCode);}
 
 void Client::receiveClientRequest()
 {
@@ -214,20 +208,10 @@ void Client::setRspType(std::string const &filePath)
 	_response.setType(type);
 }
 
-const char *Client::Deconnect::what() const throw()
-{
-	return ("disconnected!");
-}
+const char *Client::Deconnect::what() const throw(){return ("disconnected!");}
 
-const char *Client::RecvError::what() const throw()
-{
-	return ("Error RECV\nget Request from client");
-}
-/*
-	If method == POST or DELETE
-	Find "upload" in location or add upload (default) location : Config file (parsing) => TELL TSIKY !!!
-	set request target to root
-*/
+const char *Client::RecvError::what() const throw(){return ("Error RECV\nget Request from client");}
+
 void Client::processRequestWithConfig()
 {
 	vectLocationIt	it;
@@ -283,7 +267,6 @@ void Client::buildRequestTarget()
 		itLoc = _config.findClassLocation("/");
 		target = _config.getClassLocation()[0].getRootDirectory();
 		// /*INDEX ???*/
-		// if ((*itLoc).getAutoindex() == "OFF")
 		target += "/index.html";
 	}
 	else
@@ -299,11 +282,7 @@ void Client::buildRequestTarget()
 	}
 	_request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
-	/*	
-		CHECK CGI EXTENSION
-		check that the last section is file.php !!!
-	*/
-	if (target.find(".php", 0) != std::string::npos)
+	if (checkFileExtension(target, ".php") == true)
 	{
 		if ((*itLoc).getCgiActivation() == "OFF")
 			throw ErrorExcept(403, "Cgi extension is OFF");
@@ -422,15 +401,10 @@ void Client::stdGetRequest()
 void Client::cgiGetRequest(int *fd, pid_t & childPid)
 {
 	int		pipeFd[2];
-	// int		errFd[2];
 	int		stdFd[2] = {-1, -1};
 
 	if (pipe(pipeFd) == -1)
 		throw std::runtime_error("Pipe fd error");
-	// if (pipe(errFd) == -1)
-	// 	throw std::runtime_error("Pipe err error");
-	// std::cout << "Pipe_fd [0] = " << pipeFd[0] << " [1] = " << pipeFd[1] << std::endl;
-	// std::cout << "errFd [0] = " << errFd[0] << " [1] = " << errFd[1] << std::endl;
 	childPid = fork();
 	if (childPid == -1)
 		throw std::runtime_error("Fork error");
@@ -438,28 +412,22 @@ void Client::cgiGetRequest(int *fd, pid_t & childPid)
 	{
 		dupStandardIO(stdFd, 2);
 		makeDup2(pipeFd[1], STDOUT_FILENO, pipeFd[0]);
-		// makeDup2(errFd[1], STDERR_FILENO, errFd[0]);
 		try
 		{
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			// std::cout << "EXECVE ERROR" << std::endl;
 			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
-			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDOUT] = -2;
-			// fd[FD_STDERR] = -2;
 			throw std::runtime_error("Execve error");
 		}
 	}
 	else
 	{
-		// close(errFd[1]);
 		close(pipeFd[1]);
 		_request.clearCgiClass();
 		fd[FD_STDOUT] = pipeFd[0];
-		// fd[FD_STDERR] = errFd[0];
 	}
 }
 
@@ -476,7 +444,6 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd, pid_t & ch
 		_fdType = POST_PHP_SCRIPT;
 		if (!_cgiFD)
 		{
-			std::cout << "		PARSE CGI\n" << std::endl;
 			cgiPostRequest(fd, childPid);
 			setStatusCodeResponse(200);
 		}
@@ -514,18 +481,12 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 {
 	int	pipeOutFd[2];
 	int	pipeInFd[2];
-	// int	pipeErrFd[2];
-	int	stdFd[3] = {-1, -1, -1};
+	int	stdFd[2] = {-1, -1};
 
 	if (pipe(pipeInFd) == -1)
 		throw std::runtime_error("input fd error");
 	if (pipe(pipeOutFd) == -1)
 		throw std::runtime_error("output fd error");
-	// if (pipe(pipeErrFd) == -1)
-	// 	throw std::runtime_error("error fd error");
-	// std::cout << "inFd [0] = " << pipeInFd[0] << " [1] = " << pipeInFd[1] << std::endl;
-	// std::cout << "outFd [0] = " << pipeOutFd[0] << " [1] = " << pipeOutFd[1] << std::endl;
-	// std::cout << "errFd [0] = " << pipeErrFd[0] << " [1] = " << pipeErrFd[1] << std::endl;
 	childPid = fork();
 	if (childPid == -1)
 		throw std::runtime_error("Fork error");
@@ -534,17 +495,14 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 		dupStandardIO(stdFd, 3);
 		makeDup2(pipeInFd[0], STDIN_FILENO, pipeInFd[1]);
 		makeDup2(pipeOutFd[1], STDOUT_FILENO, pipeOutFd[0]);
-		// makeDup2(pipeErrFd[1], STDERR_FILENO, pipeErrFd[0]);
 		try
 		{
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			// std::cout << "EXECVE ERROR" << std::endl;
 			makeDup2(stdFd[FD_STDIN], STDIN_FILENO);
 			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
-			// makeDup2(stdFd[FD_STDERR], STDERR_FILENO);
 			fd[FD_STDIN] = -2;
 			fd[FD_STDOUT] = -2;
 			throw std::runtime_error("Execve error");
@@ -554,17 +512,14 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 	{
 		close(pipeInFd[0]);
 		close(pipeOutFd[1]);
-		// close(pipeErrFd[1]);
 		_request.clearCgiClass();
 		fd[FD_STDIN] = pipeInFd[1];
 		fd[FD_STDOUT] = pipeOutFd[0];
-		// fd[FD_STDERR] = pipeErrFd[0];
 	}
 }
 
 void Client::delete_request()
 {
-	/*	Check error for delete */
 	std::string	target;
 	struct stat	s_stat;
 
@@ -594,7 +549,6 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	{
 		_request.parseRequest(clientRequest);
 		processRequestWithConfig();
-		_request.setIsEOF(false);
 	}
 	else
 	{
@@ -608,7 +562,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		}
 	}
 	header = _request.getHeader();
-	_request.displayRequest();
+	_request.displayRequest(); //For test only
 	if (_request.getMethod() == "GET")
 		get_request(opt, fd, childPid);
 	else if (_request.getMethod() == "POST")
@@ -618,8 +572,6 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		delete_request();
 		setSingleResponse(204);
 	}
-	// std::cout << "------------------------CRLF HEADER = " << _request.get_is_CRLF_header() << std::endl;
-
 }
 
 vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation & location)
@@ -642,7 +594,6 @@ vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation &
 		nbMatch = 0;
 		for(size_t i = 0; i < vect1.size() && i < vect2.size(); i++)
 		{
-			// std::cout << "Compare " << vect1[i] << " | " << vect2[i] << std::endl;
 			if (vect1[i] != vect2[i])
 				break;
 			nbMatch++;
@@ -653,7 +604,6 @@ vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation &
 			itFinal = it;
 		}
 	}
-	// std::cout << "++++++++++++++++++ nbMatchMax = " << nbMatchMax << std::endl;
 	return itFinal;
 }
 
@@ -669,17 +619,6 @@ int Client::creat_file_for_post(std::string path, uint32_t & opt)
 	}
 	return (fd);
 }
-
-// std::string Client::currentDateTimeString()
-// {
-// 	time_t now = time(0);
-// 	struct tm tstruct;
-// 	char buf[15];
-
-// 	tstruct = *localtime(&now);
-// 	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
-// 	return (buf);
-// }
 
 std::string Client::currentDateTimeString()
 {
@@ -802,15 +741,9 @@ void Client::process_multipart_data()
 	}
 }
 
-void Client::set_last_time_activity()
-{
-	this->_last_time = time(NULL);
-}
+void Client::set_last_time_activity(){this->_last_time = time(NULL);}
 
-void Client::set_time_activity()
-{
-	this->_time_now = time(NULL);
-}
+void Client::set_time_activity(){this->_time_now = time(NULL);}
 
 bool Client::is_client_timeout()
 {
@@ -819,7 +752,6 @@ bool Client::is_client_timeout()
 	{
 		std::cout << "			CLIENT TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
 		throw ErrorExcept(408, "Client Timeout");
-		// return true;
 	}
     return false;
 }

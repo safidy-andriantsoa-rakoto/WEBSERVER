@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 08:38:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/30 10:23:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,6 @@ void Handler::identifyFd(int const & fd, int & index, int & identifier)
 		{
 			identifier = CGI_FD_INPUT;
 			return;
-		}
-		if ((*itCgiFd) && (*itCgiFd)->getErrFd() == fd)
-		{
-			(*itCgiFd)->setIsError(true);
-			identifier = CGI_FD_ERR;
-			throw ErrorExcept(500, "Internal Servor Error");
-			// return;
 		}
 		index++;
 	}
@@ -157,13 +150,12 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 {
 	VClientIt		it = _vectClient.begin() + index;
 	vectCgiFdIt		itCgi;
-	int				cgiFd[3];
+	int				cgiFd[2];
 
 	std::cout << "REMOVING CLIENT " << index << std::endl;
 	if ((*it).getPtrCgiFd())
 	{
 		cgiFd[FD_STDOUT] = (*it).getPtrCgiFd()->getOutputFd();
-		// cgiFd[FD_STDERR] = (*it).getPtrCgiFd()->getErrFd();
 		cgiFd[FD_STDIN] = (*it).getPtrCgiFd()->getInputFd();
 		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd[FD_STDOUT]);
 		if (cgiFd[FD_STDOUT] > 0)
@@ -179,19 +171,20 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 void Handler::removeClient(VClientIt & it, EpollCreation & epoll)
 {
 	vectCgiFdIt		itCgi;
-	int				cgiFd[3];
+	int				cgiFd[2];
 
 	std::cout << "REMOVING CLIENT FROM ITERATOR" << std::endl;
 	if ((*it).getPtrCgiFd())
 	{
 		cgiFd[FD_STDOUT] = (*it).getPtrCgiFd()->getOutputFd();
-		// cgiFd[FD_STDERR] = (*it).getPtrCgiFd()->getErrFd();
 		cgiFd[FD_STDIN] = (*it).getPtrCgiFd()->getInputFd();
 		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd[FD_STDOUT]);
 		if (cgiFd[FD_STDOUT] > 0)
 			epoll.epoll_clean(cgiFd[FD_STDOUT]);
 		if (cgiFd[FD_STDIN] > 0)
 			epoll.epoll_clean(cgiFd[FD_STDIN]);
+		removeCgiFd(itCgi);
+		(*it).clearPtrCgiFd();
 	}
 	_vectClient.erase(it);
 }
@@ -209,8 +202,6 @@ void	Handler::cleanFdAndAlloc()
 				close((*itCgiFd)->getOutputFd());
 			if ((*itCgiFd)->getInputFd() != -1)
 				close((*itCgiFd)->getInputFd());
-			if ((*itCgiFd)->getErrFd() != -1)
-				close((*itCgiFd)->getErrFd());
 		}
 	}
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)
@@ -239,7 +230,7 @@ void Handler::displayHandlerStat()
 	for(size_t i = 0; i < _vectCgiFd.size(); i++)
 	{
 		if (_vectCgiFd[i])
-			std::cout << _vectCgiFd[i]->getInputFd() << "|" << _vectCgiFd[i]->getOutputFd() << "|" << _vectCgiFd[i]->getErrFd() << ":" << _vectCgiFd[i] << " ";
+			std::cout << _vectCgiFd[i]->getInputFd() << "|" << _vectCgiFd[i]->getOutputFd() << ":" << _vectCgiFd[i] << " ";
 	}
 	std::cout << "]" << std::endl;
 	std::cout << std::endl;

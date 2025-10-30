@@ -16,7 +16,6 @@ CgiFd::CgiFd(){}
 
 CgiFd::CgiFd(int *fd, pid_t const & childPid, int const & clientFd) : 
 	_outputFd(fd[FD_STDOUT]),
-	_errorFd(-1),
 	_inputFd(fd[FD_STDIN]),
 	_clientFd(clientFd),
 	_isError(false),
@@ -40,7 +39,6 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 	{
 		_clientFd = other._clientFd;
 		_outputFd = other._outputFd;
-		_errorFd = other._errorFd;
 		_inputFd = other._inputFd;
 		_bufferRead = other._bufferRead;
 		_readStat = other._readStat;
@@ -66,10 +64,6 @@ int CgiFd::getOutputFd() const { return _outputFd;}
 
 void CgiFd::setOutputFd(int const &fd){_outputFd = fd;}
 
-int CgiFd::getErrFd() const { return _errorFd;}
-
-void CgiFd::setErrFd(int const &fd){ _errorFd = fd; }
-
 int CgiFd::getInputFd() const{ return _inputFd;}
 
 void CgiFd::setInputFd(int const &fd){ _inputFd = fd;}
@@ -88,7 +82,6 @@ void CgiFd::setIsError(bool const &stat){_isError = stat;}
 
 void CgiFd::setBufferRead(std::string const &content)
 {
-	/* NEED TO REVIEW THIS */
 	std::string	res = _bufferRead + content;
 
 	if (_isHeader == true)
@@ -106,19 +99,14 @@ void CgiFd::bufferReadParser()
 	stringVect	headerVect;
 
 	if (_isHeader == false && _bufferRead.find("\r\n\r\n") == std::string::npos)
-	{
-		std::cout << "		GROUP BODY " << std::endl;
 		return;
-	}
 	_header.clear();
 	_body.clear();
 	if (_isHeader == true)
 	{
-		std::cout << "		ADDING BODY" << std::endl;
 		_body = _bufferRead;
 		return;
 	}
-	std::cout << "		PARSE THE HEADER AND BODY" << std::endl;
 	startPos = 0;
 	pos = 0;
 	while (pos != std::string::npos)
@@ -135,9 +123,7 @@ void CgiFd::bufferReadParser()
 	}
 	_isHeader = true;
 	if (pos < _bufferRead.size())
-	{
 		_body = _bufferRead.substr(pos, _bufferRead.size() - pos);
-	}
 }
 
 void CgiFd::clearBufferRead()
@@ -190,7 +176,6 @@ void CgiFd::checkCgiOutput()
 
 	if (_writeStat == OP_OPEN && !_header.size())
 		throw ErrorExcept(502, "No header from the cgi");
-	/*Error 504 if TIMEOUT => CHECK WITH SIGNAL HANDLING*/
 	if (it == _header.end())
 		return;
 	tmp = (*it).second;
@@ -231,15 +216,6 @@ void CgiFd::checkTimeOut()
 	}
 }
 
-bool CgiFd::checkFirstCheckErrorTimeOut()
-{
-	time_t	currentTime = time(NULL);
-
-	if (difftime(currentTime, _startTime) > CGI_MAX_RSP_TIME)
-		return true;
-	return false;
-}
-
 pid_t CgiFd::getChildPid() const{return _childPid;}
 
 bool CgiFd::getIsChildAlive() const{ return _isChildAlive;}
@@ -251,41 +227,22 @@ void CgiFd::checkChildProcess()
 	int	waitReturn;
 	int	status;
 
-	// std::cout << "			*****CHECK CHILD PROCESS ************" << std::endl;
 	if (_isChildAlive == false)
-	{
-		std::cout << "		******No child alive anymore " << std::endl;
 		return;
-	}
 	waitReturn = waitpid(_childPid, &status, WNOHANG);
 	if (waitReturn == 0)
-	{
-		/*Child process still going on*/
-		std::cout << "			*****CHILD PROCESS NOT DONE YET" << std::endl;
 		return ;
-	}
 	else if (waitReturn == -1)
 	{
-		/*Error on child process*/
-		std::cout << "			*****WAITPID ERROR" << std::endl;
 		_isChildAlive =false;
 		throw(ErrorExcept(500, "Waitpid error"));
 	}
 	if (WIFEXITED(status)) 
 	{
-		int exit_status = WEXITSTATUS(status);
-		std::cout << "			*****CHILD DONE WITH EXIT STATUS : " << exit_status << std::endl;
-		if (exit_status == 42)
-		{
-			std::cout << "			***** EXECVE ERROR RECEIVED" << std::endl;
-			throw(ErrorExcept(500, "Child process error"));
-		}
+		int exitStatus = WEXITSTATUS(status);
 		_isChildAlive = false;
+		if (exitStatus == 42)
+			throw(ErrorExcept(500, "Child process error"));
 	}
-	else
-		std::cout << "	*********status not exited" << std::endl;
 }
 
-bool CgiFd::getCheckFirstError() const{return _firstCheckError;}
-
-void CgiFd::setCheckFirstError(bool const &stat){ _firstCheckError = stat;}
