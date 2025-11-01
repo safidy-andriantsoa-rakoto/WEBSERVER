@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:53:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 08:22:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ struct s_errPage
 	std::string	filePath;
 };
 
-//For test only
 #include "MyLoc.hpp"
 
 typedef std::vector<MyLoc>				vectLocation;
@@ -52,6 +51,7 @@ class AConfig
 
 		intVect			getServPort() const;
 		float			getMaxSize() const;
+		void			convertSizeMax();
 		std::string		getServHost() const;
 		stringVect		getServName() const;
 		t_errPage		getErrPage() const;

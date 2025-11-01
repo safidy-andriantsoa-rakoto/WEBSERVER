@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 13:28:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 07:32:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void	MyConf::displayConfig() const
 		displayStringVect(_serverName, "Server name");
 	if (_errPage.listError.size())
 	{
+		std::cout << "error_page: ";
 		displayStringVect(_errPage.listError, "List error");
 		std::cout << "Error file = " << _errPage.filePath << std::endl;
 	}

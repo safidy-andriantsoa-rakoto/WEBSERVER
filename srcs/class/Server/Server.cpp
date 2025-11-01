@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 11:50:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 08:27:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int Server::create_socket()
 	}
 	if (this->_fdSocket == -1)
 	{
-		std::cout << "Error\ncreate an endpoint for communication" << std::endl;
+		std::cerr << "Error\ncreate an endpoint for communication" << std::endl;
 		return (0); 
 	}
 	return (1);
@@ -140,6 +140,7 @@ void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
 	while(i < allServer.size())
 	{
 		allServer[i]._config.parseConfig(file);
+		allServer[i]._config.convertSizeMax(); /* [?] : Need to check pc size available */
 		allServer[i]._config.displayConfig();
 		if(allServer[i]._config.getStatus() == true)
 			i++;

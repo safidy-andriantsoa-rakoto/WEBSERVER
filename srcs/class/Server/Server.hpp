@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 11:48:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 08:23:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 class Server
 {
 	private:
-	// For socket
         int     	_fdClient;
 	    int     	_fdSocket;
         socklen_t  	_size_sockaddrin;
@@ -57,12 +56,12 @@ class Server
 
 		void		clearAllFd();
 
-		//For testing only !!!!
-		void simpleInit(std::string const & servPath, std::string const & locationPath);
-		
 		static std::vector<int> stockPort(std::vector<Server> &allServer);
 		static void getParsAllServer(std::vector<Server> &allServer, stringVect file);
 		static bool checkDuplicateValue(std::vector<Server> allserver);
+
+		/* [Test only] */
+		void simpleInit(std::string const & servPath, std::string const & locationPath);
 };
 
 #endif

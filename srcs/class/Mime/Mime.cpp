@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/14 14:23:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 10:09:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ std::string Mime::getFileType(std::string const &file)
     stringMapIt it;
     std::string type;
 
-	// std::cout << "		BON TRAVAIL EEE" << std::endl;
     extFile = getFileExtension(file);
     it = _mime.find(extFile);
     if (extFile == "/")

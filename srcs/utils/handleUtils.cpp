@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 11:09:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 07:54:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
 {
-	std::cout << "Close CGI FD EVENT" << std::endl;
+	// std::cout << "Close CGI FD EVENT" << std::endl;
 	vectCgiFdIt	itCgi = handler.getCgiFdIterator(i);
 
 	if ((*itCgi)->getOutputFd() > 0)

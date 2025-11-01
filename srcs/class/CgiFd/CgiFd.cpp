@@ -70,7 +70,7 @@ void CgiFd::setInputFd(int const &fd){ _inputFd = fd;}
 
 int CgiFd::getClientFd() const { return _clientFd;}
 
-std::string CgiFd::getBuffer() const { return _bufferRead;}
+std::string CgiFd::getBufferRead() const { return _bufferRead;}
 
 int CgiFd::getReadStat() const { return _readStat;}
 
@@ -80,14 +80,16 @@ bool CgiFd::getIsError() const { return _isError;}
 
 void CgiFd::setIsError(bool const &stat){_isError = stat;}
 
-void CgiFd::setBufferRead(std::string const &content)
+void CgiFd::processBufferRead(std::string const &content)
 {
-	std::string	res = _bufferRead + content;
-
+	_bufferRead += content;
+	_header.clear();
+	_body.clear();
 	if (_isHeader == true)
-		_bufferRead = content;
-	else
-		_bufferRead += content;
+		_body = content;
+	else if (_bufferRead.find(CRLF_SEP) != std::string::npos)
+		bufferReadParser();
+	displayBufferReadParsed(); /* [Test only] */
 }
 
 void CgiFd::bufferReadParser()
@@ -98,15 +100,8 @@ void CgiFd::bufferReadParser()
 	std::string	line;
 	stringVect	headerVect;
 
-	if (_isHeader == false && _bufferRead.find("\r\n\r\n") == std::string::npos)
-		return;
-	_header.clear();
-	_body.clear();
-	if (_isHeader == true)
-	{
-		_body = _bufferRead;
-		return;
-	}
+	// _header.clear();
+	// _body.clear();
 	startPos = 0;
 	pos = 0;
 	while (pos != std::string::npos)
@@ -124,6 +119,7 @@ void CgiFd::bufferReadParser()
 	_isHeader = true;
 	if (pos < _bufferRead.size())
 		_body = _bufferRead.substr(pos, _bufferRead.size() - pos);
+	_bufferRead.clear();
 }
 
 void CgiFd::clearBufferRead()

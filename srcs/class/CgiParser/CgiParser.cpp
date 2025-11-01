@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 11:45:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/01 20:01:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,3 +120,23 @@ void CgiParser::displayCgiClass() const
 	std::cout << "==============END OF CGI COMPONENT=============\033[0m" << std::endl;
 }
 
+bool CgiParser::checkIfFileCgi(std::string const &path)
+{
+	size_t		pos;
+	size_t		lastSlashPos;
+	std::string	ext = ".php";
+	stringVect	sub;
+
+	if (checkFileExtension(path, ext) == true)
+		return true;
+	pos = path.find(ext);
+	if (pos == std::string::npos)
+		return false;
+	lastSlashPos = path.find_last_of("/");
+	if (pos < lastSlashPos)
+		return false;
+	sub = splitString(path, "?");
+	if ((sub.size() == 1 && path[path.size() - 1] == '?') || sub.size() == 2)
+		return true;
+    return false;
+}

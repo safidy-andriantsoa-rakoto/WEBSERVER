@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 09:29:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:52:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 08:29:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	launchEpoll(vectServer & vectServer, EpollCreation &epoll)
 		int fd = ((*it).get_fdSocket());
 		std::cout << "\033[046mSERVER FD= " << fd << "\033[0m" << std::endl;
 		epoll.epoll_control(EPOLLIN, fd);
-		(*it).configure_sockaddrin((*it).getConfig().getServPort()[0]); //Need to review this function because of int vect [Safidy] !!!
+		(*it).configure_sockaddrin((*it).getConfig().getServPort()[0]);
 		if (!(*it).link_socket_adress())
 			throw std::runtime_error("Failed to load server");
 		if (!(*it).wait_connexion_from_client())

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 13:19:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 08:23:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,9 @@ class MyConf : public AConfig
 		size_t			findNotDigitError();
 		vectLocation	createVectLocation(size_t countLocation);
 
-		//For testing
 		virtual void	displayConfig() const;
 
-		//barandri_function
+		/* [Test only] */
 		void	myParseLoc(std::string const & filePath);
 		void	myParseConfig(std::string const & servPath, std::string const & locPath);
 

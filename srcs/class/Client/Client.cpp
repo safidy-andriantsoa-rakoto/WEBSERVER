@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/30 11:21:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/01 20:16:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,12 +201,7 @@ std::string Client::getRspOriginPath() const{return _response.getOriginPath();}
 
 void Client::setRspOriginPath(std::string const &path){_response.setOriginPath(path);}
 
-void Client::setRspType(std::string const &filePath)
-{
-	std::string	type = Mime::getFileType(filePath);
-
-	_response.setType(type);
-}
+void Client::setRspType(std::string const &filePath){_response.setType(Mime::getFileType(filePath));}
 
 const char *Client::Deconnect::what() const throw(){return ("disconnected!");}
 
@@ -282,8 +277,10 @@ void Client::buildRequestTarget()
 	}
 	_request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
-	if (checkFileExtension(target, ".php") == true)
+	// if (checkFileExtension(target, ".php") == true) /* [!] : REVIEW HOW TO CHECK FILE EXTENSION PROPERLY*/
+	if (CgiParser::checkIfFileCgi(target) == true)
 	{
+		std::cout << "\033[42m" << "CGI ON GOING" << "\033[0m" << std::endl;
 		if ((*itLoc).getCgiActivation() == "OFF")
 			throw ErrorExcept(403, "Cgi extension is OFF");
 		_request.processCgiClass(target, (*itLoc).getCgiExecPath());
@@ -317,9 +314,6 @@ void Client::checkMethodInLocation(stringVect & locationMethod, std::string cons
 	}
 }
 
-/*
-	Review redirection function [Barandri]
-*/
 void Client::processRedirection(MyLoc const & location, Request & request)
 {
 	std::string	oldUri;
@@ -327,6 +321,7 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	stringVect	redirect;
 	int			statusRedirect;
 
+	/* [!] : Review redirection process*/
 	redirect = location.getRedirect();
 	if (!redirect.size())
 		return ;
@@ -394,14 +389,14 @@ void Client::stdGetRequest()
 	}
 	catch(const std::exception& e)
 	{
-		throw ErrorExcept(404, "File not found");
+		throw ErrorExcept(404, "GET : File not found");
 	}
 }
 
 void Client::cgiGetRequest(int *fd, pid_t & childPid)
 {
 	int		pipeFd[2];
-	int		stdFd[2] = {-1, -1};
+	int		stockStdOut;
 
 	if (pipe(pipeFd) == -1)
 		throw std::runtime_error("Pipe fd error");
@@ -410,7 +405,7 @@ void Client::cgiGetRequest(int *fd, pid_t & childPid)
 		throw std::runtime_error("Fork error");
 	if (childPid == 0)
 	{
-		dupStandardIO(stdFd, 2);
+		stockStdOut = dup(STDOUT_FILENO);
 		makeDup2(pipeFd[1], STDOUT_FILENO, pipeFd[0]);
 		try
 		{
@@ -418,7 +413,8 @@ void Client::cgiGetRequest(int *fd, pid_t & childPid)
 		}
 		catch(const std::exception& e)
 		{
-			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			makeDup2(stockStdOut, STDOUT_FILENO);
+			_request.clearCgiClass(); /* [?] : Needed for leaks? */
 			fd[FD_STDOUT] = -2;
 			throw std::runtime_error("Execve error");
 		}
@@ -492,7 +488,7 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 		throw std::runtime_error("Fork error");
 	if (childPid == 0)
 	{
-		dupStandardIO(stdFd, 3);
+		dupStandardIO(stdFd);
 		makeDup2(pipeInFd[0], STDIN_FILENO, pipeInFd[1]);
 		makeDup2(pipeOutFd[1], STDOUT_FILENO, pipeOutFd[0]);
 		try
@@ -526,7 +522,7 @@ void Client::delete_request()
 	target = _request.getRequestTarget();
 	if (!target.size())
 		throw ErrorExcept(400, "Bad request");
-	std::cout << "\e[5mDELETE REQUEST\e[0m ->"<< target << std::endl;
+	// std::cout << "\e[5mDELETE REQUEST\e[0m ->"<< target << std::endl;
 	if (stat(target.c_str(), &s_stat) != 0)
 		throw ErrorExcept(403, "Forbidden");
 	if (S_ISREG(s_stat.st_mode))
@@ -542,19 +538,23 @@ void Client::delete_request()
 void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, pid_t & childPid)
 {
 	stringMap	header;
-	std::string	body;
 	
-	// std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
+	std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
 	if (!_request.get_is_CRLF_header())
 	{
-		_request.parseRequest(clientRequest);
+		_request.setPartRequest(clientRequest);
+		if (_request.getPartRequest().find(CRLF_SEP) == std::string::npos)
+		{
+			opt = EPOLLIN;
+			return;
+		}
+		_request.parseRequest();
 		processRequestWithConfig();
 	}
 	else
 	{
-		body = clientRequest;
-		_request.set_Body(body);
-		_request.set_c_length_received(body.size());
+		_request.set_Body(clientRequest);
+		_request.set_c_length_received(clientRequest.size());
 		if (_request.getIsCgi() == true)
 		{
 			_cgiFD->setBufferWrite(_request.getBody());
@@ -562,7 +562,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		}
 	}
 	header = _request.getHeader();
-	_request.displayRequest(); //For test only
+	_request.displayRequest(); /* [Test only] */
 	if (_request.getMethod() == "GET")
 		get_request(opt, fd, childPid);
 	else if (_request.getMethod() == "POST")
@@ -574,7 +574,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	}
 }
 
-vectLocationIt	Client::findLongestMatch(std::string const & text, vectLocation & location)
+vectLocationIt Client::findLongestMatch(std::string const &text, vectLocation &location)
 {
 	std::string		compare;
 	vectLocationIt	itFinal;
@@ -751,7 +751,7 @@ bool Client::is_client_timeout()
 	if (difftime(this->_time_now, this->_last_time) > CLIENT_MAX_TIME)
 	{
 		std::cout << "			CLIENT TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
-		throw ErrorExcept(408, "Client Timeout");
+		throw ErrorExcept(408, "Client Timeout"); /* [?] : When to send 408 response to client? On long upload only? */
 	}
     return false;
 }

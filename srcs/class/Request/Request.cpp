@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 11:44:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/01 20:17:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,10 @@ std::string Request::getOriginalRequestTarget() const{return _originalRequestTar
 std::string Request::getHttp() const{return _clientHttp;}
 
 stringMap Request::getHeader() const{return _header;}
+
+void Request::setPartRequest(std::string const &content){ _partRequest += content;}
+
+std::string Request::getPartRequest() const{return _partRequest;}
 
 bool Request::getIsCgi() const{return _isCgi;}
 
@@ -155,11 +159,14 @@ void	Request::addRequestBody(std::string const & requeststring, size_t const & p
 	_body = content;
 	_c_length_received = content.size();
 	_content_length = length;
+	// if (_partRequest.find(sep + sep) != std::string::npos && _method == "POST")
+	if (_partRequest.find(CRLF_SEP) != std::string::npos && _method == "POST")
+		this->_is_CRLF_header = true;
 	// std::cout << "\nBODY=\n" << _body << "\n"<< std::endl;
 	// std::cout << "\nCONTENT_LENGTH=" << _content_length << " \nreceived =" << content.size() << "\n"<< std::endl;
 }
 
-void	Request::parseRequest(std::string const & requeststring)
+void	Request::parseRequest()
 {
 	size_t		pos;
 	size_t		startPos;
@@ -168,27 +175,26 @@ void	Request::parseRequest(std::string const & requeststring)
 	stringVect	headerVect;
 
 	startPos = 0;
-	// std::cout << "REQUEST_STRING--->" << requeststring << "<----" << std::endl;
-	pos = requeststring.find(sep, startPos);
+	std::cout << "REQUEST_STRING--->" << _partRequest << "<----" << std::endl;
+	pos = _partRequest.find(sep, startPos);
 	if (pos == std::string::npos)
 		throw std::runtime_error("Parsing request : No request line found");
-	line = requeststring.substr(startPos, pos - startPos);
+	line = _partRequest.substr(startPos, pos - startPos);
 	setRequestLine(line);
 	startPos = pos + sep.size();
 	while (pos != std::string::npos)
 	{
-		pos = requeststring.find(sep, startPos);
+		pos = _partRequest.find(sep, startPos);
 		if (pos == startPos)
 			break ;
-		line = requeststring.substr(startPos, pos - startPos);
+		line = _partRequest.substr(startPos, pos - startPos);
 		headerVect = strictSplit(line, ": ");
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();
 	}
-	addRequestBody(requeststring, pos + sep.size());
-	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")
-		this->_is_CRLF_header = true;
+	addRequestBody(_partRequest, pos + sep.size());
+	_partRequest.clear();
 }
 
 void Request::displayRequest() const

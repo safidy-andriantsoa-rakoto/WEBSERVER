@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 10:52:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 09:56:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,14 @@ class CgiFd
 		void		setInputFd(int const & fd);
 
 		int			getClientFd() const;
-		std::string	getBuffer() const;
+		std::string	getBufferRead() const;
 		int			getReadStat() const;
 		void		setReadStat(int const & status);
 
 		bool		getIsError() const;
 		void		setIsError(bool const & stat);
 
-		void		setBufferRead(std::string const & content);
+		void		processBufferRead(std::string const & content);
 		void		bufferReadParser();
 		void		clearBufferRead();
 

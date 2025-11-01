@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 11:38:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 10:04:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	}
 	catch(AExcept & e)
 	{
-		std::cerr << "\033[031mProcess Request exception catched : " << e._errMsg << "\033[0m" << std::endl;
-		std::string	error = e.what();
-		if (error == "Execve error")
-			throw std::runtime_error(e.what());
+		std::cerr << "\033[031mProcess Request AExcept : " << e._errMsg << "\033[0m" << std::endl;
 		(*it).setCatchedResponse(e);
 		epollOpt = EPOLLOUT;
 	}
@@ -107,7 +104,7 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	bytesRead = read((*it)->getOutputFd(), buffer, _BUFFER);
 	if (bytesRead == 0)
 	{
-		// std::cout << "Nothing to read from CGI OUTPUT : " << bytesRead << std::endl;
+		std::cout << "Nothing to read from CGI OUTPUT : " << bytesRead << std::endl;
 		if ((*it)->getReadStat() == OP_ONGOING)
 		{
 			(*it)->setReadStat(OP_CLOSE);
@@ -121,11 +118,9 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	if (bytesRead == -1)
 		throw ErrorExcept(500, "Read error on cgi");
 	bufferString.append(buffer, bytesRead);
-	(*it)->setBufferRead(bufferString);
 	// std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl << "				******** Buffer CGI END" << std::endl;
-	(*it)->bufferReadParser();
+	(*it)->processBufferRead(bufferString);
 	(*it)->checkCgiOutput();
-	(*it)->displayBufferReadParsed();
 	if ((*it)->getReadStat() == OP_OPEN && (*it)->getIsHeader() == true)
 	{
 		(*it)->setReadStat(OP_START);

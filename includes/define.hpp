@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 10:12:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 09:29:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 #define CONTENT_TYPE "Content-Type: text/html\r\n"
 #define CONTENT_TYPE_CSS "Content-Type: text/css\r\n"
 #define CONTENT_LENGTH "Content-Length: "
-#define _EMPTY_LINE "\n\r\n"
+#define CRLF_SEP "\r\n\r\n"
 #define _NB_CLIENT 10
 #define MAX_EVENT 2042
 #define _BUFFER 1000

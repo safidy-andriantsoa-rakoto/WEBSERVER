@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/30 11:10:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 08:31:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void    launchServer(Handler & handler)
 	while (SIGINT != sign.getSigNum())
 	{
 		nb_event = epoll.epoll_wait_event(); //No need for try catch
-		handler.displayHandlerStat(); //Use for checking error
+		handler.displayHandlerStat(); /* [Test only] */
 		handler.check_client_timeout_all(epoll);
 		for (int i = 0; i < nb_event; i++)
 		{

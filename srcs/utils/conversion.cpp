@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   conversion.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 08:02:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/03 18:12:58 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/10/31 07:27:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,27 @@ std::string	convertStringMapToString(stringMap const & map, std::string const & 
 	std::string	result;
 
 	for (stringMapIt it = map.begin(); it != map.end(); it++)
-	{
 		result += (*it).first + ": " + (*it).second + sep;
-	}
 	return result;
+}
+
+float	convertToBytes(std::string const & n)
+{
+	int					exp;
+	float				value;
+	std::string			unit;
+	std::stringstream	ss;
+
+	ss << n;
+	ss >> value;
+	ss >> unit;
+	exp = 0;
+	if (unit == "KB")
+		exp = 3;
+	else if (unit == "MB")
+		exp = 6;
+	else if (unit == "GB")
+		exp = 9;
+	value *= std::pow(10, exp);
+	return (value);
 }
