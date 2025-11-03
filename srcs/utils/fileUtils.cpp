@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 13:03:34 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/11/03 23:43:50 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -308,6 +308,28 @@ bool checkDuplicate(stringVect file, std::string name, size_t &start, size_t &en
 		}
 	}
 	if (count != 1)
+	{
+		std::cout << "Name of duplicate => " << name << std::endl;
+		return (true);
+	}
+	return (false);
+}
+
+bool checkDuplicate3(stringVect file, std::string name, size_t &start, size_t &end)
+{
+	int count = 0;
+
+	for (size_t i = start; i < end; ++i)
+	{
+		std::istringstream iss(file[i]);
+		std::string word;
+		while (iss >> word)
+		{
+			if (name == word)
+				count++;
+		}
+	}
+	if (count > 1)
 	{
 		std::cout << "Name of duplicate => " << name << std::endl;
 		return (true);

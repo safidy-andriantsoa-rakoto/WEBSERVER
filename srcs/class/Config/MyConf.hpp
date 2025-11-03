@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 11:51:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 23:16:19 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class MyConf : public AConfig
 		~MyConf();
 
 		bool			getStatus();
-		void			getElementConfig(const size_t &start, const size_t &end, const stringVect &file);
+		bool			getElementConfig(const size_t &start, const size_t &end, const stringVect &file);
 		void 			parseConfig(stringVect file);
 		size_t			findNotDigitError();
 		vectLocation	createVectLocation(size_t countLocation);

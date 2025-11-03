@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 13:13:04 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/11/03 23:19:15 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,24 +18,24 @@ MyConf::MyConf()
 	_hasErrPage = false;
 }
 
-MyConf::MyConf(MyConf const & other) : AConfig(other){}
+MyConf::MyConf(MyConf const &other) : AConfig(other) {}
 
 MyConf &MyConf::operator=(MyConf const &other)
 {
-    if (this != & other)
+	if (this != &other)
 	{
 		AConfig::operator=(other);
 	}
 	return *this;
 }
 
-MyConf::~MyConf(){}
+MyConf::~MyConf() {}
 
-void MyConf::myParseLoc(std::string const & filePath)
+void MyConf::myParseLoc(std::string const &filePath)
 {
-	std::ifstream	file;
-	std::string		line;
-	MyLoc			loc;
+	std::ifstream file;
+	std::string line;
+	MyLoc loc;
 
 	file.open(filePath.c_str());
 	if (!file.is_open())
@@ -57,9 +57,9 @@ void MyConf::myParseLoc(std::string const & filePath)
 
 void MyConf::myParseConfig(std::string const &servPath, std::string const &locPath)
 {
-	std::ifstream	file;
-	std::string		line;
-	stringVect		vect;
+	std::ifstream file;
+	std::string line;
+	stringVect vect;
 
 	file.open(servPath.c_str());
 	if (!file.is_open())
@@ -106,11 +106,11 @@ void MyConf::delete_port_child_in_parent()
 	{
 		int port = _port[0];
 		_port.clear();
-		_port.push_back(port);	
+		_port.push_back(port);
 	}
 }
 
-void	MyConf::displayConfig() const
+void MyConf::displayConfig() const
 {
 	std::cout << "------------------------------------------" << std::endl;
 	std::cout << "Host :" << _host << std::endl;
@@ -132,7 +132,7 @@ void	MyConf::displayConfig() const
 	}
 }
 
-void MyConf::getElementConfig(const size_t &start, const size_t &end, const stringVect &file)
+bool MyConf::getElementConfig(const size_t &start, const size_t &end, const stringVect &file)
 {
 	int countLoc = 0;
 	_countLocation = 0;
@@ -152,8 +152,8 @@ void MyConf::getElementConfig(const size_t &start, const size_t &end, const stri
 				if (name == "port")
 				{
 					for (size_t i = 0; i < word.size(); i++)
-					if (!isdigit(word[i]))
-						throw std::runtime_error ("Error : Find not digit element");
+						if (!isdigit(word[i]))
+							throw std::runtime_error("Error : Find not digit element");
 					_port.push_back(atoi(word.c_str()));
 				}
 				if (name == "server_names")
@@ -164,25 +164,31 @@ void MyConf::getElementConfig(const size_t &start, const size_t &end, const stri
 					_errPage.strError.push_back(word);
 			}
 		}
-		try
-		{
-			if(_size.at(1) != "MB" || _size.at(1) != "GB")
-				throw std::runtime_error("Error : unity of size invalid");
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-		}
-		
+		std::cout << "size = " << _size.size() << std::endl;
+
 		if (name == "location")
 			countLoc++;
 	}
 	_countLocation = countLoc;
+	try
+	{
+		if (_size.at(1) != "MB" && _size.at(1) != "GB")
+		{
+			std::cerr << "Error : unity of size invalid" << '\n';
+			return (false);
+
+		}
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	return (true);
 }
 
 bool MyConf::getStatus()
 {
-    return _checkStats;
+	return _checkStats;
 }
 
 size_t MyConf::findNotDigitError()
@@ -233,7 +239,11 @@ void MyConf::parseConfig(stringVect file)
 		_checkStats = false;
 		return;
 	}
-	getElementConfig(start, end, file);
+	if(!getElementConfig(start, end, file))
+	{
+		_checkStats = false;
+		return;
+	}
 	i = findNotDigitError();
 	if (i > 0 && ((_errPage.strError.size() - i > 1)))
 	{
@@ -258,14 +268,14 @@ void MyConf::parseConfig(stringVect file)
 
 vectLocation MyConf::createVectLocation(size_t countLocation)
 {
-    vectLocation tabLocation;
-    MyLoc  loc;
-      	for (size_t i = 0; i < countLocation; ++i)
-        {
-            loc = MyLoc();
-            tabLocation.push_back(loc);
-        }
-    return (tabLocation);
+	vectLocation tabLocation;
+	MyLoc loc;
+	for (size_t i = 0; i < countLocation; ++i)
+	{
+		loc = MyLoc();
+		tabLocation.push_back(loc);
+	}
+	return (tabLocation);
 }
 
 void MyConf::setHostName(std::string host)

@@ -6,7 +6,7 @@
 /*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 13:03:51 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/11/03 22:58:06 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,10 @@ int main(int argc, char **argv)
 		for (size_t i = 0; i < allServer.size(); i++)
 			allServer[i].getConfig().displayConfig();
 		initProgram();
-		handler.setVectServer(allServer);
-		launchServer(handler);
-		std::cout << "\n\n\n\nWebserv shutting down..." << std::endl;
-		handler.cleanFdAndAlloc();
+		// handler.setVectServer(allServer);
+		// launchServer(handler);
+		// std::cout << "\n\n\n\nWebserv shutting down..." << std::endl;
+		// handler.cleanFdAndAlloc();
 	}
 	catch(const std::exception & e)
 	{

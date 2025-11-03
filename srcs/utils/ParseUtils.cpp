@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParseUtils.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 09:16:15 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/24 15:23:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 23:35:30 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,13 @@ vectServer getServer(stringVect file)
             }
         }
     return (tabServer);
+}
+
+bool fileExists(const std::string &filename)
+{
+    std::ifstream file(filename.c_str());
+    if(!file.is_open())
+        std::cerr << "Error : invalid file" << std::endl;
+    return (true);             
 }
 
