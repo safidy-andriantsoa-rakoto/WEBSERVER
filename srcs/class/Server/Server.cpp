@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:51:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 11:04:39 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
 		if(allServer[i]._config.getStatus() == true)
 			i++;
 		else
-			return ;
+			throw std::runtime_error("Error, duplicate element conf");		
 	}
 }
 
@@ -227,7 +227,6 @@ bool Server::checkDuplicateValue(std::vector<Server> allserver)
 		j = i + 1;
 		while (j < port.size())
 		{
-			// std::cout << port[i] << " " << port[j] << std::endl;
 			if (port[i] == port[j])
 			{
 				std::cerr << "Error : find duplicate port " << port[i] << std::endl;
