@@ -22,11 +22,11 @@ CgiFd::CgiFd(int *fd, pid_t const & childPid, int const & clientFd) :
 	_readStat(OP_OPEN),
 	_statusCode(-1),
 	_isHeader(false),
+	_respMode(false),
 	_writeStat(OP_START),
 	_startTime(time(NULL)),
 	_childPid(childPid),
-	_isChildAlive(true),
-	_firstCheckError(false){}
+	_isChildAlive(true){}
 
 CgiFd::CgiFd(CgiFd const & other)
 {
@@ -47,13 +47,14 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 		_isHeader = other._isHeader;
 		_header = other._header;
 		_body = other._body;
+		_contentType = other._contentType;
+		_respMode = other._respMode;
 		_bufferWrite = other._bufferWrite;
 		_writeStat = other._writeStat;
 		_pos = other._pos;
 		_startTime = other._startTime;
 		_childPid = other._childPid;
 		_isChildAlive = other._isChildAlive;
-		_firstCheckError = other._firstCheckError;
 	}
 	return *this;
 }
@@ -71,6 +72,8 @@ void CgiFd::setInputFd(int const &fd){ _inputFd = fd;}
 int CgiFd::getClientFd() const { return _clientFd;}
 
 std::string CgiFd::getBufferRead() const { return _bufferRead;}
+
+void CgiFd::setBufferRead(std::string const & content){ _bufferRead += content;}
 
 int CgiFd::getReadStat() const { return _readStat;}
 
@@ -100,8 +103,8 @@ void CgiFd::bufferReadParser()
 	std::string	line;
 	stringVect	headerVect;
 
-	// _header.clear();
-	// _body.clear();
+	_header.clear();
+	_body.clear();
 	startPos = 0;
 	pos = 0;
 	while (pos != std::string::npos)
@@ -120,6 +123,8 @@ void CgiFd::bufferReadParser()
 	if (pos < _bufferRead.size())
 		_body = _bufferRead.substr(pos, _bufferRead.size() - pos);
 	_bufferRead.clear();
+	checkCgiOutput();
+	_contentType = _header["Content-type"];
 }
 
 void CgiFd::clearBufferRead()
@@ -130,6 +135,14 @@ void CgiFd::clearBufferRead()
 }
 
 std::string CgiFd::getBody() const{return _body;}
+
+std::string CgiFd::getContentType() const{return _contentType;}
+
+void CgiFd::setContentType(std::string const &type){ _contentType = type;}
+
+bool CgiFd::getRespMode() const{return _respMode;}
+
+void CgiFd::setRespMode(bool const &stat){ _respMode = stat;}
 
 std::string CgiFd::getBufferWrite() const{return _bufferWrite;}
 
@@ -170,10 +183,13 @@ void CgiFd::checkCgiOutput()
 	std::string	tmp;
 	stringVect	vect;
 
-	if (_writeStat == OP_OPEN && !_header.size())
-		throw ErrorExcept(502, "No header from the cgi");
+	// if (_writeStat == OP_OPEN && !_header.size())
+	// 	throw ErrorExcept(502, "No header from the cgi");
 	if (it == _header.end())
+	{
+		_statusCode = 200;
 		return;
+	}
 	tmp = (*it).second;
 	vect = splitString(tmp, " ");
 	statusCode = convertStringToInt(vect[0]);

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/31 09:56:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 09:35:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ class CgiFd
 		stringMap	_header;
 		bool		_isHeader;
 		std::string	_body;
+		std::string	_contentType;
+		bool		_respMode;
 
 		std::string	_bufferWrite;
 		int			_writeStat;
@@ -39,8 +41,6 @@ class CgiFd
 		time_t		_startTime;
 		pid_t		_childPid;
 		bool		_isChildAlive;
-
-		bool		_firstCheckError;
 
 		CgiFd();
 
@@ -58,6 +58,7 @@ class CgiFd
 
 		int			getClientFd() const;
 		std::string	getBufferRead() const;
+		void		setBufferRead(std::string const & content);
 		int			getReadStat() const;
 		void		setReadStat(int const & status);
 
@@ -69,6 +70,12 @@ class CgiFd
 		void		clearBufferRead();
 
 		std::string	getBody() const;
+
+		std::string	getContentType() const;
+		void		setContentType(std::string const & type);
+
+		bool		getRespMode() const;
+		void		setRespMode(bool const & stat);
 
 		std::string	getBufferWrite() const;
 		void		setBufferWrite(std::string const & buff);

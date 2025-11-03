@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/31 09:56:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 11:21:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,45 +42,10 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		(*it).setResponseStat(OP_ONGOING);
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 	{
+		std::cout << "			Ending send response" << std::endl;
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
 	}
-}
-
-void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
-{
-	std::string	rspString;
-	int			cgiStatus;
-
-	cgiStatus = (*it).getCgiFdStatus();
-	if (cgiStatus == OP_OPEN)
-		return;
-    if (cgiStatus == OP_ONGOING && (*it).getPtrCgiFd()->getBufferRead().size() == 0)
-    {
-        std::cout << "          Nothing inside the buffer yet !!!!!\n";
-        return;
-    }
-    std::cout << "\033[35mSending cgi chunked response to " << fdCli << " with status = " << cgiStatus << "\033[0m"<< std::endl;
-	if (cgiStatus == OP_START)
-	{
-		std::string	type = (*it).getPtrCgiFd()->getHeader()["Content-type"];
-		(*it).getObjResponse().setType(type);
-	}
-	(*it).setCgiChunkedResponse();
-	if (cgiStatus == OP_ONGOING || cgiStatus == OP_CLOSE)
-		rspString = (*it).getBodyResponse() + "\r\n";
-	else
-		rspString = (*it).getFullResponse();
-	std::cout <<"\e[45mCgi response sent : \n" << rspString << "\e[0m" << std::endl;
-	send_value(fdCli, rspString);
-    (*it).getPtrCgiFd()->clearBufferRead();
-	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)
-	{
-        epoll.epoll_update_event(fdCli, EPOLLIN);
-		(*it).getObjRequest().set_is_CRLF_header(false);
-	}
-	if (cgiStatus == OP_START)
-		(*it).updateCgiFdStatus(OP_ONGOING);
 }
 
 void send_value(int const & fd, std::string & _send_content)

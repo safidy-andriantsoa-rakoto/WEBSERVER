@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/01 20:16:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 10:53:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,10 +115,25 @@ void Client::setChunkedResponse()
 	_response.setPosition(pos);
 }
 
-void Client::setCgiChunkedResponse()
+void Client::setCgiResponse()
 {
-	if (_cgiFD)
-		_response.generateCgiChunkedResponse(_cgiFD->getBody(), _cgiFD->getHeader(), _cgiFD->getReadStat());
+	size_t	size;
+
+	std::cout << "SET CGI RESPONSE = " << _cgiFD->getStatusCode() << std::endl;
+	setStatusCodeResponse(_cgiFD->getStatusCode());
+	setRspType(_cgiFD->getContentType(), 1);
+	size = _cgiFD->getBody().size();
+	if (size <= _BUFFER)
+	{
+		setResponseStat(OP_ONCE);
+		setStandardResponse(_cgiFD->getBody());
+	}
+	else
+	{
+		setResponseStat(OP_START);
+		getObjResponse().setOriginBody(_cgiFD->getBody());
+	}
+	_cgiFD->setRespMode(true);
 }
 
 void Client::setSingleResponse(int const &statusCode){_response.generateSingleResponse(statusCode);}
@@ -202,6 +217,7 @@ std::string Client::getRspOriginPath() const{return _response.getOriginPath();}
 void Client::setRspOriginPath(std::string const &path){_response.setOriginPath(path);}
 
 void Client::setRspType(std::string const &filePath){_response.setType(Mime::getFileType(filePath));}
+void Client::setRspType(std::string const & type, int){_response.setType(type);}
 
 const char *Client::Deconnect::what() const throw(){return ("disconnected!");}
 

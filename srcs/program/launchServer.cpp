@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/31 08:31:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 10:57:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 		catch(const std::exception& e1)
 		{
 			std::cerr << "			Error on CGI exception " << e1.what() << '\n';
-			// closeCgiFdEvent(handler, index, epoll);
 		}
 	}
 }

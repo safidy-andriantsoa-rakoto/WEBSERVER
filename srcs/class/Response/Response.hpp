@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:06:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 08:11:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "RedirExcept.hpp"
 #include "LDirExcept.hpp"
 #include "../CgiParser/CgiParser.hpp"
+#include "../CgiFd/CgiFd.hpp"
 #include "../Mime/Mime.hpp"
 
 class Response
@@ -80,7 +81,7 @@ class Response
 
         void				generateStandardResponse(std::string const & body);
 		void				generateChunkedResponse(std::string const & body);
-		void				generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status);
+		// void				generateCgiResponse(CgiFd *cgiFd);
 		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);
 		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);
 		void				generateRedirectResponse(RedirExcept & r);

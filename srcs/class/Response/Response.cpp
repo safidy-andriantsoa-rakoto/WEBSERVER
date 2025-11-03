@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 11:53:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 10:54:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,25 +167,12 @@ void Response::generateChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;
-	chunkString(_body, _respStat);
+	if (_respStat == OP_CLOSE)
+		_body += "\r\n";
 	_header.clear();
 	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
-	_header["Transfer-Encoding"] = "chunked";
-}
-
-void Response::generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status)
-{
-	setStatusLine();
-	_body = body;
-	chunkString(_body, status);
-	if (header.size())
-	{
-		_header.clear();
-		_header["Connection"] = "keep-alive";
-		_header["Content-Type"] = _type;
-		_header["Transfer-Encoding"] = "chunked";
-	}
+	_header["Content-Length"] = convertIntToString(_originBody.size() + 2);
 }
 
 void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)

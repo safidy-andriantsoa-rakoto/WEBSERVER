@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/01 20:17:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 09:43:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ void	Request::parseRequest()
 	stringVect	headerVect;
 
 	startPos = 0;
-	std::cout << "REQUEST_STRING--->" << _partRequest << "<----" << std::endl;
+	// std::cout << "REQUEST_STRING--->" << _partRequest << "<----" << std::endl;
 	pos = _partRequest.find(sep, startPos);
 	if (pos == std::string::npos)
 		throw std::runtime_error("Parsing request : No request line found");
