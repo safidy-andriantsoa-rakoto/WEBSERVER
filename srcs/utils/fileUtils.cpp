@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fileUtils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 15:33:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 11:09:27 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,7 +286,7 @@ bool checkNumberAllContent(std::vector<std::string> &file)
 {
 	if (!checkCountWord(file, "host", 2) || !checkCountWord(file, "size", 3) || !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "location", 3) || !checkCountWord(file, "root", 2) || !checkCountWord(file, "redirect", 3) || !checkCountWord(file, "autoindex", 2))
 		return (false);
-	if (!checkCountWord2(file, "method", 4) || !checkCountWord2(file, "error_page", 6 )|| !checkCountWord2(file, "port", 4) )
+	if (!checkCountWord2(file, "method", 4) || !checkCountWord2(file, "error_page", 6 )|| !checkCountWord2(file, "port", 4) || !checkCountWord(file, "cgi", 3))
 	{
 		return (false);
 	}
