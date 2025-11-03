@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 13:18:04 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:56:31 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,12 @@ std::string readFileToString(std::string filePath)
 {
 	std::fstream file;
 
-	file.open(filePath.c_str());
+	std::cout << "		FILEPATH=" << filePath << std::endl;
+	size_t pos = filePath.find(".mp3");
+	if (pos != std::string::npos)
+		file.open(filePath.c_str(), std::ios::binary);
+	else
+		file.open(filePath.c_str());
 	if (!file.is_open())
 		throw std::runtime_error("ReadFileToString : File can't be opened");
 	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
