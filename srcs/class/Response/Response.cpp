@@ -6,17 +6,17 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 15:28:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 22:00:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
-Response::Response() : _respCategory(STD_RSP), _pos(0){}
+Response::Response() : _respCategory(STD_RSP), _contentLength(0),  _pos(0){}
 
-Response::Response(int const & statusCode) : _statusCode(statusCode), _pos(0){}
+Response::Response(int const & statusCode) : _statusCode(statusCode), _contentLength(0), _pos(0){}
 
-Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type), _pos(0){}
+Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type),_contentLength(0), _pos(0){}
 
 Response::Response(Response const & other) :
 	_statusCode(other._statusCode),
@@ -27,6 +27,7 @@ Response::Response(Response const & other) :
 	_fullResponse(other._fullResponse),
 	_respCategory(other._respCategory),
 	_respStat(other._respStat),
+	_contentLength(other._contentLength),
 	_originPath(other._originPath),
 	_originBody(other._originBody),
 	_pos(other._pos){}
@@ -43,6 +44,7 @@ Response &Response::operator=(Response const & other)
 		_fullResponse = other._fullResponse;
 		_respCategory = other._respCategory;
 		_respStat = other._respStat;
+		_contentLength = other._contentLength;
 		_originPath = other._originPath;
 		_originBody = other._originBody;
 		_pos = other._pos;
@@ -65,6 +67,17 @@ void Response::setRespCategory(int const &category){_respCategory = category;}
 size_t Response::getPosition() const{return _pos;}
 
 void Response::setPosition(size_t const &newPos){_pos = newPos;}
+
+void Response::setFileStream(std::string const & path)
+{ 
+	_file.open(path.c_str(), std::ios::in);
+    if (_file.is_open() == false) 
+		throw std::runtime_error("Error on opening file");
+}
+
+size_t Response::getContentLength() const{return _contentLength;}
+
+void Response::setContentLength(size_t const &size){_contentLength = size;}
 
 int Response::getRespStat() const{return _respStat;}
 
@@ -140,7 +153,7 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 		_body = content;
 		_respStat = OP_ONCE;
 		_type = Mime::getFileType(_originPath);
-		generateStandardResponse(content);
+		generateCgiSingleResponse(content);
 	}
 	else
 	{
@@ -155,7 +168,7 @@ void Response::setStatusLine()
 	_statusLine = "HTTP/1.1 " + convertIntToString(_statusCode) + " " + getReasonPhrase(_statusCode);
 }
 
-void	Response::generateStandardResponse(std::string const &  body)
+void	Response::generateCgiSingleResponse(std::string const &  body)
 {
 	setStatusLine();
 	_body = body;
@@ -165,7 +178,28 @@ void	Response::generateStandardResponse(std::string const &  body)
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::generateChunkedResponse(std::string const & body)
+void Response::generateStandardResponse()
+{
+	setStatusLine();
+	_body = readFileStream(_file, _respStat);
+	_header.clear();
+	_header["Content-Length"] = convertIntToString(_body.size());
+	_header["Content-Type"] = _type;
+	_header["Connection"] = "keep-alive";
+}
+
+void Response::generateChunkedResponse()
+{
+	setStatusLine();
+	/* [!] Update body to read from fileStream*/
+	_body = readFileStream(_file, _respStat);
+	_header.clear();
+	_header["Connection"] = "keep-alive";
+	_header["Content-Type"] = _type;
+	_header["Content-Length"] = convertIntToString(_contentLength);
+}
+
+void Response::generateCgiChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;

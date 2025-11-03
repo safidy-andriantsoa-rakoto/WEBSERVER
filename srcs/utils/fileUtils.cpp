@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 11:21:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 22:07:20 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,25 @@ std::string readFileToString(std::string filePath)
 		throw std::runtime_error("ReadFileToString : File can't be opened");
 	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	return (fileString);
+}
+
+std::string	readFileStream(std::fstream & file, int & stat)
+{
+	std::string res;
+    char        buffer[_BUFFER + 1] = {0};
+    std::streamsize bytesRead;
+
+    file.read(buffer, _BUFFER);
+    bytesRead = file.gcount(); 
+    if (!file)
+    {
+        stat = OP_CLOSE;
+        file.close();
+    }
+    buffer[bytesRead] = '\0'; 
+    std::cout << "\033[42mBUFFER === >" << bytesRead << " <=====\033[0m" << std::endl;
+    res.append(buffer, bytesRead); 
+    return res;
 }
 
 stringMap splitFileToMapString(std::string const &filePath, std::string const & sep)

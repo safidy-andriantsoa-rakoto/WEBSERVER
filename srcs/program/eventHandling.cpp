@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 15:30:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 21:04:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,12 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		{
 			if (cgiReadStat != OP_CLOSE)
 				return;
-			(*it).setCgiResponse();
+			(*it).setupCgiResponse();
 		}
+		sendCgiResponse(it, fdCli, epoll);
 	}
-	sendStandardResponse(it, fdCli, epoll);
+	else
+		sendStandardResponse(it, fdCli, epoll);
 }
 
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)

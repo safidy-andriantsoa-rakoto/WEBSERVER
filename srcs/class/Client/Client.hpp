@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/03 08:33:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 21:37:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ class Client : public Server
 		Response	_response;
 		CgiFd		*_cgiFD;
 		int			_fdType;
-		std::string	filepath;
+		std::string	_filepath;
 
 		bool		_modPostFile;
 		int			_delay;
-		time_t		_last_time;
 		time_t		_time_now;
+		time_t		_last_time;
 
 		Client();
 
@@ -107,9 +107,17 @@ class Client : public Server
 		void		clearResponse();
 		void		updateResponseCategory(int const & stat);
 		void		setCatchedResponse(AExcept & e);
-		void		setStandardResponse(std::string const & content);
+
+		void		setRspFileStream(std::string const & path);
+		void		setRspContentLength(size_t const & size);
+
+		void		setStandardResponse(std::string const & path);
 		void		setChunkedResponse();
-		void		setCgiResponse();
+		
+		void		setCgiSingleResponse(std::string const & content); /* [!] : need to erase */
+		void		setCgiChunkedResponse();
+		void		setupCgiResponse();
+
 		void		setSingleResponse(int const & statusCode);
 
 		void        receiveClientRequest();

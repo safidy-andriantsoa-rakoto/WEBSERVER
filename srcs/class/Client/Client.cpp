@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/03 15:29:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 21:41:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,18 @@
 
 Client::Client(Server const & server, const int &_clientFD, bool is_connect) : 
 	Server(server),
+	_receivedSize(0),
 	_clientFD(_clientFD),
 	_connect(is_connect),
+	_to_send(0),
+	_total_send(0),
 	_cgiFD(NULL),
-	_modPostFile(false)
+	_fdType(-1),
+	_modPostFile(false),
+	_delay(0),
+	_time_now(time(NULL)),
+	_last_time(_time_now)
 {
-	this->_clientRequest= "";
-	this->_to_send = 0;
-	this->_total_send = 0;
-	this->_delay = 0;
-	this->_time_now = time(NULL);
-	this->_last_time = this->_time_now;
 	if (_clientFD < 0)
 		throw std::runtime_error("Client constructor error");
 }
@@ -40,21 +41,23 @@ Client &Client::operator=(const Client &client)
 	if (this != &client)
 	{
 		this->Server::operator=(client);
+		this->_receivedSize = client._receivedSize;
+		this->_client_stat = client._client_stat;
 		this->_clientFD = client._clientFD;
 		this->_connect = client._connect;
 		this->_clientRequest = client._clientRequest;
-		this->_client_stat = client._client_stat;
-		this->_response = client._response;
+		this->_boundary_sep = client._boundary_sep;
 		this->_to_send = client._to_send;
 		this->_total_send = client._total_send;
-		this->_boundary_sep = client._boundary_sep;
-		this->_receivedSize = client._receivedSize;
-		this->_client_stat = client._client_stat;
-		this->_boundary_sep = client._boundary_sep;
 		this->_request = client._request;
-		this->_last_time = client._last_time;
-		this->_time_now = client._time_now;
+		this->_response = client._response;
 		setPtrCgiFd(client._cgiFD);
+		this->_fdType = client._fdType;
+		this->_filepath = client._filepath;
+		this->_modPostFile = client._modPostFile;
+		this->_delay = client._delay;
+		this->_time_now = client._time_now;
+		this->_last_time = client._last_time;
 	}
 	return (*this);
 }
@@ -94,9 +97,21 @@ void Client::setCatchedResponse(AExcept & e)
 	_request.setRequestTarget(filePath);
 }
 
-void Client::setStandardResponse(std::string const & content){_response.generateStandardResponse(content);}
+void Client::setRspFileStream(std::string const & path){_response.setFileStream(path);}
 
-void Client::setChunkedResponse()
+void Client::setRspContentLength(size_t const &size){_response.setContentLength(size);}
+
+void Client::setStandardResponse(std::string const & path)
+{
+	_response.setFileStream(path);
+	_response.generateStandardResponse();
+}
+
+void Client::setChunkedResponse(){_response.generateChunkedResponse();}
+
+void Client::setCgiSingleResponse(std::string const & content){_response.generateCgiSingleResponse(content);}
+
+void Client::setCgiChunkedResponse()
 {
 	std::string content;
 	size_t		pos;
@@ -111,11 +126,11 @@ void Client::setChunkedResponse()
 		_response.setRespStat(OP_CLOSE);
 		pos = 0;
 	}
-	_response.generateChunkedResponse(content);
+	_response.generateCgiChunkedResponse(content);
 	_response.setPosition(pos);
 }
 
-void Client::setCgiResponse()
+void Client::setupCgiResponse()
 {
 	size_t	size;
 
@@ -126,7 +141,7 @@ void Client::setCgiResponse()
 	if (size <= _BUFFER)
 	{
 		setResponseStat(OP_ONCE);
-		setStandardResponse(_cgiFD->getBody());
+		setCgiSingleResponse(_cgiFD->getBody());
 	}
 	else
 	{
@@ -388,25 +403,26 @@ void Client::stdGetRequest()
 		filePath += "/index.html";
 	try
 	{
-		fileContent = readFileToString(filePath);
-		/*Use fstat to check the file size instead of readFileToString*/
-		/*Instead of fileContent, send fstream*/
+		size_t	fileSize = getFileSize(filePath);
+
 		setStatusCodeResponse(200);
 		setRspOriginPath(filePath);
 		setRspType(filePath);
-		if (fileContent.size() <= _BUFFER)
+		setRspContentLength(fileSize);
+		if (fileSize <= _BUFFER)
 		{
 			setResponseStat(OP_ONCE);
-			setStandardResponse(fileContent);
+			setStandardResponse(filePath);
 		}
 		else
 		{
 			setResponseStat(OP_START);
-			getObjResponse().setOriginBody(fileContent);
+			setRspFileStream(filePath);
 		}
 	}
 	catch(const std::exception& e)
 	{
+		/* [!] : Review error for forbidden*/
 		throw ErrorExcept(404, "GET : File not found");
 	}
 }
@@ -660,7 +676,7 @@ bool Client::get_pathfile()
 	std::string body;
 
 	body = _request.get_Body();
-	while (this->filepath.empty())
+	while (this->_filepath.empty())
 	{
 		if (findFile != std::string::npos && _request.get_Body().find("filename=\"\"") == std::string::npos)
 		{
@@ -673,8 +689,8 @@ bool Client::get_pathfile()
 			_request.delete_range_body_request(0, endFile + 4);
 			if (filename.size())
 			{
-				this->filepath = _request.getRequestTarget() + "/" + currentDateTimeString() + filename;
-				std::cout << "\n\n\n		PATH=["<< this->filepath <<"]\n\n\n" << std::endl;
+				this->_filepath = _request.getRequestTarget() + "/" + currentDateTimeString() + filename;
+				std::cout << "\n\n\n		PATH=["<< this->_filepath <<"]\n\n\n" << std::endl;
 				return (true);
 			}
 		}
@@ -713,16 +729,16 @@ void Client::write_in_file_post()
 	std::string body;
 	size_t		pos;
 	
-	if (this->filepath.size() && _request.get_Body().size())
+	if (this->_filepath.size() && _request.get_Body().size())
 	{
 		body = _request.get_Body();
-		std::fstream file(this->filepath.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+		std::fstream file(this->_filepath.c_str(), std::ios::out | std::ios::binary | std::ios::app);
 		if (file.is_open())
 		{
 			pos = body.find(this->_boundary_sep);
 			if (pos != std::string::npos)
 			{
-				this->filepath.clear();
+				this->_filepath.clear();
 				body = body.substr(0 , pos - 2);
 				_request.delete_range_body_request(0, pos + this->_boundary_sep.size() + 2);
 				std::cout << "		\033[43m\e[5mFILE WRITE DONE\033[0m\e[0m" << std::endl;
@@ -744,12 +760,12 @@ void Client::write_in_file_post()
 void Client::process_multipart_data()
 {
 	if (get_pathfile())
-		std::cout << "\e[5mNEW FILE\e[0m->"<< this->filepath << std::endl;
-	if (this->filepath.size())
+		std::cout << "\e[5mNEW FILE\e[0m->"<< this->_filepath << std::endl;
+	if (this->_filepath.size())
 	{
 		while (1)
 		{
-			if (this->filepath.empty())
+			if (this->_filepath.empty())
 				break ;
 			write_in_file_post();
 			if (get_pathfile())
