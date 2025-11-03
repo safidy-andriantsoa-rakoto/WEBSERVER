@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:26:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 09:35:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ class CgiFd
 {
 	private:
 		int			_outputFd;
-		int			_errorFd;
 		int			_inputFd;
 		int			_clientFd;
 
@@ -32,6 +31,8 @@ class CgiFd
 		stringMap	_header;
 		bool		_isHeader;
 		std::string	_body;
+		std::string	_contentType;
+		bool		_respMode;
 
 		std::string	_bufferWrite;
 		int			_writeStat;
@@ -52,25 +53,29 @@ class CgiFd
 		int			getOutputFd() const;
 		void		setOutputFd(int const & fd);
 	
-		int			getErrFd() const;
-		void		setErrFd(int const & fd);
-	
 		int			getInputFd() const;
 		void		setInputFd(int const & fd);
 
 		int			getClientFd() const;
-		std::string	getBuffer() const;
+		std::string	getBufferRead() const;
+		void		setBufferRead(std::string const & content);
 		int			getReadStat() const;
 		void		setReadStat(int const & status);
 
 		bool		getIsError() const;
 		void		setIsError(bool const & stat);
 
-		void		setBufferRead(std::string const & content);
+		void		processBufferRead(std::string const & content);
 		void		bufferReadParser();
 		void		clearBufferRead();
 
 		std::string	getBody() const;
+
+		std::string	getContentType() const;
+		void		setContentType(std::string const & type);
+
+		bool		getRespMode() const;
+		void		setRespMode(bool const & stat);
 
 		std::string	getBufferWrite() const;
 		void		setBufferWrite(std::string const & buff);

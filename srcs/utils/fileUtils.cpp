@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 11:09:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 13:18:04 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,11 @@ void	printFileContent(std::string const & path)
 	}
 }
 
-void    checkFileExtension(std::string const & fileName, std::string extension)
+bool	checkFileExtension(std::string const & fileName, std::string extension)
 {
 	if (fileName.compare(fileName.size() - extension.size(), extension.size(), extension) != 0)
-		throw std::runtime_error("Extension file problem");
+		return false;
+	return true;
 }
 
 std::string readFileToString(std::string filePath)

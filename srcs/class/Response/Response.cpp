@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 15:36:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 14:36:22 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,70 +52,31 @@ Response &Response::operator=(Response const & other)
 
 Response::~Response(){}
 
-int Response::getStatusCode() const
-{
-    return _statusCode;
-}
+int Response::getStatusCode() const{return _statusCode;}
 
-void Response::setType(std::string const &type)
-{
-	_type = type;
-}
+void Response::setType(std::string const &type){_type = type;}
 
-std::string Response::getType() const
-{
-    return _type;
-}
+std::string Response::getType() const{return _type;}
 
-void Response::setStatusCode(int const &statusCode)
-{
-	_statusCode = statusCode;
-}
+void Response::setStatusCode(int const &statusCode){_statusCode = statusCode;}
 
-void Response::setRespCategory(int const &category)
-{
-	_respCategory = category;
-}
+void Response::setRespCategory(int const &category){_respCategory = category;}
 
-size_t Response::getPosition() const
-{
-    return _pos;
-}
+size_t Response::getPosition() const{return _pos;}
 
-void Response::setPosition(size_t const &newPos)
-{
-	_pos = newPos;
-}
+void Response::setPosition(size_t const &newPos){_pos = newPos;}
 
-int Response::getRespStat() const
-{
-    return _respStat;
-}
+int Response::getRespStat() const{return _respStat;}
 
-void Response::setRespStat(int const &stat)
-{
-	_respStat = stat;
-}
+void Response::setRespStat(int const &stat){_respStat = stat;}
 
-std::string Response::getOriginPath() const
-{
-    return _originPath;
-}
+std::string Response::getOriginPath() const{return _originPath;}
 
-void Response::setOriginPath(std::string const &path)
-{
-	_originPath = path;
-}
+void Response::setOriginPath(std::string const &path){_originPath = path;}
 
-void Response::addHeader(std::string const &header, std::string const &content)
-{
-	_header[header] = content;
-}
+void Response::addHeader(std::string const &header, std::string const &content){_header[header] = content;}
 
-int Response::getRespCategory() const
-{
-    return _respCategory;
-}
+int Response::getRespCategory() const{return _respCategory;}
 
 std::string Response::getFullResponse()
 {
@@ -127,25 +88,13 @@ std::string Response::getFullResponse()
 	return _fullResponse;
 }
 
-std::string Response::getBody() const
-{
-    return _body;
-}
+std::string Response::getBody() const{return _body;}
 
-std::string Response::getOriginBody() const
-{
-    return _originBody;
-}
+std::string Response::getOriginBody() const{return _originBody;}
 
-void Response::setOriginBody(std::string const &body)
-{
-	_originBody = body;
-}
+void Response::setOriginBody(std::string const &body){_originBody = body;}
 
-void	Response::clearResponse()
-{
-	_fullResponse.clear();
-}
+void	Response::clearResponse(){_fullResponse.clear();}
 
 void Response::addStatusCode(std::string & content)
 {
@@ -218,25 +167,10 @@ void Response::generateChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;
-	chunkString(_body, _respStat);
 	_header.clear();
 	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
-	_header["Transfer-Encoding"] = "chunked";
-}
-
-void Response::generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status)
-{
-	setStatusLine();
-	_body = body;
-	chunkString(_body, status);
-	if (header.size())
-	{
-		_header.clear();
-		_header["Connection"] = "keep-alive";
-		_header["Content-Type"] = _type;
-		_header["Transfer-Encoding"] = "chunked";
-	}
+	_header["Content-Length"] = convertIntToString(_originBody.size() + 2);
 }
 
 void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)

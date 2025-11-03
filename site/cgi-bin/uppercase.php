@@ -15,8 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo $uppercase_content;
     
 } else {
-    // If not a POST request, return an error message
-    http_response_code(405); // Method Not Allowed
-    echo "Error: Only POST requests are accepted.";
+    echo "Error : This script is used for POST request";
 }
 ?>

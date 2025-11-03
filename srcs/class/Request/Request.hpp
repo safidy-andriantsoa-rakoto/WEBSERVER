@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/23 10:30:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 09:09:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 class Request
 {
 	private:
+		std::string	_partRequest;
+
 		std::string	_requestLine;
 		std::string	_method;
 		std::string	_requestTarget;
@@ -30,10 +32,7 @@ class Request
 
 		size_t		_request_length;
 		bool		_autoIdx;
-		bool		_isChunked;
-		bool		_isEOF;
 
-		//for post
 		MapSVectStr	_multipart_body;
 		size_t		_content_length;
 		size_t		_c_length_received;
@@ -59,14 +58,11 @@ class Request
 		std::string	getBody() const;
 		stringMap	getHeader() const;
 
+		void		setPartRequest(std::string const & content);
+		std::string	getPartRequest() const;
+
 		bool		getIsCgi() const;
 		void		setIsCgi(bool const & condition);
-
-		bool		getIsChunked() const;
-		void		setIsChunked(bool const & stat);
-
-		bool		getIsEOF() const;
-		void		setIsEOF(bool const & stat);
 
 		CgiParser	getCgiParser() const;
 		void		processCgiClass(std::string & target, std::string const & execPath);
@@ -91,7 +87,7 @@ class Request
 
 		void			setRequestTarget(std::string const & target);
 	
-		void			parseRequest(std::string const & requestString);
+		void			parseRequest();
 
 		void			displayRequest() const;
 
@@ -103,6 +99,8 @@ class Request
 
 		size_t 		get_content_length();
 		void 		set_content_length(size_t size);
+
+		bool		checkContentReceived() const;
 
 		void		delete_range_body_request(int start, int end);
 

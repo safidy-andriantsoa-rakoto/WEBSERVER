@@ -16,13 +16,13 @@ CgiFd::CgiFd(){}
 
 CgiFd::CgiFd(int *fd, pid_t const & childPid, int const & clientFd) : 
 	_outputFd(fd[FD_STDOUT]),
-	_errorFd(fd[FD_STDERR]),
 	_inputFd(fd[FD_STDIN]),
 	_clientFd(clientFd),
 	_isError(false),
 	_readStat(OP_OPEN),
 	_statusCode(-1),
 	_isHeader(false),
+	_respMode(false),
 	_writeStat(OP_START),
 	_startTime(time(NULL)),
 	_childPid(childPid),
@@ -39,7 +39,6 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 	{
 		_clientFd = other._clientFd;
 		_outputFd = other._outputFd;
-		_errorFd = other._errorFd;
 		_inputFd = other._inputFd;
 		_bufferRead = other._bufferRead;
 		_readStat = other._readStat;
@@ -48,6 +47,8 @@ CgiFd &CgiFd::operator=(CgiFd const & other)
 		_isHeader = other._isHeader;
 		_header = other._header;
 		_body = other._body;
+		_contentType = other._contentType;
+		_respMode = other._respMode;
 		_bufferWrite = other._bufferWrite;
 		_writeStat = other._writeStat;
 		_pos = other._pos;
@@ -64,17 +65,15 @@ int CgiFd::getOutputFd() const { return _outputFd;}
 
 void CgiFd::setOutputFd(int const &fd){_outputFd = fd;}
 
-int CgiFd::getErrFd() const { return _errorFd;}
-
-void CgiFd::setErrFd(int const &fd){ _errorFd = fd; }
-
 int CgiFd::getInputFd() const{ return _inputFd;}
 
 void CgiFd::setInputFd(int const &fd){ _inputFd = fd;}
 
 int CgiFd::getClientFd() const { return _clientFd;}
 
-std::string CgiFd::getBuffer() const { return _bufferRead;}
+std::string CgiFd::getBufferRead() const { return _bufferRead;}
+
+void CgiFd::setBufferRead(std::string const & content){ _bufferRead += content;}
 
 int CgiFd::getReadStat() const { return _readStat;}
 
@@ -84,7 +83,17 @@ bool CgiFd::getIsError() const { return _isError;}
 
 void CgiFd::setIsError(bool const &stat){_isError = stat;}
 
-void CgiFd::setBufferRead(std::string const &content){_bufferRead = content;}
+void CgiFd::processBufferRead(std::string const &content)
+{
+	_bufferRead += content;
+	_header.clear();
+	_body.clear();
+	if (_isHeader == true)
+		_body = content;
+	else if (_bufferRead.find(CRLF_SEP) != std::string::npos)
+		bufferReadParser();
+	displayBufferReadParsed(); /* [Test only] */
+}
 
 void CgiFd::bufferReadParser()
 {
@@ -96,11 +105,6 @@ void CgiFd::bufferReadParser()
 
 	_header.clear();
 	_body.clear();
-	if (_isHeader == true)
-	{
-		_body = _bufferRead;
-		return;
-	}
 	startPos = 0;
 	pos = 0;
 	while (pos != std::string::npos)
@@ -117,10 +121,10 @@ void CgiFd::bufferReadParser()
 	}
 	_isHeader = true;
 	if (pos < _bufferRead.size())
-	{
 		_body = _bufferRead.substr(pos, _bufferRead.size() - pos);
-		/* NEED TO APPEND BODY BEFORE SENDING !!!!!!!!!*/
-	}
+	_bufferRead.clear();
+	checkCgiOutput();
+	_contentType = _header["Content-type"];
 }
 
 void CgiFd::clearBufferRead()
@@ -131,6 +135,14 @@ void CgiFd::clearBufferRead()
 }
 
 std::string CgiFd::getBody() const{return _body;}
+
+std::string CgiFd::getContentType() const{return _contentType;}
+
+void CgiFd::setContentType(std::string const &type){ _contentType = type;}
+
+bool CgiFd::getRespMode() const{return _respMode;}
+
+void CgiFd::setRespMode(bool const &stat){ _respMode = stat;}
 
 std::string CgiFd::getBufferWrite() const{return _bufferWrite;}
 
@@ -171,11 +183,13 @@ void CgiFd::checkCgiOutput()
 	std::string	tmp;
 	stringVect	vect;
 
-	if (_writeStat == OP_OPEN && !_header.size())
-		throw ErrorExcept(502, "No header from the cgi");
-	/*Error 504 if TIMEOUT => CHECK WITH SIGNAL HANDLING*/
+	// if (_writeStat == OP_OPEN && !_header.size())
+	// 	throw ErrorExcept(502, "No header from the cgi");
 	if (it == _header.end())
+	{
+		_statusCode = 200;
 		return;
+	}
 	tmp = (*it).second;
 	vect = splitString(tmp, " ");
 	statusCode = convertStringToInt(vect[0]);
@@ -223,24 +237,24 @@ void CgiFd::setIsChildAlive(bool const &stat){ _isChildAlive = stat; }
 void CgiFd::checkChildProcess()
 {
 	int	waitReturn;
-	int	stat;
+	int	status;
 
-	waitReturn = waitpid(_childPid, &stat, WNOHANG);
+	if (_isChildAlive == false)
+		return;
+	waitReturn = waitpid(_childPid, &status, WNOHANG);
 	if (waitReturn == 0)
+		return ;
+	else if (waitReturn == -1)
 	{
-		/*Child process still going on*/
-		std::cout << "			*****CHILD PROCESS NOT DONE YET" << std::endl;
+		_isChildAlive =false;
+		throw(ErrorExcept(500, "Waitpid error"));
 	}
-	else if (waitReturn > 0)
+	if (WIFEXITED(status)) 
 	{
-		/*Child process exited normally with status*/
-		std::cout << "			*****CHILD DONE" << std::endl;
-
-	}
-	else if (waitReturn < 0)
-	{
-		/*Error on child process*/
-		std::cout << "			*****CHILD PROCESS ERROR" << std::endl;
-		throw(ErrorExcept(500, "Child process error"));
+		int exitStatus = WEXITSTATUS(status);
+		_isChildAlive = false;
+		if (exitStatus == 42)
+			throw(ErrorExcept(500, "Child process error"));
 	}
 }
+

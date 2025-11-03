@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 08:08:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/01 20:01:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ CgiParser::~CgiParser(){}
 
 char **CgiParser::getEnvp(){return _envp;}
 
-void CgiParser::parseCgiEnv(std::string const & requestTarget)
+void CgiParser::parseCgiRequestTarget(std::string const & requestTarget)
 {
 	stringVect	vect;
 
@@ -50,7 +50,6 @@ void CgiParser::parseCgiEnv(std::string const & requestTarget)
 	size_t pos = vect[0].find_last_of("/");
 	_scriptName = vect[0].substr(pos, vect[0].size() - pos);
 	_scriptFileName = vect[0];
-	// std::cout << "CGI SCRIPT = " << _scriptFileName << " ; " << _scriptName << std::endl;
 }
 
 void CgiParser::buildEnvp()
@@ -68,7 +67,6 @@ void CgiParser::buildEnvp()
 	vect = splitString(ownedConfig, "\n");
 	clearCharTable(_envp);
 	_envp = convertStringVectToTable(vect);
-	// displayCharTable(_envp, "ENVP TABLE");
 	vect.clear();
 	ownedConfig.clear();
 }
@@ -122,3 +120,23 @@ void CgiParser::displayCgiClass() const
 	std::cout << "==============END OF CGI COMPONENT=============\033[0m" << std::endl;
 }
 
+bool CgiParser::checkIfFileCgi(std::string const &path)
+{
+	size_t		pos;
+	size_t		lastSlashPos;
+	std::string	ext = ".php";
+	stringVect	sub;
+
+	if (checkFileExtension(path, ext) == true)
+		return true;
+	pos = path.find(ext);
+	if (pos == std::string::npos)
+		return false;
+	lastSlashPos = path.find_last_of("/");
+	if (pos < lastSlashPos)
+		return false;
+	sub = splitString(path, "?");
+	if ((sub.size() == 1 && path[path.size() - 1] == '?') || sub.size() == 2)
+		return true;
+    return false;
+}

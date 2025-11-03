@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 09:53:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 13:14:19 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ class Client : public Server
 		void		setRspOriginPath(std::string const & path);
 
 		void		setRspType(std::string const & filePath);
+		void		setRspType(std::string const & type, int);
 
 		CgiFd		*getPtrCgiFd();
 		void        setPtrCgiFd(CgiFd *cgiFd);
@@ -108,7 +109,7 @@ class Client : public Server
 		void		setCatchedResponse(AExcept & e);
 		void		setStandardResponse(std::string const & content);
 		void		setChunkedResponse();
-		void		setCgiChunkedResponse();
+		void		setCgiResponse();
 		void		setSingleResponse(int const & statusCode);
 
 		void        receiveClientRequest();
