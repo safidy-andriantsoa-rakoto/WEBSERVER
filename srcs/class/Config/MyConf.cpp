@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 08:20:44 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 10:35:28 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,8 @@ size_t MyConf::findNotDigitError()
 }
 void MyConf::parseConfig(stringVect file)
 {
-	static size_t currentBlock(0), i(0), k(0);
+	static size_t currentBlock(0);
+	size_t i(0), k(0);
 	static intVect index = containsExactWordInVector(file, "server");
 
 	if (currentBlock >= index.size())

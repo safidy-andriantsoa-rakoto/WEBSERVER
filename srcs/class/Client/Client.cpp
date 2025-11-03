@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/30 11:02:10 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 10:33:41 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -315,6 +315,7 @@ void Client::processLocationOption(MyLoc const & location, Request & request)
 {
 	stringVect	locationMethod;
 
+	location.displayLocation();
 	locationMethod = location.getAvailableMethod();
 	processRedirection(location, request);
 	checkMethodInLocation(locationMethod, request.getMethod());
@@ -329,12 +330,17 @@ void Client::checkMethodInLocation(stringVect & locationMethod, std::string cons
 	stringVectIt	it;
 
 	it = std::find(locationMethod.begin(), locationMethod.end(), method);
+	displayStringVect(locationMethod);
+	std::cout << "Method = " << locationMethod.size() << std::endl;
 	if (it == locationMethod.end())
 	{
 		if (method != "GET" && method != "POST" && method != "DELETE")
 			throw ErrorExcept(501, "Method not implemented");
 		else
+		{
+			std::cout << "Method = " << method << std::endl;
 			throw ErrorExcept(405, "Method not allowed");
+		}
 	}
 }
 
