@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fileUtils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 11:09:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 13:03:34 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,7 +317,6 @@ bool checkDuplicate(stringVect file, std::string name, size_t &start, size_t &en
 
 bool checkConfigDupli(stringVect file, size_t &start, size_t &end)
 {
-	// if (checkDuplicate(file, "host", start, end) || checkDuplicate(file, "port", start, end) || checkDuplicate(file, "server_names", start, end) || checkDuplicate(file, "error_page", start, end) || checkDuplicate(file, "size", start, end))
 	if (checkDuplicate(file, "host", start, end) || checkDuplicate(file, "port", start, end) || checkDuplicate(file, "server_names", start, end) || checkDuplicate(file, "size", start, end))
 	{
 		std::cerr << "Error : duplicate setting find or not find setting" << std::endl;

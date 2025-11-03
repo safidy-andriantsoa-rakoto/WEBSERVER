@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 12:05:24 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 13:13:04 by trahanta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,16 @@ void MyConf::getElementConfig(const size_t &start, const size_t &end, const stri
 					_errPage.strError.push_back(word);
 			}
 		}
+		try
+		{
+			if(_size.at(1) != "MB" || _size.at(1) != "GB")
+				throw std::runtime_error("Error : unity of size invalid");
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+		
 		if (name == "location")
 			countLoc++;
 	}
