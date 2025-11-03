@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 11:58:47 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 12:05:24 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ void MyConf::init_port_child(int port)
 {
 	if (_port.size())
 		_port.clear();
-	std::cout << "  len port=" << _port.size() << std::endl;
 	_port.push_back(port);
 }
 

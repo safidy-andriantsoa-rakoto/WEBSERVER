@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 12:03:43 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 12:04:23 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,7 @@ int main(int argc, char **argv)
 		if (childServer.size())
 			std::copy(childServer.begin(), childServer.end(), std::back_inserter(allServer));
 		for (size_t i = 0; i < allServer.size(); i++)
-		{
 			allServer[i].getConfig().displayConfig();
-		}
-		
 		initProgram();
 		handler.setVectServer(allServer);
 		launchServer(handler);
