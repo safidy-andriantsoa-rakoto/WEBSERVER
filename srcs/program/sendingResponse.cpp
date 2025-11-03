@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 14:42:23 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 14:52:29 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		(*it).setChunkedResponse();
 	}
 	if ((*it).getResponseStat() == OP_ONGOING || (*it).getResponseStat() == OP_CLOSE)
-		rspString = (*it).getBodyResponse() + "\r\n";
+		rspString = (*it).getBodyResponse();
 	else
 		rspString = (*it).getFullResponse();
 	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
