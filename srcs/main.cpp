@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:47:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 12:03:43 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int main(int argc, char **argv)
 	Handler 	handler;
 	stringVect	config;
 	vectServer	allServer;
+	vectServer	childServer;
 
 	try
 	{		
@@ -61,9 +62,28 @@ int main(int argc, char **argv)
 				|| !checkNumberAllContent(config))
 			return (1);
 		allServer = getServer(config);
-		Server::getParsAllServer(allServer, config);
+		Server::getParsAllServer(allServer, config);//vita ny parse
 		if(!Server::checkDuplicateValue(allServer))
 			return (1);
+		//vita !erreur ny parse
+		for (size_t i = 0; i < allServer.size(); i++)
+		{
+			intVect port_tmp = allServer[i].getConfig().getServPort();
+			for (size_t j = 1; j < port_tmp.size(); j++)
+			{
+				Server child(allServer[i]);
+				child.config_ref().init_port_child(port_tmp[j]);
+				childServer.push_back(child);
+			}
+			allServer[i].config_ref().delete_port_child_in_parent();
+		}
+		if (childServer.size())
+			std::copy(childServer.begin(), childServer.end(), std::back_inserter(allServer));
+		for (size_t i = 0; i < allServer.size(); i++)
+		{
+			allServer[i].getConfig().displayConfig();
+		}
+		
 		initProgram();
 		handler.setVectServer(allServer);
 		launchServer(handler);

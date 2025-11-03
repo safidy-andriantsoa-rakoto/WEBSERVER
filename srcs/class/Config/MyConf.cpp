@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 10:35:28 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 11:58:47 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,24 @@ void MyConf::myParseConfig(std::string const &servPath, std::string const &locPa
 		line.clear();
 	}
 	myParseLoc(locPath);
+}
+
+void MyConf::init_port_child(int port)
+{
+	if (_port.size())
+		_port.clear();
+	std::cout << "  len port=" << _port.size() << std::endl;
+	_port.push_back(port);
+}
+
+void MyConf::delete_port_child_in_parent()
+{
+	if (_port.size() > 1)
+	{
+		int port = _port[0];
+		_port.clear();
+		_port.push_back(port);	
+	}
 }
 
 void	MyConf::displayConfig() const

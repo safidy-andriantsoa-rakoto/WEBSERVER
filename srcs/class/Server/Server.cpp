@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 11:04:39 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 12:02:12 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,4 +244,9 @@ bool Server::checkDuplicateValue(std::vector<Server> allserver)
 
 	std::cout << std::endl;
 	return (true);
+}
+
+MyConf &Server::config_ref()
+{
+    return (_config);
 }

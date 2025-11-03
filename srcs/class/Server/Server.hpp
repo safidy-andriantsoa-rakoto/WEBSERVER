@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:51:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 12:01:36 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ class Server
 		static std::vector<int> stockPort(std::vector<Server> &allServer);
 		static void getParsAllServer(std::vector<Server> &allServer, stringVect file);
 		static bool checkDuplicateValue(std::vector<Server> allserver);
+		MyConf& config_ref();
 };
 
 #endif

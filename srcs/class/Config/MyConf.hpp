@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 08:20:15 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 11:51:06 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ class MyConf : public AConfig
 		//barandri_function
 		void	myParseLoc(std::string const & filePath);
 		void	myParseConfig(std::string const & servPath, std::string const & locPath);
-
-
+		void	init_port_child(int port);
+		void	delete_port_child_in_parent();
 };
 
 #endif
