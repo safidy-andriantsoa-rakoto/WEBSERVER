@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 14:34:48 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/03 14:42:23 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 void send_value(int const & fd, std::string & _send_content)
 {
 
-    // size_t to_send = _send_content.size();
+    size_t to_send = _send_content.size();
 
-    std::cout << "Size to send = " << _send_content.size() << std::endl;
-    std::cout << "Sent = " << _send_content << std::endl;
+    // std::cout << "Size to send = " << _send_content.size() << std::endl;
+    // std::cout << "Sent = " << _send_content << std::endl;
     if (fd < 0)
         throw ErrorExcept(500, "Invalid fd to send");
     const char *resp =  _send_content.c_str();
-    ssize_t sent = send(fd, resp, _send_content.length(), 0);
+    ssize_t sent = send(fd, resp, to_send, 0);
     if (sent < 0)
     {
         perror("Send failed");
