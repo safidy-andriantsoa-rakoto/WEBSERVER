@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/31 09:29:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 14:55:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@
 						"host localhost\n" \
 						"port 2003\n" \
 						"server_names localhost\n" \
-						"size 200 MB\n" \
+						"size 2 GB\n" \
 						"location / {\n" \
 						"	root ./site\n" \
 						"	method GET POST DELETE\n" \

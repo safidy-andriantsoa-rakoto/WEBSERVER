@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/03 10:53:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:29:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -389,6 +389,8 @@ void Client::stdGetRequest()
 	try
 	{
 		fileContent = readFileToString(filePath);
+		/*Use fstat to check the file size instead of readFileToString*/
+		/*Instead of fileContent, send fstream*/
 		setStatusCodeResponse(200);
 		setRspOriginPath(filePath);
 		setRspType(filePath);

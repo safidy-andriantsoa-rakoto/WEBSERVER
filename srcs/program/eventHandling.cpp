@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 09:49:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:30:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 		{
 			(*it)->setReadStat(OP_CLOSE);
 			(*it)->bufferReadParser();
+			/*Send body into a stream*/
 			// (*it)->displayBufferReadParsed();/*[TEST]*/
 			epoll.epoll_clean((*it)->getOutputFd());
 			(*it)->setOutputFd(-1);

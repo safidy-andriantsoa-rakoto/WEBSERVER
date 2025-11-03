@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 08:02:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/31 07:27:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:04:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,16 @@ std::string	convertStringMapToString(stringMap const & map, std::string const & 
 	return result;
 }
 
-float	convertToBytes(std::string const & n)
+float	convertToBytes(stringVect const & vect)
 {
 	int					exp;
 	float				value;
 	std::string			unit;
 	std::stringstream	ss;
 
-	ss << n;
+	ss << vect[0];
 	ss >> value;
-	ss >> unit;
+	unit = vect[1];
 	exp = 0;
 	if (unit == "KB")
 		exp = 3;

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 10:54:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:28:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,8 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 		addStatusCode(content);
 		_originPath = "backup.html";
 	}
+	/*Check the content size using fstat*/
+	/*Instead of content, send fstream*/
 	if (content.size() <= _BUFFER)
 	{
 		_body = content;
@@ -158,7 +160,7 @@ void	Response::generateStandardResponse(std::string const &  body)
 	setStatusLine();
 	_body = body;
 	_header.clear();
-	_header["Content-Length"] = convertIntToString(_body.size() + 2);
+	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
 }
@@ -167,12 +169,10 @@ void Response::generateChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;
-	if (_respStat == OP_CLOSE)
-		_body += "\r\n";
 	_header.clear();
 	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
-	_header["Content-Length"] = convertIntToString(_originBody.size() + 2);
+	_header["Content-Length"] = convertIntToString(_originBody.size());
 }
 
 void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)

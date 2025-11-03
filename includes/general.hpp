@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/31 08:13:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:00:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ float       convertStringToFLoat(std::string const & n);
 int         convertStringToInt(std::string const & n);
 std::string	convertStringMapToString(stringMap const & map, std::string const & sep);
 char**	    convertStringVectToTable(stringVect & vect);
-float       convertToBytes(std::string const & n);
+float		convertToBytes(stringVect const & vect);
 
 	//DisplayUtils
 void	    displayFormatting(std::string const & text, std::string const & title);

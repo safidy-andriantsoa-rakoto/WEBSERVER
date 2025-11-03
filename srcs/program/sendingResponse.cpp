@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 11:21:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:06:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		(*it).setChunkedResponse();
 	}
 	if ((*it).getResponseStat() == OP_ONGOING || (*it).getResponseStat() == OP_CLOSE)
-		rspString = (*it).getBodyResponse() + "\r\n";
+		rspString = (*it).getBodyResponse();
 	else
 		rspString = (*it).getFullResponse();
 	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
-	// std::cout << rspString << std::endl;
+	std::cout << rspString << std::endl;
 	send_value(fdCli, rspString);
 	if ((*it).getResponseStat() == OP_START)
 		(*it).setResponseStat(OP_ONGOING);
@@ -50,11 +50,8 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 
 void send_value(int const & fd, std::string & _send_content)
 {
-
     size_t to_send = _send_content.size();
 
-    // std::cout << "Size to send = " << _send_content.size() << std::endl;
-    // std::cout << "Sent = " << _send_content << std::endl;
     if (fd < 0)
         throw ErrorExcept(500, "Invalid fd to send");
     const char *resp =  _send_content.c_str();
