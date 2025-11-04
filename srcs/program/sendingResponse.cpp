@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 21:10:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 08:12:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 
 	if ((*it).getResponseStat() != OP_ONCE)
 	{
-		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
+		std::cout << "\033[35mSending standard chunked response" << "\033[0m"<< std::endl;
 		(*it).setChunkedResponse();
 	}
 	if ((*it).getResponseStat() == OP_ONGOING || (*it).getResponseStat() == OP_CLOSE)
@@ -36,13 +36,14 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	else
 		rspString = (*it).getFullResponse();
 	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
-	std::cout << rspString << std::endl;
+	// std::cout << rspString << std::endl;
 	send_value(fdCli, rspString);
 	if ((*it).getResponseStat() == OP_START)
 		(*it).setResponseStat(OP_ONGOING);
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 	{
 		std::cout << "			Ending send response" << std::endl;
+		(*it).getObjResponse().closeFile();
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
 	}
@@ -68,6 +69,7 @@ void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		(*it).setResponseStat(OP_ONGOING);
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 	{
+		std::cout << "			Ending send response" << std::endl;
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
 	}
@@ -88,5 +90,6 @@ void send_value(int const & fd, std::string & _send_content)
     }
     else if (sent == 0)
         throw ErrorExcept(400, "Connection closed by peer"); //400?
-    _send_content.clear();
+    std::cout << "			sent = " << sent << std::endl;
+	_send_content.clear();
 }

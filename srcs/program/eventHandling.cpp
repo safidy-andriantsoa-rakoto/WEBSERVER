@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 21:04:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 07:48:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		}
 		sendCgiResponse(it, fdCli, epoll);
 	}
+	else if ((*it).getCategoryResponse() == ERR_RSP)
+		sendCgiResponse(it, fdCli, epoll);
 	else
 		sendStandardResponse(it, fdCli, epoll);
 }

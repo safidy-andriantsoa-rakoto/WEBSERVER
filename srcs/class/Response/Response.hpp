@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 21:29:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 08:12:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ class Response
 		void				setOriginBody(std::string const & body);
 
 		void				clearResponse();
+
+		void				closeFile();
 
         void				generateCgiSingleResponse(std::string const & body);/* [!] Need to erase */
         void				generateStandardResponse();

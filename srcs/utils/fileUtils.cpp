@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 22:07:20 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 08:11:08 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,22 +45,68 @@ std::string readFileToString(std::string filePath)
 	return (fileString);
 }
 
+// std::string	readFileStream(std::fstream & file, int & stat)
+// {
+// 	std::string		res;
+//     char        	buffer[_BUFFER + 1] = {0};
+//     std::streamsize bytesRead;
+
+//     file.read(buffer, _BUFFER);
+//     bytesRead = file.gcount(); 
+//     if (!file)
+//     {
+// 		std::cout << "					CLOSING STREAM !!!!!!!!!!!!!" << std::endl;	
+//         stat = OP_CLOSE;
+//         file.close();
+//     }
+//     buffer[bytesRead] = '\0'; 
+//     std::cout << "\033[42mBUFFER : " << bytesRead << " ===>" << buffer << " <=====\033[0m" << std::endl;
+//     res.append(buffer, bytesRead);
+//     return res;
+// }
+
 std::string	readFileStream(std::fstream & file, int & stat)
 {
-	std::string res;
-    char        buffer[_BUFFER + 1] = {0};
+    std::string res;
+    char buffer[_BUFFER + 1] = {0};
     std::streamsize bytesRead;
 
-    file.read(buffer, _BUFFER);
-    bytesRead = file.gcount(); 
-    if (!file)
-    {
+    // Check stream state before reading
+    if (!file.is_open()) 
+	{
+        std::cout << "Stream not open" << std::endl;
         stat = OP_CLOSE;
-        file.close();
+        return res;
     }
-    buffer[bytesRead] = '\0'; 
-    std::cout << "\033[42mBUFFER === >" << bytesRead << " <=====\033[0m" << std::endl;
-    res.append(buffer, bytesRead); 
+    if (!file.good())
+	{
+        std::cout << "Stream not in good state - clearing errors" << std::endl;
+        file.clear(); // Clear any error flags
+    }
+    file.read(buffer, _BUFFER);
+    bytesRead = file.gcount();
+    if (file.eof())
+	{
+        std::cout << "Reached end of file" << std::endl;
+        stat = OP_CLOSE;
+        // file.close();
+    }
+    else if (!file) 
+	{
+        std::cout << "Error reading from stream" << std::endl;
+		file.clear();
+    }
+    
+    if (bytesRead > 0) 
+	{
+        buffer[bytesRead] = '\0';
+        std::cout << "\033[42mBUFFER : " << bytesRead << " ===>" << buffer << " <=====\033[0m" << std::endl;
+        res.append(buffer, bytesRead);
+    }
+	else 
+	{
+        std::cout << "No data read from stream" << std::endl;
+    }
     return res;
 }
 

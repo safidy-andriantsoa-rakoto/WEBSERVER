@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 22:00:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 08:12:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,17 @@ void Response::setPosition(size_t const &newPos){_pos = newPos;}
 void Response::setFileStream(std::string const & path)
 { 
 	_file.open(path.c_str(), std::ios::in);
-    if (_file.is_open() == false) 
+	if (!_file.is_open()) {
+        std::cout << "Stream not open" << std::endl;
 		throw std::runtime_error("Error on opening file");
+    }
+    if (!_file.good())
+	{
+        std::cout << "Stream not in good state - clearing errors" << std::endl;
+        _file.clear(); // Clear any error flags
+		throw std::runtime_error("Error on opening file");
+    }
+	std::cout << "SET FILESTREAM DONE FOR " << path << std::endl;
 }
 
 size_t Response::getContentLength() const{return _contentLength;}
@@ -97,7 +106,7 @@ std::string Response::getFullResponse()
 	std::string	endLine = "\r\n";
 
 	headerString = convertStringMapToString(_header, endLine);
-	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
+	_fullResponse = _statusLine + endLine + headerString + endLine + _body;
 	return _fullResponse;
 }
 
@@ -108,6 +117,8 @@ std::string Response::getOriginBody() const{return _originBody;}
 void Response::setOriginBody(std::string const &body){_originBody = body;}
 
 void	Response::clearResponse(){_fullResponse.clear();}
+
+void Response::closeFile(){ _file.close();}
 
 void Response::addStatusCode(std::string & content)
 {
@@ -146,8 +157,6 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 		addStatusCode(content);
 		_originPath = "backup.html";
 	}
-	/*Check the content size using fstat*/
-	/*Instead of content, send fstream*/
 	if (content.size() <= _BUFFER)
 	{
 		_body = content;
