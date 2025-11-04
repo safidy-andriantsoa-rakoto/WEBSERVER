@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/04 15:30:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 21:17:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ void Client::setRspRegFileFd(std::string const & path)
 	}
 	catch(const std::exception& e)
 	{
+		/* [!] : See how to get error 403*/
 		std::cerr << e.what() << std::endl;
 		std::string err = e.what();
 		if (err == "Forbidden")
@@ -128,6 +129,7 @@ void Client::setRegStandardResponse(std::string const & path)
 	}
 	catch(const std::exception& e)
 	{
+		/* [!] : See how to get error 403*/
 		std::string err = e.what();
 		if (err == "Forbidden")
 			throw ErrorExcept(403, "Error on open Reg file");
@@ -435,29 +437,20 @@ void Client::stdGetRequest()
 		throw LDirExcept(200, dir, _request.getOriginalRequestTarget(), "Listing directory");
 	if (dir && _request.getAutoIdx() == false)
 		filePath += "/index.html";
-	try
-	{
 		size_t	fileSize = getFileSize(filePath);
-
-		setStatusCodeResponse(200);
-		setRspOriginPath(filePath);
-		setRspType(filePath);
-		setRspContentLength(fileSize);
-		if (fileSize <= _BUFFER)
-		{
-			setResponseStat(OP_ONCE);
-			setRegStandardResponse(filePath);
-		}
-		else
-		{
-			setResponseStat(OP_START);
-			setRspRegFileFd(filePath);
-		}
-	}
-	catch(const std::exception& e)
+	setStatusCodeResponse(200);
+	setRspOriginPath(filePath);
+	setRspType(filePath);
+	setRspContentLength(fileSize);
+	if (fileSize <= _BUFFER)
 	{
-		/* [!] : Review error for forbidden*/
-		throw ErrorExcept(404, "GET : File not found");
+		setResponseStat(OP_ONCE);
+		setRegStandardResponse(filePath);
+	}
+	else
+	{
+		setResponseStat(OP_START);
+		setRspRegFileFd(filePath);
 	}
 }
 
@@ -625,7 +618,6 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		if (_request.getIsCgi() == true)
 		{
 			_cgiFD->setBufferWrite(_request.getBody());
-			opt = EPOLLOUT;
 			return;
 		}
 	}
