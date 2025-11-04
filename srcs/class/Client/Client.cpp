@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/04 10:57:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 11:48:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ void Client::setCatchedResponse(AExcept & e)
 	_response.generateCatchedResponse(e, errPage, filePath, _fdType);
 	_request.setRequestTarget(filePath);
 }
+
+void Client::closeRspFd(){_response.closeRegFileFd();}
 
 void Client::setRspRegFileFd(std::string const & path)
 {

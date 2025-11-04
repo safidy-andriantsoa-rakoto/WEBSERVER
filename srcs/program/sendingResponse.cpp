@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 10:54:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 11:35:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	sendResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	else
 		rspString = (*it).getFullResponse();
 	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
-	// std::cout << rspString << std::endl;
+	// std::cout << rspString.size() << std::endl;
 	send_value(fdCli, rspString);
 	if ((*it).getResponseStat() == OP_START)
 		(*it).setResponseStat(OP_ONGOING);
@@ -76,7 +76,8 @@ void send_value(int const & fd, std::string & _send_content)
         throw ErrorExcept(500, "Send_value error");
     }
     else if (sent == 0)
+	{
         throw ErrorExcept(400, "Connection closed by peer"); //400?
-    std::cout << "			sent = " << sent << std::endl;
+	}
 	_send_content.clear();
 }

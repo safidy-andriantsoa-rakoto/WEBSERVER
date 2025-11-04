@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 09:39:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 11:45:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,7 @@ void	Handler::cleanFdAndAlloc()
 	{
 		if ((*itCli).get_clientFD() != -1)
 			close((*itCli).get_clientFD());
+		(*itCli).closeRspFd();
 		(*itCli).clearPtrCgiFd();
 	}
 }

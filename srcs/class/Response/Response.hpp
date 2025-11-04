@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 10:57:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 11:44:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,9 @@ class Response
 		size_t				getPosition() const;
 		void				setPosition(size_t const & newPos);
 
-		int					getRegFileFd() const;
+		int	&				getRegFileFd();
 		void				setRegFileFd(int const & fd);
+		void				closeRegFileFd();
 
 		size_t				getContentLength() const;
 		void				setContentLength(size_t const & size);

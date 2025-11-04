@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 10:57:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 11:44:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,15 @@ size_t Response::getPosition() const{return _pos;}
 
 void Response::setPosition(size_t const &newPos){_pos = newPos;}
 
-int Response::getRegFileFd() const{return _regFileFd;}
+int & Response::getRegFileFd(){return _regFileFd;}
 
 void Response::setRegFileFd(int const &fd){ _regFileFd = fd;}
+
+void Response::closeRegFileFd()
+{
+	if (_regFileFd != -1)
+		close(_regFileFd);
+}
 
 size_t Response::getContentLength() const{return _contentLength;}
 
@@ -132,6 +138,10 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 		if (it != errPage.listError.end())
 			filePath = errPage.filePath;
 	}
+	/*Add two options : from ERR_PATH or errPage
+		errPage => STD_RSP
+		ERR_PATH => stringResponse
+	*/
 	try
 	{
 		content = readFileToString(filePath);
@@ -189,10 +199,11 @@ void Response::generateRegChunkedResponse()
 {
 	setStatusLine();
 	_body = readFromRegFileFd(_regFileFd, _respStat);
+	std::cout << "								BODY = " << _body.size() << std::endl;
 	_header.clear();
 	_header["Content-Length"] = convertIntToString(_contentLength);
-	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
+	_header["Connection"] = "keep-alive";
 }
 
 void Response::generateStringChunkedResponse(std::string const & body)

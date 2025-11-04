@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 10:28:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 11:24:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ std::string readFileToString(std::string filePath)
 
 std::string	readFromRegFileFd(int & fd, int & stat)
 {
-    std::string res;
     char		buffer[_BUFFER + 1] = {0};
     int			bytesRead;
 
@@ -61,8 +60,8 @@ std::string	readFromRegFileFd(int & fd, int & stat)
 			throw std::runtime_error("Error on reading");
 	}
 	buffer[bytesRead] = '\0';
-	res.append(buffer);
-	// std::cout << "				BUFFER = " << bytesRead << " ****************> " << buffer << " <***************** " << std::endl;
+	std::string res(buffer, bytesRead);
+	// std::cout << "				BUFFER = " << bytesRead << " ****************> " << res << " <***************** " << std::endl;
     return res;
 }
 
