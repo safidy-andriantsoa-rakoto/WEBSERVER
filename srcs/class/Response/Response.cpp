@@ -6,17 +6,17 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 08:12:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 10:57:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
-Response::Response() : _respCategory(STD_RSP), _contentLength(0),  _pos(0){}
+Response::Response() : _respCategory(STD_RSP), _regFileFd(-1), _contentLength(0), _pos(0){}
 
-Response::Response(int const & statusCode) : _statusCode(statusCode), _contentLength(0), _pos(0){}
+Response::Response(int const & statusCode) : _statusCode(statusCode), _regFileFd(-1), _contentLength(0), _pos(0){}
 
-Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type),_contentLength(0), _pos(0){}
+Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type), _regFileFd(-1), _contentLength(0), _pos(0){}
 
 Response::Response(Response const & other) :
 	_statusCode(other._statusCode),
@@ -27,6 +27,7 @@ Response::Response(Response const & other) :
 	_fullResponse(other._fullResponse),
 	_respCategory(other._respCategory),
 	_respStat(other._respStat),
+	_regFileFd(other._regFileFd),
 	_contentLength(other._contentLength),
 	_originPath(other._originPath),
 	_originBody(other._originBody),
@@ -44,6 +45,7 @@ Response &Response::operator=(Response const & other)
 		_fullResponse = other._fullResponse;
 		_respCategory = other._respCategory;
 		_respStat = other._respStat;
+		_regFileFd = other._regFileFd;
 		_contentLength = other._contentLength;
 		_originPath = other._originPath;
 		_originBody = other._originBody;
@@ -68,21 +70,9 @@ size_t Response::getPosition() const{return _pos;}
 
 void Response::setPosition(size_t const &newPos){_pos = newPos;}
 
-void Response::setFileStream(std::string const & path)
-{ 
-	_file.open(path.c_str(), std::ios::in);
-	if (!_file.is_open()) {
-        std::cout << "Stream not open" << std::endl;
-		throw std::runtime_error("Error on opening file");
-    }
-    if (!_file.good())
-	{
-        std::cout << "Stream not in good state - clearing errors" << std::endl;
-        _file.clear(); // Clear any error flags
-		throw std::runtime_error("Error on opening file");
-    }
-	std::cout << "SET FILESTREAM DONE FOR " << path << std::endl;
-}
+int Response::getRegFileFd() const{return _regFileFd;}
+
+void Response::setRegFileFd(int const &fd){ _regFileFd = fd;}
 
 size_t Response::getContentLength() const{return _contentLength;}
 
@@ -117,8 +107,6 @@ std::string Response::getOriginBody() const{return _originBody;}
 void Response::setOriginBody(std::string const &body){_originBody = body;}
 
 void	Response::clearResponse(){_fullResponse.clear();}
-
-void Response::closeFile(){ _file.close();}
 
 void Response::addStatusCode(std::string & content)
 {
@@ -162,7 +150,7 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 		_body = content;
 		_respStat = OP_ONCE;
 		_type = Mime::getFileType(_originPath);
-		generateCgiSingleResponse(content);
+		generateStringSingleResponse(content);
 	}
 	else
 	{
@@ -177,7 +165,7 @@ void Response::setStatusLine()
 	_statusLine = "HTTP/1.1 " + convertIntToString(_statusCode) + " " + getReasonPhrase(_statusCode);
 }
 
-void	Response::generateCgiSingleResponse(std::string const &  body)
+void	Response::generateStringSingleResponse(std::string const &  body)
 {
 	setStatusLine();
 	_body = body;
@@ -190,25 +178,24 @@ void	Response::generateCgiSingleResponse(std::string const &  body)
 void Response::generateStandardResponse()
 {
 	setStatusLine();
-	_body = readFileStream(_file, _respStat);
+	_body = readFromRegFileFd(_regFileFd, _respStat);
 	_header.clear();
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::generateChunkedResponse()
+void Response::generateRegChunkedResponse()
 {
 	setStatusLine();
-	/* [!] Update body to read from fileStream*/
-	_body = readFileStream(_file, _respStat);
+	_body = readFromRegFileFd(_regFileFd, _respStat);
 	_header.clear();
+	_header["Content-Length"] = convertIntToString(_contentLength);
 	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
-	_header["Content-Length"] = convertIntToString(_contentLength);
 }
 
-void Response::generateCgiChunkedResponse(std::string const & body)
+void Response::generateStringChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;

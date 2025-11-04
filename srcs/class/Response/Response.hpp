@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 08:12:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 10:57:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Response
 
 		int					_respStat;
 
-		std::fstream		_file;
+		int					_regFileFd;
 		size_t				_contentLength;
 
 		std::string			_originPath;
@@ -64,7 +64,8 @@ class Response
 		size_t				getPosition() const;
 		void				setPosition(size_t const & newPos);
 
-		void				setFileStream(std::string const & path);
+		int					getRegFileFd() const;
+		void				setRegFileFd(int const & fd);
 
 		size_t				getContentLength() const;
 		void				setContentLength(size_t const & size);
@@ -88,12 +89,10 @@ class Response
 
 		void				clearResponse();
 
-		void				closeFile();
-
-        void				generateCgiSingleResponse(std::string const & body);/* [!] Need to erase */
+        void				generateStringSingleResponse(std::string const & body);/* [!] Need to erase */
         void				generateStandardResponse();
-		void				generateChunkedResponse();
-		void				generateCgiChunkedResponse(std::string const & body);
+		void				generateRegChunkedResponse();
+		void				generateStringChunkedResponse(std::string const & body);
 		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);
 		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);
 		void				generateRedirectResponse(RedirExcept & r);

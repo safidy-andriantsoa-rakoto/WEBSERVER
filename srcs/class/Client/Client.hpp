@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/03 21:37:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 10:57:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,14 +108,14 @@ class Client : public Server
 		void		updateResponseCategory(int const & stat);
 		void		setCatchedResponse(AExcept & e);
 
-		void		setRspFileStream(std::string const & path);
+		void		setRspRegFileFd(std::string const & path);
 		void		setRspContentLength(size_t const & size);
 
 		void		setStandardResponse(std::string const & path);
-		void		setChunkedResponse();
+		void		setRegFdChunkedResponse();
 		
-		void		setCgiSingleResponse(std::string const & content); /* [!] : need to erase */
-		void		setCgiChunkedResponse();
+		void		setStringSingleResponse(std::string const & content); /* [!] : need to erase */
+		void		setStringChunkedResponse();
 		void		setupCgiResponse();
 
 		void		setSingleResponse(int const & statusCode);

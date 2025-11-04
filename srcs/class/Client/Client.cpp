@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/03 21:41:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 10:57:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,21 +97,44 @@ void Client::setCatchedResponse(AExcept & e)
 	_request.setRequestTarget(filePath);
 }
 
-void Client::setRspFileStream(std::string const & path){_response.setFileStream(path);}
+void Client::setRspRegFileFd(std::string const & path)
+{
+	int fd;
+	try
+	{
+		fd = openRegFile(path);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+		throw ErrorExcept(404, "Error on open Reg file");
+	}
+	_response.setRegFileFd(fd);
+}
 
 void Client::setRspContentLength(size_t const &size){_response.setContentLength(size);}
 
 void Client::setStandardResponse(std::string const & path)
 {
-	_response.setFileStream(path);
+	int fd;
+	try
+	{
+		fd = openRegFile(path);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+		throw ErrorExcept(404, "Error on open Reg file");
+	}
+	_response.setRegFileFd(fd);
 	_response.generateStandardResponse();
 }
 
-void Client::setChunkedResponse(){_response.generateChunkedResponse();}
+void Client::setRegFdChunkedResponse(){_response.generateRegChunkedResponse();}
 
-void Client::setCgiSingleResponse(std::string const & content){_response.generateCgiSingleResponse(content);}
+void Client::setStringSingleResponse(std::string const & content){_response.generateStringSingleResponse(content);}
 
-void Client::setCgiChunkedResponse()
+void Client::setStringChunkedResponse()
 {
 	std::string content;
 	size_t		pos;
@@ -126,7 +149,7 @@ void Client::setCgiChunkedResponse()
 		_response.setRespStat(OP_CLOSE);
 		pos = 0;
 	}
-	_response.generateCgiChunkedResponse(content);
+	_response.generateStringChunkedResponse(content);
 	_response.setPosition(pos);
 }
 
@@ -141,7 +164,7 @@ void Client::setupCgiResponse()
 	if (size <= _BUFFER)
 	{
 		setResponseStat(OP_ONCE);
-		setCgiSingleResponse(_cgiFD->getBody());
+		setStringSingleResponse(_cgiFD->getBody());
 	}
 	else
 	{
@@ -245,6 +268,7 @@ void Client::processRequestWithConfig()
 
 	if (_request.getHttp() != "HTTP/1.1")
 		throw ErrorExcept(505, "This server only support HTTP/1.1\n", "Http version error");
+	_request.setIsCgi(false);
 	buildRequestTarget();
 	if (_request.getIsCgi() == false && (_request.getMethod() == "POST" || _request.getMethod() == "DELETE"))
 	{
@@ -285,7 +309,6 @@ void Client::buildRequestTarget()
 
 	target = _request.getRequestTarget();
 	originTarget = target;
-	_request.setIsCgi(false);
 	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
 	if (target == "/")
 	{
@@ -374,12 +397,14 @@ void Client::get_request(uint32_t & opt, int *fd, pid_t & childPid)
 {
 	if (_request.getIsCgi() == false)
 	{
+		updateResponseCategory(STD_RSP);
 		_fdType = STD_FILE;
 		stdGetRequest();
 		opt = EPOLLOUT;
 	}
 	else
 	{
+		updateResponseCategory(CGI_RSP);
 		_fdType = GET_PHP_SCRIPT;
 		cgiGetRequest(fd, childPid);
 		setStatusCodeResponse(200);
@@ -417,7 +442,7 @@ void Client::stdGetRequest()
 		else
 		{
 			setResponseStat(OP_START);
-			setRspFileStream(filePath);
+			setRspRegFileFd(filePath);
 		}
 	}
 	catch(const std::exception& e)
@@ -465,18 +490,17 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd, pid_t & ch
 {
 	if (_request.getIsCgi() == false)
 	{
+		updateResponseCategory(STD_RSP);
 		_fdType = STD_FILE;
 		stdPostRequest(header, opt);
 	}
 	else
 	{
+		updateResponseCategory(CGI_RSP);
 		opt = EPOLLIN;
 		_fdType = POST_PHP_SCRIPT;
-		if (!_cgiFD)
-		{
-			cgiPostRequest(fd, childPid);
-			setStatusCodeResponse(200);
-		}
+		cgiPostRequest(fd, childPid);
+		setStatusCodeResponse(200);
 	}
 }
 
@@ -545,6 +569,7 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 		_request.clearCgiClass();
 		fd[FD_STDIN] = pipeInFd[1];
 		fd[FD_STDOUT] = pipeOutFd[0];
+		std::cout << "		POST CGI = " << fd[FD_STDIN] << " ; " << fd[FD_STDOUT] << std::endl;
 	}
 }
 
@@ -573,7 +598,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 {
 	stringMap	header;
 	
-	std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
+	// std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
 	if (!_request.get_is_CRLF_header())
 	{
 		_request.setPartRequest(clientRequest);
@@ -587,12 +612,14 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	}
 	else
 	{
+		std::cout << "				SET BODY" << std::endl;
 		_request.set_Body(clientRequest);
 		_request.set_c_length_received(clientRequest.size());
 		if (_request.getIsCgi() == true)
 		{
 			_cgiFD->setBufferWrite(_request.getBody());
 			opt = EPOLLOUT;
+			return;
 		}
 	}
 	header = _request.getHeader();

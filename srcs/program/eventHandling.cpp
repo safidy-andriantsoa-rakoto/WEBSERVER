@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 07:48:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 10:46:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,11 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 			handler.setIsChildProcess(true);
 			return;
 		}
+		// std::cout << "		FD STDIN = " << fdCgi[FD_STDIN] << " STDOUT = " << fdCgi[FD_STDOUT] << std::endl;
 		if (fdCgi[FD_STDOUT] > 0)
 			createCgiFd(it, handler, epoll, fdCgi, childPid);
+		if ((*it).getFdType() == POST_PHP_SCRIPT)
+			epoll.epoll_update_event(fdCli, epollOpt);
 	}
 	else
 		epoll.epoll_update_event(fdCli, epollOpt);
@@ -70,6 +73,7 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 
 	if ((*it).getPtrCgiFd())
 	{
+		std::cout << "Sending CGI response" << std::endl;
 		bool respMode = (*it).getPtrCgiFd()->getRespMode();
 		int	cgiReadStat = (*it).getPtrCgiFd()->getReadStat();
 		if (respMode == false)
@@ -78,12 +82,8 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 				return;
 			(*it).setupCgiResponse();
 		}
-		sendCgiResponse(it, fdCli, epoll);
 	}
-	else if ((*it).getCategoryResponse() == ERR_RSP)
-		sendCgiResponse(it, fdCli, epoll);
-	else
-		sendStandardResponse(it, fdCli, epoll);
+	sendResponse(it, fdCli, epoll);
 }
 
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)
@@ -114,16 +114,14 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	bytesRead = read((*it)->getOutputFd(), buffer, _BUFFER);
 	if (bytesRead == 0)
 	{
-		// std::cout << "Nothing to read from CGI OUTPUT : " << bytesRead << std::endl;
 		if ((*it)->getReadStat() == OP_ONGOING)
 		{
 			(*it)->setReadStat(OP_CLOSE);
 			(*it)->bufferReadParser();
-			/*Send body into a stream*/
-			// (*it)->displayBufferReadParsed();/*[TEST]*/
 			epoll.epoll_clean((*it)->getOutputFd());
 			(*it)->setOutputFd(-1);
 			(*it)->setIsChildAlive(false);
+			closeCgiFdEvent(handler, i, epoll);
 			epoll.epoll_update_event(fdCli, EPOLLOUT);
 		}
 		return ;

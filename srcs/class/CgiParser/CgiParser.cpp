@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/01 20:01:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 09:46:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ void CgiParser::buildEnvp()
 	_envp = convertStringVectToTable(vect);
 	vect.clear();
 	ownedConfig.clear();
+	displayCharTable(_envp, "CGI ENVP");
 }
 
 void CgiParser::execCgi()

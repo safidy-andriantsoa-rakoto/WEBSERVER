@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 21:25:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 08:36:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,10 @@
 bool        checkFileExtension(std::string const & fileName, std::string extension);
 void	    printFileContent(std::string const & path);
 std::string	readFileToString(std::string _path);
-std::string	readFileStream(std::fstream & file, int & stat);
+std::string	readFromRegFileFd(int & fd, int & stat);
 stringMap	splitFileToMapString(std::string const & filePath, std::string const & sep);
 std::string	getFileExtension(std::string const & fileName);
-int         openFile(std::string const & filePath);
+int         openRegFile(std::string const & filePath);
 size_t	    getFileSize(std::string const & path);
 DIR*	    openDir(std::string const & dirPath);
 DIR*	    openDir(std::string const & dirPath);

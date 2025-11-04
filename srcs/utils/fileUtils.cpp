@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 08:11:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 10:28:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,68 +45,24 @@ std::string readFileToString(std::string filePath)
 	return (fileString);
 }
 
-// std::string	readFileStream(std::fstream & file, int & stat)
-// {
-// 	std::string		res;
-//     char        	buffer[_BUFFER + 1] = {0};
-//     std::streamsize bytesRead;
-
-//     file.read(buffer, _BUFFER);
-//     bytesRead = file.gcount(); 
-//     if (!file)
-//     {
-// 		std::cout << "					CLOSING STREAM !!!!!!!!!!!!!" << std::endl;	
-//         stat = OP_CLOSE;
-//         file.close();
-//     }
-//     buffer[bytesRead] = '\0'; 
-//     std::cout << "\033[42mBUFFER : " << bytesRead << " ===>" << buffer << " <=====\033[0m" << std::endl;
-//     res.append(buffer, bytesRead);
-//     return res;
-// }
-
-std::string	readFileStream(std::fstream & file, int & stat)
+std::string	readFromRegFileFd(int & fd, int & stat)
 {
     std::string res;
-    char buffer[_BUFFER + 1] = {0};
-    std::streamsize bytesRead;
+    char		buffer[_BUFFER + 1] = {0};
+    int			bytesRead;
 
-    // Check stream state before reading
-    if (!file.is_open()) 
+	bytesRead = read(fd, buffer, _BUFFER);
+	if (bytesRead <= 0)
 	{
-        std::cout << "Stream not open" << std::endl;
-        stat = OP_CLOSE;
-        return res;
-    }
-    if (!file.good())
-	{
-        std::cout << "Stream not in good state - clearing errors" << std::endl;
-        file.clear(); // Clear any error flags
-    }
-    file.read(buffer, _BUFFER);
-    bytesRead = file.gcount();
-    if (file.eof())
-	{
-        std::cout << "Reached end of file" << std::endl;
-        stat = OP_CLOSE;
-        // file.close();
-    }
-    else if (!file) 
-	{
-        std::cout << "Error reading from stream" << std::endl;
-		file.clear();
-    }
-    
-    if (bytesRead > 0) 
-	{
-        buffer[bytesRead] = '\0';
-        std::cout << "\033[42mBUFFER : " << bytesRead << " ===>" << buffer << " <=====\033[0m" << std::endl;
-        res.append(buffer, bytesRead);
-    }
-	else 
-	{
-        std::cout << "No data read from stream" << std::endl;
-    }
+		stat = OP_CLOSE;
+		close(fd);
+		fd = -1;
+		if (bytesRead < 0)
+			throw std::runtime_error("Error on reading");
+	}
+	buffer[bytesRead] = '\0';
+	res.append(buffer);
+	// std::cout << "				BUFFER = " << bytesRead << " ****************> " << buffer << " <***************** " << std::endl;
     return res;
 }
 
@@ -278,7 +234,7 @@ bool checkCountWord(const std::vector<std::string> &lines, const std::string &wo
 	return (true);
 }
 
-int	openFile(std::string const & filePath)
+int	openRegFile(std::string const & filePath)
 {
 	int			fd;
 	DIR*		dir;
@@ -286,12 +242,13 @@ int	openFile(std::string const & filePath)
 	dir = opendir(filePath.c_str());
 	if (dir)
 		throw std::runtime_error("File is a directory");	
-	fd = open(filePath.c_str(), O_RDONLY);
+	fd = open(filePath.c_str(), O_RDONLY); //Add more error checking
 	if (fd == -1)
 	{
 		perror("Open file");
 		throw std::runtime_error("File error");
 	}
+	std::cout << "		FD = " << fd << " from " << filePath << std::endl;
 	return fd;
 }
 
