@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 11:24:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:11:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ std::string	readFromRegFileFd(int & fd, int & stat)
 	}
 	buffer[bytesRead] = '\0';
 	std::string res(buffer, bytesRead);
-	// std::cout << "				BUFFER = " << bytesRead << " ****************> " << res << " <***************** " << std::endl;
     return res;
 }
 
@@ -247,7 +246,6 @@ int	openRegFile(std::string const & filePath)
 		perror("Open file");
 		throw std::runtime_error("File error");
 	}
-	std::cout << "		FD = " << fd << " from " << filePath << std::endl;
 	return fd;
 }
 
@@ -257,7 +255,7 @@ size_t	getFileSize(std::string const & path)
 
 	if (stat(path.c_str(), &sf) == -1)
 		throw std::runtime_error("Stat function error");
-	std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
+	// std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
 	return sf.st_size;
 }
 

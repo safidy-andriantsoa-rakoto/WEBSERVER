@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 09:43:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 12:55:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,11 +159,8 @@ void	Request::addRequestBody(std::string const & requeststring, size_t const & p
 	_body = content;
 	_c_length_received = content.size();
 	_content_length = length;
-	// if (_partRequest.find(sep + sep) != std::string::npos && _method == "POST")
 	if (_partRequest.find(CRLF_SEP) != std::string::npos && _method == "POST")
 		this->_is_CRLF_header = true;
-	// std::cout << "\nBODY=\n" << _body << "\n"<< std::endl;
-	// std::cout << "\nCONTENT_LENGTH=" << _content_length << " \nreceived =" << content.size() << "\n"<< std::endl;
 }
 
 void	Request::parseRequest()
@@ -238,7 +235,6 @@ void Request::set_c_length_received(size_t received)
 {
 	if ((int)received > -1)
 		this->_c_length_received += received;
-	std::cout << "			ACTUAL RECEIVED === " << _c_length_received << std::endl;
 }
 
 size_t Request::get_content_length(){return (this->_content_length);}

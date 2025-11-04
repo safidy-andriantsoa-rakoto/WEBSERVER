@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 10:46:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:57:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,46 +44,15 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		(*it).setCatchedResponse(e);
 		epollOpt = EPOLLOUT;
 	}
-	if (hasSingleResponse((*it).getCategoryResponse()) == true)
+	if (hasSingleResponse((*it).getRspCategory()) == true)
 	{
 		(*it).setResponseStat(OP_ONCE);
 		epollOpt = EPOLLOUT;
 	}
 	if ((*it).getObjRequest().getIsCgi() == true)
-	{
-		if (fdCgi[FD_STDOUT] == -2)
-		{
-			handler.setProgramBreak(true);
-			handler.setIsChildProcess(true);
-			return;
-		}
-		// std::cout << "		FD STDIN = " << fdCgi[FD_STDIN] << " STDOUT = " << fdCgi[FD_STDOUT] << std::endl;
-		if (fdCgi[FD_STDOUT] > 0)
-			createCgiFd(it, handler, epoll, fdCgi, childPid);
-		if ((*it).getFdType() == POST_PHP_SCRIPT)
-			epoll.epoll_update_event(fdCli, epollOpt);
-	}
+		manageCgiAfterProcessingRequest(it, epoll, handler, fdCgi, childPid);
 	else
 		epoll.epoll_update_event(fdCli, epollOpt);
-}
-
-void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
-{
-	std::cout << "-->> \033[45mSendingResponseToClient : " << (*it).getCategoryResponse() << "\033[0m" << std::endl;
-
-	if ((*it).getPtrCgiFd())
-	{
-		std::cout << "Sending CGI response" << std::endl;
-		bool respMode = (*it).getPtrCgiFd()->getRespMode();
-		int	cgiReadStat = (*it).getPtrCgiFd()->getReadStat();
-		if (respMode == false)
-		{
-			if (cgiReadStat != OP_CLOSE)
-				return;
-			(*it).setupCgiResponse();
-		}
-	}
-	sendResponse(it, fdCli, epoll);
 }
 
 void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx)

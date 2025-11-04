@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 08:36:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:09:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ bool        checkDuplicate2(stringVect file, std::string name, size_t &start, si
 
 // dirListing
 stringMap	listingDirectory(DIR* dir, std::string const & path);
-std::string	convertListing(stringMap & mapDir);
+std::string	createListingDirectoryLink(stringMap & mapDir);
 
 //pipeUtils
 void	makeDup2(int const & fd1, int const & fd2, int const & fd3);

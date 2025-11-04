@@ -6,37 +6,44 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 11:35:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:47:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
+int	processCgiSetup(VClientIt & it)
 {
-	std::string	rspString;
-
-	std::cout <<"\033[35mSending single response\n" << rspString.size() << "\033[0m" << std::endl;
-	rspString = (*it).getFullResponse();
-	send_value(fdCli, rspString);
-	epoll.epoll_update_event(fdCli, EPOLLIN);
+	if ((*it).getPtrCgiFd() == NULL)
+		return 0;
+	bool respMode = (*it).getPtrCgiFd()->getRespMode();
+	int	cgiReadStat = (*it).getPtrCgiFd()->getReadStat();
+	if (respMode == false)
+	{
+		if (cgiReadStat != OP_CLOSE)
+			return 1;
+		(*it).setupCgiResponse();
+	}
+	return 0;
 }
 
-void	sendResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
+void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
 	std::string	rspString;
-	int			rspCategory = (*it).getCategoryResponse();
-
+	int			rspCategory = (*it).getRspCategory();
+	std::cout << "-->> \033[45mSendingResponseToClient : " << (*it).getRspCategory() << "\033[0m" << std::endl;
+	if (processCgiSetup(it) == 1)
+		return;
 	if ((*it).getResponseStat() != OP_ONCE)
 	{
 		if (rspCategory == CGI_RSP || rspCategory == ERR_RSP)
 		{
-			std::cout << "\033[35mSending cgi chunked response" << "\033[0m"<< std::endl;
+			std::cout << "\033[35mSending string chunked response" << "\033[0m"<< std::endl;
 			(*it).setStringChunkedResponse();
 		}
 		else
 		{
-			std::cout << "\033[35mSending standard chunked response" << "\033[0m"<< std::endl;
+			std::cout << "\033[35mSending reg chunked response" << "\033[0m"<< std::endl;
 			(*it).setRegFdChunkedResponse();
 		}
 	}
@@ -45,13 +52,13 @@ void	sendResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	else
 		rspString = (*it).getFullResponse();
 	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
-	// std::cout << rspString.size() << std::endl;
+	// std::cout << rspString << std::endl;
 	send_value(fdCli, rspString);
 	if ((*it).getResponseStat() == OP_START)
 		(*it).setResponseStat(OP_ONGOING);
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 	{
-		std::cout << "			Ending send response" << std::endl;
+		// std::cout << "			Ending send response" << std::endl;
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
 		(*it).clearPtrCgiFd();

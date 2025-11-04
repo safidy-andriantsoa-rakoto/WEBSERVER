@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 11:44:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:09:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ class Response
 
 		void				setStatusLine();
 		void				addStatusCode(std::string & content);
+		void				setupDefaultStringPage(std::string const & content);
+		void				setupDefaultErrorPage();
+		void				setupCustomErrorPage(std::string const & filePath);
 		void				buildErrorPage(int const & statusCode, t_errPage & errPage, std::string & filePath, int & fdType);
 
 	public:
@@ -91,7 +94,7 @@ class Response
 		void				clearResponse();
 
         void				generateStringSingleResponse(std::string const & body);/* [!] Need to erase */
-        void				generateStandardResponse();
+        void				generateRegStandardResponse();
 		void				generateRegChunkedResponse();
 		void				generateStringChunkedResponse(std::string const & body);
 		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);

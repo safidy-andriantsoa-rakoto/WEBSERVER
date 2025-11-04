@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 14:25:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/13 14:15:46 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:09:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ stringMap	listingDirectory(DIR* dir, std::string const & relativePath)
 	return map;
 }
 
-std::string	convertListing(stringMap & mapDir)
+std::string	createListingDirectoryLink(stringMap & mapDir)
 {
 	std::string	list;
 

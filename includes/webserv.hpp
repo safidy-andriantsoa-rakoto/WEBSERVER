@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 10:46:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:57:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,14 @@ void			launchServer(Handler & handler);
 //HandleUtils
 void			closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll);
 void			createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *fd, pid_t const & childPid);
+void	        manageCgiAfterProcessingRequest(VClientIt & it, EpollCreation & epoll, Handler & handler, int *fdCgi, pid_t childPid);
 void			handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err);
 bool			hasSingleResponse(int const & respStat);
 std::string		getIdentifier(int const & identifier);
 
-//MessageUtils
-void			sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
-void	        sendResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
-void			sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
-void	        sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
+//sendingResponse
+int				processCgiSetup(VClientIt & it);
+void			sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll);
 void   			send_value(int const & _acceptStatus, std::string & _send_content);
 
 vectServer 		getServer(stringVect file);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handleUtils.cpp                                    :+:      :+:    :+:   */
+/*   eventHandlingUtils.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/31 07:54:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:03:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
 {
-	// std::cout << "Close CGI FD EVENT" << std::endl;
 	vectCgiFdIt	itCgi = handler.getCgiFdIterator(i);
 
 	if ((*itCgi)->getOutputFd() > 0)
@@ -27,7 +26,6 @@ void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
 void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *fd, pid_t const & childPid)
 {
 	std::cout << "Create CGI FD" << std::endl;
-	std::cout << fd[FD_STDIN] << " " << fd[FD_STDOUT] << " => " << childPid << std::endl;
 
 	if ((*it).getFdType() == GET_PHP_SCRIPT)
 	{
@@ -42,6 +40,21 @@ void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *
 		int fdCli = (*it).get_clientFD();
 		epoll.epoll_update_event(fdCli, EPOLLOUT);
 	}
+}
+
+void	manageCgiAfterProcessingRequest(VClientIt & it, EpollCreation & epoll, Handler & handler, int *fdCgi, pid_t childPid)
+{
+	int	fdCli = (*it).get_clientFD();
+	if (fdCgi[FD_STDOUT] == -2)
+	{
+		handler.setProgramBreak(true);
+		handler.setIsChildProcess(true);
+		return;
+	}
+	if (fdCgi[FD_STDOUT] > 0)
+		createCgiFd(it, handler, epoll, fdCgi, childPid);
+	if ((*it).getFdType() == POST_PHP_SCRIPT)
+		epoll.epoll_update_event(fdCli, EPOLLOUT);
 }
 
 void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err)

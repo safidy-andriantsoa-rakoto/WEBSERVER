@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 11:44:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:09:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,10 +125,51 @@ void Response::addStatusCode(std::string & content)
 	replaceString(content, replace, "$status");
 }
 
+void Response::setupDefaultStringPage(std::string const &content)
+{
+	if (content.size() <= _BUFFER)
+	{
+		_body = content;
+		_respStat = OP_ONCE;
+		generateStringSingleResponse(content);
+	}
+	else
+	{
+		_originBody = content;
+		_respStat = OP_START;
+	}
+}
+
+void Response::setupDefaultErrorPage()
+{
+	std::string	content;
+
+	content = readFileToString(ERR_PATH);
+	addStatusCode(content);
+	setupDefaultStringPage(content);
+	_respCategory = ERR_RSP;
+}
+
+void Response::setupCustomErrorPage(std::string const & filePath)
+{
+	_contentLength = getFileSize(filePath);
+	if (_contentLength <= _BUFFER)
+	{
+		_respStat = OP_ONCE;
+		_regFileFd = openRegFile(filePath);
+		generateRegStandardResponse();
+	}
+	else
+	{
+		_respStat = OP_START;
+		_regFileFd = openRegFile(filePath);
+	}
+	_respCategory = STD_RSP;
+}
+
 void Response::buildErrorPage(int const & status, t_errPage & errPage, std::string & filePath, int & fdType)
 {
 	stringVectIt	it;
-	std::string		content;
 
 	filePath = ERR_PATH;
 	fdType = STD_FILE;
@@ -138,36 +179,22 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 		if (it != errPage.listError.end())
 			filePath = errPage.filePath;
 	}
-	/*Add two options : from ERR_PATH or errPage
-		errPage => STD_RSP
-		ERR_PATH => stringResponse
-	*/
 	try
 	{
-		content = readFileToString(filePath);
-		if (filePath == ERR_PATH)
-			addStatusCode(content);
 		_originPath = filePath;
+		if (filePath == ERR_PATH)
+			setupDefaultErrorPage();
+		else
+			setupCustomErrorPage(filePath);
 	}
 	catch(const std::exception& e)
 	{
-		content = BACKUP_ERR_PAGE;
+		std::string content = BACKUP_ERR_PAGE;
 		addStatusCode(content);
 		_originPath = "backup.html";
+		setupDefaultStringPage(content);
 	}
-	if (content.size() <= _BUFFER)
-	{
-		_body = content;
-		_respStat = OP_ONCE;
-		_type = Mime::getFileType(_originPath);
-		generateStringSingleResponse(content);
-	}
-	else
-	{
-		_originBody = content;
-		_respStat = OP_START;
-		_type = Mime::getFileType(_originPath);
-	}
+	_type = Mime::getFileType(_originPath);
 }
 
 void Response::setStatusLine()
@@ -185,7 +212,7 @@ void	Response::generateStringSingleResponse(std::string const &  body)
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::generateStandardResponse()
+void Response::generateRegStandardResponse()
 {
 	setStatusLine();
 	_body = readFromRegFileFd(_regFileFd, _respStat);
@@ -199,7 +226,6 @@ void Response::generateRegChunkedResponse()
 {
 	setStatusLine();
 	_body = readFromRegFileFd(_regFileFd, _respStat);
-	std::cout << "								BODY = " << _body.size() << std::endl;
 	_header.clear();
 	_header["Content-Length"] = convertIntToString(_contentLength);
 	_header["Content-Type"] = _type;
@@ -230,19 +256,20 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::st
 			LDirExcept & dir = dynamic_cast<LDirExcept & >(e);
 			generateLDirResponse(dir);
 			_respStat = OP_ONCE;
+			_respCategory = e._type;
 		}
 		else if (e._type == REDIR_RSP)
 		{
 			RedirExcept & redir = dynamic_cast<RedirExcept & >(e);
 			generateRedirectResponse(redir);
 			_respStat = OP_ONCE;
+			_respCategory = e._type;
 		}
 	}
 	catch(const std::exception& e)
 	{
 		throw std::runtime_error("AExcept error");
 	}
-	_respCategory = e._type;
 }
 
 void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)
@@ -266,7 +293,7 @@ void Response::generateRedirectResponse(RedirExcept & r)
 
 void Response::generateLDirResponse(LDirExcept &d)
 {
-	std::string	list = convertListing(d._dirList);
+	std::string	list = createListingDirectoryLink(d._dirList);
 
 	_statusCode = d._statusCode;
 	_type = "text/html";

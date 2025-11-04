@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/04 11:48:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:44:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void Client::setRspRegFileFd(std::string const & path)
 
 void Client::setRspContentLength(size_t const &size){_response.setContentLength(size);}
 
-void Client::setStandardResponse(std::string const & path)
+void Client::setRegStandardResponse(std::string const & path)
 {
 	int fd;
 	try
@@ -129,7 +129,7 @@ void Client::setStandardResponse(std::string const & path)
 		throw ErrorExcept(404, "Error on open Reg file");
 	}
 	_response.setRegFileFd(fd);
-	_response.generateStandardResponse();
+	_response.generateRegStandardResponse();
 }
 
 void Client::setRegFdChunkedResponse(){_response.generateRegChunkedResponse();}
@@ -159,7 +159,6 @@ void Client::setupCgiResponse()
 {
 	size_t	size;
 
-	std::cout << "SET CGI RESPONSE = " << _cgiFD->getStatusCode() << std::endl;
 	setStatusCodeResponse(_cgiFD->getStatusCode());
 	setRspType(_cgiFD->getContentType(), 1);
 	size = _cgiFD->getBody().size();
@@ -234,7 +233,7 @@ std::string Client::getFullResponse(){return _response.getFullResponse();}
 
 std::string Client::getBodyResponse(){return _response.getBody();}
 
-int Client::getCategoryResponse(){return _response.getRespCategory();}
+int Client::getRspCategory(){return _response.getRespCategory();}
 
 int Client::getStatusCodeResponse(){return _response.getStatusCode();}
 
@@ -242,7 +241,7 @@ void Client::setStatusCodeResponse(int const &status){_response.setStatusCode(st
 
 void Client::clearResponse(){_response.clearResponse();}
 
-void Client::updateResponseCategory(int const &stat){_response.setRespCategory(stat);}
+void Client::setRspCategory(int const &stat){_response.setRespCategory(stat);}
 
 int Client::getFdType() const{return _fdType;}
 
@@ -295,7 +294,7 @@ void Client::checkContentLength()
 		return ;
 	itFind = _request.getHeader().find("Content-Length");
 	if (itFind == _request.getHeader().end())
-		throw ErrorExcept(411, "Length required"); //No transfer encoding accepted
+		throw ErrorExcept(411, "Length required");
 	maxSize = _config.getMaxSize();
 	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
 	if (requestSize > maxSize)
@@ -317,7 +316,6 @@ void Client::buildRequestTarget()
 		processLocationOption(_config.getClassLocation()[0], _request);
 		itLoc = _config.findClassLocation("/");
 		target = _config.getClassLocation()[0].getRootDirectory();
-		// /*INDEX ???*/
 		target += "/index.html";
 	}
 	else
@@ -333,7 +331,6 @@ void Client::buildRequestTarget()
 	}
 	_request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
-	// if (checkFileExtension(target, ".php") == true) /* [!] : REVIEW HOW TO CHECK FILE EXTENSION PROPERLY*/
 	if (CgiParser::checkIfFileCgi(target) == true)
 	{
 		std::cout << "\033[42m" << "CGI ON GOING" << "\033[0m" << std::endl;
@@ -399,14 +396,14 @@ void Client::get_request(uint32_t & opt, int *fd, pid_t & childPid)
 {
 	if (_request.getIsCgi() == false)
 	{
-		updateResponseCategory(STD_RSP);
+		setRspCategory(STD_RSP);
 		_fdType = STD_FILE;
 		stdGetRequest();
 		opt = EPOLLOUT;
 	}
 	else
 	{
-		updateResponseCategory(CGI_RSP);
+		setRspCategory(CGI_RSP);
 		_fdType = GET_PHP_SCRIPT;
 		cgiGetRequest(fd, childPid);
 		setStatusCodeResponse(200);
@@ -439,7 +436,7 @@ void Client::stdGetRequest()
 		if (fileSize <= _BUFFER)
 		{
 			setResponseStat(OP_ONCE);
-			setStandardResponse(filePath);
+			setRegStandardResponse(filePath);
 		}
 		else
 		{
@@ -492,13 +489,13 @@ void Client::post_request(stringMap &header, uint32_t & opt, int *fd, pid_t & ch
 {
 	if (_request.getIsCgi() == false)
 	{
-		updateResponseCategory(STD_RSP);
+		setRspCategory(STD_RSP);
 		_fdType = STD_FILE;
 		stdPostRequest(header, opt);
 	}
 	else
 	{
-		updateResponseCategory(CGI_RSP);
+		setRspCategory(CGI_RSP);
 		opt = EPOLLIN;
 		_fdType = POST_PHP_SCRIPT;
 		cgiPostRequest(fd, childPid);
@@ -571,7 +568,6 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 		_request.clearCgiClass();
 		fd[FD_STDIN] = pipeInFd[1];
 		fd[FD_STDOUT] = pipeOutFd[0];
-		std::cout << "		POST CGI = " << fd[FD_STDIN] << " ; " << fd[FD_STDOUT] << std::endl;
 	}
 }
 
@@ -614,7 +610,6 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	}
 	else
 	{
-		std::cout << "				SET BODY" << std::endl;
 		_request.set_Body(clientRequest);
 		_request.set_c_length_received(clientRequest.size());
 		if (_request.getIsCgi() == true)
