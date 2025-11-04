@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 14:11:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:56:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,16 +235,22 @@ bool checkCountWord(const std::vector<std::string> &lines, const std::string &wo
 int	openRegFile(std::string const & filePath)
 {
 	int			fd;
-	DIR*		dir;
+	struct stat	st;
 
-	dir = opendir(filePath.c_str());
-	if (dir)
-		throw std::runtime_error("File is a directory");	
-	fd = open(filePath.c_str(), O_RDONLY); //Add more error checking
+	if (stat(filePath.c_str(), &st) == -1)
+	{
+		if (errno == EACCES)
+			throw std::runtime_error("Forbidden");
+		throw std::runtime_error("Other");
+	}
+	if (S_ISREG(st.st_mode) == false)
+		throw std::runtime_error("Other");
+	fd = open(filePath.c_str(), O_RDONLY);
 	if (fd == -1)
 	{
-		perror("Open file");
-		throw std::runtime_error("File error");
+		if (errno == EPERM || errno == EACCES)
+			throw std::runtime_error("Forbidden");
+		throw std::runtime_error("Not found");
 	}
 	return fd;
 }

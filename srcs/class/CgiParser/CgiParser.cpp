@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 09:46:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:28:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void CgiParser::buildEnvp()
 	replaceString(ownedConfig, _reqMethod, "$1");
 	replaceString(ownedConfig, _scriptFileName, "$2");
 	replaceString(ownedConfig, _scriptName, "$3");
-	replaceString(ownedConfig, "http:localhost", "$4"); // REVIEW REQUEST_URI IF NECESSARY
+	replaceString(ownedConfig, "http:localhost", "$4"); /* [!] : Add request URI, see for the other env */
 	replaceString(ownedConfig, _query, "$5");
 	replaceString(ownedConfig, convertIntToString(_contentLength), "$6");
 	replaceString(ownedConfig, _contentType, "$7");
@@ -69,7 +69,7 @@ void CgiParser::buildEnvp()
 	_envp = convertStringVectToTable(vect);
 	vect.clear();
 	ownedConfig.clear();
-	displayCharTable(_envp, "CGI ENVP");
+	// displayCharTable(_envp, "CGI ENVP");/* [TEST ONLY] */
 }
 
 void CgiParser::execCgi()

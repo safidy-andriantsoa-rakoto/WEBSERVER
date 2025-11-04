@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/04 12:52:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:23:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 	}
 	if (identifier == CGI_FD_OUTPUT || identifier == CGI_FD_INPUT)
 	{
-		std::cerr << "CGI error identified" << std::endl;
 		try
 		{
 			ErrorExcept	& err = dynamic_cast<ErrorExcept &>(e);
@@ -40,7 +39,7 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 		}
 		catch(const std::exception& e1)
 		{
-			std::cerr << "			Error on CGI exception " << e1.what() << '\n';
+			std::cerr << "			Error on CGI exception " << e1.what() << '\n'; /* [TEST ONLY] */
 		}
 	}
 }
@@ -85,7 +84,7 @@ void    launchServer(Handler & handler)
 	while (SIGINT != sign.getSigNum())
 	{
 		nb_event = epoll.epoll_wait_event();
-		handler.displayHandlerStat(); /* [Test only] */
+		handler.displayHandlerStat(); /* [TEST ONLY] */
 		handler.check_client_timeout_all(epoll);
 		for (int i = 0; i < nb_event; i++)
 		{

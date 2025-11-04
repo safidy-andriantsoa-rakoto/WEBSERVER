@@ -2,9 +2,6 @@ PEER QUESTIONS :
 [subject]: 
     - redirection : how about after $uri???
 
-TEAM :
-    - server_name not necessary ? We won't implement virtual host
-
 std::string	unchunkString(std::string const & text)
 {
 	size_t		size;

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 13:47:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:30:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,9 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	if ((*it).getResponseStat() != OP_ONCE)
 	{
 		if (rspCategory == CGI_RSP || rspCategory == ERR_RSP)
-		{
-			std::cout << "\033[35mSending string chunked response" << "\033[0m"<< std::endl;
 			(*it).setStringChunkedResponse();
-		}
 		else
-		{
-			std::cout << "\033[35mSending reg chunked response" << "\033[0m"<< std::endl;
 			(*it).setRegFdChunkedResponse();
-		}
 	}
 	if ((*it).getResponseStat() == OP_ONGOING || (*it).getResponseStat() == OP_CLOSE)
 		rspString = (*it).getBodyResponse();

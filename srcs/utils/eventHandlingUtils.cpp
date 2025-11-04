@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 14:03:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:22:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
 
 void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *fd, pid_t const & childPid)
 {
-	std::cout << "Create CGI FD" << std::endl;
+	std::cout << "Create CGI FD" << std::endl; /* [TEST ONLY] */
 
 	if ((*it).getFdType() == GET_PHP_SCRIPT)
 	{
@@ -42,7 +42,7 @@ void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *
 	}
 }
 
-void	manageCgiAfterProcessingRequest(VClientIt & it, EpollCreation & epoll, Handler & handler, int *fdCgi, pid_t childPid)
+void	manageCgiAfterProcessRequest(VClientIt & it, EpollCreation & epoll, Handler & handler, int *fdCgi, pid_t childPid)
 {
 	int	fdCli = (*it).get_clientFD();
 	if (fdCgi[FD_STDOUT] == -2)
@@ -63,7 +63,7 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 	int fdCli = (*itCgi)->getClientFd();
 	VClientIt	it = findFdInClient(handler.getVectClient(), fdCli);
 
-	std::cout << "Handle cgi error " << std::endl;
+	std::cout << "Handle cgi error " << std::endl; /* [TEST ONLY] */
 	(*it).setCatchedResponse(err);
 	closeCgiFdEvent(handler, index, epoll);
 	(*it).clearPtrCgiFd();

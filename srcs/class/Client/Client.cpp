@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/04 13:44:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:30:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,10 @@ void Client::setRspRegFileFd(std::string const & path)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
+		std::cerr << e.what() << std::endl;
+		std::string err = e.what();
+		if (err == "Forbidden")
+			throw ErrorExcept(403, "Error on open Reg file");
 		throw ErrorExcept(404, "Error on open Reg file");
 	}
 	_response.setRegFileFd(fd);
@@ -125,14 +128,20 @@ void Client::setRegStandardResponse(std::string const & path)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
+		std::string err = e.what();
+		if (err == "Forbidden")
+			throw ErrorExcept(403, "Error on open Reg file");
 		throw ErrorExcept(404, "Error on open Reg file");
 	}
 	_response.setRegFileFd(fd);
 	_response.generateRegStandardResponse();
 }
 
-void Client::setRegFdChunkedResponse(){_response.generateRegChunkedResponse();}
+void Client::setRegFdChunkedResponse()
+{
+	std::cout << "\033[35mSending reg chunked response" << "\033[0m"<< std::endl;
+	_response.generateRegChunkedResponse();
+}
 
 void Client::setStringSingleResponse(std::string const & content){_response.generateStringSingleResponse(content);}
 
@@ -141,6 +150,7 @@ void Client::setStringChunkedResponse()
 	std::string content;
 	size_t		pos;
 
+	std::cout << "\033[35mSending string chunked response" << "\033[0m"<< std::endl;
 	if (_response.getRespStat() == OP_START)
 		_response.setPosition(0);
 	pos = _response.getPosition();

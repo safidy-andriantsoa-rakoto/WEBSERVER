@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 13:57:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:22:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 		epollOpt = EPOLLOUT;
 	}
 	if ((*it).getObjRequest().getIsCgi() == true)
-		manageCgiAfterProcessingRequest(it, epoll, handler, fdCgi, childPid);
+		manageCgiAfterProcessRequest(it, epoll, handler, fdCgi, childPid);
 	else
 		epoll.epoll_update_event(fdCli, epollOpt);
 }
