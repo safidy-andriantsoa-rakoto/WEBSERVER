@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:28:11 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:06:26 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,7 +335,7 @@ bool checkDuplicate(stringVect file, std::string name, size_t &start, size_t &en
 	}
 	if (count != 1)
 	{
-		std::cout << "Name of duplicate => " << name << std::endl;
+		// std::cout << "Name of duplicate => " << name << std::endl;
 		return (true);
 	}
 	return (false);
