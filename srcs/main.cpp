@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:12:49 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:00:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,32 @@ static void	initProgram()
 	closedir(dir);
 }
 
+static void manageMultiPort(vectServer & allServer)
+{
+	vectServer	childServer;
+
+	for (size_t i = 0; i < allServer.size(); i++)
+	{
+		intVect port_tmp = allServer[i].getConfig().getServPort();
+		for (size_t j = 1; j < port_tmp.size(); j++)
+		{
+			Server child(allServer[i]);
+			child.config_ref().init_port_child(port_tmp[j]);
+			childServer.push_back(child);
+		}
+		allServer[i].config_ref().delete_port_child_in_parent();
+	}
+	if (childServer.size())
+		std::copy(childServer.begin(), childServer.end(), std::back_inserter(allServer));
+	for (size_t i = 0; i < allServer.size(); i++)
+		allServer[i].getConfig().displayConfig(); /* [TEST ONLY] */
+}
+
 int main(int argc, char **argv)
 {
 	Handler 	handler;
 	stringVect	config;
 	vectServer	allServer;
-	vectServer	childServer;
 
 	try
 	{		
@@ -38,29 +58,14 @@ int main(int argc, char **argv)
 				|| !checkNumberAllContent(config))
 			return (1);
 		allServer = getServer(config);
-		Server::getParsAllServer(allServer, config);//vita ny parse
+		Server::getParsAllServer(allServer, config);
 		if(!Server::checkDuplicateValue(allServer))
 			return (1);
-		//vita !erreur ny parse
-		for (size_t i = 0; i < allServer.size(); i++)
-		{
-			intVect port_tmp = allServer[i].getConfig().getServPort();
-			for (size_t j = 1; j < port_tmp.size(); j++)
-			{
-				Server child(allServer[i]);
-				child.config_ref().init_port_child(port_tmp[j]);
-				childServer.push_back(child);
-			}
-			allServer[i].config_ref().delete_port_child_in_parent();
-		}
-		if (childServer.size())
-			std::copy(childServer.begin(), childServer.end(), std::back_inserter(allServer));
-		for (size_t i = 0; i < allServer.size(); i++)
-			allServer[i].getConfig().displayConfig();
+		manageMultiPort(allServer);
 		initProgram();
 		handler.setVectServer(allServer);
 		launchServer(handler);
-		std::cout << "\n\n\n\nWebserv shutting down..." << std::endl;
+		std::cout << "\n\n\n\nWebserv shutting down..." << std::endl;/* [TEST ONLY] */
 		handler.cleanFdAndAlloc();
 	}
 	catch(const std::exception & e)

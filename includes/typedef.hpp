@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:46:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:38:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ typedef stringVect::iterator        stringVectIt;
 
 typedef std::vector<int>		intVect;
 typedef intVect::const_iterator	intVectIt;
+
+typedef std::vector<std::pair<int, int> >			intPairVect;
+typedef std::vector<std::pair<int, int> >::iterator	intPairVectIt;
 
 typedef std::list<std::string>	stringList;
 typedef std::list<int>			intList;

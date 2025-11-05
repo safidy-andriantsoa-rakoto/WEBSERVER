@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyLoc.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:14:37 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 14:17:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
     {
         std::istringstream iss(file[i]);
         std::string name, value;
+        bool    cgiOn(false); /* [UPDATE] */
         iss >> name;
         while (std::getline(iss, value))
         {
@@ -89,12 +90,13 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                 }
                 if (name == "cgi")
                 {
-                    /*Add the cgi extension inside parsing : need two elt, ON/OFF + execution path*/
+                    /* [UPDATE] */
+                    if (cgiOn)
+                        _cgiExtension.push_back(word);
                     if (word == "ON")
                     {
                         _cgiExtension[0] = word;
-                        /* Then Check for the execution path at _cgiExtension[1] */
-                        _cgiExtension.push_back("/usr/bin/php-cgi"); //Temporary line
+                        cgiOn = true;
                     }
                 }
                 if (name == "method")
@@ -134,10 +136,10 @@ void MyLoc::parseLocation(const stringVect &file)
         end = index[currentBlock + 1];
     else
         end = file.size();
-    if (checkDuplicate2(file, "autoindex", start, end) || checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end) || checkDuplicate(file, "cgi", start, end))
-    {
+    /* [!] : Add check for only redirect here !!!! */
+    // if (checkDuplicate2(file, "autoindex", start, end) || checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end) || checkDuplicate(file, "cgi", start, end))
+    if (checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end))
         throw std::runtime_error("Error : duplicate setting find or not find setting");
-    }
     getElementLocation(start, end, file);
     currentBlock++;
     _checkStats = true;

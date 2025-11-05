@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fileUtils.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:28:11 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 14:29:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ std::vector<std::string> getContentFile(std::string _path)
 		fluxFile.close();
 	}
 	else
-		std::cout << "Error : to open the file" << std::endl;
+		std::cerr << "Error : to open the file" << std::endl;/* [UPDATE] : cout to cerr*/
 	return (lines);
 }
 

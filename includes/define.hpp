@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   define.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:12:11 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 14:12:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,6 @@
 						"location /upload {\n" \
 						"	root ./site/upload\n" \
 						"	method GET POST DELETE\n" \
-						"	autoindex ON\n} \n}"
+						"	autoindex ON\n	}\n}"
 
 #endif
