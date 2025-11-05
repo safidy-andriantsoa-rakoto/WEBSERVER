@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 15:15:41 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:39:08 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,11 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                     //tokony mbola misy erreur eto
                 }
                 if (name == "method")
+                {
+                    if (word != "POST" && word != "GET" && word != "DELETE")
+                        throw std::runtime_error("Error: Method not allowed->" + name + "=" + word);
                     _method.push_back(word);
+                }
                 if (name == "redirect")
                 {
                     _redirect.push_back(word);
