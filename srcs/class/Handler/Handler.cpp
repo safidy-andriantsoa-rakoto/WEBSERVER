@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 11:45:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 08:11:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,6 +203,8 @@ void	Handler::cleanFdAndAlloc()
 				close((*itCgiFd)->getOutputFd());
 			if ((*itCgiFd)->getInputFd() != -1)
 				close((*itCgiFd)->getInputFd());
+			std::cout << "\033[43mCHILD PID TO BE KILLED = " << (*itCgiFd)->getChildPid() << "\033[0m" << std::endl;
+			kill((*itCgiFd)->getChildPid(), SIGKILL); /* [!] : SIGKILL or SIGTERM or SIGINT ? */
 		}
 	}
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/04 21:17:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 07:45:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -437,7 +437,7 @@ void Client::stdGetRequest()
 		throw LDirExcept(200, dir, _request.getOriginalRequestTarget(), "Listing directory");
 	if (dir && _request.getAutoIdx() == false)
 		filePath += "/index.html";
-		size_t	fileSize = getFileSize(filePath);
+	size_t	fileSize = getFileSize(filePath);
 	setStatusCodeResponse(200);
 	setRspOriginPath(filePath);
 	setRspType(filePath);

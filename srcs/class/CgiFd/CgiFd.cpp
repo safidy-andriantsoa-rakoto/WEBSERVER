@@ -221,8 +221,8 @@ void CgiFd::checkTimeOut()
 
 	if (difftime(currentTime, _startTime) > CGI_MAX_TIME)
 	{
-		std::cout << "			CGI TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
-		kill(_childPid, SIGTERM);
+		// std::cout << "			CGI TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
+		kill(_childPid, SIGINT); /* [!] : SIGKILL or SIGTERM or SIGINT ? */
 		_isChildAlive = false;
 		throw ErrorExcept(504, "CGI Took too long");
 	}
