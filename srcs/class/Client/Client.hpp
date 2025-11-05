@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 09:53:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:14:01 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ class Client : public Server
 		Response	_response;
 		CgiFd		*_cgiFD;
 		int			_fdType;
-		std::string	filepath;
+		std::string	_filepath;
 
 		bool		_modPostFile;
 		int			_delay;
-		time_t		_last_time;
 		time_t		_time_now;
+		time_t		_last_time;
 
 		Client();
 
@@ -90,6 +90,7 @@ class Client : public Server
 		void		setRspOriginPath(std::string const & path);
 
 		void		setRspType(std::string const & filePath);
+		void		setRspType(std::string const & type, int);
 
 		CgiFd		*getPtrCgiFd();
 		void        setPtrCgiFd(CgiFd *cgiFd);
@@ -100,15 +101,24 @@ class Client : public Server
 		Response &	getObjResponse();
 		std::string	getFullResponse();
 		std::string	getBodyResponse();
-		int			getCategoryResponse();
 		int			getStatusCodeResponse();
 		void		setStatusCodeResponse(int const & status);
 		void		clearResponse();
-		void		updateResponseCategory(int const & stat);
+		int			getRspCategory();
+		void		setRspCategory(int const & stat);
 		void		setCatchedResponse(AExcept & e);
-		void		setStandardResponse(std::string const & content);
-		void		setChunkedResponse();
-		void		setCgiChunkedResponse();
+		void		closeRspFd();
+
+		void		setRspRegFileFd(std::string const & path);
+		void		setRspContentLength(size_t const & size);
+
+		void		setRegStandardResponse(std::string const & path);
+		void		setRegFdChunkedResponse();
+		
+		void		setStringSingleResponse(std::string const & content); /* [!] : need to erase */
+		void		setStringChunkedResponse();
+		void		setupCgiResponse();
+
 		void		setSingleResponse(int const & statusCode);
 
 		void        receiveClientRequest();

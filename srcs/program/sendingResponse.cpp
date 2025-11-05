@@ -6,36 +6,43 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 15:28:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:30:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-/*
-	See other cases of response, for successfull response
-*/
-void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
+int	processCgiSetup(VClientIt & it)
 {
-	std::string	rspString;
-
-	std::cout <<"\033[35mSending single response\n" << rspString.size() << "\033[0m" << std::endl;
-	rspString = (*it).getFullResponse();
-	send_value(fdCli, rspString);
-	epoll.epoll_update_event(fdCli, EPOLLIN);
+	if ((*it).getPtrCgiFd() == NULL)
+		return 0;
+	bool respMode = (*it).getPtrCgiFd()->getRespMode();
+	int	cgiReadStat = (*it).getPtrCgiFd()->getReadStat();
+	if (respMode == false)
+	{
+		if (cgiReadStat != OP_CLOSE)
+			return 1;
+		(*it).setupCgiResponse();
+	}
+	return 0;
 }
 
-void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
+void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 {
 	std::string	rspString;
-
+	int			rspCategory = (*it).getRspCategory();
+	std::cout << "-->> \033[45mSendingResponseToClient : " << (*it).getRspCategory() << "\033[0m" << std::endl;
+	if (processCgiSetup(it) == 1)
+		return;
 	if ((*it).getResponseStat() != OP_ONCE)
 	{
-		std::cout << "\033[35mSending chunked response" << "\033[0m"<< std::endl;
-		(*it).setChunkedResponse();
+		if (rspCategory == CGI_RSP || rspCategory == ERR_RSP)
+			(*it).setStringChunkedResponse();
+		else
+			(*it).setRegFdChunkedResponse();
 	}
 	if ((*it).getResponseStat() == OP_ONGOING || (*it).getResponseStat() == OP_CLOSE)
-		rspString = (*it).getBodyResponse() + "\r\n";
+		rspString = (*it).getBodyResponse();
 	else
 		rspString = (*it).getFullResponse();
 	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
@@ -45,60 +52,23 @@ void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		(*it).setResponseStat(OP_ONGOING);
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 	{
+		// std::cout << "			Ending send response" << std::endl;
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
+		(*it).clearPtrCgiFd();
 	}
-		// std::cout << "		Rsp Stat = " << (*it).getResponseStat() << std::endl;
 }
 
-void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll)
-{
-	std::string	rspString;
-	int			cgiStatus;
-
-	cgiStatus = (*it).getCgiFdStatus();
-	if (cgiStatus == OP_OPEN)
-		return;
-    if (cgiStatus == OP_ONGOING && (*it).getPtrCgiFd()->getBuffer().size() == 0)
-    {
-        // std::cout << "          Nothing inside the buffer yet !!!!!\n";
-        return;
-    }
-    std::cout << "\033[35mSending cgi chunked response to " << fdCli << " with status = " << cgiStatus << "\033[0m"<< std::endl;
-	if (cgiStatus == OP_START)
-	{
-		std::string	type = (*it).getPtrCgiFd()->getHeader()["Content-type"];
-		(*it).getObjResponse().setType(type);
-	}
-	(*it).setCgiChunkedResponse();
-	if (cgiStatus == OP_ONGOING || cgiStatus == OP_CLOSE)
-		rspString = (*it).getBodyResponse() + "\r\n";
-	else
-		rspString = (*it).getFullResponse();
-	std::cout <<"\e[45mCgi response sent : \n" << rspString << "\e[0m" << std::endl;
-	send_value(fdCli, rspString);
-    (*it).getPtrCgiFd()->clearBufferRead();
-	if (cgiStatus != OP_ONGOING && cgiStatus != OP_START)
-	{
-        epoll.epoll_update_event(fdCli, EPOLLIN);
-		(*it).getObjRequest().set_is_CRLF_header(false);
-	}
-	if (cgiStatus == OP_START)
-		(*it).updateCgiFdStatus(OP_ONGOING);
-}
-
-/*
-    Review Error status Code !!!
-*/
 void send_value(int const & fd, std::string & _send_content)
 {
-
     size_t to_send = _send_content.size();
 
-    // std::cout << "Size to send = " << _send_content.size() << std::endl;
-    // std::cout << "Sent = " << _send_content << std::endl;
     if (fd < 0)
+	{
         throw ErrorExcept(500, "Invalid fd to send");
+	}
+	if (to_send == 0)
+		return;
     const char *resp =  _send_content.c_str();
     ssize_t sent = send(fd, resp, to_send, 0);
     if (sent < 0)
@@ -107,6 +77,8 @@ void send_value(int const & fd, std::string & _send_content)
         throw ErrorExcept(500, "Send_value error");
     }
     else if (sent == 0)
-        throw ErrorExcept(400, "Connection closed by peer");
-    _send_content.clear();
+	{
+        throw ErrorExcept(400, "Connection closed by peer"); //400?
+	}
+	_send_content.clear();
 }

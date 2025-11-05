@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 14:49:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:22:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,44 +16,44 @@
 #include "general.hpp"
 #include "class.hpp"
 
-//Server handler
-void	server_create(Server & server);
-void	initServer(vectServer & allServer);
-void	launchEpoll(vectServer & allServer, EpollCreation &epoll);
+//Program
+void			server_create(Server & server);
+void			initServer(vectServer & allServer);
+void			launchEpoll(vectServer & allServer, EpollCreation &epoll);
 
-void	handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll);
-void	handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
-void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll);
-void	writeCgiInput(Handler & handler, int const & i, EpollCreation & epoll);
+//Handler
+void			handleServerEvent(Handler & handler, int const & i, EpollCreation & epoll);
+void			handleClientEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & eventIdx);
+void			readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll);
+void			writeCgiInput(Handler & handler, int const & i, EpollCreation & epoll);
 
-std::string	currentDateTimeString();
+std::string		currentDateTimeString();
 
+//Searching Utils
 vectServerIt	findFdInServer(vectServer & allServer, int const & fd);
 VClientIt		findFdInClient(VClient & allClient, int const & fd);
 
 // Server main
-void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & identifier, int const & fdEvent, int const & index, std::exception & e);
-void	callEvent(Handler & handler, EpollCreation & epoll, int const & index, int const & identifier, int const & i);
-void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier);
-int		readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll);
-void    launchServer(Handler & handler);
-
-//Waiting for real parser
-vectServer	myParseConfigFile();
+void			manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & identifier, int const & fdEvent, int const & index, std::exception & e);
+void			callEvent(Handler & handler, EpollCreation & epoll, int const & index, int const & identifier, int const & i);
+void			launchServer(Handler & handler);
 
 //HandleUtils
-void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll, int const & fd);
-void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *fd, pid_t const & childPid);
-int     readCgiStdError(vectCgiFdIt & itCgi, EpollCreation & epoll);
-void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err, int const & identifier);
-bool	hasSingleResponse(int const & respStat);
+void			closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll);
+void			createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *fd, pid_t const & childPid);
+void	        manageCgiAfterProcessRequest(VClientIt & it, EpollCreation & epoll, Handler & handler, int *fdCgi, pid_t childPid);
+void			handleCgiError(Handler & handler, int const & index, EpollCreation & epoll, AExcept & err);
+bool			hasSingleResponse(int const & respStat);
+std::string		getIdentifier(int const & identifier);
 
-//MessageUtils
-void	sendSingleResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
-void	sendStandardResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
-void	sendCgiResponse(VClientIt & it, int & fdCli, EpollCreation & epoll);
-void    send_value(int const & _acceptStatus, std::string & _send_content);
+//sendingResponse
+int				processCgiSetup(VClientIt & it);
+void			sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll);
+void   			send_value(int const & _acceptStatus, std::string & _send_content);
 
-vectServer getServer(stringVect file);
-vectLocation getLocation(size_t countLocation);
+vectServer 		getServer(stringVect file);
+
+//Waiting for real parser
+vectServer		myParseConfigFile();
+
 #endif

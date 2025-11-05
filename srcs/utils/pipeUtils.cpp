@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 14:23:44 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/17 14:42:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/10/31 08:09:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,8 @@ void	makeDup2(int const & fd1, int const & fd2)
 	close(fd1);
 }
 
-void	dupStandardIO(int *stdFd, int const & n)
+void	dupStandardIO(int *stdFd)
 {
-	if (n == 2)
-	{
-		stdFd[FD_STDOUT] = dup(STDOUT_FILENO);
-		stdFd[FD_STDERR] = dup(STDERR_FILENO);
-	}
-	if (n == 3)
-		stdFd[FD_STDIN] = dup(STDIN_FILENO);
+	stdFd[FD_STDIN] = dup(STDIN_FILENO);
+	stdFd[FD_STDOUT] = dup(STDOUT_FILENO);
 }

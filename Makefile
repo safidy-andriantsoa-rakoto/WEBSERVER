@@ -68,7 +68,7 @@ CLASS = $(addprefix $(SERV_DIR), $(SERV)) \
 
 UTILS_DIR = utils/
 UTILS = stringUtils.cpp fileUtils.cpp displayUtils.cpp \
-		units.cpp conversion.cpp searchingUtils.cpp dirListing.cpp handleUtils.cpp \
+		conversion.cpp searchingUtils.cpp dirListing.cpp eventHandlingUtils.cpp \
 		CheckBraceClose.cpp ParseUtils.cpp pipeUtils.cpp
 
 PRO_DIR = program/
@@ -113,11 +113,11 @@ $(OBJ) : $(OBJ_DIR)%.o:$(SRC_DIR)%.cpp $(INC)
 
 clean :
 	rm -rf $(LOG)
+	rm -rf $(UPLOAD)
 	rm -rf $(OBJ)
 	rm -rf $(OBJ_DIR)
 
 fclean : clean
 	rm -f $(NAME)
-	rm -rf upload
 
 re : fclean all

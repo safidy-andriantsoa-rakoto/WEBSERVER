@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:53:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/03 15:02:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,35 +40,19 @@ AConfig &AConfig::operator=(AConfig const &other)
     return *this;
 }
 
-intVect AConfig::getServPort() const
-{
-	return _port;
-}
+intVect AConfig::getServPort() const{return _port;}
 
-float	AConfig::getMaxSize() const
-{
-	return _maxSize;
-}
+float	AConfig::getMaxSize() const{return _maxSize;}
 
-std::string	AConfig::getServHost() const
-{
-	return _host;
-}
+void AConfig::convertSizeMax(){_maxSize = convertToBytes(_size);}
 
-stringVect	AConfig::getServName() const
-{
-	return _serverName;
-}
+std::string	AConfig::getServHost() const{return _host;}
 
-t_errPage	AConfig::getErrPage() const
-{
-	return _errPage;
-}
+stringVect	AConfig::getServName() const{return _serverName;}
 
-vectLocation AConfig::getClassLocation() const
-{
-	return _location;
-}
+t_errPage	AConfig::getErrPage() const{return _errPage;}
+
+vectLocation AConfig::getClassLocation() const{return _location;}
 
 vectLocationIt AConfig::findClassLocation(std::string const & toFind)
 {

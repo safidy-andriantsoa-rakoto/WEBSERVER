@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:06:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 13:09:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "RedirExcept.hpp"
 #include "LDirExcept.hpp"
 #include "../CgiParser/CgiParser.hpp"
+#include "../CgiFd/CgiFd.hpp"
 #include "../Mime/Mime.hpp"
 
 class Response
@@ -33,12 +34,19 @@ class Response
 		int					_respCategory;
 
 		int					_respStat;
+
+		int					_regFileFd;
+		size_t				_contentLength;
+
 		std::string			_originPath;
 		std::string			_originBody;
 		size_t				_pos;
 
 		void				setStatusLine();
 		void				addStatusCode(std::string & content);
+		void				setupDefaultStringPage(std::string const & content);
+		void				setupDefaultErrorPage();
+		void				setupCustomErrorPage(std::string const & filePath);
 		void				buildErrorPage(int const & statusCode, t_errPage & errPage, std::string & filePath, int & fdType);
 
 	public:
@@ -59,6 +67,13 @@ class Response
 		size_t				getPosition() const;
 		void				setPosition(size_t const & newPos);
 
+		int	&				getRegFileFd();
+		void				setRegFileFd(int const & fd);
+		void				closeRegFileFd();
+
+		size_t				getContentLength() const;
+		void				setContentLength(size_t const & size);
+
 		int					getRespStat() const;
 		void				setRespStat(int const & stat);
 
@@ -78,9 +93,10 @@ class Response
 
 		void				clearResponse();
 
-        void				generateStandardResponse(std::string const & body);
-		void				generateChunkedResponse(std::string const & body);
-		void				generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status);
+        void				generateStringSingleResponse(std::string const & body);/* [!] Need to erase */
+        void				generateRegStandardResponse();
+		void				generateRegChunkedResponse();
+		void				generateStringChunkedResponse(std::string const & body);
 		void				generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);
 		void				generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::string & filePath, int & fdType);
 		void				generateRedirectResponse(RedirExcept & r);

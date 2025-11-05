@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 10:28:52 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:17:27 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,22 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 {
 	if (identifier == CLIENT)
 	{
+		std::string error = e.what();
+		if (error == "Execve error")
+			throw std::runtime_error(e.what());
 		handler.removeClient(index, epoll);
 		epoll.epoll_clean(fdEvent);
 	}
-	if (identifier == CGI_FD_OUTPUT || identifier == CGI_FD_ERR)
+	if (identifier == CGI_FD_OUTPUT || identifier == CGI_FD_INPUT)
 	{
-		std::cerr << "CGI error identified" << std::endl;
 		try
 		{
 			ErrorExcept	& err = dynamic_cast<ErrorExcept &>(e);
-			handleCgiError(handler, index, epoll, err, identifier);
+			handleCgiError(handler, index, epoll, err);
 		}
 		catch(const std::exception& e1)
 		{
-			std::cerr << "			Error on CGI exception " << e1.what() << '\n';
+			std::cerr << "			Error on CGI exception " << e1.what() << '\n'; /* [TEST ONLY] */
 		}
 	}
 }
@@ -81,24 +83,9 @@ void    launchServer(Handler & handler)
 	launchEpoll(handler.getVectServer(), epoll);
 	while (SIGINT != sign.getSigNum())
 	{
-		try
-		{
-			nb_event = epoll.epoll_wait_event();
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-			nb_event = -1;
-		}
-		handler.displayHandlerStat(); //Use for checking error
-		try
-		{
-			handler.check_client_timeout_all(epoll);
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-		}
+		nb_event = epoll.epoll_wait_event();
+		handler.displayHandlerStat(); /* [TEST ONLY] */
+		handler.check_client_timeout_all(epoll);
 		for (int i = 0; i < nb_event; i++)
 		{
 			fdEvent = epoll.get_fdEvent(i);
@@ -110,14 +97,12 @@ void    launchServer(Handler & handler)
 			}
 			catch(std::exception & e)
 			{
-				std::cerr << "\033[41m" << fdEvent << " , idt = " << identifier << " => Error on epoll event loop : " << e.what() << "\033[0m" << std::endl;
+				std::cerr << "\033[41m" << fdEvent << " , idt = " << getIdentifier(identifier) << " => Error on epoll event loop : " << e.what() << "\033[0m" << std::endl;
 				manageEpollLoopError(handler, epoll, identifier, fdEvent, index, e);
 				break ;
 			}
 			if (handler.getProgramBreak() == true)
-			{
 				throw std::runtime_error("Program break launched");
-			}
 		}
 	}
 }

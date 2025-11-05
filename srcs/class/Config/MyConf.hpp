@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 11:51:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:14:26 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 class MyConf : public AConfig
 {
 	private:
-		bool _checkStats;
-		int  _countLocation;
+		bool	_checkStats;
+		int		_countLocation;
+		int		_endLocation;
 
 	public:
 		MyConf();
@@ -36,7 +37,7 @@ class MyConf : public AConfig
 		//For testing
 		virtual void	displayConfig() const;
 
-		//barandri_function
+		/* [Test only] */
 		void	myParseLoc(std::string const & filePath);
 		void	myParseConfig(std::string const & servPath, std::string const & locPath);
 		void	init_port_child(int port);

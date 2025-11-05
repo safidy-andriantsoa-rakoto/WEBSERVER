@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 15:37:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/01 20:03:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,21 @@ stringVect	splitString(std::string const & target, std::string const & sep)
 {
 	size_t		findPos;
 	size_t		startPos;
+	size_t		subSize;
 	stringVect	result;
 
 	startPos = 0;
 	findPos = 0;
 	while (findPos != std::string::npos)
 	{
+		subSize = 0;
 		findPos = target.find(sep, startPos);
-		if (startPos != findPos)
-			result.push_back(target.substr(startPos, findPos - startPos));
+		if (findPos == std::string::npos)
+			subSize = target.size() - startPos;
+		else if (startPos != findPos)
+			subSize = findPos - startPos;
+		if (subSize)
+			result.push_back(target.substr(startPos, subSize));
 		startPos = findPos + sep.size();
 	}
 	return result;
@@ -85,49 +91,6 @@ void	chunkString(std::string & text, int const & status)
 	text.insert(0, add + "\r\n");
 	if (status == OP_CLOSE)
 		text += "\r\n0\r\n";
-}
-
-std::string	unchunkString(std::string const & text)
-{
-	size_t		size;
-	size_t		pos;
-	std::string	result;
-    std::string hexSize;
-	std::string	eof = "\r\n";
-	std::string	realEof = "0\r\n";
-	bool		stat = false;
-	size_t		startPos;
-
-	pos = text.find(realEof);
-	if (pos != std::string::npos)
-		stat = true;
-	pos = 0;
-	while (pos < text.size())
-	{
-		// std::cout << "before pos = " << pos << " [" << text[pos] << "]" << std::endl;
-		startPos = pos;
-		pos = text.find(eof, pos);
-		// std::cout << "find pos = " << pos << " [" << text[pos] << "]" << std::endl;
-		if (pos == std::string::npos)
-			break ;
-		hexSize = text.substr(startPos, pos);
-		std::istringstream converter(hexSize);
-		converter >> std::hex >> size;
-		// std::cout << "SIZE = " << size << std::endl;
-		// if (!size)
-		// {
-		// 	break;
-		// }
-		pos += eof.size();
-		// std::cout << "new pos = " << pos << " [" << text[pos] << "]" << std::endl;
-		std::string	add = text.substr(pos, size);
-		// std::cout << "ADD = " << add << std::endl;
-		pos += size + eof.size();
-		result.append(add);
-	}
-	if (stat == true)
-		result += eof;
-	return result;
 }
 
 char**	convertStringVectToTable(stringVect & vect)

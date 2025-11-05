@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/30 08:30:22 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:12:11 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@
 #define CONTENT_TYPE "Content-Type: text/html\r\n"
 #define CONTENT_TYPE_CSS "Content-Type: text/css\r\n"
 #define CONTENT_LENGTH "Content-Length: "
-#define _EMPTY_LINE "\n\r\n"
+#define CRLF_SEP "\r\n\r\n"
 #define _NB_CLIENT 10
 #define MAX_EVENT 2042
 #define _BUFFER 1000
 #define _BUFFER_RECV 1024
-#define	CLIENT_MAX_TIME 50
-#define	CGI_MAX_TIME 10
+#define	CLIENT_MAX_TIME 60
+#define	CGI_MAX_TIME CLIENT_MAX_TIME / 2
 
 //Listing directory
 #define HEAD_LDIR "<!DOCTYPE html></head><body><h1>LISTING DIRECTORY</h1><div><ul>"
@@ -63,7 +63,7 @@
 						"host localhost\n" \
 						"port 2003\n" \
 						"server_names localhost\n" \
-						"size 200000000 MB\n" \
+						"size 2 GB\n" \
 						"location / {\n" \
 						"	root ./site\n" \
 						"	method GET POST DELETE\n" \
@@ -72,7 +72,6 @@
 						"location /upload {\n" \
 						"	root ./site/upload\n" \
 						"	method GET POST DELETE\n" \
-						"	}\n}"
-						
+						"	autoindex ON\n} \n}"
 
 #endif

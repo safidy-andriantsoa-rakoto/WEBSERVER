@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 11:09:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:17:32 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,11 @@ void	printFileContent(std::string const & path)
 	}
 }
 
-void    checkFileExtension(std::string const & fileName, std::string extension)
+bool	checkFileExtension(std::string const & fileName, std::string extension)
 {
 	if (fileName.compare(fileName.size() - extension.size(), extension.size(), extension) != 0)
-		throw std::runtime_error("Extension file problem");
+		return false;
+	return true;
 }
 
 std::string readFileToString(std::string filePath)
@@ -42,6 +43,25 @@ std::string readFileToString(std::string filePath)
 		throw std::runtime_error("ReadFileToString : File can't be opened");
 	std::string fileString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	return (fileString);
+}
+
+std::string	readFromRegFileFd(int & fd, int & stat)
+{
+    char		buffer[_BUFFER + 1] = {0};
+    int			bytesRead;
+
+	bytesRead = read(fd, buffer, _BUFFER);
+	if (bytesRead <= 0)
+	{
+		stat = OP_CLOSE;
+		close(fd);
+		fd = -1;
+		if (bytesRead < 0)
+			throw std::runtime_error("Error on reading");
+	}
+	buffer[bytesRead] = '\0';
+	std::string res(buffer, bytesRead);
+    return res;
 }
 
 stringMap splitFileToMapString(std::string const &filePath, std::string const & sep)
@@ -212,19 +232,25 @@ bool checkCountWord(const std::vector<std::string> &lines, const std::string &wo
 	return (true);
 }
 
-int	openFile(std::string const & filePath)
+int	openRegFile(std::string const & filePath)
 {
 	int			fd;
-	DIR*		dir;
+	struct stat	st;
 
-	dir = opendir(filePath.c_str());
-	if (dir)
-		throw std::runtime_error("File is a directory");	
+	if (stat(filePath.c_str(), &st) == -1)
+	{
+		if (errno == EACCES)
+			throw std::runtime_error("Forbidden");
+		throw std::runtime_error("Other");
+	}
+	if (S_ISREG(st.st_mode) == false)
+		throw std::runtime_error("Other");
 	fd = open(filePath.c_str(), O_RDONLY);
 	if (fd == -1)
 	{
-		perror("Open file");
-		throw std::runtime_error("File error");
+		if (errno == EPERM || errno == EACCES)
+			throw std::runtime_error("Forbidden");
+		throw std::runtime_error("Not found");
 	}
 	return fd;
 }
@@ -235,7 +261,7 @@ size_t	getFileSize(std::string const & path)
 
 	if (stat(path.c_str(), &sf) == -1)
 		throw std::runtime_error("Stat function error");
-	std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
+	// std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
 	return sf.st_size;
 }
 

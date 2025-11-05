@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 12:01:36 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:16:50 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,12 @@
 #include "general.hpp"
 #include "typedef.hpp"
 #include "../Mime/Mime.hpp"
-// #include "Handler.hpp"
 
 class Server
 {
 	private:
-	// For socket
-	    int     	_fdSocket;
         int     	_fdClient;
+	    int     	_fdSocket;
         socklen_t  	_size_sockaddrin;
         SockAddrIn	_sockaddrIn;
 		struct addrinfo	_addrinfo;
@@ -62,9 +60,6 @@ class Server
 
 		void		clearAllFd();
 
-		//For testing only !!!!
-		void simpleInit(std::string const & servPath, std::string const & locationPath);
-		
 		static std::vector<int> stockPort(std::vector<Server> &allServer);
 		static void getParsAllServer(std::vector<Server> &allServer, stringVect file);
 		static bool checkDuplicateValue(std::vector<Server> allserver);

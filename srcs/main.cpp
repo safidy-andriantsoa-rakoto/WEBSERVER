@@ -6,42 +6,18 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 12:04:23 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:12:49 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-/*
-	Check every configFile needed by the program !!!
-*/
 static void	initProgram()
 {
 	Mime::initMapMime(MIME_PATH);
 	DIR *dir = openDir(UPLOAD_PATH);
 	closedir(dir);
 }
-
-// int main()
-// {
-// 	Handler handler;
-
-// 	try
-// 	{
-// 		initProgram();
-// 		vectServer	allServer = myParseConfigFile();
-// 		handler.setVectServer(allServer);
-// 		launchServer(handler);
-// 		handler.cleanFdAndAlloc();
-// 	}
-// 	catch(const std::exception & e)
-// 	{
-// 		std::cerr << "Main exception :" << e.what() << std::endl;
-// 		handler.cleanFdAndAlloc();
-// 		return 1;
-// 	}
-// 	return 0;
-// }
 
 int main(int argc, char **argv)
 {
@@ -89,11 +65,13 @@ int main(int argc, char **argv)
 	}
 	catch(const std::exception & e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << "\033[41mMain Function : " << e.what() << "\033[0m" << std::endl;
+		std::string error = e.what();
+		if (error == "Execve error")
+			return 42;
 		handler.cleanFdAndAlloc();
 		return 1;
 	}
 	return 0;
 }
-
 

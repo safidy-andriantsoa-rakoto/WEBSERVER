@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 11:10:53 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:14:37 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,6 @@ void MyLoc::parseLocation(const stringVect &file)
         return;
     size_t start = index[currentBlock];
     size_t end;
-    std::cout << "Index size = " << index.size() << std::endl;
     if (currentBlock + 1 < index.size())
         end = index[currentBlock + 1];
     else

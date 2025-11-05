@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:46:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:12:42 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,38 +52,38 @@
 
 
 //Utils
-    //fileUtils
-void        checkFileExtension(std::string const & fileName, std::string extension);
+	//fileUtils
+bool        checkFileExtension(std::string const & fileName, std::string extension);
 void	    printFileContent(std::string const & path);
 std::string	readFileToString(std::string _path);
+std::string	readFromRegFileFd(int & fd, int & stat);
 stringMap	splitFileToMapString(std::string const & filePath, std::string const & sep);
 std::string	getFileExtension(std::string const & fileName);
-int         openFile(std::string const & filePath);
+int         openRegFile(std::string const & filePath);
 size_t	    getFileSize(std::string const & path);
 DIR*	    openDir(std::string const & dirPath);
 DIR*	    openDir(std::string const & dirPath);
 
-    //stringUtils
+	//stringUtils
 stringVect	strictSplit(std::string const & target, std::string const & sep);
 void	    split_line(std::vector<std::string> &_data, std::string line);
 stringVect	splitString(std::string const & target, std::string const & sep);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
-std::string	checkLimitSize(std::string const & a, std::string const & b);
 void	    chunkString(std::string & text, int const & status);
-std::string	unchunkString(std::string const & text);
 void	    clearCharTable(char **tab);
 
 std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize);
 
-    //Conversion
+	//Conversion
 std::string convertIntToString(ssize_t const & n);
 float       convertStringToFLoat(std::string const & n);
 int         convertStringToInt(std::string const & n);
 std::string	convertStringMapToString(stringMap const & map, std::string const & sep);
 char**	    convertStringVectToTable(stringVect & vect);
+float		convertToBytes(stringVect const & vect);
 
-    //DisplayUtils
+	//DisplayUtils
 void	    displayFormatting(std::string const & text, std::string const & title);
 void	    displayStringPair(stringPair const & pair);
 void	    displayStringMap(stringMap const & map);
@@ -109,9 +109,15 @@ bool        checkDuplicate2(stringVect file, std::string name, size_t &start, si
 
 // dirListing
 stringMap	listingDirectory(DIR* dir, std::string const & path);
-std::string	convertListing(stringMap & mapDir);
+std::string	createListingDirectoryLink(stringMap & mapDir);
 
 //pipeUtils
 void	makeDup2(int const & fd1, int const & fd2, int const & fd3);
 void	makeDup2(int const & fd1, int const & fd2);
-void    dupStandardIO(int *stdFd, int const & n);
+void   	dupStandardIO(int *stdFd);
+
+//ParseUtils
+bool	checkValuePort(intVect &vect);
+bool	checkDuplicationStr(stringVect &str);
+bool	checkDuplicationInt(intVect &Int);
+bool	checkValueMethod(stringVect &str);

@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/29 15:41:40 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:15:51 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,12 @@
 
 Request::Request(): _request_length(0),
 	_autoIdx(false),
-	_isChunked(false),
-	_isEOF(false),
 	_content_length(0),
 	_c_length_received(0),
 	_isCgi(false),
 	_is_CRLF_header(false){}
 
-Request::Request(Request const & other)
-{
-	*this = other;
-}
+Request::Request(Request const & other){*this = other;}
 
 Request &Request::operator=(Request const & other)
 {
@@ -39,8 +34,6 @@ Request &Request::operator=(Request const & other)
 		_body = other._body;
 		_request_length = other._request_length;
 		_autoIdx = other._autoIdx;
-		_isChunked = other._isChunked;
-		_isEOF = other._isEOF;
 		_multipart_body = other._multipart_body;
 		_content_length = other._content_length;
 		_c_length_received = other._c_length_received;
@@ -53,76 +46,33 @@ Request &Request::operator=(Request const & other)
 
 Request::~Request(){}
 
-std::string Request::getRequestLine() const
-{
-	return _requestLine;
-}
+std::string Request::getRequestLine() const{return _requestLine;}
 
-std::string Request::getMethod() const
-{
-    return _method;
-}
+std::string Request::getMethod() const{return _method;}
 
-std::string Request::getRequestTarget() const
-{
-    return _requestTarget;
-}
+std::string Request::getRequestTarget() const{return _requestTarget;}
 
-std::string Request::getOriginalRequestTarget() const
-{
-    return _originalRequestTarget;
-}
+std::string Request::getOriginalRequestTarget() const{return _originalRequestTarget;}
 
-std::string Request::getHttp() const
-{
-    return _clientHttp;
-}
+std::string Request::getHttp() const{return _clientHttp;}
 
-stringMap Request::getHeader() const
-{
-	return _header;
-}
+stringMap Request::getHeader() const{return _header;}
 
-bool Request::getIsCgi() const
-{
-    return _isCgi;
-}
+void Request::setPartRequest(std::string const &content){ _partRequest += content;}
 
-void Request::setIsCgi(bool const &condition)
-{
-	_isCgi = condition;
-}
+std::string Request::getPartRequest() const{return _partRequest;}
 
-bool Request::getIsChunked() const
-{
-    return _isChunked;
-}
+bool Request::getIsCgi() const{return _isCgi;}
 
-void Request::setIsChunked(bool const &stat)
-{
-	_isChunked = stat;
-}
+void Request::setIsCgi(bool const &condition){_isCgi = condition;}
 
-bool Request::getIsEOF() const
-{
-    return _isEOF;
-}
-
-void Request::setIsEOF(bool const &stat)
-{
-	_isEOF = stat;
-}
-
-CgiParser Request::getCgiParser() const
-{
-    return _cgiParser;
-}
+CgiParser Request::getCgiParser() const{return _cgiParser;}
 
 void Request::processCgiClass(std::string & target, std::string const & execPath)
 {
 	clearCgiClass();
 	setIsCgi(true);
-	_cgiParser.parseCgiEnv(target);
+	_cgiParser.parseCgiRequestTarget(target);
 	_cgiParser.setReqMethod(_method);
 	_cgiParser.setContentLength(_body.size());
 	_cgiParser.setCgiExecPath(execPath);
@@ -133,25 +83,13 @@ void Request::processCgiClass(std::string & target, std::string const & execPath
 	target = _cgiParser.getScriptFileName();
 }
 
-void Request::setCgiClass(CgiParser const &cgi)
-{
-	_cgiParser = cgi;
-}
+void Request::setCgiClass(CgiParser const &cgi){_cgiParser = cgi;}
 
-void Request::execCgiClass()
-{
-	_cgiParser.execCgi();
-}
+void Request::execCgiClass(){_cgiParser.execCgi();}
 
-void Request::clearCgiClass()
-{
-	_cgiParser.clearCgiClass();
-}
+void Request::clearCgiClass(){_cgiParser.clearCgiClass();}
 
-const MapSVectStr& Request::getpostMultipartData() const
-{
-    return (this->_multipart_body);
-}
+const MapSVectStr& Request::getpostMultipartData() const{return (this->_multipart_body);}
 
 void Request::Del_space(std::string &data)
 {
@@ -159,25 +97,13 @@ void Request::Del_space(std::string &data)
         data.erase(data.find(' '), 1);
 }
 
-bool Request::getAutoIdx() const
-{
-    return _autoIdx;
-}
+bool Request::getAutoIdx() const{return _autoIdx;}
 
-void Request::setAutoIdx(bool const &autoIdx)
-{
-	_autoIdx = autoIdx;
-}
+void Request::setAutoIdx(bool const &autoIdx){_autoIdx = autoIdx;}
 
-void Request::setRequestSize(ssize_t size)
-{
-	this->_request_length = size;
-}
+void Request::setRequestSize(ssize_t size){this->_request_length = size;}
 
-ssize_t Request::getRequestSize()
-{
-	return (this->_request_length);
-}
+ssize_t Request::getRequestSize(){return (this->_request_length);}
 
 void Request::set_Body(const std::string& body)
 {
@@ -188,15 +114,9 @@ void Request::set_Body(const std::string& body)
 		this->_body = body;
 }
 
-std::string& Request::get_Body()
-{
-    return (_body);
-}
+std::string& Request::get_Body(){return (_body);}
 
-void Request::clear_body()
-{
-	this->_body.clear();
-}
+void Request::clear_body(){this->_body.clear();}
 
 void Request::set_post_body(stringVect var, std::string content)
 {
@@ -204,15 +124,9 @@ void Request::set_post_body(stringVect var, std::string content)
 		_multipart_body[var] = content;
 }
 
-std::string Request::getBody() const
-{
-	return _body;
-}
+std::string Request::getBody() const{return _body;}
 
-void Request::setRequestTarget(std::string const &target)
-{
-	_requestTarget = target;
-}
+void Request::setRequestTarget(std::string const &target){_requestTarget = target;}
 
 void Request::setRequestLine(std::string const & replacement)
 {
@@ -237,28 +151,19 @@ void	Request::addRequestBody(std::string const & requeststring, size_t const & p
 	std::string	content;
 	stringMapIt	it;
 
-	if (_isChunked == true)
-	{
-		// size_t posEnd = requeststring.find_last_of("\r\n");
-		length = requeststring.size() - pos;
-	}
-	else
-	{
-		length = 0;
-		it = _header.find("Content-Length");
-		if (_isChunked ==false && it == _header.end())
-			return ;
-		length = atoi((*it).second.c_str());
-	}
+	it = _header.find("Content-Length");
+	if (it == _header.end())
+		return ;
+	length = atoi((*it).second.c_str());
 	content = requeststring.substr(pos, static_cast<size_t>(length));
-	_body = content;//alana @zay eee
-	_c_length_received = content.size(); //novaina (mbola mila jerena ny olana ateran @Post tsotra)
+	_body = content;
+	_c_length_received = content.size();
 	_content_length = length;
-	// std::cout << "\nBODY=\n" << _body << "\n"<< std::endl;
-	std::cout << "\nCONTENT_LENGTH=" << _content_length << " \nreceived =" << content.size() << "\n"<< std::endl;
+	if (_partRequest.find(CRLF_SEP) != std::string::npos && _method == "POST")
+		this->_is_CRLF_header = true;
 }
 
-void	Request::parseRequest(std::string const & requeststring)
+void	Request::parseRequest()
 {
 	size_t		pos;
 	size_t		startPos;
@@ -267,27 +172,28 @@ void	Request::parseRequest(std::string const & requeststring)
 	stringVect	headerVect;
 
 	startPos = 0;
-	// std::cout << "REQUEST_STRING--->" << requeststring << "<----" << std::endl;
-	pos = requeststring.find(sep, startPos);
+	// std::cout << "REQUEST_STRING--->" << _partRequest << "<----" << std::endl;
+	pos = _partRequest.find(sep, startPos);
 	if (pos == std::string::npos)
 		throw std::runtime_error("Parsing request : No request line found");
-	line = requeststring.substr(startPos, pos - startPos);
+	line = _partRequest.substr(startPos, pos - startPos);
 	setRequestLine(line);
+	_header.clear();
+	_body.clear();
 	startPos = pos + sep.size();
 	while (pos != std::string::npos)
 	{
-		pos = requeststring.find(sep, startPos);
+		pos = _partRequest.find(sep, startPos);
 		if (pos == startPos)
 			break ;
-		line = requeststring.substr(startPos, pos - startPos);
+		line = _partRequest.substr(startPos, pos - startPos);
 		headerVect = strictSplit(line, ": ");
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();
 	}
-	addRequestBody(requeststring, pos + sep.size());
-	if (requeststring.find(sep + sep) != std::string::npos && _method == "POST")
-		this->_is_CRLF_header = true;
+	addRequestBody(_partRequest, pos + sep.size());
+	_partRequest.clear();
 }
 
 void Request::displayRequest() const
@@ -327,10 +233,7 @@ void Request::displayRequestMultipartData()
 	
 }
 
-size_t Request::get_c_length_received()
-{
-    return (this->_c_length_received);
-}
+size_t Request::get_c_length_received(){return (this->_c_length_received);}
 
 void Request::set_c_length_received(size_t received)
 {
@@ -338,14 +241,15 @@ void Request::set_c_length_received(size_t received)
 		this->_c_length_received += received;
 }
 
-size_t Request::get_content_length()
-{
-    return (this->_content_length);
-}
+size_t Request::get_content_length(){return (this->_content_length);}
 
-void Request::set_content_length(size_t size)
+void Request::set_content_length(size_t size){this->_content_length = size;}
+
+bool Request::checkContentReceived() const
 {
-	this->_content_length = size;
+	if (_c_length_received != _content_length)
+    	return false;
+	return true;
 }
 
 void Request::delete_range_body_request(int start, int end)
@@ -360,12 +264,6 @@ void Request::delete_range_body_request(int start, int end)
 }
 
 
-void Request::set_is_CRLF_header(bool is_crlf)
-{
-	this->_is_CRLF_header = is_crlf;
-}
+void Request::set_is_CRLF_header(bool is_crlf){this->_is_CRLF_header = is_crlf;}
 
-bool Request::get_is_CRLF_header()
-{
-    return (this->_is_CRLF_header);
-}
+bool Request::get_is_CRLF_header(){return (this->_is_CRLF_header);}

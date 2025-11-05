@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   EpollCreation.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:26:07 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 09:49:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:14:54 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ void EpollCreation::epoll_update_event(int const &fd, uint32_t event)
     epoll_event up;
     up.data.fd = fd;
     up.events = event;
+
+    // std::cout << "Epoll update event for " << fd << std::endl;
     if (epoll_ctl(this->efds, EPOLL_CTL_MOD, fd, &up) < 0)
     {
         std::string error(strerror(errno));

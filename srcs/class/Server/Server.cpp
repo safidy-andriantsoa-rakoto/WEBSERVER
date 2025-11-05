@@ -6,18 +6,13 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 12:02:12 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:17:57 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-Server::Server()
-{
-	_fdClient = -1;
-	_fdSocket = -1;
-	_resp = NULL;
-}
+Server::Server() : _fdClient(-1), _fdSocket(-1){}
 
 Server::Server(Server const & other)
 {
@@ -43,27 +38,14 @@ Server &Server::operator=(Server const & other)
 
 Server::~Server(){}
 
-MyConf Server::getConfig() const
-{
-	return _config;
-}
+MyConf Server::getConfig() const{return _config;}
 
-int Server::get_fdClient() const
-{
-	return (this->_fdClient);
-}
+int Server::get_fdClient() const{return (this->_fdClient);}
 
-int Server::get_fdSocket() const
-{
-    return _fdSocket;
-}
+int Server::get_fdSocket() const{return _fdSocket;}
 
-SockAddrIn & Server::get_confSockAddrIn()
-{
-    return (_sockaddrIn);
-}
+SockAddrIn & Server::get_confSockAddrIn(){return (_sockaddrIn);}
 
-//Afaka atao throw
 int Server::create_socket()
 {
 	int opt = 1;
@@ -76,7 +58,7 @@ int Server::create_socket()
 	}
 	if (this->_fdSocket == -1)
 	{
-		std::cout << "Error\ncreate an endpoint for communication" << std::endl;
+		std::cerr << "Error\ncreate an endpoint for communication" << std::endl;
 		return (0); 
 	}
 	return (1);
@@ -175,20 +157,13 @@ void Server::clearAllFd()
 		close(_fdSocket);
 }
 
-void Server::simpleInit(std::string const & servPath, std::string const & locationPath)
-{
-	MyConf conf;
-
-	conf.myParseConfig(servPath, locationPath);
-	_config = conf;
-}
-
 void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
 {
 	size_t i(0);
 	while(i < allServer.size())
 	{
 		allServer[i]._config.parseConfig(file);
+		allServer[i]._config.convertSizeMax(); /* [?] : Need to check pc size available */
 		allServer[i]._config.displayConfig();
 		if(allServer[i]._config.getStatus() == true)
 			i++;

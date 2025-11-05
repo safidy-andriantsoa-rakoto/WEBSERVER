@@ -6,17 +6,17 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 15:36:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:09:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
-Response::Response() : _respCategory(STD_RSP), _pos(0){}
+Response::Response() : _respCategory(STD_RSP), _regFileFd(-1), _contentLength(0), _pos(0){}
 
-Response::Response(int const & statusCode) : _statusCode(statusCode), _pos(0){}
+Response::Response(int const & statusCode) : _statusCode(statusCode), _regFileFd(-1), _contentLength(0), _pos(0){}
 
-Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type), _pos(0){}
+Response::Response(int const & statusCode, std::string const & type) : _statusCode(statusCode), _type(type), _regFileFd(-1), _contentLength(0), _pos(0){}
 
 Response::Response(Response const & other) :
 	_statusCode(other._statusCode),
@@ -27,6 +27,8 @@ Response::Response(Response const & other) :
 	_fullResponse(other._fullResponse),
 	_respCategory(other._respCategory),
 	_respStat(other._respStat),
+	_regFileFd(other._regFileFd),
+	_contentLength(other._contentLength),
 	_originPath(other._originPath),
 	_originBody(other._originBody),
 	_pos(other._pos){}
@@ -43,6 +45,8 @@ Response &Response::operator=(Response const & other)
 		_fullResponse = other._fullResponse;
 		_respCategory = other._respCategory;
 		_respStat = other._respStat;
+		_regFileFd = other._regFileFd;
+		_contentLength = other._contentLength;
 		_originPath = other._originPath;
 		_originBody = other._originBody;
 		_pos = other._pos;
@@ -52,70 +56,45 @@ Response &Response::operator=(Response const & other)
 
 Response::~Response(){}
 
-int Response::getStatusCode() const
+int Response::getStatusCode() const{return _statusCode;}
+
+void Response::setType(std::string const &type){_type = type;}
+
+std::string Response::getType() const{return _type;}
+
+void Response::setStatusCode(int const &statusCode){_statusCode = statusCode;}
+
+void Response::setRespCategory(int const &category){_respCategory = category;}
+
+size_t Response::getPosition() const{return _pos;}
+
+void Response::setPosition(size_t const &newPos){_pos = newPos;}
+
+int & Response::getRegFileFd(){return _regFileFd;}
+
+void Response::setRegFileFd(int const &fd){ _regFileFd = fd;}
+
+void Response::closeRegFileFd()
 {
-    return _statusCode;
+	if (_regFileFd != -1)
+		close(_regFileFd);
 }
 
-void Response::setType(std::string const &type)
-{
-	_type = type;
-}
+size_t Response::getContentLength() const{return _contentLength;}
 
-std::string Response::getType() const
-{
-    return _type;
-}
+void Response::setContentLength(size_t const &size){_contentLength = size;}
 
-void Response::setStatusCode(int const &statusCode)
-{
-	_statusCode = statusCode;
-}
+int Response::getRespStat() const{return _respStat;}
 
-void Response::setRespCategory(int const &category)
-{
-	_respCategory = category;
-}
+void Response::setRespStat(int const &stat){_respStat = stat;}
 
-size_t Response::getPosition() const
-{
-    return _pos;
-}
+std::string Response::getOriginPath() const{return _originPath;}
 
-void Response::setPosition(size_t const &newPos)
-{
-	_pos = newPos;
-}
+void Response::setOriginPath(std::string const &path){_originPath = path;}
 
-int Response::getRespStat() const
-{
-    return _respStat;
-}
+void Response::addHeader(std::string const &header, std::string const &content){_header[header] = content;}
 
-void Response::setRespStat(int const &stat)
-{
-	_respStat = stat;
-}
-
-std::string Response::getOriginPath() const
-{
-    return _originPath;
-}
-
-void Response::setOriginPath(std::string const &path)
-{
-	_originPath = path;
-}
-
-void Response::addHeader(std::string const &header, std::string const &content)
-{
-	_header[header] = content;
-}
-
-int Response::getRespCategory() const
-{
-    return _respCategory;
-}
+int Response::getRespCategory() const{return _respCategory;}
 
 std::string Response::getFullResponse()
 {
@@ -123,29 +102,17 @@ std::string Response::getFullResponse()
 	std::string	endLine = "\r\n";
 
 	headerString = convertStringMapToString(_header, endLine);
-	_fullResponse = _statusLine + endLine + headerString + endLine + _body + endLine;
+	_fullResponse = _statusLine + endLine + headerString + endLine + _body;
 	return _fullResponse;
 }
 
-std::string Response::getBody() const
-{
-    return _body;
-}
+std::string Response::getBody() const{return _body;}
 
-std::string Response::getOriginBody() const
-{
-    return _originBody;
-}
+std::string Response::getOriginBody() const{return _originBody;}
 
-void Response::setOriginBody(std::string const &body)
-{
-	_originBody = body;
-}
+void Response::setOriginBody(std::string const &body){_originBody = body;}
 
-void	Response::clearResponse()
-{
-	_fullResponse.clear();
-}
+void	Response::clearResponse(){_fullResponse.clear();}
 
 void Response::addStatusCode(std::string & content)
 {
@@ -158,10 +125,51 @@ void Response::addStatusCode(std::string & content)
 	replaceString(content, replace, "$status");
 }
 
+void Response::setupDefaultStringPage(std::string const &content)
+{
+	if (content.size() <= _BUFFER)
+	{
+		_body = content;
+		_respStat = OP_ONCE;
+		generateStringSingleResponse(content);
+	}
+	else
+	{
+		_originBody = content;
+		_respStat = OP_START;
+	}
+}
+
+void Response::setupDefaultErrorPage()
+{
+	std::string	content;
+
+	content = readFileToString(ERR_PATH);
+	addStatusCode(content);
+	setupDefaultStringPage(content);
+	_respCategory = ERR_RSP;
+}
+
+void Response::setupCustomErrorPage(std::string const & filePath)
+{
+	_contentLength = getFileSize(filePath);
+	if (_contentLength <= _BUFFER)
+	{
+		_respStat = OP_ONCE;
+		_regFileFd = openRegFile(filePath);
+		generateRegStandardResponse();
+	}
+	else
+	{
+		_respStat = OP_START;
+		_regFileFd = openRegFile(filePath);
+	}
+	_respCategory = STD_RSP;
+}
+
 void Response::buildErrorPage(int const & status, t_errPage & errPage, std::string & filePath, int & fdType)
 {
 	stringVectIt	it;
-	std::string		content;
 
 	filePath = ERR_PATH;
 	fdType = STD_FILE;
@@ -173,30 +181,20 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 	}
 	try
 	{
-		content = readFileToString(filePath);
-		if (filePath == ERR_PATH)
-			addStatusCode(content);
 		_originPath = filePath;
+		if (filePath == ERR_PATH)
+			setupDefaultErrorPage();
+		else
+			setupCustomErrorPage(filePath);
 	}
 	catch(const std::exception& e)
 	{
-		content = BACKUP_ERR_PAGE;
+		std::string content = BACKUP_ERR_PAGE;
 		addStatusCode(content);
 		_originPath = "backup.html";
+		setupDefaultStringPage(content);
 	}
-	if (content.size() <= _BUFFER)
-	{
-		_body = content;
-		_respStat = OP_ONCE;
-		_type = Mime::getFileType(_originPath);
-		generateStandardResponse(content);
-	}
-	else
-	{
-		_originBody = content;
-		_respStat = OP_START;
-		_type = Mime::getFileType(_originPath);
-	}
+	_type = Mime::getFileType(_originPath);
 }
 
 void Response::setStatusLine()
@@ -204,39 +202,44 @@ void Response::setStatusLine()
 	_statusLine = "HTTP/1.1 " + convertIntToString(_statusCode) + " " + getReasonPhrase(_statusCode);
 }
 
-void	Response::generateStandardResponse(std::string const &  body)
+void	Response::generateStringSingleResponse(std::string const &  body)
 {
 	setStatusLine();
 	_body = body;
 	_header.clear();
-	_header["Content-Length"] = convertIntToString(_body.size() + 2);
+	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = _type;
 	_header["Connection"] = "keep-alive";
 }
 
-void Response::generateChunkedResponse(std::string const & body)
+void Response::generateRegStandardResponse()
+{
+	setStatusLine();
+	_body = readFromRegFileFd(_regFileFd, _respStat);
+	_header.clear();
+	_header["Content-Length"] = convertIntToString(_body.size());
+	_header["Content-Type"] = _type;
+	_header["Connection"] = "keep-alive";
+}
+
+void Response::generateRegChunkedResponse()
+{
+	setStatusLine();
+	_body = readFromRegFileFd(_regFileFd, _respStat);
+	_header.clear();
+	_header["Content-Length"] = convertIntToString(_contentLength);
+	_header["Content-Type"] = _type;
+	_header["Connection"] = "keep-alive";
+}
+
+void Response::generateStringChunkedResponse(std::string const & body)
 {
 	setStatusLine();
 	_body = body;
-	chunkString(_body, _respStat);
 	_header.clear();
 	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
-	_header["Transfer-Encoding"] = "chunked";
-}
-
-void Response::generateCgiChunkedResponse(std::string const & body, stringMap const & header, int const & status)
-{
-	setStatusLine();
-	_body = body;
-	chunkString(_body, status);
-	if (header.size())
-	{
-		_header.clear();
-		_header["Connection"] = "keep-alive";
-		_header["Content-Type"] = _type;
-		_header["Transfer-Encoding"] = "chunked";
-	}
+	_header["Content-Length"] = convertIntToString(_originBody.size());
 }
 
 void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)
@@ -253,19 +256,20 @@ void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::st
 			LDirExcept & dir = dynamic_cast<LDirExcept & >(e);
 			generateLDirResponse(dir);
 			_respStat = OP_ONCE;
+			_respCategory = e._type;
 		}
 		else if (e._type == REDIR_RSP)
 		{
 			RedirExcept & redir = dynamic_cast<RedirExcept & >(e);
 			generateRedirectResponse(redir);
 			_respStat = OP_ONCE;
+			_respCategory = e._type;
 		}
 	}
 	catch(const std::exception& e)
 	{
 		throw std::runtime_error("AExcept error");
 	}
-	_respCategory = e._type;
 }
 
 void	Response::generateErrorResponse(ErrorExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)
@@ -289,7 +293,7 @@ void Response::generateRedirectResponse(RedirExcept & r)
 
 void Response::generateLDirResponse(LDirExcept &d)
 {
-	std::string	list = convertListing(d._dirList);
+	std::string	list = createListingDirectoryLink(d._dirList);
 
 	_statusCode = d._statusCode;
 	_type = "text/html";
