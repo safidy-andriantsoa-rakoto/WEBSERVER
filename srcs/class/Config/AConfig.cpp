@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AConfig.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 15:02:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:29:26 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ AConfig::AConfig(AConfig const &other) :
 	_port(other._port),
 	_maxSize(other._maxSize),
 	_host(other._host),
-	_serverName(other._serverName),
 	_errPage(other._errPage),
 	_hasErrPage(other._hasErrPage),
 	_location(other._location),
@@ -31,7 +30,6 @@ AConfig &AConfig::operator=(AConfig const &other)
         _port       = other._port;
         _maxSize    = other._maxSize;
         _host       = other._host;
-        _serverName = other._serverName;
         _errPage    = other._errPage;
         _hasErrPage = other._hasErrPage;
         _location   = other._location;
@@ -47,8 +45,6 @@ float	AConfig::getMaxSize() const{return _maxSize;}
 void AConfig::convertSizeMax(){_maxSize = convertToBytes(_size);}
 
 std::string	AConfig::getServHost() const{return _host;}
-
-stringVect	AConfig::getServName() const{return _serverName;}
 
 t_errPage	AConfig::getErrPage() const{return _errPage;}
 

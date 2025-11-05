@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:14:09 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:39:19 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,68 +30,6 @@ MyConf &MyConf::operator=(MyConf const &other)
 }
 
 MyConf::~MyConf(){}
-
-void MyConf::myParseLoc(std::string const & filePath)
-{
-	std::ifstream	file;
-	std::string		line;
-	MyLoc			loc;
-
-	file.open(filePath.c_str());
-	if (!file.is_open())
-		throw std::runtime_error("Error on parsing config");
-	while (std::getline(file, line))
-	{
-		loc = MyLoc();
-		loc.myParseLocation(line);
-		_location.push_back(loc);
-	}
-	vectLocationIt it = findClassLocation("upload");
-	if (it == _location.end())
-	{
-		loc = MyLoc();
-		loc.myParseLocation(DEF_UPLOAD_LOCATION);
-		_location.push_back(loc);
-	}
-}
-
-void MyConf::myParseConfig(std::string const &servPath, std::string const &locPath)
-{
-	std::ifstream	file;
-	std::string		line;
-	stringVect		vect;
-
-	file.open(servPath.c_str());
-	if (!file.is_open())
-		throw std::runtime_error("Error on parsing config 1");
-	while (std::getline(file, line))
-	{
-		vect = splitString(line, " ");
-		if (vect[0] == "host")
-			_host = vect[1];
-		else if (vect[0] == "port")
-			_port[0] = convertStringToInt(vect[1]);
-		else if (vect[0] == "server_names")
-		{
-			vect.erase(vect.begin());
-			_serverName = vect;
-		}
-		else if (vect[0] == "error_page")
-		{
-			_hasErrPage = true;
-			_errPage.filePath = *(vect.end() - 1);
-			vect.erase((vect.end() - 1));
-			vect.erase(vect.begin());
-			_errPage.listError = vect;
-			_errPage.fileContent = readFileToString(_errPage.filePath);
-		}
-		else if (vect[0] == "size")
-			_maxSize = convertStringToFLoat(vect[1]);
-		vect.clear();
-		line.clear();
-	}
-	myParseLoc(locPath);
-}
 
 void MyConf::init_port_child(int port)
 {
@@ -118,8 +56,6 @@ void	MyConf::displayConfig() const
 	for (intVectIt itInt = _port.begin(); itInt != _port.end(); itInt++)
 		std::cout << " " << (*itInt);
 	std::cout << std::endl;
-	if (_serverName.size())
-		displayStringVect(_serverName, "Server name");
 	if (_errPage.listError.size())
 	{
 		std::cout << "error_page: ";
@@ -157,8 +93,8 @@ void MyConf::getElementConfig(const size_t &start, const size_t &end, const stri
 						throw std::runtime_error ("Error : Find not digit element");
 					_port.push_back(atoi(word.c_str()));
 				}
-				if (name == "server_names")
-					_serverName.push_back(word);
+				// if (name == "server_names")
+				// 	_serverName.push_back(word);
 				if (name == "size")
 					_size.push_back(word);
 				if (name == "error_page")
@@ -170,8 +106,6 @@ void MyConf::getElementConfig(const size_t &start, const size_t &end, const stri
 	}
 	if(checkValuePort(_port) == false)
 		throw std::runtime_error ("Error : Port invalid");
-	if(checkDuplicationStr(_serverName) == false)
-		throw std::runtime_error ("Error : server name invalid");
 	if(checkDuplicationStr(_errPage.strError) == false)
 		throw std::runtime_error ("Error : server name invalid");
 	_countLocation = countLoc;

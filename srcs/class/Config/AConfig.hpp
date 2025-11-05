@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AConfig.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/31 08:22:35 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:38:43 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ class AConfig
 		intVect			_port;
 		float			_maxSize;
 		std::string		_host;
-		stringVect		_serverName;
 		t_errPage		_errPage;
 		bool			_hasErrPage;
 		vectLocation	_location;
@@ -53,7 +52,6 @@ class AConfig
 		float			getMaxSize() const;
 		void			convertSizeMax();
 		std::string		getServHost() const;
-		stringVect		getServName() const;
 		t_errPage		getErrPage() const;
 		vectLocation	getClassLocation() const;
 
@@ -61,7 +59,7 @@ class AConfig
 
 		virtual 		~AConfig(){};
 
-		virtual void	myParseLoc(std::string const & filePath) = 0;
+		virtual void	parseConfig(stringVect file) = 0;
 };
 
 #endif

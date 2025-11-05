@@ -72,7 +72,7 @@ UTILS = stringUtils.cpp fileUtils.cpp displayUtils.cpp \
 		CheckBraceClose.cpp ParseUtils.cpp pipeUtils.cpp
 
 PRO_DIR = program/
-PRO = launchServer.cpp parseConfig.cpp eventHandling.cpp initServer.cpp sendingResponse.cpp
+PRO = launchServer.cpp eventHandling.cpp initServer.cpp sendingResponse.cpp
 
 SRC_DIR = srcs/
 SRC = $(addprefix $(SRC_DIR), $(MAIN)) \

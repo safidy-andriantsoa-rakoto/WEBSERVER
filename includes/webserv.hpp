@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 14:22:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 11:31:54 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,5 @@ void   			send_value(int const & _acceptStatus, std::string & _send_content);
 
 vectServer 		getServer(stringVect file);
 
-//Waiting for real parser
-vectServer		myParseConfigFile();
 
 #endif
