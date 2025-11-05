@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 14:57:19 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 15:15:41 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,25 +80,27 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
             }
             while (s >> word)
             {
-                std::cout << "Name="<< name << " | "<< word << std::endl;
                 if (name != "root" && name != "autoindex" && name != "root" && name != "method" && name != "redirect" && name != "location" && name !=  "cgi")
                     throw std::runtime_error("Error: invalid config->" + name);
                 if (name == "root")
                     _root.push_back(word);
                 if (name == "autoindex")
                 {
-                    if (word == "ON")
+                    if (word == "ON" || word == "OFF")
                         _autoindex[0] = word;
+                    else
+                        throw std::runtime_error("Error: invalid config->" + name);
                 }
                 if (name == "cgi")
                 {
                     /*Add the cgi extension inside parsing : need two elt, ON/OFF + execution path*/
-                    if (word == "ON")
+                    if (word == "ON" || word == "OFF")
                     {
                         _cgiExtension[0] = word;
                         /* Then Check for the execution path at _cgiExtension[1] */
                         _cgiExtension.push_back("/usr/bin/php-cgi"); //Temporary line
                     }
+                    //tokony mbola misy erreur eto
                 }
                 if (name == "method")
                     _method.push_back(word);
