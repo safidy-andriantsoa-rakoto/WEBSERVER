@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 15:00:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 22:24:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static void manageMultiPort(vectServer & allServer)
 	}
 	if (childServer.size())
 		std::copy(childServer.begin(), childServer.end(), std::back_inserter(allServer));
+	std::cout << "*******************ManageMultiPort******************" << std::endl;
 	for (size_t i = 0; i < allServer.size(); i++)
 		allServer[i].getConfig().displayConfig(); /* [TEST ONLY] */
 }
@@ -45,6 +46,7 @@ int main(int argc, char **argv)
 	Handler 	handler;
 	stringVect	config;
 	vectServer	allServer;
+	intPairVect index;
 
 	try
 	{		
@@ -52,8 +54,8 @@ int main(int argc, char **argv)
 			config = splitString(DEFAULT_CONFIG, "\n");
 		else
 			config = getContentFile(argv[1]);
-		if (!checkBraceClose(config)
-				|| !checkBracesAfterNewline(config)
+		if (!checkBraceClose(config, index)
+				|| !checkBracesAfterNewline(config, index)
 				|| !checkWriteConfig(config, "server", "server {")
 				|| !checkNumberAllContent(config))
 			return (1);

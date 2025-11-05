@@ -6,56 +6,60 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 10:13:07 by trahanta          #+#    #+#             */
-/*   Updated: 2025/11/05 15:48:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 22:11:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "general.hpp"
 
-bool    checkIfContentInsideBracket(std::string const & openString, int const & open, int const & close)
+bool    checkStringInsideBrace(std::string const & content, int const & open, int const & close)
 {
-	std::cout << "String = [" << openString << "]" << std::endl;
-	std::cout << "Open = " << openString[open] << "; Close = " << openString[close] << std::endl;
-	std::cout << "Open = " << open << "; Close = " << close << std::endl;
+	int	count = 0;
+
 	for(int i = open + 1; i <= close; i++)
 	{
-		if (std::isspace(openString[i]) == true)
-			return false;
-		std::cout << "[" << openString[i] << "]" << std::endl;
+		if (std::isspace(content[i]) == false && content[i] != '\n')
+			return true;
+		count++;
 	}
-	return true;
+	if (count)
+		return true;
+	std::cout << "COUNT = " <<  count << std::endl;
+	return false;
 }
 
-void	checkBracketIndex(stringVect const & vect, intPairVect & bracketIndex)
+void	checkBraceContent(stringVect const & vect, intPairVect const & braceIndex)
 {
 	int		openB;
 	int		closeB;
-	int		vectIndex;
-	size_t	i;
+	size_t	vect_i;
+	size_t	vect_j;
+	size_t	size = braceIndex.size();
 	size_t	j;
-	size_t	size = bracketIndex.size();
-	std::string	sub;
 
-	std::cout << "Size = " << size << " " << size / 2 << std::endl;
-	for (i = 0; i < size / 2; i++)
+	// std::cout << "Size = " << size << " " << size / 2 << std::endl;
+	for(size_t i = 0; i < size; i++)
 	{
 		j = size - i - 1;
-		vectIndex = bracketIndex[i].first;
-		openB = bracketIndex[i].second;
-		closeB = bracketIndex[j].second;
-		if (checkIfContentInsideBracket(vect[vectIndex], openB, closeB))
-			throw std::runtime_error("Error : There is nothing inside a bracket");
+		vect_i = braceIndex[i].first;
+		vect_j = braceIndex[j].first;
+		for (; vect_i < vect_j; vect_i++)
+		{
+			openB = braceIndex[i].second;
+			closeB = braceIndex[j].second;
+			if (checkStringInsideBrace(vect[vect_i], openB, closeB) == false)
+				throw std::runtime_error("Error : There is nothing inside a bracket");
+		}
 	}
 }
 
-bool	checkBraceClose(std::vector<std::string> vect)
+/* [UPDATE] : Review argument function */
+bool	checkBraceClose(stringVect const & vect, intPairVect & index)
 {
-	int			count = 0;
-	intPairVect	index;
+	int	count = 0;
 
 	for (size_t i = 0; i < vect.size(); i++)
 	{
-		std::cout << "[" << vect[i] << "]" << std::endl;
 		for (size_t j = 0; j < vect[i].size(); j++)
 			if (vect[i][j] == '{')
 			{
@@ -78,12 +82,11 @@ bool	checkBraceClose(std::vector<std::string> vect)
 		std::cerr << "Error : brace not close in config" << std::endl;/* [UPDATE] : cout to cerr */
 		return false;
 	}
-	checkBracketIndex(vect, index);
-	std::cout << "CHECK BRACE CLOSE DONE !!!!!" << std::endl;
 	return true;
 }
 
-bool checkBracesAfterNewline(const std::vector<std::string> &file)
+/* [UPDATE] : Add checkBraceContent */
+bool checkBracesAfterNewline(stringVect const & file, intPairVect const & braceIndex)
 {
 	for (size_t i = 0; i < file.size(); ++i)
 	{
@@ -112,6 +115,8 @@ bool checkBracesAfterNewline(const std::vector<std::string> &file)
 				}
 			}
 		}
+		(void) braceIndex;
+		// checkBraceContent(file, braceIndex);
 	}
 	return true;
 }
