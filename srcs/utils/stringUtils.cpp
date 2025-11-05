@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stringUtils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/01 20:03:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/05 13:58:40 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

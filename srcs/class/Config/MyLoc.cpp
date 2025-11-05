@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:14:37 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 14:57:19 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,9 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
             }
             while (s >> word)
             {
+                std::cout << "Name="<< name << " | "<< word << std::endl;
+                if (name != "root" && name != "autoindex" && name != "root" && name != "method" && name != "redirect" && name != "location" && name !=  "cgi")
+                    throw std::runtime_error("Error: invalid config->" + name);
                 if (name == "root")
                     _root.push_back(word);
                 if (name == "autoindex")
@@ -138,7 +141,14 @@ void MyLoc::parseLocation(const stringVect &file)
     {
         throw std::runtime_error("Error : duplicate setting find or not find setting");
     }
-    getElementLocation(start, end, file);
+    try
+    {
+        getElementLocation(start, end, file);
+    }
+    catch(const std::exception& e)
+    {
+        throw std::runtime_error(e.what());
+    }
     currentBlock++;
     _checkStats = true;
 }

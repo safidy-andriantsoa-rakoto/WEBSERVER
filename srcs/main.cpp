@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:12:49 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 14:54:07 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ int main(int argc, char **argv)
 			return (1);
 		allServer = getServer(config);
 		Server::getParsAllServer(allServer, config);//vita ny parse
+		std::cout << "aty ee" << std::endl;
 		if(!Server::checkDuplicateValue(allServer))
 			return (1);
-		//vita !erreur ny parse
 		for (size_t i = 0; i < allServer.size(); i++)
 		{
 			intVect port_tmp = allServer[i].getConfig().getServPort();

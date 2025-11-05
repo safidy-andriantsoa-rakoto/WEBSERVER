@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CheckBraceClose.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: trahanta <trahanta@student.42antananari    +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 10:13:07 by trahanta          #+#    #+#             */
-/*   Updated: 2025/08/20 09:53:02 by trahanta         ###   ########.fr       */
+/*   Updated: 2025/11/05 14:22:13 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@ bool checkBraceClose(std::vector<std::string> vect)
                 count--;
                 if (count < 0)
                 {
-                    std::cout << "Error : brace not close in config" << std::endl;
+                    std::cerr << "Error : brace not close in config" << std::endl;
                     return false;
                 }
             }
     }
     if (count > 0)
     {
-        std::cout << "Error : brace not close in config" << std::endl;
+        std::cerr << "Error : brace not close in config" << std::endl;
         return (false);
     }
     return (true);

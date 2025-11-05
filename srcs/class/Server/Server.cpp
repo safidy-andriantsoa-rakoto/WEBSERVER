@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:17:57 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/05 14:54:22 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,14 @@ void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
 	size_t i(0);
 	while(i < allServer.size())
 	{
-		allServer[i]._config.parseConfig(file);
+		try
+		{
+			allServer[i]._config.parseConfig(file);
+		}
+		catch(const std::exception& e)
+		{
+	        throw std::runtime_error(e.what());
+		}
 		allServer[i]._config.convertSizeMax(); /* [?] : Need to check pc size available */
 		allServer[i]._config.displayConfig();
 		if(allServer[i]._config.getStatus() == true)
