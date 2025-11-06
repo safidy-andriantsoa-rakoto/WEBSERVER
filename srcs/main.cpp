@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 10:10:42 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/06 11:36:48 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ int main(int argc, char **argv)
 {
 	// Handler 	handler;
 	stringVect	config;
+	serverVect	allServer_conf;
+	dataMap		_data_conf;
 	// vectServer	allServer;
 	// vectServer	childServer;
 
@@ -38,7 +40,50 @@ int main(int argc, char **argv)
 			config = getContentFile(argv[1]);
 		for (size_t i = 0; i < config.size(); i++)
 		{
+			size_t pos;
+			std::istringstream line(config[i]);
+			parseMap _content_conf;
+			std::string word;
+			stringVect	line_data;
+			pos = config[i].find("\t");// if faut rechercher dabort un tab pos 0
+			// pos2 = config[i].find("\t");
+			if (config[i].size() == 1)
+			continue;
+			std::cout << "=============================================================================" << std::endl;
+			while (line >> word)
+				line_data.push_back(word);
+			if (pos == std::string::npos)
+			{
+				if (line_data.size() == 1) //server bloc
+				{
+					_data_conf.clear();
+					_data_conf[line_data[0]];
+					allServer_conf.push_back(_data_conf);
+					std::cout << "\033[43mSize Map= "<< allServer_conf.size() << "\033[0m" << std::endl;
+				}
+			}
+			else if (pos == 0)
+			{
+				config[i].erase(0, 1);// changer par rapport a la identation space or tab
+				std::cout << "\033[046mLEVEL->"<< config[i] <<"<-\033[0m" << std::endl;
+				pos = config[i].find("\t");
+				if (pos == 0)
+				{
+					std::cout << "\033[045mLEVEL 2\033[0m" << std::endl;
+					
+				}
+				else
+				{
+					std::cout << "\033[044mLEVEL 1\033[0m" << std::endl;
+					
+				}
+			}
+			for (size_t j = 0; j < line_data.size(); j++)
+			{
+				std::cout << "			WORD->" << line_data[j] << std::endl;
+			}
 			std::cout << "Ligne["<< i <<"]->"<< config[i] << "<-size=" << config[i].size() << std::endl;
+			std::cout << "=============================================================================" << std::endl;
 		}
 	}
 	// 	if (!checkBraceClose(config)
