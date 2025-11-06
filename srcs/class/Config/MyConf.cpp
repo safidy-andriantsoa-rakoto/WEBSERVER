@@ -6,12 +6,69 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 08:02:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 11:59:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MyConf.hpp"
 #include "AConfig.hpp"
+
+void MyConf::checkConfigElement(parseMap & map)
+{
+	stringVect	vectElt;
+	stringVect	vectLoc;
+
+	for (parseMapIt it = map.begin(); it != map.end(); it++)
+	{
+		if ((*it).first.size() < 2)
+			throw std::runtime_error("Error on element value");
+		std::string elt = getElt(it);
+		if (elt == "location")
+			vectLoc.push_back(getLocValue(it));
+		else
+		{
+			if (getLocVect(it).size() > 1)
+				throw std::runtime_error("Element should not have level 3");
+			else if (getLocVect(it).size() == 1 && getLocVect(it)[0] != "")
+				throw std::runtime_error("Element should not have level 3 !!!");
+			vectElt.push_back(elt);
+		}
+	}
+	/* [TEST ONLY] */
+	// displayStringVect(vectElt, "ELEMENT");
+	// displayStringVect(vectLoc, "LOCATION");
+	if (vectLoc.size() == 0)
+		throw std::runtime_error("No location");
+	if (vectLoc.size() == 1 && vectLoc[0] != "/")
+		throw std::runtime_error("Must be / location");
+	if (vectElt.size() == 0 || vectElt.size() < 3 || vectElt.size() > 4)
+		throw std::runtime_error("Error on the number of elements");
+	for (size_t i = 0; i < vectElt.size(); i++)
+	{
+		if (std::count(vectElt.begin(), vectElt.end(), vectElt[i]) != 1)
+			throw std::runtime_error("Element duplicated");
+	}
+}
+
+void MyConf::parseHost(stringVect const &vect)
+{
+}
+
+void MyConf::parsePort(stringVect const &vect)
+{
+}
+
+void MyConf::parseErrorPage(stringVect const &vect)
+{
+}
+
+void MyConf::parseSize(stringVect const &vect)
+{
+}
+
+void MyConf::parseLocation(parseMapIt &it)
+{
+}
 
 MyConf::MyConf()
 {
@@ -47,6 +104,25 @@ void MyConf::delete_port_child_in_parent()
 		_port.push_back(port);	
 	}
 }
+
+void MyConf::parseNewConfig(parseMap & map)
+{
+	std::string elt;
+
+	checkConfigElement(map);
+	for(parseMapIt it = map.begin(); it != map.end(); it++)
+	{
+		elt = getElt(it);
+		/* [!] : Add condition for all the element */
+
+	}
+}
+
+std::string MyConf::getElt(parseMapIt &it){return (*it).first[0];}
+
+std::string MyConf::getLocValue(parseMapIt &it){return (*it).first[1];}
+
+stringVect& MyConf::getLocVect(parseMapIt &it){return (*it).second;}
 
 void	MyConf::displayConfig() const
 {

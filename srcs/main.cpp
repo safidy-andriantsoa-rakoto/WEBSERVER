@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 09:16:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 11:51:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,25 +81,28 @@
 // 	return 0;
 // }
 
-
-typedef struct s_bloc{
-	int	id;
-	stringVect vectContent;
-} t_bloc;
-
-typedef std::vector<t_bloc> bloc;
-
 int main()
 {
-	vectServer	allServer;
-	stringVect	config;
+	MyConf conf;
+	parseMap map;
 
 	try
 	{
-		config = getContentFile("config/serverConf/test.conf");
-		if (!checkBraceClose(config)
-				|| !checkBracesAfterNewline(config))
-			return 1;
+		stringVect vect;
+		stringVect secondVect;
+		vect.push_back("host");
+		vect.push_back("localhost");
+		secondVect.push_back("");
+		map.insert(std::pair<stringVect, stringVect>(vect, secondVect));
+		vect.clear();
+		vect.push_back("host");
+		vect.push_back("/");
+		map.insert(std::pair<stringVect, stringVect>(vect, secondVect));
+		vect.clear();
+		vect.push_back("location");
+		vect.push_back("/");
+		map.insert(std::pair<stringVect, stringVect>(vect, secondVect));
+		conf.parseNewConfig(map);
 	}
 	catch(const std::exception& e)
 	{

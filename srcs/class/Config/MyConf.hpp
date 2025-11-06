@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:29:56 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/06 11:58:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@ class MyConf : public AConfig
 		bool	_checkStats;
 		int		_countLocation;
 		int		_endLocation;
+
+		void	checkConfigElement(parseMap & map);
+
+		void	parseHost(stringVect const & vect);
+		void	parsePort(stringVect const & vect);
+		void	parseErrorPage(stringVect const & vect);
+		void	parseSize(stringVect const & vect);
+		void	parseLocation(parseMapIt & it);
 
 	public:
 		MyConf();
@@ -37,8 +45,15 @@ class MyConf : public AConfig
 		//For testing
 		virtual void	displayConfig() const;
 
-		void	init_port_child(int port);
-		void	delete_port_child_in_parent();
+		void			init_port_child(int port);
+		void			delete_port_child_in_parent();
+
+		/* [UPDATE] */
+		void			parseNewConfig(parseMap & map);
+
+		std::string		getElt(parseMapIt & it);
+		std::string		getLocValue(parseMapIt & it);
+		stringVect&		getLocVect(parseMapIt & it);
 };
 
 #endif

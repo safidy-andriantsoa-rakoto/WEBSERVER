@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 09:30:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 10:16:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,14 @@ typedef errVect::iterator       errIt;
 typedef std::map<stringVect, std::string>   MapSVectStr;
 typedef MapSVectStr::iterator               MapSVectStrIt;
 
-typedef std::map<std::string, stringVect>   parseMap;
-typedef parseMap::iterator               parseMapIt;
+/*stringVect = key, stringVect = Content (especially for location)*/
+typedef std::map<stringVect, stringVect>   parseMap;
+typedef parseMap::iterator                  parseMapIt;
+typedef parseMap::const_iterator                  parseMapCit;
 
-typedef std::map<std::string, parseMap> dataMap;
-typedef dataMap::iterator               dataMapIt;
+/*string = indentation, parseMap = content*/
+typedef std::map<std::string, parseMap>     dataMap;
+typedef dataMap::iterator                   dataMapIt;
 
 typedef struct s_redirection      t_redirection;
 
