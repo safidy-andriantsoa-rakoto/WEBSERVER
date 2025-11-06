@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 14:28:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 19:40:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,39 @@ typedef struct s_errPage        t_errPage;
 typedef std::vector<t_errPage>  errVect;
 typedef errVect::iterator       errIt;
 
+typedef struct s_redirection      t_redirection;
+
 typedef std::map<stringVect, std::string>   MapSVectStr;
 typedef MapSVectStr::iterator               MapSVectStrIt;
 
-/*stringVect = key, stringVect = Content (especially for location)*/
-typedef std::map<stringVect, stringVect>	parseMap;
-typedef parseMap::iterator					parseMapIt;
-typedef parseMap::const_iterator			parseMapCit;
+// typedef std::map<stringVect, stringVect>   parseMap;
+// typedef parseMap::iterator               parseMapIt;
 
-/*string = indentation, parseMap = content*/
-typedef std::map<std::string, parseMap>     dataMap;
-typedef dataMap::iterator                   dataMapIt;
+// typedef std::map<std::string, stringVect>   MapData;
+// typedef MapData::iterator               MapDataIt;
 
-typedef struct s_redirection      t_redirection;
+// typedef std::vector<std::pair<MapData, MapData> >   vectPair;
+// typedef vectPair::iterator            vectPairIt;
+
+// typedef std::map<std::string, MapDataL>   dataMap;
+// typedef dataMap::iterator               dataMapIt;
+
+// typedef std::vector<vectPair>	serverVect;
+// typedef serverVect::iterator        serverVectIt;
+
+
+struct s_dataConf
+{
+    int lvl;
+    std::string key;
+    stringVect  value;
+};
+
+typedef std::vector<s_dataConf> vectData;
+typedef std::vector<s_dataConf>::iterator vectDataIt;
+
+typedef std::vector<vectData>	serverVect;
+typedef serverVect::iterator        serverVectIt;
+
 
 #endif

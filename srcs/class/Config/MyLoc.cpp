@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 15:37:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 19:41:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,12 +170,16 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
             }
             while (s >> word)
             {
+                if (name != "root" && name != "autoindex" && name != "root" && name != "method" && name != "redirect" && name != "location" && name !=  "cgi")
+                    throw std::runtime_error("Error: invalid config->" + name);
                 if (name == "root")
                     _root.push_back(word);
                 if (name == "autoindex")
                 {
-                    if (word == "ON")
+                    if (word == "ON" || word == "OFF")
                         _autoindex[0] = word;
+                    else
+                        throw std::runtime_error("Error: invalid config->" + name);
                 }
                 if (name == "cgi")
                 {
@@ -187,9 +191,14 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                         _cgiExtension[0] = word;
                         cgiOn = true;
                     }
+                    //tokony mbola misy erreur eto
                 }
                 if (name == "method")
+                {
+                    if (word != "POST" && word != "GET" && word != "DELETE")
+                        throw std::runtime_error("Error: Method not allowed->" + name + "=" + word);
                     _method.push_back(word);
+                }
                 if (name == "redirect")
                 {
                     _redirect.push_back(word);
@@ -254,6 +263,15 @@ void MyLoc::oldParseLocation(stringVect const &file)
     if (checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end))
         throw std::runtime_error("Error : duplicate setting find or not find setting");
     getElementLocation(start, end, file);
+    }
+    try
+    {
+        getElementLocation(start, end, file);
+    }
+    catch(const std::exception& e)
+    {
+        throw std::runtime_error(e.what());
+    }
     currentBlock++;
     _checkStats = true;
 }

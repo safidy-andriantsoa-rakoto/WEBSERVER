@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 15:38:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 19:41:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -315,7 +315,14 @@ void MyConf::parseConfig(stringVect file)
 	this->_location = createVectLocation(_countLocation);
 	while (k < _location.size())
 	{
-		_location[k].parseLocation(file);
+		try
+		{
+			_location[k].parseLocation(file);
+		}
+		catch(const std::exception& e)
+		{
+	        throw std::runtime_error(e.what());
+		}
 		if (_location[k].getStatus())
 			k++;
 		else

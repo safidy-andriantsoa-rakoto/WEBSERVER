@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 08:24:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 19:42:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,7 +339,7 @@ bool checkDuplicate(stringVect file, std::string name, size_t &start, size_t &en
 	}
 	if (count != 1)
 	{
-		std::cout << "Name of duplicate => " << name << std::endl;
+		// std::cout << "Name of duplicate => " << name << std::endl;
 		return (true);
 	}
 	return (false);
