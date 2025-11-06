@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 08:02:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/03 15:04:06 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 14:14:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ float convertStringToFLoat(std::string const & n)
 
 	ss << n;
 	ss >> result;
+	if (ss.eof() == false)
+		throw std::runtime_error("SConversion from string to float failed");
 	return result;
 }
 
@@ -39,6 +41,8 @@ int convertStringToInt(std::string const & n)
 
 	ss << n;
 	ss >> result;
+	if (ss.eof() == false)
+		throw std::runtime_error("Conversion from string to int failed");
 	return result;	
 }
 
@@ -60,6 +64,8 @@ float	convertToBytes(stringVect const & vect)
 
 	ss << vect[0];
 	ss >> value;
+	if (ss.eof() == false || ss.fail() == true)
+		throw std::runtime_error("Value is not valid");
 	unit = vect[1];
 	exp = 0;
 	if (unit == "KB")
@@ -68,6 +74,8 @@ float	convertToBytes(stringVect const & vect)
 		exp = 6;
 	else if (unit == "GB")
 		exp = 9;
+	else if (unit != "B")
+		throw std::runtime_error("Conversion failed");
 	value *= std::pow(10, exp);
 	return (value);
 }

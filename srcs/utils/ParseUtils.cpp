@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 09:16:15 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/10/28 13:23:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 15:13:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,4 +88,14 @@ bool checkValueMethod(stringVect &str)
             return (false);
     }
     return (true);
+}
+
+bool    checkDuplicateInStringVect(stringVect vect)
+{
+    for (stringVectIt it = vect.begin(); it != vect.end(); it++)
+    {
+        if (std::count(vect.begin(), vect.end(), *it) != 1)
+            return true;
+    }
+    return false;
 }

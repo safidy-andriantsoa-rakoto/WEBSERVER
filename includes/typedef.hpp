@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 10:16:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 14:28:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef std::pair<std::string, std::string>	   stringPair;
 
 typedef std::vector<std::string>	stringVect;
 typedef stringVect::iterator        stringVectIt;
+typedef stringVect::const_iterator	stringVectCIt;
 
 typedef std::vector<int>		intVect;
 typedef intVect::const_iterator	intVectIt;
@@ -51,9 +52,9 @@ typedef std::map<stringVect, std::string>   MapSVectStr;
 typedef MapSVectStr::iterator               MapSVectStrIt;
 
 /*stringVect = key, stringVect = Content (especially for location)*/
-typedef std::map<stringVect, stringVect>   parseMap;
-typedef parseMap::iterator                  parseMapIt;
-typedef parseMap::const_iterator                  parseMapCit;
+typedef std::map<stringVect, stringVect>	parseMap;
+typedef parseMap::iterator					parseMapIt;
+typedef parseMap::const_iterator			parseMapCit;
 
 /*string = indentation, parseMap = content*/
 typedef std::map<std::string, parseMap>     dataMap;

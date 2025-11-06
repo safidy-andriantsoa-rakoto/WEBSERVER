@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/24 14:44:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 15:09:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ class ALocation
 		size_t 			_endConfig;
 		t_redirection	_redirection;
 
-
 	public:
 		ALocation();
+		ALocation(std::string const & locationName);
 		ALocation(ALocation const & other);
 		ALocation & operator=(ALocation const & other);
 		virtual	~ALocation(){};

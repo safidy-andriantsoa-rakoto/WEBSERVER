@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 08:38:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 15:11:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,3 +121,5 @@ bool	checkValuePort(intVect &vect);
 bool	checkDuplicationStr(stringVect &str);
 bool	checkDuplicationInt(intVect &Int);
 bool	checkValueMethod(stringVect &str);
+
+bool    checkDuplicateInStringVect(stringVect vect);

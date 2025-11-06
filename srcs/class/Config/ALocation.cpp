@@ -6,13 +6,19 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/27 08:28:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 14:39:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ALocation.hpp"
 
 ALocation::ALocation()
+{
+	_autoindex.push_back("OFF");
+	_cgiExtension.push_back("OFF");
+}
+
+ALocation::ALocation(std::string const &locationName) : _locations(locationName)
 {
 	_autoindex.push_back("OFF");
 	_cgiExtension.push_back("OFF");

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 11:59:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 15:38:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void MyConf::checkConfigElement(parseMap & map)
 	for (parseMapIt it = map.begin(); it != map.end(); it++)
 	{
 		if ((*it).first.size() < 2)
-			throw std::runtime_error("Error on element value");
+			throw std::runtime_error("Element value need at least one value");
 		std::string elt = getElt(it);
 		if (elt == "location")
 			vectLoc.push_back(getLocValue(it));
@@ -34,46 +34,99 @@ void MyConf::checkConfigElement(parseMap & map)
 			vectElt.push_back(elt);
 		}
 	}
-	/* [TEST ONLY] */
-	// displayStringVect(vectElt, "ELEMENT");
-	// displayStringVect(vectLoc, "LOCATION");
 	if (vectLoc.size() == 0)
 		throw std::runtime_error("No location");
 	if (vectLoc.size() == 1 && vectLoc[0] != "/")
 		throw std::runtime_error("Must be / location");
 	if (vectElt.size() == 0 || vectElt.size() < 3 || vectElt.size() > 4)
 		throw std::runtime_error("Error on the number of elements");
-	for (size_t i = 0; i < vectElt.size(); i++)
+	
+	/* [!] : Remove this section if not needed */
+	// for (size_t i = 0; i < vectElt.size(); i++)
+	// {
+	// 	if (std::count(vectElt.begin(), vectElt.end(), vectElt[i]) != 1)
+	// 		throw std::runtime_error("Element duplicated");
+	// }
+}
+
+void MyConf::parseHost(stringVect const & vect)
+{
+	if (vect.size() != 2)
+		throw std::runtime_error("Host contains only one element");
+	_host = vect[1];
+}
+
+void MyConf::parsePort(stringVect const & vect, intVect & allPort)
+{
+	int	n;
+
+	if (vect.size() < 2 || vect.size() > 4)
+		throw std::runtime_error("Number of ports doesn't respsect limit");
+	for (stringVectCIt it = vect.begin() + 1; it != vect.end(); it++)
 	{
-		if (std::count(vectElt.begin(), vectElt.end(), vectElt[i]) != 1)
-			throw std::runtime_error("Element duplicated");
+		n = convertStringToInt(*it);
+		if(n < 0 || n > 65535)
+			throw std::runtime_error("Invalid port");
+		if (std::count(allPort.begin(), allPort.end(), n) != 0)
+			throw std::runtime_error("Port already used in the server");
+		_port.push_back(n);
+	}
+	
+}
+
+void MyConf::parseErrorPage(stringVect const & vect)
+{
+	stringVect	allStatusCode = splitString(ALL_STATUS_CODE, ";");
+	size_t		i;
+
+	if (vect.size() < 3)
+		throw std::runtime_error("Error_page elements missing");
+	for(i = 1; i < vect.size() - 1; i++)
+	{
+		if (std::find(allStatusCode.begin(), allStatusCode.end(), vect[i]) == allStatusCode.end())
+			throw std::runtime_error("Invalid status code");
+		_errPage.listError.push_back(vect[i]);
+	}
+	try
+	{
+		int fd = openRegFile(vect[i]);
+		close(fd);
+		_errPage.filePath = vect[i];
+	}
+	catch(const std::exception& e)
+	{
+		throw std::runtime_error("Error_page file can't be opened or does not exist");
 	}
 }
 
-void MyConf::parseHost(stringVect const &vect)
+void MyConf::parseSize(stringVect const & vect)
 {
+	if (vect.size() != 3)
+		throw std::runtime_error("Size contains only two element");
+	_size = vect;
+	try
+	{
+		_size.erase(_size.begin());
+		_maxSize =  convertToBytes(_size);
+	}
+	catch(const std::exception& e)
+	{
+		std::runtime_error("Size unit or value error");
+	}
 }
 
-void MyConf::parsePort(stringVect const &vect)
+void MyConf::parseLocationBloc(parseMapIt &it)
 {
+	std::string	locValue = getLocValue(it);
+
+	if ((locValue[0] != '/') || (locValue[locValue.size() - 1] == '/' && locValue.size() > 1))
+		throw std::runtime_error("Syntax incorrect for location name");
+	MyLoc loc(locValue);
+	loc.parseLocation((*it).second);
+	_location.push_back(loc);
 }
 
-void MyConf::parseErrorPage(stringVect const &vect)
-{
-}
-
-void MyConf::parseSize(stringVect const &vect)
-{
-}
-
-void MyConf::parseLocation(parseMapIt &it)
-{
-}
-
-MyConf::MyConf()
-{
-	_hasErrPage = false;
-}
+MyConf::MyConf(){_hasErrPage = false;}
 
 MyConf::MyConf(MyConf const & other) : AConfig(other){}
 
@@ -105,7 +158,7 @@ void MyConf::delete_port_child_in_parent()
 	}
 }
 
-void MyConf::parseNewConfig(parseMap & map)
+void MyConf::parseNewConfig(parseMap & map, intVect& allPort)
 {
 	std::string elt;
 
@@ -114,7 +167,18 @@ void MyConf::parseNewConfig(parseMap & map)
 	{
 		elt = getElt(it);
 		/* [!] : Add condition for all the element */
-
+		if (elt == "host")
+			parseHost((*it).first);
+		else if (elt == "port")
+			parsePort((*it).first, allPort);
+		else if (elt == "error_page")
+			parseErrorPage((*it).first);
+		else if (elt == "size")
+			parseSize((*it).first);
+		else if (elt == "location")
+			parseLocationBloc(it);
+		else
+			throw std::runtime_error("Unknown element");
 	}
 }
 

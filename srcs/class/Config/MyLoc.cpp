@@ -6,14 +6,103 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 14:17:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 15:37:06 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MyLoc.hpp"
 #include "ALocation.hpp"
 
-MyLoc::MyLoc() {}
+void MyLoc::checkLocElement(stringVect const &vect)
+{
+    stringVect  elt;
+    stringVect  split;
+
+    for(stringVectCIt it = vect.begin(); it != vect.end(); it++)
+    {
+        split = splitString((*it), " ");
+        if (split.size() < 2)
+            throw std::runtime_error("Location doesn't have minimal element requirement");
+        elt.push_back(split[0]);
+    }
+    if ((std::find(elt.begin(), elt.end(), "redirect") != elt.end()) && elt.size() != 1)
+        throw std::runtime_error("redirect go alone inside a location bloc");
+    if ((elt.size() == 1 && elt[0] != "redirect") || elt.size() < 2)
+        throw std::runtime_error("Minimal requirement for location element is not respected");
+    if (checkDuplicateInStringVect(elt) == true)
+        throw std::runtime_error("Location element duplicated");
+}
+
+void MyLoc::parseRoot(stringVect & vect)
+{
+    if (vect.size() != 2)
+        throw std::runtime_error("Root need  one element");
+    _root = vect;
+}
+
+void MyLoc::parseMethod(stringVect & vect)
+{
+    if (vect.size() > 4)
+        throw std::runtime_error("Method need  3 elements");
+    for (stringVectIt it = vect.begin(); it != vect.end(); it++)
+    {
+        if (*it != "GET" && *it != "POST" && *it != "DELETE")
+            throw std::runtime_error("Server supports only GET, POST, DELETE");
+    }
+    if (checkDuplicateInStringVect(vect) == true)
+        throw std::runtime_error("Method duplicated");
+    _method = vect;
+    _method.erase(_method.begin());
+}
+
+void MyLoc::parseAutoIndex(stringVect & vect)
+{
+    if (vect.size() != 2)
+        throw std::runtime_error("Autoindex need 1 element");
+    if (vect[1] != "ON" && vect[0] != "OFF")
+        throw std::runtime_error("Autoindex can be activated by ON/OFF");
+    _autoindex[0] = vect[1];
+}
+
+void MyLoc::parseCgiExt(stringVect & vect)
+{
+    if (vect.size() != 3)
+        throw std::runtime_error("cgi need 3 elements");
+    if (vect[1] != "ON" && vect[1] != "OFF")
+        throw std::runtime_error("cgi can be activated by ON/OFF");
+    try
+    {
+        /* [!] : fstat or openRegFile ? */
+        int fd = openRegFile(vect[2]);
+        close(fd);
+    }
+    catch(const std::exception& e)
+    {
+        throw std::runtime_error("cgi executable is not valid");
+    }
+    _cgiExtension = vect;
+    _cgiExtension.erase(_cgiExtension.begin());
+}
+
+void MyLoc::parseRedirect(stringVect & vect)
+{
+	size_t  i;
+
+	if (vect.size() < 3)
+		throw std::runtime_error("Error_page elements missing");
+	for(i = 1; i < vect.size() - 1; i++)
+	{
+		if (vect[i] != "30i" && vect[i] != "302" && vect[i] != "307" && vect[i] != "308")
+			throw std::runtime_error("Invalid status code");
+	}
+    /* [!] : URI checker? */
+    _redirect = vect;
+    _redirect.erase(_redirect.begin());
+}
+
+MyLoc::MyLoc(){}
+
+MyLoc::MyLoc(std::string const &locName): ALocation(locName){}
 
 MyLoc::MyLoc(MyLoc const &other) : ALocation(other) {}
 
@@ -124,7 +213,31 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
     }
 }
 
-void MyLoc::parseLocation(const stringVect &file)
+
+
+void MyLoc::parseLocation(stringVect const & vect)
+{
+    stringVect  elt;
+
+    for(stringVectCIt it = vect.begin(); it != vect.end(); it++)
+    {
+        elt = splitString(*it, " ");
+        if (elt[0] == "root")
+            parseRoot(elt);
+        else if (elt[0] == "autoindex")
+            parseAutoIndex(elt);
+        else if (elt[0] == "method")
+            parseMethod(elt);
+        else if (elt[0] == "redirect")
+           parseRedirect(elt);
+        else if (elt[0] == "cgi")
+            parseCgiExt(elt);
+        else
+            throw std::runtime_error("Unknown element in location bloc");
+    }
+}
+
+void MyLoc::oldParseLocation(stringVect const &file)
 {
     static intVect index = containsExactWordInVector(file, "location");
     static size_t currentBlock = 0;

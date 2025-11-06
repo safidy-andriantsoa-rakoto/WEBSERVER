@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 11:51:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 13:48:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,9 @@
 
 int main()
 {
-	MyConf conf;
-	parseMap map;
+	MyConf		conf;
+	parseMap	map;
+	intVect		allPort;
 
 	try
 	{
@@ -102,7 +103,7 @@ int main()
 		vect.push_back("location");
 		vect.push_back("/");
 		map.insert(std::pair<stringVect, stringVect>(vect, secondVect));
-		conf.parseNewConfig(map);
+		conf.parseNewConfig(map, allPort);
 	}
 	catch(const std::exception& e)
 	{
