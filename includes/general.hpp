@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 15:11:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 20:23:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ void	    displayString(std::string const & text);
 void	    displayStringVect(stringVect const & vect, std::string const & title);
 void	    displayStringVect(stringVect const & vect);
 void	    displayCharTable(char	**tab, std::string const & title);
+void		displayServerVectConfig(serverVect & allServer_conf);
 
 //Parse
 bool		checkBraceClose(stringVect const & vect);

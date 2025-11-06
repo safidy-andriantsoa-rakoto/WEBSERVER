@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:16:50 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/06 20:50:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,10 @@
 class Server
 {
 	private:
-        int     	_fdClient;
-	    int     	_fdSocket;
-        socklen_t  	_size_sockaddrin;
-        SockAddrIn	_sockaddrIn;
+        int     		_fdClient;
+	    int     		_fdSocket;
+        socklen_t  		_size_sockaddrin;
+        SockAddrIn		_sockaddrIn;
 		struct addrinfo	_addrinfo;
 		struct addrinfo	*_resp;
 		// struct sockaddinfo	*_hints;
@@ -39,6 +39,7 @@ class Server
 
 	public:
 		Server();
+		Server(MyConf conf);
 		Server(Server const & other);
 		Server & operator=(Server const & other);
 		~Server();

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 14:28:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 21:28:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@ class MyConf : public AConfig
 		int		_countLocation;
 		int		_endLocation;
 
-		void	checkConfigElement(parseMap & map);
+		void	checkConfigElement(vectData & data);
 
 		void	parseHost(stringVect const & vect);
 		void	parsePort(stringVect const & vect, intVect & allPort);
 		void	parseErrorPage(stringVect const & vect);
 		void	parseSize(stringVect const & vect);
-		void	parseLocationBloc(parseMapIt & it);
+		void	parseLocationBloc(vectDataIt & itUpper, vectData & data);
 
 	public:
 		MyConf();
@@ -49,7 +49,7 @@ class MyConf : public AConfig
 		void			delete_port_child_in_parent();
 
 		/* [UPDATE] */
-		void			parseNewConfig(parseMap & map, intVect & allPort);
+		void			parseNewConfig(vectData & data, intVect & allPort);
 
 		std::string		getElt(parseMapIt & it);
 		std::string		getLocValue(parseMapIt & it);

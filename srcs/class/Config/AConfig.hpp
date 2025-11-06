@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AConfig.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:38:43 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/06 20:54:27 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

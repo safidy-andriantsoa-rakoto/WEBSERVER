@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 15:01:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 21:58:15 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 class MyLoc : public ALocation
 {
 	private:
-		void	checkLocElement(stringVect const &vect);
+		void	checkLocElement(vectData & data);
 
 		void	parseRoot(stringVect & vect);
 		void	parseMethod(stringVect & vect);
@@ -36,12 +36,9 @@ class MyLoc : public ALocation
 		bool			getStatus();
 		void 			getElementLocation(const size_t &start, const size_t &end, const stringVect &file);
 
-		virtual void	parseLocation(const stringVect &file);
+		virtual void	parseLocation(vectData & data);
 
 		void			oldParseLocation(stringVect const & file);
-
-		//barandri_function
-		virtual void	myParseLocation(std::string const & filePath);
 };
 
 #endif

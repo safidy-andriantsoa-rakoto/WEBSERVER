@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 09:43:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/09/30 10:39:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 20:41:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,20 @@ void	displayCharTable(char	**tab, std::string const & title)
 		tmp++;
 	}
 	std::cout << "===========End of " << title << "==============" << std::endl << std::endl;
+}
+
+void	displayServerVectConfig(serverVect & allServer_conf)
+{
+	for (size_t i = 0; i < allServer_conf.size(); i++)
+	{
+		std::cout << "**********************************************" << std::endl;
+		for (size_t j = 0; j < allServer_conf[i].size(); j++)
+		{
+			if (allServer_conf[i][j].lvl == 2)
+				std::cout << "	";
+			std::cout << "LVL=" << allServer_conf[i][j].lvl;
+			std::cout << "| key=" << allServer_conf[i][j].key;
+			displayStringVect(allServer_conf[i][j].value, "	| value=");
+		}
+	}	
 }

@@ -6,32 +6,39 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 19:41:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 22:08:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MyConf.hpp"
 #include "AConfig.hpp"
 
-void MyConf::checkConfigElement(parseMap & map)
+void MyConf::checkConfigElement(vectData & data)
 {
 	stringVect	vectElt;
 	stringVect	vectLoc;
+	vectDataIt	upperLvl = data.begin();
 
-	for (parseMapIt it = map.begin(); it != map.end(); it++)
+	for (vectDataIt it = data.begin(); it != data.end(); it++)
 	{
-		if ((*it).first.size() < 2)
-			throw std::runtime_error("Element value need at least one value");
-		std::string elt = getElt(it);
-		if (elt == "location")
-			vectLoc.push_back(getLocValue(it));
+		if ((*it).lvl == 1)
+		{
+			if ((*it).key.size() == 0 || (*it).value.size() == 0)
+				throw std::runtime_error("Config element need at least one value");
+			if ((*it).key == "location")
+			{
+				if ((*it).value.size() != 1)
+					throw std::runtime_error("Location has only one value");
+				vectLoc.push_back((*it).value[0]);
+			}
+			else
+				vectElt.push_back((*it).key);
+			upperLvl = it;
+		}
 		else
 		{
-			if (getLocVect(it).size() > 1)
-				throw std::runtime_error("Element should not have level 3");
-			else if (getLocVect(it).size() == 1 && getLocVect(it)[0] != "")
-				throw std::runtime_error("Element should not have level 3 !!!");
-			vectElt.push_back(elt);
+			if ((*upperLvl).lvl == 2 || (*upperLvl).key != "location")
+				throw std::runtime_error("Location is the one who has level 2 element");
 		}
 	}
 	if (vectLoc.size() == 0)
@@ -40,35 +47,33 @@ void MyConf::checkConfigElement(parseMap & map)
 		throw std::runtime_error("Must be / location");
 	if (vectElt.size() == 0 || vectElt.size() < 3 || vectElt.size() > 4)
 		throw std::runtime_error("Error on the number of elements");
-	
-	/* [!] : Remove this section if not needed */
-	// for (size_t i = 0; i < vectElt.size(); i++)
-	// {
-	// 	if (std::count(vectElt.begin(), vectElt.end(), vectElt[i]) != 1)
-	// 		throw std::runtime_error("Element duplicated");
-	// }
+	if (checkDuplicateInStringVect(vectElt) == true)
+		throw std::runtime_error("Duplicate among the config element");
+	if (checkDuplicateInStringVect(vectLoc))
+		throw std::runtime_error("Duplicate among the location");
 }
 
 void MyConf::parseHost(stringVect const & vect)
 {
-	if (vect.size() != 2)
+	if (vect.size() != 1)
 		throw std::runtime_error("Host contains only one element");
-	_host = vect[1];
+	_host = vect[0];
 }
 
 void MyConf::parsePort(stringVect const & vect, intVect & allPort)
 {
 	int	n;
 
-	if (vect.size() < 2 || vect.size() > 4)
+	if (vect.size() == 0 || vect.size() > 3)
 		throw std::runtime_error("Number of ports doesn't respsect limit");
-	for (stringVectCIt it = vect.begin() + 1; it != vect.end(); it++)
+	for (stringVectCIt it = vect.begin(); it != vect.end(); it++)
 	{
 		n = convertStringToInt(*it);
 		if(n < 0 || n > 65535)
 			throw std::runtime_error("Invalid port");
-		if (std::count(allPort.begin(), allPort.end(), n) != 0)
+		if (std::count(allPort.begin(), allPort.end(), n) == 1)
 			throw std::runtime_error("Port already used in the server");
+		allPort.push_back(n);
 		_port.push_back(n);
 	}
 	
@@ -79,9 +84,9 @@ void MyConf::parseErrorPage(stringVect const & vect)
 	stringVect	allStatusCode = splitString(ALL_STATUS_CODE, ";");
 	size_t		i;
 
-	if (vect.size() < 3)
+	if (vect.size() < 2)
 		throw std::runtime_error("Error_page elements missing");
-	for(i = 1; i < vect.size() - 1; i++)
+	for(i = 0; i < vect.size() - 1; i++)
 	{
 		if (std::find(allStatusCode.begin(), allStatusCode.end(), vect[i]) == allStatusCode.end())
 			throw std::runtime_error("Invalid status code");
@@ -101,7 +106,7 @@ void MyConf::parseErrorPage(stringVect const & vect)
 
 void MyConf::parseSize(stringVect const & vect)
 {
-	if (vect.size() != 3)
+	if (vect.size() != 2)
 		throw std::runtime_error("Size contains only two element");
 	_size = vect;
 	try
@@ -115,14 +120,14 @@ void MyConf::parseSize(stringVect const & vect)
 	}
 }
 
-void MyConf::parseLocationBloc(parseMapIt &it)
+void MyConf::parseLocationBloc(vectDataIt & itUpper, vectData & data)
 {
-	std::string	locValue = getLocValue(it);
+	std::string	locValue = (*itUpper).value[0];
 
-	if ((locValue[0] != '/') || (locValue[locValue.size() - 1] == '/' && locValue.size() > 1))
+	if ((locValue[0] != '/') || (locValue.size() > 1 && locValue[locValue.size() - 1] == '/'))
 		throw std::runtime_error("Syntax incorrect for location name");
 	MyLoc loc(locValue);
-	loc.parseLocation((*it).second);
+	loc.parseLocation(data);
 	_location.push_back(loc);
 }
 
@@ -158,28 +163,43 @@ void MyConf::delete_port_child_in_parent()
 	}
 }
 
-void MyConf::parseNewConfig(parseMap & map, intVect& allPort)
+void MyConf::parseNewConfig(vectData & data, intVect& allPort)
 {
 	std::string elt;
+	vectData	locationData;
+	vectDataIt	itUpper;
+	bool		collectData = false;
 
-	checkConfigElement(map);
-	for(parseMapIt it = map.begin(); it != map.end(); it++)
+	checkConfigElement(data);
+	for(vectDataIt it = data.begin(); it != data.end(); it++)
 	{
-		elt = getElt(it);
-		/* [!] : Add condition for all the element */
+		elt = (*it).key;
+		if ((*it).lvl == 1 && collectData == true)
+		{
+			parseLocationBloc(itUpper, locationData);
+			collectData = false;
+			locationData.clear();
+		}
 		if (elt == "host")
-			parseHost((*it).first);
+			parseHost((*it).value);
 		else if (elt == "port")
-			parsePort((*it).first, allPort);
+			parsePort((*it).value, allPort);
 		else if (elt == "error_page")
-			parseErrorPage((*it).first);
+			parseErrorPage((*it).value);
 		else if (elt == "size")
-			parseSize((*it).first);
+			parseSize((*it).value);
 		else if (elt == "location")
-			parseLocationBloc(it);
+		{
+			itUpper = it;
+			collectData = true;
+		}
+		else if ((*it).lvl == 2)
+			locationData.push_back(*it);
 		else
 			throw std::runtime_error("Unknown element");
 	}
+	if (collectData == true)
+		parseLocationBloc(itUpper, locationData);
 }
 
 std::string MyConf::getElt(parseMapIt &it){return (*it).first[0];}
@@ -317,7 +337,7 @@ void MyConf::parseConfig(stringVect file)
 	{
 		try
 		{
-			_location[k].parseLocation(file);
+			_location[k].oldParseLocation(file);
 		}
 		catch(const std::exception& e)
 		{

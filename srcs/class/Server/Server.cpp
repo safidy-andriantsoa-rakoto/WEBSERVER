@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 14:54:22 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/06 20:51:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
 Server::Server() : _fdClient(-1), _fdSocket(-1){}
+
+Server::Server(MyConf conf): _fdClient(-1), _fdSocket(-1), _config(conf){}
 
 Server::Server(Server const & other)
 {
