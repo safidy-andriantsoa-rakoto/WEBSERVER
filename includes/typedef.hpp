@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 10:16:26 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/06 16:00:03 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,39 @@ typedef struct s_errPage        t_errPage;
 typedef std::vector<t_errPage>  errVect;
 typedef errVect::iterator       errIt;
 
+typedef struct s_redirection      t_redirection;
+
 typedef std::map<stringVect, std::string>   MapSVectStr;
 typedef MapSVectStr::iterator               MapSVectStrIt;
 
-typedef std::map<stringVect, stringVect>   parseMap;
-typedef parseMap::iterator               parseMapIt;
+// typedef std::map<stringVect, stringVect>   parseMap;
+// typedef parseMap::iterator               parseMapIt;
 
-typedef std::map<std::string, parseMap>   dataMap;
-typedef dataMap::iterator               dataMapIt;
+// typedef std::map<std::string, stringVect>   MapData;
+// typedef MapData::iterator               MapDataIt;
 
-typedef std::vector<dataMap>	serverVect;
+// typedef std::vector<std::pair<MapData, MapData> >   vectPair;
+// typedef vectPair::iterator            vectPairIt;
+
+// typedef std::map<std::string, MapDataL>   dataMap;
+// typedef dataMap::iterator               dataMapIt;
+
+// typedef std::vector<vectPair>	serverVect;
+// typedef serverVect::iterator        serverVectIt;
+
+
+struct s_dataConf
+{
+    int lvl;
+    std::string key;
+    stringVect  value;
+};
+
+typedef std::vector<s_dataConf> vectData;
+typedef std::vector<s_dataConf>::iterator vectDataIt;
+
+typedef std::vector<vectData>	serverVect;
 typedef serverVect::iterator        serverVectIt;
 
-typedef struct s_redirection      t_redirection;
 
 #endif

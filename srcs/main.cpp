@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 11:41:17 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/06 16:06:55 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,14 @@ int main(int argc, char **argv)
 	// Handler 	handler;
 	stringVect	config;
 	serverVect	allServer_conf;
-	dataMap		_data_conf;
+	vectData	all_data_conf;
+	// dataMap		_data_conf;
 	// vectServer	allServer;
 	// vectServer	childServer;
 
 	(void)argc;
 	(void)argv;
-	
-	// try
-	// {		
+	try
 	{
 		if (argc == 1)
 			config = splitString(DEFAULT_CONFIG, "\n");
@@ -42,25 +41,29 @@ int main(int argc, char **argv)
 		{
 			size_t pos;
 			std::istringstream line(config[i]);
-			parseMap _content_conf;
+			// parseMap _content_conf;
 			std::string word;
 			stringVect	line_data;
 			pos = config[i].find("\t");// if faut rechercher dabort un tab pos 0
-			// pos2 = config[i].find("\t");
 			if (config[i].size() == 1)
 			continue;
 			std::cout << "=============================================================================" << std::endl;
-			// while (line >> word)
-			// 	line_data.push_back(word);
 			if (pos == std::string::npos)
 			{
-				if (line_data.size() == 1) //server bloc
+				while (line >> word)
+					line_data.push_back(word);
+				if (line_data.size() != 1 || line_data[0] != "server") //server bloc
 				{
-					_data_conf.clear();
-					_data_conf[line_data[0]];
-					allServer_conf.push_back(_data_conf);
-					std::cout << "\033[43mSize Map= "<< allServer_conf.size() << "\033[0m" << std::endl;
+					std::stringstream error;
+					error << "Error: ligne[" << i << "]->" << config[i];
+					throw std::runtime_error(error.str());
 				}
+				else
+				{
+					all_data_conf.clear();
+					allServer_conf.push_back(all_data_conf);
+				}
+				std::cout << "		\033[042mSERVER NB=" << allServer_conf.size() << "\033[0m" << std::endl;
 			}
 			else if (pos == 0)
 			{
@@ -69,34 +72,59 @@ int main(int argc, char **argv)
 				pos = config[i].find("\t");
 				if (pos == 0)
 				{
-					line_data.clear();
+					s_dataConf secLvl;
 					std::cout << "\033[045mLEVEL 2v\033[0m" << std::endl;
 					while (line >> word)
-						line_data.push_back(word);
-					for (size_t j = 0; j < line_data.size(); j++)
 					{
-						std::cout << "			WORD2->" << line_data[j] << std::endl;
+						if (!secLvl.key.size())
+						{
+							secLvl.key = word;
+							secLvl.lvl = 2;
+						}
+						else
+							secLvl.value.push_back(word);
 					}
+					allServer_conf[allServer_conf.size() - 1].push_back(secLvl);
 					std::cout << "\033[045mLEVEL 2^\033[0m" << std::endl;
 				}
 				else
 				{
-					line_data.clear();
+					s_dataConf firLVl;
 					std::cout << "\033[044mLEVEL 1v\033[0m" << std::endl;
 					while (line >> word)
-						line_data.push_back(word);
-					for (size_t j = 0; j < line_data.size(); j++)
 					{
-						std::cout << "			WORD1->" << line_data[j] << std::endl;
+						if (!firLVl.key.size())
+						{
+							firLVl.key = word;
+							firLVl.lvl = 1;
+						}
+						else
+							firLVl.value.push_back(word);
 					}
+					allServer_conf[allServer_conf.size() - 1].push_back(firLVl);
 					std::cout << "\033[044mLEVEL 1^\033[0m" << std::endl;
 				}
 			}
-
 			std::cout << "Ligne["<< i <<"]->"<< config[i] << "<-size=" << config[i].size() << std::endl;
 			std::cout << "=============================================================================" << std::endl;
 		}
+		for (size_t i = 0; i < allServer_conf.size(); i++)
+		{
+			for (size_t j = 0; j < allServer_conf[i].size(); j++)
+			{
+				std::cout << "LVL=" << allServer_conf[i][j].lvl << std::endl;
+				std::cout << "key=" << allServer_conf[i][j].key << std::endl;
+				for (size_t k = 0; k < allServer_conf[i][j].value.size(); k++)
+					std::cout << "	value=" << allServer_conf[i][j].value[k] << std::endl;
+			}
+		}
+		
 	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	
 	// 	if (!checkBraceClose(config)
 	// 			|| !checkBracesAfterNewline(config)
 	// 			|| !checkWriteConfig(config, "server", "server {")
