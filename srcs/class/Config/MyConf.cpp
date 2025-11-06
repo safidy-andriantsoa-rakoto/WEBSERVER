@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:40:28 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/06 08:02:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,8 @@ void MyConf::parseConfig(stringVect file)
 	else
 		end = file.size();
 	_endLocation = end;
+	std::cout << "Current block = " << currentBlock << std::endl;
+	std::cout << "Start = " << start << " ; End = " << end << std::endl;
 	if (checkConfigDupli(file, start, end))
 	{
 		_checkStats = false;

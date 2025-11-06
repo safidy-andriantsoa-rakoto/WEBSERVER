@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 14:29:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 08:24:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,10 @@ std::vector<int> containsExactWordInVector(const std::vector<std::string> &lines
 			}
 		}
 	}
+	/* [UPDATE] : Check what the function do*/
+	// std::cout << "\033[42m" << "*********CONTAINSWORD***********" << "\033[0m" << std::endl;
+	// for (size_t i = 0; i < index.size(); i++)
+	// 	std::cout << i << std::endl;
 	return (index);
 }
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 10:13:07 by trahanta          #+#    #+#             */
-/*   Updated: 2025/11/05 22:11:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 08:37:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	checkBraceContent(stringVect const & vect, intPairVect const & braceIndex)
 }
 
 /* [UPDATE] : Review argument function */
-bool	checkBraceClose(stringVect const & vect, intPairVect & index)
+bool	checkBraceClose(stringVect const & vect)
 {
 	int	count = 0;
 
@@ -63,12 +63,10 @@ bool	checkBraceClose(stringVect const & vect, intPairVect & index)
 		for (size_t j = 0; j < vect[i].size(); j++)
 			if (vect[i][j] == '{')
 			{
-				index.push_back(std::pair<int, int>(i, j));
 				count++;
 			}
 			else if (vect[i][j] == '}')
 			{
-				index.push_back(std::pair<int, int>(i, j));
 				count--;
 				if (count < 0)
 				{
@@ -86,7 +84,7 @@ bool	checkBraceClose(stringVect const & vect, intPairVect & index)
 }
 
 /* [UPDATE] : Add checkBraceContent */
-bool checkBracesAfterNewline(stringVect const & file, intPairVect const & braceIndex)
+bool checkBracesAfterNewline(stringVect const & file)
 {
 	for (size_t i = 0; i < file.size(); ++i)
 	{
@@ -115,8 +113,6 @@ bool checkBracesAfterNewline(stringVect const & file, intPairVect const & braceI
 				}
 			}
 		}
-		(void) braceIndex;
-		// checkBraceContent(file, braceIndex);
 	}
 	return true;
 }

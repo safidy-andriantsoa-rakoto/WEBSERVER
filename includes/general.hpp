@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 21:56:33 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 08:38:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,8 @@ void	    displayStringVect(stringVect const & vect);
 void	    displayCharTable(char	**tab, std::string const & title);
 
 //Parse
-// bool        checkBraceClose(std::vector<std::string> vect);
-// bool        checkBracesAfterNewline(const std::vector<std::string> &file);
-bool		checkBraceClose(stringVect const & vect, intPairVect & index);
-bool 		checkBracesAfterNewline(stringVect const & file, intPairVect const & braceIndex);
+bool		checkBraceClose(stringVect const & vect);
+bool 		checkBracesAfterNewline(stringVect const & file);
 bool        checkCountWord(const std::vector<std::string> &lines, const std::string &word, const int &count);
 bool        checkWriteConfig(const std::vector<std::string>& lines, const std::string &word, const std::string &writeLine);
 bool        checkNumberAllContent(std::vector<std::string> &file);
