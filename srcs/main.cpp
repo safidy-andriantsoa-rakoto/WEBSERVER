@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 11:36:48 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/06 11:41:17 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ int main(int argc, char **argv)
 			if (config[i].size() == 1)
 			continue;
 			std::cout << "=============================================================================" << std::endl;
-			while (line >> word)
-				line_data.push_back(word);
+			// while (line >> word)
+			// 	line_data.push_back(word);
 			if (pos == std::string::npos)
 			{
 				if (line_data.size() == 1) //server bloc
@@ -69,19 +69,30 @@ int main(int argc, char **argv)
 				pos = config[i].find("\t");
 				if (pos == 0)
 				{
-					std::cout << "\033[045mLEVEL 2\033[0m" << std::endl;
-					
+					line_data.clear();
+					std::cout << "\033[045mLEVEL 2v\033[0m" << std::endl;
+					while (line >> word)
+						line_data.push_back(word);
+					for (size_t j = 0; j < line_data.size(); j++)
+					{
+						std::cout << "			WORD2->" << line_data[j] << std::endl;
+					}
+					std::cout << "\033[045mLEVEL 2^\033[0m" << std::endl;
 				}
 				else
 				{
-					std::cout << "\033[044mLEVEL 1\033[0m" << std::endl;
-					
+					line_data.clear();
+					std::cout << "\033[044mLEVEL 1v\033[0m" << std::endl;
+					while (line >> word)
+						line_data.push_back(word);
+					for (size_t j = 0; j < line_data.size(); j++)
+					{
+						std::cout << "			WORD1->" << line_data[j] << std::endl;
+					}
+					std::cout << "\033[044mLEVEL 1^\033[0m" << std::endl;
 				}
 			}
-			for (size_t j = 0; j < line_data.size(); j++)
-			{
-				std::cout << "			WORD->" << line_data[j] << std::endl;
-			}
+
 			std::cout << "Ligne["<< i <<"]->"<< config[i] << "<-size=" << config[i].size() << std::endl;
 			std::cout << "=============================================================================" << std::endl;
 		}
