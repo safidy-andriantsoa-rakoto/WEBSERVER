@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   typedef.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:05 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/28 09:46:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/06 10:16:26 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,15 @@ typedef errVect::iterator       errIt;
 
 typedef std::map<stringVect, std::string>   MapSVectStr;
 typedef MapSVectStr::iterator               MapSVectStrIt;
+
+typedef std::map<stringVect, stringVect>   parseMap;
+typedef parseMap::iterator               parseMapIt;
+
+typedef std::map<std::string, parseMap>   dataMap;
+typedef dataMap::iterator               dataMapIt;
+
+typedef std::vector<dataMap>	serverVect;
+typedef serverVect::iterator        serverVectIt;
 
 typedef struct s_redirection      t_redirection;
 
