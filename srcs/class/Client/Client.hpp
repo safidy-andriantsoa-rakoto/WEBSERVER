@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/05 11:14:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:51:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ class Client : public Server
 		std::string	_filepath;
 
 		bool		_modPostFile;
-		int			_delay;
 		time_t		_time_now;
 		time_t		_last_time;
 
@@ -50,7 +49,6 @@ class Client : public Server
 		void		checkMethodInLocation(stringVect & locationMethod, std::string const & method);
 		void		processRedirection(MyLoc const & location, Request & request);
 
-				//HTTP Method
 		void		get_request(uint32_t & opt, int *fd, pid_t & childPid);
 		void		stdGetRequest();
 		void		cgiGetRequest(int *fd, pid_t & childPid);
@@ -149,5 +147,4 @@ class Client : public Server
 		void			set_last_time_activity();
 		void			set_time_activity();
 		bool			is_client_timeout();
-		void			set_delay(int delay);
 };

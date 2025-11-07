@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 18:56:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:02:35 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,4 +131,42 @@ std::string	divideStringBySize(std::string const & target, size_t const & startP
 
 	result = target.substr(startPos, endPos - startPos);
 	return result;
+}
+
+intVect containsExactWordInVector(stringVect const & lines, const std::string & word)
+{
+	intVect index;
+	int i = 0;
+	for (std::vector<std::string>::const_iterator it = lines.begin(); it != lines.end(); ++it, i++)
+	{
+		const std::string &line = *it;
+
+		std::istringstream iss(line);
+		std::string w;
+		while (iss >> w)
+		{
+			if (w == word)
+				index.push_back(i);
+		}
+	}
+	return (index);
+}
+
+bool checkDuplicate(stringVect const & file, std::string const & name, size_t & start, size_t & end)
+{
+	int count = 0;
+
+	for (size_t i = start; i < end; ++i)
+	{
+		std::istringstream iss(file[i]);
+		std::string word;
+		while (iss >> word)
+		{
+			if (name == word)
+				count++;
+		}
+	}
+	if (count != 1)
+		return (true);
+	return (false);
 }

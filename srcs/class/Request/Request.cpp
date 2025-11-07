@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:15:51 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:54:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,7 +262,6 @@ void Request::delete_range_body_request(int start, int end)
 			_body.erase(_body.begin() + start, _body.begin() + end);
 	}
 }
-
 
 void Request::set_is_CRLF_header(bool is_crlf){this->_is_CRLF_header = is_crlf;}
 

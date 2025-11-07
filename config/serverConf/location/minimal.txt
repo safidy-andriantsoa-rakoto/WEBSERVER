@@ -1,4 +1,0 @@
-location / | root ./site/minimal | method GET | autoindex ON
-location /tooplate | root ./site/minimal/tooplate | method GET | autoindex ON
-location /custom | root ./config/errorPage/custom | method GET
-location .php | root ./site/minimal/cgi-bin | method GET POST DELETE | autoindex ON

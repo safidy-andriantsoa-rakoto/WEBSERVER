@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Signal.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 11:12:25 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/09/10 11:34:41 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:59:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ class Signal
 {
     public:
         static int signum;
+
         Signal();
         ~Signal();
         static void    hander_signal(int sig);

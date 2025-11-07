@@ -1,2 +1,0 @@
-location / | root ./site/delete | method GET POST DELETE
-location /upload | root ./custom_upload

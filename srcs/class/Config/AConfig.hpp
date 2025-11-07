@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 18:21:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:32:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ class AConfig
 
 		intVect			getServPort() const;
 		float			getMaxSize() const;
-		void			convertSizeMax();
 		std::string		getServHost() const;
 		t_errPage		getErrPage() const;
 		vectLocation	getClassLocation() const;

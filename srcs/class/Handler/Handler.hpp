@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:15:15 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:37:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ typedef vectCgiFd::iterator		vectCgiFdIt;
 class Handler
 {
 	private:
-		vectServer	_vectServer;
-		VClient		_vectClient;
-		vectCgiFd	_vectCgiFd;
+		vectServer		_vectServer;
+		VClient			_vectClient;
+		vectCgiFd		_vectCgiFd;
 
-		bool		_programBreak;
-		bool		_isChildProcess;
+		bool			_programBreak;
+		bool			_isChildProcess;
 
 	public:
 		Handler();
@@ -70,14 +70,14 @@ class Handler
 
 		void			removeClient(int const & index, EpollCreation & epoll);
 		void			removeClient(VClientIt & it, EpollCreation & epoll);
-			
+
 		void			removeCgiFd(int const & index);
 		void			removeCgiFd(vectCgiFdIt & it);
 		vectCgiFdIt		findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd);
 		vectCgiFdIt		findPtrInCgiFd(vectCgiFd & allCgiFd, CgiFd *ptr);
 		
 		void			cleanFdAndAlloc();
-		
+
 		void			displayHandlerStat();
 		void			check_client_timeout_all(EpollCreation& epoll);
 };

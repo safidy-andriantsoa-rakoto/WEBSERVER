@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 14:09:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:57:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,6 +317,7 @@ void Response::generateSingleResponse(int const &statusCode)
 	_header["Content-Length"] = "0";
 }
 
+/* [!] : Review unused status code and do update on list too */
 std::string Response::getReasonPhrase(int const &statusCode)
 {
 	std::string result;

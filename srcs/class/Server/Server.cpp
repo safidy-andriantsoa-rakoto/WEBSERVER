@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 18:26:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:58:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ int Server::resolve_host(std::string const &host, int const &port)
 	int stat = getaddrinfo(host.c_str(), port_str.c_str(), &_addrinfo, &_resp);
 	if (stat != 0)
 	{
+		/* [?] : fprintf? Safidy */
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(errno));
 		return (0);
 	}

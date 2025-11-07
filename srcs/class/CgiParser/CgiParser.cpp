@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 15:28:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:28:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,7 @@
 
 CgiParser::CgiParser() : _envp(NULL){}
 
-CgiParser::CgiParser(CgiParser const &other)
-{
-	*this = other;
-}
+CgiParser::CgiParser(CgiParser const &other){*this = other;}
 
 CgiParser &CgiParser::operator=(CgiParser const &other)
 {

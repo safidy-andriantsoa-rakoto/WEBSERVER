@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 18:40:51 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:02:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,25 +81,6 @@ stringVect getContentFile(std::string const & _path)
 	return (lines);
 }
 
-intVect containsExactWordInVector(stringVect const & lines, const std::string & word)
-{
-	intVect index;
-	int i = 0;
-	for (std::vector<std::string>::const_iterator it = lines.begin(); it != lines.end(); ++it, i++)
-	{
-		const std::string &line = *it;
-
-		std::istringstream iss(line);
-		std::string w;
-		while (iss >> w)
-		{
-			if (w == word)
-				index.push_back(i);
-		}
-	}
-	return (index);
-}
-
 int	openRegFile(std::string const & filePath)
 {
 	int			fd;
@@ -141,25 +122,6 @@ DIR*	openDir(std::string const & dirPath)
 	if (!dir)
 		throw std::runtime_error("Opendir error");
 	return dir;
-}
-
-bool checkDuplicate(stringVect const & file, std::string const & name, size_t & start, size_t & end)
-{
-	int count = 0;
-
-	for (size_t i = start; i < end; ++i)
-	{
-		std::istringstream iss(file[i]);
-		std::string word;
-		while (iss >> word)
-		{
-			if (name == word)
-				count++;
-		}
-	}
-	if (count != 1)
-		return (true);
-	return (false);
 }
 
 bool	checkIfDirectoryAvailable(std::string const & path)

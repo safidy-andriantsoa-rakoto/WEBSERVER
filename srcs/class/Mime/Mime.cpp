@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mime.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/05 11:15:22 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:45:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,9 +147,7 @@ void Mime::initMapMime(std::string const &path)
 }
 
 MapMime &Mime::getMapMime()
-{
-   return _mime;
-}
+{return _mime;}
 
 Mime &Mime::operator=(const Mime &mime)
 {

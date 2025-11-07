@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 18:27:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:57:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Server
 		struct addrinfo	*_resp;
 
 	protected :
-		MyConf		_config;
+		MyConf			_config;
 
 	public:
 		Server();
@@ -43,25 +43,23 @@ class Server
 		Server & operator=(Server const & other);
 		~Server();
 
-		//Server config
-		MyConf		getConfig() const;
-
-		//Server connection
-		int 		get_fdClient() const;
-		int 		get_fdSocket() const;
-		SockAddrIn	& get_confSockAddrIn();
-		MyConf& 	config_ref();
-
-        int 		create_socket();
-        void 		configure_sockaddrin(int port);
-        int 		link_socket_adress();
-		int			resolve_host(std::string const & host, int const & port);
-        int 		wait_connexion_from_client();
-        int 		accept_client_connexion();
-
-        std::string get_client_request();
-
-		void		clearAllFd();
+		MyConf			getConfig() const;
+	
+		int 			get_fdClient() const;
+		int 			get_fdSocket() const;
+		SockAddrIn		& get_confSockAddrIn();
+		MyConf& 		config_ref();
+	
+        int 			create_socket();
+        void 			configure_sockaddrin(int port);
+        int 			link_socket_adress();
+		int				resolve_host(std::string const & host, int const & port);
+        int 			wait_connexion_from_client();
+        int 			accept_client_connexion();
+	
+        std::string 	get_client_request();
+	
+		void			clearAllFd();
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 08:11:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:32:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ AConfig &AConfig::operator=(AConfig const &other)
 intVect AConfig::getServPort() const{return _port;}
 
 float	AConfig::getMaxSize() const{return _maxSize;}
-
-void AConfig::convertSizeMax(){_maxSize = convertToBytes(_size);}
 
 std::string	AConfig::getServHost() const{return _host;}
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Handler.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:15:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:45:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,7 +219,6 @@ void	Handler::cleanFdAndAlloc()
 void Handler::displayHandlerStat()
 {
 	std::cout << "========================================== \n";
-	// std::cout << "\033[2J\033[H========================================== \n";
 	std::cout << "		HANDLER STATS : " << _isChildProcess << std::endl;
 	std::cout << "Nb Server = " << _vectServer.size() << " [";
 	for(size_t i = 0; i < _vectServer.size(); i++)
@@ -253,7 +252,6 @@ void Handler::check_client_timeout_all(EpollCreation& epoll)
 		}
 		catch (const std::exception & e)
 		{
-			// std::cerr << "			Error on client timeout check: " << e.what() << '\n';
 			int fdrm = (*it).get_clientFD();
 			this->removeClient(it, epoll);
 			if (fdrm > -1)

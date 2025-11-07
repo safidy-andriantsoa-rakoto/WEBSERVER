@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 19:21:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:34:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,8 @@ void MyConf::checkConfigElement(vectData & data)
 				vectElt.push_back((*it).key);
 			upperLvl = it;
 		}
-		else
-		{
-			if ((*upperLvl).lvl == 2 || (*upperLvl).key != "location")
-				throw std::runtime_error("Location is the one who has level 2 element");
-		}
+		else if ((*upperLvl).lvl == 2 || (*upperLvl).key != "location")
+			throw std::runtime_error("Location is the one who has level 2 element");
 	}
 	if (vectLoc.size() == 0)
 		throw std::runtime_error("No location");
@@ -192,67 +189,19 @@ void MyConf::parseLocationBloc(vectDataIt & itUpper, vectData & data)
 	_location.push_back(loc);
 }
 
-size_t MyConf::findNotDigitError()
-{
-	size_t checkIndex(0), i(0);
-
-	while (i < _errPage.strError.size())
-	{
-		std::string str = _errPage.strError[i];
-		bool isAllDigit = true;
-
-		for (size_t j = 0; j < str.size(); j++)
-		{
-			if (!isdigit(str[j]))
-			{
-				isAllDigit = false;
-				break;
-			}
-		}
-		if (isAllDigit && !str.empty())
-			_errPage.listError.push_back(str);
-		else if (!isAllDigit)
-		{
-			checkIndex = i;
-			break;
-		}
-		i++;
-	}
-	return (checkIndex);
-}
-
-void MyConf::checkErrorPage()
-{
-	size_t	i = findNotDigitError();
-
-	if (i > 0 && ((_errPage.strError.size() - i > 1)))
-	{
-		_checkStats = false;
-		return;
-	}
-	else if (i > 0 && i < _errPage.strError.size())
-		_errPage.filePath = _errPage.strError[i];
-}
-
 MyConf::MyConf(){_hasErrPage = false;}
 
 MyConf::MyConf(MyConf const & other) : AConfig(other){}
 
 MyConf &MyConf::operator=(MyConf const &other)
 {
-    if (this != & other)
-	{
-		AConfig::operator=(other);
-	}
+    if (this != & other){AConfig::operator=(other);}
 	return *this;
 }
 
 MyConf::~MyConf(){}
 
-bool MyConf::getStatus()
-{
-    return _checkStats;
-}
+bool MyConf::getStatus(){return _checkStats;}
 
 void MyConf::setHostName(std::string const & host)
 {

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/07 08:11:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 20:51:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ Client::Client(Server const & server, const int &_clientFD, bool is_connect) :
 	_cgiFD(NULL),
 	_fdType(-1),
 	_modPostFile(false),
-	_delay(0),
 	_time_now(time(NULL)),
 	_last_time(_time_now)
 {
@@ -55,7 +54,6 @@ Client &Client::operator=(const Client &client)
 		this->_fdType = client._fdType;
 		this->_filepath = client._filepath;
 		this->_modPostFile = client._modPostFile;
-		this->_delay = client._delay;
 		this->_time_now = client._time_now;
 		this->_last_time = client._last_time;
 	}
@@ -396,7 +394,6 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	redirect = location.getRedirect();
 	if (!redirect.size())
 		return ;
-	// std::cout << "\033[32m<<<<<<<<<REDIRECTION HEREEE>>>>>>>>>\033[0m" << std::endl;
 	redirect = location.getRedirect();
 	statusRedirect = convertStringToInt(redirect[0]);
 	newUri = redirect[1];
@@ -406,7 +403,6 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 		oldUri.erase(oldUri.find(location.getName()), location.getName().size() + 1);
 		replaceString(newUri, oldUri, "$uri");
 	}
-	// std::cout << "Old = " << oldUri << " => " << newUri << std::endl;
 	throw RedirExcept(statusRedirect, "Redirection", newUri);
 }
 
@@ -586,7 +582,7 @@ void Client::delete_request()
 	struct stat	s_stat;
 
 	target = _request.getRequestTarget();
-	std::cout << "\n\n\n				TARGET=" << target << std::endl;
+	// std::cout << "\n\n\n				TARGET=" << target << std::endl;
 	if (!target.size())
 		throw ErrorExcept(400, "Bad request");
 	if (target[target.size() - 1] == '/')
@@ -748,13 +744,13 @@ void Client::get_bounadary_from_header(stringMap &header)
 	if (this->_boundary_sep.empty())
 	{
 		std::string	getboundary = header.find("Content-Type")->second;
-		size_t pos = getboundary.find("boundary=");// get boundary
+		size_t pos = getboundary.find("boundary=");
 		if (pos != std::string::npos)
 		{
 			getboundary.erase(0, pos + 9); 
 			this->_boundary_sep = "--" + getboundary;
 		}
-		std::cout << "		BOUNDARY=" << this->_boundary_sep << std::endl;
+		// std::cout << "		BOUNDARY=" << this->_boundary_sep << std::endl;
 	}
 }
 
@@ -822,10 +818,4 @@ bool Client::is_client_timeout()
 		throw ErrorExcept(408, "Client Timeout"); /* [?] : When to send 408 response to client? On long upload only? */
 	}
     return false;
-}
-
-void Client::set_delay(int delay)
-{
-	if (delay > 0)
-		this->_delay = delay;
 }

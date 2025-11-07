@@ -28,10 +28,7 @@ CgiFd::CgiFd(int *fd, pid_t const & childPid, int const & clientFd) :
 	_childPid(childPid),
 	_isChildAlive(true){}
 
-CgiFd::CgiFd(CgiFd const & other)
-{
-	*this = other;
-}
+CgiFd::CgiFd(CgiFd const & other){*this = other;}
 
 CgiFd &CgiFd::operator=(CgiFd const & other)
 {
@@ -183,8 +180,6 @@ void CgiFd::checkCgiOutput()
 	std::string	tmp;
 	stringVect	vect;
 
-	// if (_writeStat == OP_OPEN && !_header.size())
-	// 	throw ErrorExcept(502, "No header from the cgi");
 	if (it == _header.end())
 	{
 		_statusCode = 200;
@@ -221,7 +216,6 @@ void CgiFd::checkTimeOut()
 
 	if (difftime(currentTime, _startTime) > CGI_MAX_TIME)
 	{
-		// std::cout << "			CGI TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
 		kill(_childPid, SIGINT); /* [!] : SIGKILL or SIGTERM or SIGINT ? */
 		_isChildAlive = false;
 		throw ErrorExcept(504, "CGI Took too long");
