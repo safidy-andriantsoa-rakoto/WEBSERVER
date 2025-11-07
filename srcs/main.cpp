@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 08:51:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 08:55:58 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,8 @@ void server_line_checker(std::istringstream &line, serverVect &allServer_conf, i
 void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl)
 {
 	std::string word;
-	
 	s_dataConf secLvl;
-	std::cout << "\033[045mLEVEL 2v\033[0m" << std::endl;
+
 	while (line >> word)
 	{
 		if (!secLvl.key.size())
@@ -54,6 +53,44 @@ void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl)
 			secLvl.value.push_back(word);
 	}
 	allServer_conf[allServer_conf.size() - 1].push_back(secLvl);
+}
+
+void parse_config_data(stringVect &config, serverVect &allServer_conf)
+{
+	for (size_t i = 0; i < config.size(); i++)
+	{
+		size_t pos;
+		std::istringstream line(config[i]);
+		std::string word;
+		pos = config[i].find("\t");// if faut rechercher dabort un tab pos 0
+		if (config[i].size() == 1)
+			continue;
+		if (pos == std::string::npos)
+			server_line_checker(line, allServer_conf, i);
+		else if (pos == 0)
+		{
+			config[i].erase(0, 1);// changer par rapport a la identation space or tab
+			pos = config[i].find("\t");
+			if (pos == 0)
+				get_data_lvl(line, allServer_conf, 2);
+			else
+				get_data_lvl(line, allServer_conf, 1);
+		}
+	}
+}
+
+void print_conf(serverVect	allServer_conf)
+{
+	for (size_t i = 0; i < allServer_conf.size(); i++)
+	{
+		for (size_t j = 0; j < allServer_conf[i].size(); j++)
+		{
+			std::cout << "LVL=" << allServer_conf[i][j].lvl << std::endl;
+			std::cout << "key=" << allServer_conf[i][j].key << std::endl;
+			for (size_t k = 0; k < allServer_conf[i][j].value.size(); k++)
+				std::cout << "	value=" << allServer_conf[i][j].value[k] << std::endl;
+		}
+	}
 }
 
 int main(int argc, char **argv)
@@ -73,38 +110,8 @@ int main(int argc, char **argv)
 			config = splitString(DEFAULT_CONFIG, "\n");
 		else
 			config = getContentFile(argv[1]);
-		for (size_t i = 0; i < config.size(); i++)
-		{
-			size_t pos;
-			std::istringstream line(config[i]);
-			// parseMap _content_conf;
-			std::string word;
-			pos = config[i].find("\t");// if faut rechercher dabort un tab pos 0
-			if (config[i].size() == 1)
-				continue;
-			if (pos == std::string::npos)
-				server_line_checker(line, allServer_conf, i);
-			else if (pos == 0)
-			{
-				config[i].erase(0, 1);// changer par rapport a la identation space or tab
-				pos = config[i].find("\t");
-				if (pos == 0)
-					get_data_lvl(line, allServer_conf, 2);
-				else
-					get_data_lvl(line, allServer_conf, 1);
-			}
-		}
-		for (size_t i = 0; i < allServer_conf.size(); i++)
-		{
-			for (size_t j = 0; j < allServer_conf[i].size(); j++)
-			{
-				std::cout << "LVL=" << allServer_conf[i][j].lvl << std::endl;
-				std::cout << "key=" << allServer_conf[i][j].key << std::endl;
-				for (size_t k = 0; k < allServer_conf[i][j].value.size(); k++)
-					std::cout << "	value=" << allServer_conf[i][j].value[k] << std::endl;
-			}
-		}
-		
+		parse_config_data(config, allServer_conf);
+		print_conf(allServer_conf);
 	}
 	catch(const std::exception& e)
 	{
