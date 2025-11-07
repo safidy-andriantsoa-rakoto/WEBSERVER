@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 14:39:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 08:14:12 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ ALocation::ALocation()
 	_cgiExtension.push_back("OFF");
 }
 
-ALocation::ALocation(std::string const &locationName) : _locations(locationName)
+ALocation::ALocation(std::string const &locationName) : _name(locationName)
 {
 	_autoindex.push_back("OFF");
 	_cgiExtension.push_back("OFF");
@@ -26,8 +26,7 @@ ALocation::ALocation(std::string const &locationName) : _locations(locationName)
 
 ALocation::ALocation(ALocation const &other) :
 		_autoindex(other._autoindex),
-		_location(other._location),
-		_locations(other._locations),
+		_name(other._name),
 		_root(other._root),
 		_method(other._method),
 		_redirect(other._redirect),
@@ -41,8 +40,7 @@ ALocation &ALocation::operator=(ALocation const &other)
 	if (this != &other)
 	{
 		_autoindex = other._autoindex;
-		_location = other._location;
-		_locations = other._locations;
+		_name = other._name;
 		_root = other._root;
 		_method = other._method;
 		_redirect = other._redirect;
@@ -59,9 +57,9 @@ std::string ALocation::getAutoindex() const
 	return _autoindex[0];
 }
 
-std::string ALocation::getLocation() const
+std::string ALocation::getName() const
 {
-	return _locations;
+	return _name;
 }
 
 std::string ALocation::getRootDirectory() const
@@ -96,17 +94,16 @@ std::string ALocation::getCgiExecPath() const
 
 void ALocation::displayLocation() const
 {
-	std::cout << "location " << _locations << " {\n";
-	displayStringVect(_root, "	root : ");
+	std::cout << "location " << _name  << std::endl;
+	displayStringVect(_root, "	root ");
 	if (_method.size())
-		displayStringVect(_method, "	method : ");
+		displayStringVect(_method, "	method ");
 	if (_redirect.size())
-		displayStringVect(_redirect, "	redirect : ");
+		displayStringVect(_redirect, "	redirect ");
 	if (_index.size())
-		displayStringVect(_index, "	index : ");
+		displayStringVect(_index, "	index ");
 	if (_autoindex.size())
-		displayStringVect(_autoindex, "	autoindex : ");
+		displayStringVect(_autoindex, "	autoindex ");
 	if (_cgiExtension.size())
-		displayStringVect(_cgiExtension, "	cgi : ");
-	std::cout << "} \n";
+		displayStringVect(_cgiExtension, "	cgi ");
 }

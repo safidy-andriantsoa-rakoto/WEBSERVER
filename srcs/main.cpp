@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 22:07:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 11:05:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ int main(int argc, char **argv)
 		else
 			config = getContentFile(argv[1]);
 		parsingConfigFileSetup(config, allServer);
+		config.clear();
 		manageMultiPort(allServer);
 		for (size_t i = 0; i < allServer.size(); i++)
 			allServer[i].getConfig().displayConfig();

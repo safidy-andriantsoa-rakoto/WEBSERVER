@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/09 09:16:15 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/06 15:13:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 09:47:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ bool checkDuplicationInt(intVect &Int)
     return (true);
 }
 
+/* [!] : Keep function */
 bool checkValueMethod(stringVect &str)
 {
     for(size_t i = 0; i < str.size(); i++)
@@ -90,7 +91,7 @@ bool checkValueMethod(stringVect &str)
     return (true);
 }
 
-bool    checkDuplicateInStringVect(stringVect vect)
+bool    checkDuplicateInStringVect(stringVect & vect)
 {
     for (stringVectIt it = vect.begin(); it != vect.end(); it++)
     {
@@ -99,3 +100,24 @@ bool    checkDuplicateInStringVect(stringVect vect)
     }
     return false;
 }
+
+bool    findEltInStringVect(stringVect & vect, stringVect & toFind)
+{
+    for (stringVectIt it = toFind.begin(); it != toFind.end(); it++)
+    {
+        if (std::count(vect.begin(), vect.end(), *it) != 1)
+            return false;
+    }
+    return true; 
+}
+
+s_dataConf  addDataConf(int const & lvl, std::string const & key, stringVect & value)
+{
+    s_dataConf conf;
+
+    conf.lvl = lvl;
+    conf.key = key;
+    conf.value = value;
+    return conf;
+}
+

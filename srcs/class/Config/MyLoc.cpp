@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 22:03:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 11:11:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,30 +25,68 @@ void MyLoc::checkLocElement(vectData & data)
     }
     if ((std::find(elt.begin(), elt.end(), "redirect") != elt.end()) && elt.size() != 1)
         throw std::runtime_error("redirect go alone inside a location bloc");
-    if ((elt.size() == 1 && elt[0] != "redirect") || elt.size() < 2)
-        throw std::runtime_error("Minimal requirement for location element is not respected");
     if (checkDuplicateInStringVect(elt) == true)
         throw std::runtime_error("Location element duplicated");
+    if (elt[0] != "redirect")
+        checkMandatoryElement(elt);
+}
+
+void MyLoc::checkMandatoryElement(stringVect &vect)
+{
+    stringVect  mandatory;
+
+    mandatory.push_back("root");
+    mandatory.push_back("method");
+    if (findEltInStringVect(vect, mandatory) == false)
+        throw std::runtime_error("root and method are mandatory for location element");
+}
+
+void MyLoc::addLocationBySplitParsing(std::string const &line)
+{
+    stringVect attr;
+    stringVect elt;
+    std::string topic;
+
+    attr = splitString(line, " | ");
+    for (stringVectIt it = attr.begin(); it != attr.end(); it++)
+    {
+        elt = splitString(*it, " ");
+        topic = elt[0];
+        elt.erase(elt.begin());
+        if (topic == "location")
+            _name = elt[0];
+        if (topic == "root")
+            _root = elt;
+        if (topic == "autoindex")
+            _autoindex = elt;
+        if (topic == "method")
+            _method = elt;
+        if (topic == "redirect")
+            _redirect = elt;
+        if (topic == "index")
+            _index = elt;
+        if (topic == "cgi")
+            _cgiExtension = elt;
+    }
 }
 
 void MyLoc::parseRoot(stringVect & vect)
 {
     if (vect.size() != 1)
         throw std::runtime_error("Root need  one element");
+    if (checkIfDirectoryAvailable(vect[0]) == false)
+        throw std::runtime_error("Root is not a directory or can't be reached");
     _root = vect;
 }
 
 void MyLoc::parseMethod(stringVect & vect)
 {
     if (vect.size() > 3)
-        throw std::runtime_error("Method need  3 elements");
-    for (stringVectIt it = vect.begin(); it != vect.end(); it++)
-    {
-        if (*it != "GET" && *it != "POST" && *it != "DELETE")
-            throw std::runtime_error("Server supports only GET, POST, DELETE");
-    }
+        throw std::runtime_error("The maximum of method allowed is 3");
+    if (checkValueMethod(vect) == false)
+        throw std::runtime_error("Server supports only GET, POST, DELETE");
     if (checkDuplicateInStringVect(vect) == true)
-        throw std::runtime_error("Method duplicated");
+        throw std::runtime_error("Method are duplicated");
     _method = vect;
 }
 
@@ -63,19 +101,28 @@ void MyLoc::parseAutoIndex(stringVect & vect)
 
 void MyLoc::parseCgiExt(stringVect & vect)
 {
+    bool    isCgi = false;
+
     if (vect.size() != 2)
-        throw std::runtime_error("cgi need 3 elements");
+        throw std::runtime_error("Cgi need 3 elements");
     if (vect[0] != "ON" && vect[0] != "OFF")
-        throw std::runtime_error("cgi can be activated by ON/OFF");
+        throw std::runtime_error("Cgi can be activated by ON/OFF");
+    if (vect[0] == "OFF" && vect.size() != 1)
+        throw std::runtime_error("Cgi is OFF, no need for executable");
+    if (vect[0] == "ON")
+        isCgi = true;
     try
     {
         /* [!] : fstat or openRegFile ? */
-        int fd = openRegFile(vect[1]);
-        close(fd);
+        if (isCgi == true)
+        {
+            int fd = openRegFile(vect[1]);
+            close(fd);
+        }
     }
     catch(const std::exception& e)
     {
-        throw std::runtime_error("cgi executable is not valid");
+        throw std::runtime_error("Cgi executable is not valid");
     }
     _cgiExtension = vect;
 }
@@ -85,13 +132,12 @@ void MyLoc::parseRedirect(stringVect & vect)
 	size_t  i;
 
 	if (vect.size() < 2)
-		throw std::runtime_error("Error_page elements missing");
-	for(i = 1; i < vect.size() - 1; i++)
+		throw std::runtime_error("Redirect elements missing");
+	for(i = 0; i < vect.size() - 1; i++)
 	{
-		if (vect[i] != "30i" && vect[i] != "302" && vect[i] != "307" && vect[i] != "308")
-			throw std::runtime_error("Invalid status code");
+		if (vect[0] != "30i" && vect[0] != "302" && vect[0] != "307" && vect[0] != "308")
+			throw std::runtime_error("Invalid status code for redirection");
 	}
-    /* [!] : URI checker? */
     _redirect = vect;
 }
 
@@ -129,7 +175,7 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
             if (name == "location")
             {
                 stringVect tab = splitString(value, " ");
-                _locations = tab[0];
+                _name = tab[0];
             }
             while (s >> word)
             {
@@ -202,7 +248,7 @@ void MyLoc::parseLocation(vectData & data)
         else if (elt == "method")
             parseMethod((*it).value);
         else if (elt == "redirect")
-           parseRedirect((*it).value);
+            parseRedirect((*it).value);
         else if (elt == "cgi")
             parseCgiExt((*it).value);
         else

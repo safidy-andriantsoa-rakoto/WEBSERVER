@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/05 11:18:43 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 08:11:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,9 +335,9 @@ void Client::buildRequestTarget()
 		loc = _config.getClassLocation();
 		itLoc = findLongestMatch(target, loc);
 		processLocationOption(*itLoc, _request);
-		std::cout << "\033[96mLOCATION SELECTED = " << (*itLoc).getLocation() << " => " << (*itLoc).getRootDirectory() << "\033[0m" << std::endl;
-		if ((*itLoc).getLocation() != "/")
-			target.replace(target.find((*itLoc).getLocation(), 0), (*itLoc).getLocation().size(), (*itLoc).getRootDirectory());
+		std::cout << "\033[96mLOCATION SELECTED = " << (*itLoc).getName() << " => " << (*itLoc).getRootDirectory() << "\033[0m" << std::endl;
+		if ((*itLoc).getName() != "/")
+			target.replace(target.find((*itLoc).getName(), 0), (*itLoc).getName().size(), (*itLoc).getRootDirectory());
 		else
 			target = (*itLoc).getRootDirectory() + target;
 	}
@@ -403,7 +403,7 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	if (newUri.find("$uri") != std::string::npos)
 	{
 		oldUri = request.getRequestTarget();
-		oldUri.erase(oldUri.find(location.getLocation()), location.getLocation().size() + 1);
+		oldUri.erase(oldUri.find(location.getName()), location.getName().size() + 1);
 		replaceString(newUri, oldUri, "$uri");
 	}
 	// std::cout << "Old = " << oldUri << " => " << newUri << std::endl;
@@ -655,7 +655,7 @@ vectLocationIt Client::findLongestMatch(std::string const &text, vectLocation &l
 	itFinal = location.begin();
 	for(vectLocationIt it = location.begin(); it != location.end(); it++)
 	{
-		compare = (*it).getLocation();
+		compare = (*it).getName();
 		if (text == compare)
 			return it;
 		vect2 = splitString(compare, "/");

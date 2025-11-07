@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 20:23:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 10:28:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,8 @@ std::string	getFileExtension(std::string const & fileName);
 int         openRegFile(std::string const & filePath);
 size_t	    getFileSize(std::string const & path);
 DIR*	    openDir(std::string const & dirPath);
-DIR*	    openDir(std::string const & dirPath);
+bool		checkIfDirectoryAvailable(std::string const & path);
+bool		checkIfFileAvailabe(std::string const & path);
 
 	//stringUtils
 stringVect	strictSplit(std::string const & target, std::string const & sep);
@@ -123,4 +124,6 @@ bool	checkDuplicationStr(stringVect &str);
 bool	checkDuplicationInt(intVect &Int);
 bool	checkValueMethod(stringVect &str);
 
-bool    checkDuplicateInStringVect(stringVect vect);
+bool    checkDuplicateInStringVect(stringVect & vect);
+bool    findEltInStringVect(stringVect & vect, stringVect & toFind);
+s_dataConf  addDataConf(int const & lvl, std::string const & key, stringVect & value);

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 13:56:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 11:07:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #define UPLOAD_PATH "./site/upload"
 
 // Need to add the substitue in the location parsing for upload directory !!!
-#define DEF_UPLOAD_LOCATION "location /upload | root ./site/upload | method GET POST DELETE | autoindex ON"
+#define DEF_UPLOAD_LOCATION "location /upload | root $1 | method GET POST DELETE | autoindex ON"
 
 //HTTP
 #define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"
@@ -62,19 +62,14 @@
                         "h1 {margin-bottom: 10px;}</style>" \
                         "</head><body><div class=\"content\"><h1>ERROR</h1><h2>$status</h2></div></body></html>"
 
-#define DEFAULT_CONFIG "server {\n" \
-						"host localhost\n" \
-						"port 2003\n" \
-						"server_names localhost\n" \
-						"size 2 GB\n" \
-						"location / {\n" \
-						"	root ./site\n" \
-						"	method GET POST DELETE\n" \
-						"	autoindex ON\n" \
-						"	cgi	ON /usr/bin/php-cgi\n	}\n" \
-						"location /upload {\n" \
-						"	root ./site/upload\n" \
-						"	method GET POST DELETE\n" \
-						"	autoindex ON\n	}\n}"
+#define DEFAULT_CONFIG "server\n" \
+						"	host localhost\n" \
+						"	port 2003\n" \
+						"	size 100 MB\n" \
+						"	location /\n" \
+						"		root ./site\n" \
+						"		method GET POST DELETE\n" \
+						"		autoindex ON\n" \
+						"		cgi	ON /usr/bin/php-cgi"
 
 #endif

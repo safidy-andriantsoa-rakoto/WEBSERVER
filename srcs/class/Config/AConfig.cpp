@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AConfig.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:29:26 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 08:11:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ vectLocationIt AConfig::findClassLocation(std::string const & toFind)
 
 	for (it = _location.begin(); it != _location.end(); it++)
 	{
-		if ((*it).getLocation() == toFind)
+		if ((*it).getName() == toFind)
 			break ;
 	}
     return it;

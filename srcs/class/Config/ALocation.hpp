@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 21:59:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 08:11:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ class ALocation
 {
 	protected:
 		stringVect		_autoindex;
-		stringVect		_location;
-		std::string 	_locations;
+		std::string 	_name;
 		stringVect		_root;
 		stringVect		_method;
 		stringVect		_redirect;
@@ -44,7 +43,7 @@ class ALocation
 		virtual	~ALocation(){};
 
 		std::string	getAutoindex() const;
-		std::string	getLocation() const;
+		std::string	getName() const;
 		std::string	getRootDirectory() const;
 		std::string	getCgiActivation() const;
 		std::string	getCgiExecPath() const;

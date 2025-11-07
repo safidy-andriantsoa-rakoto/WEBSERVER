@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 22:08:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 11:06:24 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void MyConf::checkConfigElement(vectData & data)
 	stringVect	vectElt;
 	stringVect	vectLoc;
 	vectDataIt	upperLvl = data.begin();
+	bool		hasLocationMandatory = false;
 
 	for (vectDataIt it = data.begin(); it != data.end(); it++)
 	{
@@ -29,6 +30,8 @@ void MyConf::checkConfigElement(vectData & data)
 			{
 				if ((*it).value.size() != 1)
 					throw std::runtime_error("Location has only one value");
+				if ((*it).value[0] == "/")
+					hasLocationMandatory = true;
 				vectLoc.push_back((*it).value[0]);
 			}
 			else
@@ -43,14 +46,53 @@ void MyConf::checkConfigElement(vectData & data)
 	}
 	if (vectLoc.size() == 0)
 		throw std::runtime_error("No location");
-	if (vectLoc.size() == 1 && vectLoc[0] != "/")
-		throw std::runtime_error("Must be / location");
+	if ((vectLoc.size() == 1 && vectLoc[0] != "/") || hasLocationMandatory == false)
+		throw std::runtime_error("Must have location /");
 	if (vectElt.size() == 0 || vectElt.size() < 3 || vectElt.size() > 4)
 		throw std::runtime_error("Error on the number of elements");
 	if (checkDuplicateInStringVect(vectElt) == true)
 		throw std::runtime_error("Duplicate among the config element");
 	if (checkDuplicateInStringVect(vectLoc))
 		throw std::runtime_error("Duplicate among the location");
+	checkMandatoryElement(vectElt);
+}
+
+void MyConf::checkMandatoryElement(stringVect &vectElt)
+{
+	stringVect	mandatory;
+
+	mandatory.push_back("host");
+	mandatory.push_back("port");
+	mandatory.push_back("size");
+	if (findEltInStringVect(vectElt, mandatory) == false)
+		throw std::runtime_error("host, port and size are mandatory for config element");
+}
+
+void MyConf::manageUploadLocation()
+{
+	vectLocationIt	itFirst;
+	vectLocationIt	itUp;
+
+	itFirst = findClassLocation("/");
+	itUp = findClassLocation("/upload");
+	if (itUp == _location.end())
+	{
+		MyLoc loc;
+		std::string	locationUpload = DEF_UPLOAD_LOCATION;
+		std::string	rootUpload = (*itFirst).getRootDirectory() + "/upload";
+		replaceString(locationUpload, rootUpload, "$1");
+		if (checkIfDirectoryAvailable(rootUpload) == false)
+        	throw std::runtime_error("upload directory can't be reached");
+		loc.addLocationBySplitParsing(locationUpload);
+		_location.push_back(loc);
+	}
+	else
+	{
+		if ((*itUp).getRootDirectory() != (*itFirst).getRootDirectory() + "/upload")
+			throw std::runtime_error("root for location /upload need to be directly inside root for location /");
+		if (checkIfDirectoryAvailable((*itUp).getRootDirectory()) == false)
+        	throw std::runtime_error("upload directory can't be reached");
+	}
 }
 
 void MyConf::parseHost(stringVect const & vect)
@@ -65,7 +107,7 @@ void MyConf::parsePort(stringVect const & vect, intVect & allPort)
 	int	n;
 
 	if (vect.size() == 0 || vect.size() > 3)
-		throw std::runtime_error("Number of ports doesn't respsect limit");
+		throw std::runtime_error("Multiport per server is limited to 3 and need at least one port");
 	for (stringVectCIt it = vect.begin(); it != vect.end(); it++)
 	{
 		n = convertStringToInt(*it);
@@ -83,41 +125,62 @@ void MyConf::parseErrorPage(stringVect const & vect)
 {
 	stringVect	allStatusCode = splitString(ALL_STATUS_CODE, ";");
 	size_t		i;
+	stringVect	listStatusCode;
 
 	if (vect.size() < 2)
 		throw std::runtime_error("Error_page elements missing");
-	for(i = 0; i < vect.size() - 1; i++)
+	if (vect.size() == 2 && vect[0] == "ALL")
 	{
-		if (std::find(allStatusCode.begin(), allStatusCode.end(), vect[i]) == allStatusCode.end())
-			throw std::runtime_error("Invalid status code");
-		_errPage.listError.push_back(vect[i]);
+		listStatusCode = allStatusCode;
+		i = 1;
 	}
+	else
+	{
+		for(i = 0; i < vect.size() - 1; i++)
+		{
+			if (std::find(allStatusCode.begin(), allStatusCode.end(), vect[i]) == allStatusCode.end())
+				throw std::runtime_error("Invalid status code");
+			listStatusCode.push_back(vect[i]);
+			if (listStatusCode.size() > allStatusCode.size())
+				throw std::runtime_error("Status code limit exceeded");
+		}
+	}
+	if (checkDuplicateInStringVect(listStatusCode) == true)
+		throw std::runtime_error("Status code duplicated");
+	_errPage.listError = listStatusCode;
 	try
 	{
+		/* [!] : openreg or filestat */
 		int fd = openRegFile(vect[i]);
 		close(fd);
-		_errPage.filePath = vect[i];
 	}
 	catch(const std::exception& e)
 	{
-		throw std::runtime_error("Error_page file can't be opened or does not exist");
+		throw std::runtime_error("Error_page file can't be reached");
 	}
+	if (checkFileExtension(vect[i], ".html") == false)
+		throw std::runtime_error("Error page need to be an html file");
+	_errPage.filePath = vect[i];
 }
 
 void MyConf::parseSize(stringVect const & vect)
 {
+	float size;
+
 	if (vect.size() != 2)
 		throw std::runtime_error("Size contains only two element");
 	_size = vect;
 	try
 	{
-		_size.erase(_size.begin());
-		_maxSize =  convertToBytes(_size);
+		size = convertToBytes(_size);
 	}
 	catch(const std::exception& e)
 	{
-		std::runtime_error("Size unit or value error");
+		throw std::runtime_error("Invalid size unit or value");
 	}
+	if (size < 0)
+		throw std::runtime_error("Size need to be a positive number");
+	_maxSize =  size;
 }
 
 void MyConf::parseLocationBloc(vectDataIt & itUpper, vectData & data)
@@ -200,6 +263,7 @@ void MyConf::parseNewConfig(vectData & data, intVect& allPort)
 	}
 	if (collectData == true)
 		parseLocationBloc(itUpper, locationData);
+	manageUploadLocation();
 }
 
 std::string MyConf::getElt(parseMapIt &it){return (*it).first[0];}
@@ -211,16 +275,17 @@ stringVect& MyConf::getLocVect(parseMapIt &it){return (*it).second;}
 void	MyConf::displayConfig() const
 {
 	std::cout << "------------------------------------------" << std::endl;
-	std::cout << "Host :" << _host << std::endl;
-	std::cout << "Port :";
+	std::cout << "Host " << _host << std::endl;
+	std::cout << "Port ";
 	for (intVectIt itInt = _port.begin(); itInt != _port.end(); itInt++)
 		std::cout << " " << (*itInt);
 	std::cout << std::endl;
+	std::cout << "size " << _maxSize << " bytes" << std::endl;
 	if (_errPage.listError.size())
 	{
-		std::cout << "error_page: ";
-		displayStringVect(_errPage.listError, "List error");
-		std::cout << "Error file = " << _errPage.filePath << std::endl;
+		std::cout << "error_page ";
+		displayStringVect(_errPage.listError);
+		std::cout << _errPage.filePath << std::endl;
 	}
 	for (vectLocationcIt it = _location.begin(); it != _location.end(); it++)
 	{

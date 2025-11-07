@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 19:42:32 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 10:28:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -377,4 +377,26 @@ bool checkDuplicate2(stringVect file, std::string name, size_t &start, size_t &e
 		return (true);
 	}
 	return (false);
+}
+
+bool	checkIfDirectoryAvailable(std::string const & path)
+{
+	struct stat	st;
+
+	if (stat(path.c_str(), &st) == -1)
+		return false;
+	if (S_ISDIR(st.st_mode) == false)
+		return false;
+	return true;
+}
+
+bool	checkIfFileAvailabe(std::string const & path)
+{
+	struct stat	st;
+
+	if (stat(path.c_str(), &st) == -1)
+		return false;
+	if (S_ISREG(st.st_mode) == false)
+		return false;
+	return true;
 }
