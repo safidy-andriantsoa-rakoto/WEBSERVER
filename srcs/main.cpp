@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 10:11:42 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 10:54:01 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void server_line_checker(std::istringstream &line, serverVect &allServer_conf, i
 	std::string word;
 	stringVect	line_data;
 	vectData	all_data_conf;
-	
+
 	while (line >> word)
 		line_data.push_back(word);
 	if (line_data.size() != 1 || line_data[0] != "server")
@@ -64,24 +64,28 @@ void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl, 
 
 void parse_config_data(stringVect &config, serverVect &allServer_conf)
 {
-	std::string identat = "    ";
+	std::string identat = "\t";
 	
-	for (size_t i = 0; i < config.size(); i++)
-	{
-		size_t pos = config[i].find("\t");
-		if (pos != std::string::npos && (pos == 4 || pos == 0))
-			identat = "\t";
-	}
 	for (size_t i = 0; i < config.size(); i++)
 	{
 		size_t pos;
 		std::istringstream line(config[i]);
 		std::string word;
-		pos = config[i].find(identat);// if faut rechercher dabort un tab pos 0
+
+		pos = config[i].find(identat);
 		if (config[i].size() == 1)
 			continue;
-		if (pos > 0)
+		if (pos != 0 || pos == std::string::npos)
+		{
+			pos = config[i].find(" ");
+			if (pos == 0)
+			{
+				std::stringstream error;
+				error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
+				throw std::runtime_error(error.str());
+			}
 			server_line_checker(line, allServer_conf, i);
+		}
 		else if (pos == 0 && allServer_conf.size())
 		{
 			if (config[i].find(identat + identat) == 0)
@@ -109,14 +113,14 @@ void parse_config_data(stringVect &config, serverVect &allServer_conf)
 			else if (config[i].find(identat) == 0)
 			{
 				config[i].erase(0, identat.size());
-				pos = config[i].find("\t");
+				pos = config[i].find(" ");
 				if (pos == 0)
 				{
 					std::stringstream error;
 					error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
 					throw std::runtime_error(error.str());
 				}
-				if (pos == std::string::npos)
+				if (pos > 0 || pos == std::string::npos)
 				{
 					pos = config[i].find(" ");
 					if (pos == 0)
