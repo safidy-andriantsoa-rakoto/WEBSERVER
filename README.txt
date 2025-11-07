@@ -11,4 +11,4 @@ Custom Error page:
 
 Upload (POST and DELETE) : 
     - default directory + default location bloc : use this if no custom directory is specified in the file configuration
-    - custom directory must be named  : Add new location (must be upload/) bloc with specified root
+    - custom directory must be named  : Add new location (must be /upload) bloc with specified root

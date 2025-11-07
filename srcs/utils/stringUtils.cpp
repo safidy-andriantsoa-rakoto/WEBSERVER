@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stringUtils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 13:58:40 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 18:56:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,19 +78,6 @@ void	replaceString(std::string & text, std::string const & replaceText, std::str
 	pos = text.find(findText);
 	text.erase(pos, findText.size());
 	text.insert(pos, replaceText);
-}
-
-void	chunkString(std::string & text, int const & status)
-{
-	std::string			add;
-	std::stringstream	ss;
-	size_t				size = text.size();
-
-	ss << std::hex << size;
-	ss >> add;
-	text.insert(0, add + "\r\n");
-	if (status == OP_CLOSE)
-		text += "\r\n0\r\n";
 }
 
 char**	convertStringVectToTable(stringVect & vect)

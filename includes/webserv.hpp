@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 09:47:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:40:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,12 @@ void   			send_value(int const & _acceptStatus, std::string & _send_content);
 
 vectServer 		getServer(stringVect file);
 
+// DataConfUtils
+void            error_ligne(int const & i, std::string const & line);
+void            server_line_checker(std::istringstream & line, serverVect & allServer_conf, int const & i);
+void            get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int const & lvl, int const & i);
+void            content_lvl_parser(std::string &config, int const & i, serverVect &allServer_conf, std::istringstream &line);
+void            parse_config_data(stringVect &config, serverVect &allServer_conf);
+void	        getAllServerFromDataConf(vectServer & allServer, serverVect & allServer_conf);
 
 #endif

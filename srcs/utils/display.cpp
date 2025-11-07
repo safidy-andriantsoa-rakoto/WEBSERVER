@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   displayUtils.cpp                                   :+:      :+:    :+:   */
+/*   display.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 09:43:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 11:28:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:14:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,3 +94,15 @@ void print_conf(serverVect & allServer_conf)
 		std::cout << "==================================="<< i << "===================================" << std::endl;
 	}
 }
+
+void	displayInt(int const & n)
+{
+	std::cout << "[" << n << "] ";
+}
+
+void	displayIntVect(intVect const & vect, std::string const & title)
+{
+	std::cout << title << " ";
+	std::for_each(vect.begin(), vect.end(), displayInt);
+	std::cout << std::endl;
+}	

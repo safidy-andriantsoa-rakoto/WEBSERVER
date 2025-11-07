@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 20:51:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 18:26:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ Server &Server::operator=(Server const & other)
 		_size_sockaddrin = other._size_sockaddrin;
 		_sockaddrIn = other._sockaddrIn;
 		_addrinfo = other._addrinfo;
-		// *_resp = *other._resp;
 	}
 	return *this;
 }
@@ -47,6 +46,8 @@ int Server::get_fdClient() const{return (this->_fdClient);}
 int Server::get_fdSocket() const{return _fdSocket;}
 
 SockAddrIn & Server::get_confSockAddrIn(){return (_sockaddrIn);}
+
+MyConf &Server::config_ref(){return (_config);}
 
 int Server::create_socket()
 {
@@ -88,7 +89,7 @@ int Server::link_socket_adress()
 	return (1);
 }
 
-int Server::resolve_host(std::string const &host, int const &port) //pour resoudre localhost / ip 0.0.0.0/1.1.1.1/....
+int Server::resolve_host(std::string const &host, int const &port)
 {
 	memset(&_addrinfo, 0, sizeof(_addrinfo));
 	_addrinfo.ai_family = AF_INET;
@@ -159,78 +160,4 @@ void Server::clearAllFd()
 		close(_fdSocket);
 }
 
-void Server::getParsAllServer(std::vector<Server> &allServer, stringVect file)
-{
-	size_t i(0);
-	while(i < allServer.size())
-	{
-		try
-		{
-			allServer[i]._config.parseConfig(file);
-		}
-		catch(const std::exception& e)
-		{
-	        throw std::runtime_error(e.what());
-		}
-		allServer[i]._config.convertSizeMax(); /* [?] : Need to check pc size available */
-		allServer[i]._config.displayConfig();
-		if(allServer[i]._config.getStatus() == true)
-			i++;
-		else
-			throw std::runtime_error("Error, duplicate element conf");		
-	}
-}
 
-std::vector<int> Server::stockPort(std::vector<Server> &allServer)
-{
-	size_t i(0);
-	intVect tabPort;
-	intVect port;
-	while (i < allServer.size())
-	{
-		port = allServer[i]._config.getServPort();
-		for (size_t i = 0; i < port.size(); i++)
-		{
-			tabPort.push_back(port[i]);
-		}
-		i++;
-	}
-
-	return (tabPort);
-}
-
-bool Server::checkDuplicateValue(std::vector<Server> allserver)
-{
-	intVect port;
-	size_t i(0), j(0);
-
-	port = Server::stockPort(allserver);
-	std::cout << "Port list ";
-	while (i < port.size())
-	{
-		j = i + 1;
-		while (j < port.size())
-		{
-			if (port[i] == port[j])
-			{
-				std::cerr << "Error : find duplicate port " << port[i] << std::endl;
-				return (false);
-			}
-			j++;
-		}
-		i++;
-	}
-
-	for (size_t i = 0; i < port.size(); i++)
-	{
-		std::cout << port[i] << " ";
-	}
-
-	std::cout << std::endl;
-	return (true);
-}
-
-MyConf &Server::config_ref()
-{
-    return (_config);
-}

@@ -67,9 +67,9 @@ CLASS = $(addprefix $(SERV_DIR), $(SERV)) \
 		$(addprefix $(CGIFD_DIR), $(CGIFD))
 
 UTILS_DIR = utils/
-UTILS = stringUtils.cpp fileUtils.cpp displayUtils.cpp \
+UTILS = stringUtils.cpp fileUtils.cpp display.cpp \
 		conversion.cpp searchingUtils.cpp dirListing.cpp eventHandlingUtils.cpp \
-		CheckBraceClose.cpp ParseUtils.cpp pipeUtils.cpp
+		parseUtils.cpp pipeUtils.cpp dataConfUtils.cpp
 
 PRO_DIR = program/
 PRO = launchServer.cpp eventHandling.cpp initServer.cpp sendingResponse.cpp

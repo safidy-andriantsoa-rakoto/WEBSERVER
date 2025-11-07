@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 11:30:54 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:22:14 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void MyLoc::checkLocElement(vectData & data)
     }
     if ((std::find(elt.begin(), elt.end(), "redirect") != elt.end()) && elt.size() != 1)
         throw std::runtime_error("redirect go alone inside a location bloc");
-    if (checkDuplicateInStringVect(elt) == true)
+    if (checkDuplicationStr(elt) == false)
         throw std::runtime_error("Location element duplicated");
     if (elt[0] != "redirect")
         checkMandatoryElement(elt);
@@ -35,40 +35,10 @@ void MyLoc::checkMandatoryElement(stringVect &vect)
 {
     stringVect  mandatory;
 
-    displayStringVect(vect, "Error");
     mandatory.push_back("root");
     mandatory.push_back("method");
     if (findEltInStringVect(vect, mandatory) == false)
         throw std::runtime_error("root and method are mandatory for location element");
-}
-
-void MyLoc::addLocationBySplitParsing(std::string const &line)
-{
-    stringVect attr;
-    stringVect elt;
-    std::string topic;
-
-    attr = splitString(line, " | ");
-    for (stringVectIt it = attr.begin(); it != attr.end(); it++)
-    {
-        elt = splitString(*it, " ");
-        topic = elt[0];
-        elt.erase(elt.begin());
-        if (topic == "location")
-            _name = elt[0];
-        if (topic == "root")
-            _root = elt;
-        if (topic == "autoindex")
-            _autoindex = elt;
-        if (topic == "method")
-            _method = elt;
-        if (topic == "redirect")
-            _redirect = elt;
-        if (topic == "index")
-            _index = elt;
-        if (topic == "cgi")
-            _cgiExtension = elt;
-    }
 }
 
 void MyLoc::parseRoot(stringVect & vect)
@@ -86,7 +56,7 @@ void MyLoc::parseMethod(stringVect & vect)
         throw std::runtime_error("The maximum of method allowed is 3");
     if (checkValueMethod(vect) == false)
         throw std::runtime_error("Server supports only GET, POST, DELETE");
-    if (checkDuplicateInStringVect(vect) == true)
+    if (checkDuplicationStr(vect) == false)
         throw std::runtime_error("Method are duplicated");
     _method = vect;
 }
@@ -142,32 +112,13 @@ void MyLoc::parseRedirect(stringVect & vect)
     _redirect = vect;
 }
 
-MyLoc::MyLoc(){}
-
-MyLoc::MyLoc(std::string const &locName): ALocation(locName){}
-
-MyLoc::MyLoc(MyLoc const &other) : ALocation(other) {}
-
-MyLoc &MyLoc::operator=(MyLoc const &other)
-{
-    if (this != &other)
-    {
-        ALocation::operator=(other);
-    }
-    return *this;
-}
-
-MyLoc::~MyLoc() {}
-
-bool MyLoc::getStatus(){return (_checkStats);}
-
 void MyLoc::getElementLocation(const size_t &start, const size_t &end, const stringVect &file)
 {
     for (size_t i = start; i < end; ++i)
     {
         std::istringstream iss(file[i]);
         std::string name, value;
-        bool    cgiOn(false); /* [UPDATE] */
+        bool    cgiOn(false);
         iss >> name;
         while (std::getline(iss, value))
         {
@@ -193,7 +144,6 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                 }
                 if (name == "cgi")
                 {
-                    /* [UPDATE] */
                     if (cgiOn)
                         _cgiExtension.push_back(word);
                     if (word == "ON")
@@ -201,7 +151,6 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                         _cgiExtension[0] = word;
                         cgiOn = true;
                     }
-                    //tokony mbola misy erreur eto
                 }
                 if (name == "method")
                 {
@@ -232,7 +181,46 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
     }
 }
 
+MyLoc::MyLoc(){}
 
+MyLoc::MyLoc(std::string const &locName): ALocation(locName){}
+
+MyLoc::MyLoc(MyLoc const &other) : ALocation(other) {}
+
+MyLoc &MyLoc::operator=(MyLoc const &other)
+{
+    if (this != &other){ALocation::operator=(other);}
+    return *this;
+}
+
+MyLoc::~MyLoc() {}
+
+void MyLoc::specialParseLocation(stringVect const &file)
+{
+    static intVect index = containsExactWordInVector(file, "location");
+    static size_t currentBlock = 0;
+
+    if (currentBlock >= index.size())
+        return;
+    size_t start = index[currentBlock];
+    size_t end;
+    if (currentBlock + 1 < index.size())
+        end = index[currentBlock + 1];
+    else
+        end = file.size();
+    if (checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end))
+        throw std::runtime_error("Error : duplicate setting find or not find setting");
+    try
+    {
+        getElementLocation(start, end, file);
+    }
+    catch(const std::exception& e)
+    {
+        throw std::runtime_error(e.what());
+    }
+    currentBlock++;
+    _checkStats = true;
+}
 
 void MyLoc::parseLocation(vectData & data)
 {
@@ -255,32 +243,4 @@ void MyLoc::parseLocation(vectData & data)
         else
             throw std::runtime_error("Unknown element in location bloc");
     }
-}
-
-void MyLoc::oldParseLocation(stringVect const &file)
-{
-    static intVect index = containsExactWordInVector(file, "location");
-    static size_t currentBlock = 0;
-    if (currentBlock >= index.size())
-        return;
-    size_t start = index[currentBlock];
-    size_t end;
-    if (currentBlock + 1 < index.size())
-        end = index[currentBlock + 1];
-    else
-        end = file.size();
-    /* [!] : Add check for only redirect here !!!! */
-    // if (checkDuplicate2(file, "autoindex", start, end) || checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end) || checkDuplicate(file, "cgi", start, end))
-    if (checkDuplicate(file, "root", start, end) || checkDuplicate(file, "method", start, end))
-        throw std::runtime_error("Error : duplicate setting find or not find setting");
-    try
-    {
-        getElementLocation(start, end, file);
-    }
-    catch(const std::exception& e)
-    {
-        throw std::runtime_error(e.what());
-    }
-    currentBlock++;
-    _checkStats = true;
 }

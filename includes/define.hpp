@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 11:07:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:48:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,6 @@
 //PATH
 #define ERR_PATH "./config/errorPage/default/default.html"
 #define MIME_PATH "./config/ext"
-#define UPLOAD_PATH "./site/upload"
-
-// Need to add the substitue in the location parsing for upload directory !!!
-#define DEF_UPLOAD_LOCATION "location /upload | root $1 | method GET POST DELETE | autoindex ON"
 
 //HTTP
 #define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"
@@ -71,5 +67,10 @@
 						"		method GET POST DELETE\n" \
 						"		autoindex ON\n" \
 						"		cgi	ON /usr/bin/php-cgi"
+
+#define DEFAULT_UPLOAD_LOCATION "	location /upload\n" \
+								"		root $1\n" \
+								"		method GET POST DELETE\n" \
+								"		autoindex ON"
 
 #endif

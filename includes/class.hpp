@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 10:25:14 by barandri          #+#    #+#             */
-/*   Updated: 2025/10/16 08:56:15 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:48:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,11 @@
 #include "../srcs/class/CgiParser/CgiParser.hpp"
 #include "../srcs/class/CgiFd/CgiFd.hpp"
 
-// Waiting for official class config and location
 #include "../srcs/class/Config/AConfig.hpp"
 #include "../srcs/class/Config/ALocation.hpp"
 #include "../srcs/class/Config/MyConf.hpp"
 #include "../srcs/class/Config/MyLoc.hpp"
 
-// Put here all typedef used in all code through webserv.hpp
 typedef std::vector<Client>     VClient;
 typedef VClient::iterator       VClientIt;
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:26:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 20:54:27 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 18:21:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ class AConfig
 		AConfig();
 		AConfig(AConfig const & other);
 		AConfig &		operator=(AConfig const &other);
+		virtual 		~AConfig(){};
 
 		intVect			getServPort() const;
 		float			getMaxSize() const;
@@ -57,9 +58,7 @@ class AConfig
 
 		vectLocationIt	findClassLocation(std::string const & toFind);
 
-		virtual 		~AConfig(){};
-
-		virtual void	parseConfig(stringVect file) = 0;
+		virtual void	parseConfig(vectData & data, intVect & allPort) = 0;
 };
 
 #endif

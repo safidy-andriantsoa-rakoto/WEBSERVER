@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 20:50:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 18:27:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ class Server
         SockAddrIn		_sockaddrIn;
 		struct addrinfo	_addrinfo;
 		struct addrinfo	*_resp;
-		// struct sockaddinfo	*_hints;
 
 	protected :
 		MyConf		_config;
@@ -51,20 +50,18 @@ class Server
 		int 		get_fdClient() const;
 		int 		get_fdSocket() const;
 		SockAddrIn	& get_confSockAddrIn();
+		MyConf& 	config_ref();
+
         int 		create_socket();
         void 		configure_sockaddrin(int port);
         int 		link_socket_adress();
 		int			resolve_host(std::string const & host, int const & port);
         int 		wait_connexion_from_client();
         int 		accept_client_connexion();
+
         std::string get_client_request();
 
 		void		clearAllFd();
-
-		static std::vector<int> stockPort(std::vector<Server> &allServer);
-		static void getParsAllServer(std::vector<Server> &allServer, stringVect file);
-		static bool checkDuplicateValue(std::vector<Server> allserver);
-		MyConf& config_ref();
 };
 
 #endif

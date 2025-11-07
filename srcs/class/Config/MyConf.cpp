@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 11:06:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:21:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ void MyConf::checkConfigElement(vectData & data)
 		throw std::runtime_error("Must have location /");
 	if (vectElt.size() == 0 || vectElt.size() < 3 || vectElt.size() > 4)
 		throw std::runtime_error("Error on the number of elements");
-	if (checkDuplicateInStringVect(vectElt) == true)
+	if (checkDuplicationStr(vectElt) == false)
 		throw std::runtime_error("Duplicate among the config element");
-	if (checkDuplicateInStringVect(vectLoc))
+	if (checkDuplicationStr(vectLoc) == false)
 		throw std::runtime_error("Duplicate among the location");
 	checkMandatoryElement(vectElt);
 }
@@ -78,12 +78,11 @@ void MyConf::manageUploadLocation()
 	if (itUp == _location.end())
 	{
 		MyLoc loc;
-		std::string	locationUpload = DEF_UPLOAD_LOCATION;
 		std::string	rootUpload = (*itFirst).getRootDirectory() + "/upload";
+		std::string	locationUpload = DEFAULT_UPLOAD_LOCATION;
 		replaceString(locationUpload, rootUpload, "$1");
-		if (checkIfDirectoryAvailable(rootUpload) == false)
-        	throw std::runtime_error("upload directory can't be reached");
-		loc.addLocationBySplitParsing(locationUpload);
+		stringVect vect = splitString(locationUpload, "\n");
+		loc.specialParseLocation(vect);
 		_location.push_back(loc);
 	}
 	else
@@ -111,14 +110,13 @@ void MyConf::parsePort(stringVect const & vect, intVect & allPort)
 	for (stringVectCIt it = vect.begin(); it != vect.end(); it++)
 	{
 		n = convertStringToInt(*it);
-		if(n < 0 || n > 65535)
-			throw std::runtime_error("Invalid port");
-		if (std::count(allPort.begin(), allPort.end(), n) == 1)
-			throw std::runtime_error("Port already used in the server");
 		allPort.push_back(n);
 		_port.push_back(n);
 	}
-	
+	if (checkValuePort(_port) == false)
+		throw std::runtime_error("Invalid port");
+	if (checkDuplicationInt(_port) == false || checkDuplicationInt(allPort) == false)
+		throw std::runtime_error("Port already used in the server");
 }
 
 void MyConf::parseErrorPage(stringVect const & vect)
@@ -145,7 +143,7 @@ void MyConf::parseErrorPage(stringVect const & vect)
 				throw std::runtime_error("Status code limit exceeded");
 		}
 	}
-	if (checkDuplicateInStringVect(listStatusCode) == true)
+	if (checkDuplicationStr(listStatusCode) == false)
 		throw std::runtime_error("Status code duplicated");
 	_errPage.listError = listStatusCode;
 	try
@@ -194,6 +192,48 @@ void MyConf::parseLocationBloc(vectDataIt & itUpper, vectData & data)
 	_location.push_back(loc);
 }
 
+size_t MyConf::findNotDigitError()
+{
+	size_t checkIndex(0), i(0);
+
+	while (i < _errPage.strError.size())
+	{
+		std::string str = _errPage.strError[i];
+		bool isAllDigit = true;
+
+		for (size_t j = 0; j < str.size(); j++)
+		{
+			if (!isdigit(str[j]))
+			{
+				isAllDigit = false;
+				break;
+			}
+		}
+		if (isAllDigit && !str.empty())
+			_errPage.listError.push_back(str);
+		else if (!isAllDigit)
+		{
+			checkIndex = i;
+			break;
+		}
+		i++;
+	}
+	return (checkIndex);
+}
+
+void MyConf::checkErrorPage()
+{
+	size_t	i = findNotDigitError();
+
+	if (i > 0 && ((_errPage.strError.size() - i > 1)))
+	{
+		_checkStats = false;
+		return;
+	}
+	else if (i > 0 && i < _errPage.strError.size())
+		_errPage.filePath = _errPage.strError[i];
+}
+
 MyConf::MyConf(){_hasErrPage = false;}
 
 MyConf::MyConf(MyConf const & other) : AConfig(other){}
@@ -209,7 +249,18 @@ MyConf &MyConf::operator=(MyConf const &other)
 
 MyConf::~MyConf(){}
 
-void MyConf::init_port_child(int port)
+bool MyConf::getStatus()
+{
+    return _checkStats;
+}
+
+void MyConf::setHostName(std::string const & host)
+{
+	if (host.size())
+		this->_host = host;
+}
+
+void MyConf::init_port_child(int const & port)
 {
 	if (_port.size())
 		_port.clear();
@@ -226,7 +277,7 @@ void MyConf::delete_port_child_in_parent()
 	}
 }
 
-void MyConf::parseNewConfig(vectData & data, intVect& allPort)
+void MyConf::parseConfig(vectData & data, intVect& allPort)
 {
 	std::string elt;
 	vectData	locationData;
@@ -266,12 +317,6 @@ void MyConf::parseNewConfig(vectData & data, intVect& allPort)
 	manageUploadLocation();
 }
 
-std::string MyConf::getElt(parseMapIt &it){return (*it).first[0];}
-
-std::string MyConf::getLocValue(parseMapIt &it){return (*it).first[1];}
-
-stringVect& MyConf::getLocVect(parseMapIt &it){return (*it).second;}
-
 void	MyConf::displayConfig() const
 {
 	std::cout << "------------------------------------------" << std::endl;
@@ -292,148 +337,4 @@ void	MyConf::displayConfig() const
 		(*it).displayLocation();
 		std::cout << std::endl;
 	}
-}
-
-void MyConf::getElementConfig(const size_t &start, const size_t &end, const stringVect &file)
-{
-	int countLoc = 0;
-	_countLocation = 0;
-	for (size_t i = start; i < end; i++)
-	{
-		std::istringstream iss(file[i]);
-		std::string name, value;
-		iss >> name;
-		while (std::getline(iss, value))
-		{
-			std::string word;
-			std::istringstream s(value);
-			while (s >> word)
-			{
-				if (name == "host")
-					_host = word;
-				if (name == "port")
-				{
-					for (size_t i = 0; i < word.size(); i++)
-					if (!isdigit(word[i]))
-						throw std::runtime_error ("Error : Find not digit element");
-					_port.push_back(atoi(word.c_str()));
-				}
-				if (name == "size")
-					_size.push_back(word);
-				if (name == "error_page")
-					_errPage.strError.push_back(word);
-			}
-		}
-		if (name == "location")
-			countLoc++;
-	}
-	if(checkValuePort(_port) == false)
-		throw std::runtime_error ("Error : Port invalid");
-	if(checkDuplicationStr(_errPage.strError) == false)
-		throw std::runtime_error ("Error : server name invalid");
-	_countLocation = countLoc;
-}
-
-bool MyConf::getStatus()
-{
-    return _checkStats;
-}
-
-size_t MyConf::findNotDigitError()
-{
-	size_t checkIndex(0), i(0);
-	while (i < _errPage.strError.size())
-	{
-		std::string str = _errPage.strError[i];
-		bool isAllDigit = true;
-		for (size_t j = 0; j < str.size(); j++)
-		{
-			if (!isdigit(str[j]))
-			{
-				isAllDigit = false;
-				break;
-			}
-		}
-		if (isAllDigit && !str.empty())
-		{
-			_errPage.listError.push_back(str);
-		}
-		else if (!isAllDigit)
-		{
-			checkIndex = i;
-			break;
-		}
-		i++;
-	}
-	return (checkIndex);
-}
-void MyConf::parseConfig(stringVect file)
-{
-	static size_t currentBlock(0);
-	size_t i(0), k(0);
-	static intVect index = containsExactWordInVector(file, "server");
-	if (currentBlock >= index.size())
-		return;
-	size_t start = index[currentBlock];
-	size_t end;
-	if (currentBlock + 1 < index.size())
-		end = index[currentBlock + 1];
-	else
-		end = file.size();
-	_endLocation = end;
-	std::cout << "Current block = " << currentBlock << std::endl;
-	std::cout << "Start = " << start << " ; End = " << end << std::endl;
-	if (checkConfigDupli(file, start, end))
-	{
-		_checkStats = false;
-		return;
-	}
-	getElementConfig(start, end, file);
-	i = findNotDigitError();
-	if (i > 0 && ((_errPage.strError.size() - i > 1)))
-	{
-		_checkStats = false;
-		return;
-	}
-	else if (i > 0 && i < _errPage.strError.size())
-		_errPage.filePath = _errPage.strError[i];
-	this->_location = createVectLocation(_countLocation);
-	while (k < _location.size())
-	{
-		try
-		{
-			_location[k].oldParseLocation(file);
-		}
-		catch(const std::exception& e)
-		{
-	        throw std::runtime_error(e.what());
-		}
-		if (_location[k].getStatus())
-			k++;
-		else
-		{
-			_checkStats = false;
-			return;
-		}
-	}
-	_checkStats = true;
-	currentBlock++;
-}
-
-vectLocation MyConf::createVectLocation(size_t countLocation)
-{
-    vectLocation tabLocation;
-    MyLoc  loc;
-      	for (size_t i = 0; i < countLocation; ++i)
-        {
-            loc = MyLoc();
-            tabLocation.push_back(loc);
-        }
-    return (tabLocation);
-}
-
-void MyConf::setHostName(std::string host)
-{
-	if (host.size())
-		this->_host = host;
 }

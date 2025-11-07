@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 11:28:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 18:53:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,8 @@
 //Utils
 	//fileUtils
 bool        checkFileExtension(std::string const & fileName, std::string extension);
-void	    printFileContent(std::string const & path);
 std::string	readFileToString(std::string _path);
 std::string	readFromRegFileFd(int & fd, int & stat);
-stringMap	splitFileToMapString(std::string const & filePath, std::string const & sep);
 std::string	getFileExtension(std::string const & fileName);
 int         openRegFile(std::string const & filePath);
 size_t	    getFileSize(std::string const & path);
@@ -94,37 +92,28 @@ void	    displayStringVect(stringVect const & vect);
 void	    displayCharTable(char	**tab, std::string const & title);
 void		displayServerVectConfig(serverVect & allServer_conf);
 void 		print_conf(serverVect & allServer_conf);
+void		displayInt(int const & n);
+void		displayIntVect(intVect const & vect, std::string const & title);
 
 //Parse
-bool		checkBraceClose(stringVect const & vect);
-bool 		checkBracesAfterNewline(stringVect const & file);
-bool        checkCountWord(const std::vector<std::string> &lines, const std::string &word, const int &count);
-bool        checkWriteConfig(const std::vector<std::string>& lines, const std::string &word, const std::string &writeLine);
-bool        checkNumberAllContent(std::vector<std::string> &file);
-
-std::vector<std::string> getContentFile(std::string _path);
-std::vector<int> containsExactWordInVector(const std::vector<std::string> &lines, const std::string &word);
-
-std::vector<std::string> getContentFile(std::string _path);
-bool        checkDuplicate(stringVect file, std::string name, size_t &start , size_t &end);
-bool        checkConfigDupli(stringVect file, size_t &start, size_t &end);
-bool        checkDuplicate2(stringVect file, std::string name, size_t &start, size_t &end);
+stringVect	getContentFile(std::string const & _path);
+intVect 	containsExactWordInVector(stringVect const & lines, const std::string & word);
+bool 		checkDuplicate(stringVect const & file, std::string const & name, size_t & start, size_t & end);
 
 // dirListing
 stringMap	listingDirectory(DIR* dir, std::string const & path);
 std::string	createListingDirectoryLink(stringMap & mapDir);
 
 //pipeUtils
-void	makeDup2(int const & fd1, int const & fd2, int const & fd3);
-void	makeDup2(int const & fd1, int const & fd2);
-void   	dupStandardIO(int *stdFd);
+void		makeDup2(int const & fd1, int const & fd2, int const & fd3);
+void		makeDup2(int const & fd1, int const & fd2);
+void   		dupStandardIO(int *stdFd);
 
 //ParseUtils
-bool	checkValuePort(intVect &vect);
-bool	checkDuplicationStr(stringVect &str);
-bool	checkDuplicationInt(intVect &Int);
-bool	checkValueMethod(stringVect &str);
+bool		checkValuePort(intVect &vect);
+bool		checkDuplicationStr(stringVect &str);
+bool		checkDuplicationInt(intVect &Int);
+bool		checkValueMethod(stringVect &str);
 
-bool    checkDuplicateInStringVect(stringVect & vect);
-bool    findEltInStringVect(stringVect & vect, stringVect & toFind);
+bool    	findEltInStringVect(stringVect & vect, stringVect & toFind);
 s_dataConf  addDataConf(int const & lvl, std::string const & key, stringVect & value);
