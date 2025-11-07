@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 10:54:01 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 11:01:41 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,13 @@
 // 	closedir(dir);
 // }
 
+void error_ligne(int i, std::string line)
+{
+	std::stringstream error;
+	error << "\033[031;47mError: ligne[" << i + 1 << "]->" << line  << "<-\033[0m";
+	throw std::runtime_error(error.str());
+}
+
 void server_line_checker(std::istringstream &line, serverVect &allServer_conf, int i)
 {
 	std::string word;
@@ -28,11 +35,7 @@ void server_line_checker(std::istringstream &line, serverVect &allServer_conf, i
 	while (line >> word)
 		line_data.push_back(word);
 	if (line_data.size() != 1 || line_data[0] != "server")
-	{
-		std::stringstream error;
-		error << "\033[031;47mError: ligne[" << i + 1 << "]->" << line.str()  << "<-\033[0m";
-		throw std::runtime_error(error.str());
-	}
+		error_ligne(i, line.str());
 	else
 		allServer_conf.push_back(all_data_conf);
 }
@@ -55,11 +58,7 @@ void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl, 
 	if (secLvl.key.size())
 		allServer_conf[allServer_conf.size() - 1].push_back(secLvl);
 	else
-	{
-		std::stringstream error;
-		error << "\033[031;47mError: ligne[" << i + 1 << "]->" << line.str()  << "<-\033[0m";
-		throw std::runtime_error(error.str());
-	}
+		error_ligne(i, line.str());
 }
 
 void parse_config_data(stringVect &config, serverVect &allServer_conf)
@@ -79,11 +78,7 @@ void parse_config_data(stringVect &config, serverVect &allServer_conf)
 		{
 			pos = config[i].find(" ");
 			if (pos == 0)
-			{
-				std::stringstream error;
-				error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
-				throw std::runtime_error(error.str());
-			}
+				error_ligne(i, config[i]);
 			server_line_checker(line, allServer_conf, i);
 		}
 		else if (pos == 0 && allServer_conf.size())
@@ -93,20 +88,12 @@ void parse_config_data(stringVect &config, serverVect &allServer_conf)
 				config[i].erase(0, identat.size() * 2);
 				pos = config[i].find("\t");
 				if (pos == 0)
-				{
-					std::stringstream error;
-					error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
-					throw std::runtime_error(error.str());
-				}
+					error_ligne(i, config[i]);
 				if (pos == std::string::npos)
 				{
 					pos = config[i].find(" ");
 					if (pos == 0)
-					{
-						std::stringstream error;
-						error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
-						throw std::runtime_error(error.str());
-					}
+						error_ligne(i, config[i]);
 					get_data_lvl(line, allServer_conf, 2, i);
 				}
 			}
@@ -115,36 +102,20 @@ void parse_config_data(stringVect &config, serverVect &allServer_conf)
 				config[i].erase(0, identat.size());
 				pos = config[i].find(" ");
 				if (pos == 0)
-				{
-					std::stringstream error;
-					error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
-					throw std::runtime_error(error.str());
-				}
+					error_ligne(i, config[i]);
 				if (pos > 0 || pos == std::string::npos)
 				{
 					pos = config[i].find(" ");
 					if (pos == 0)
-					{
-						std::stringstream error;
-						error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
-						throw std::runtime_error(error.str());
-					}
+						error_ligne(i, config[i]);
 					get_data_lvl(line, allServer_conf, 1, i);
 				}
 			}
 			else
-			{
-				std::stringstream error;
-				error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
-				throw std::runtime_error(error.str());
-			}
+				error_ligne(i, config[i]);
 		}
 		else
-		{
-			std::stringstream error;
-			error << "\033[031;47mError: ligne[" << i + 1 << "]->" << "identation server block error"  << "<-\033[0m";
-			throw std::runtime_error(error.str());
-		}
+			error_ligne(i, config[i]);
 	}
 }
 
