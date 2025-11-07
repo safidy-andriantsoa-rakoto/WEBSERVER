@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 08:55:58 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 09:37:59 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void server_line_checker(std::istringstream &line, serverVect &allServer_conf, i
 		allServer_conf.push_back(all_data_conf);
 }
 
-void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl)
+void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl, int i)
 {
 	std::string word;
 	s_dataConf secLvl;
@@ -52,29 +52,76 @@ void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl)
 		else
 			secLvl.value.push_back(word);
 	}
-	allServer_conf[allServer_conf.size() - 1].push_back(secLvl);
+	if (secLvl.key.size())
+		allServer_conf[allServer_conf.size() - 1].push_back(secLvl);
+	else
+	{
+		std::stringstream error;
+		error << "Error: ligne[" << i << "]->" << line.str();
+		throw std::runtime_error(error.str());
+	}
 }
 
 void parse_config_data(stringVect &config, serverVect &allServer_conf)
 {
+	std::string identat = "    ";
+	
+	for (size_t i = 0; i < config.size(); i++)
+	{
+		size_t pos = config[i].find("\t");
+		if (pos != std::string::npos && (pos == 4 || pos == 0))
+			identat = "\t";
+	}
 	for (size_t i = 0; i < config.size(); i++)
 	{
 		size_t pos;
 		std::istringstream line(config[i]);
 		std::string word;
-		pos = config[i].find("\t");// if faut rechercher dabort un tab pos 0
+		pos = config[i].find(identat);// if faut rechercher dabort un tab pos 0
 		if (config[i].size() == 1)
 			continue;
 		if (pos == std::string::npos)
 			server_line_checker(line, allServer_conf, i);
 		else if (pos == 0)
 		{
-			config[i].erase(0, 1);// changer par rapport a la identation space or tab
-			pos = config[i].find("\t");
-			if (pos == 0)
-				get_data_lvl(line, allServer_conf, 2);
+			if (config[i].find(identat + identat) == 0)
+			{
+				config[i].erase(0, identat.size() * 2);
+				if (identat.size() == 1)
+					pos = config[i].find("\t");
+				else
+					pos = config[i].find(" ");
+				if (pos == 0)
+				{
+					std::stringstream error;
+					error << "Error: ligne[" << i << "]->" << line.str();
+					throw std::runtime_error(error.str());
+				}
+				else
+					get_data_lvl(line, allServer_conf, 2, i);
+			}
+			else if (config[i].find(identat) == 0)
+			{
+				config[i].erase(0, (identat.size()));
+								if (identat.size() == 1)
+					pos = config[i].find("\t");
+				else
+					pos = config[i].find(" ");
+				if (pos == 0)
+				{
+					std::stringstream error;
+					error << "Error: ligne[" << i << "]->" << line.str();
+					throw std::runtime_error(error.str());
+				}
+				else
+					get_data_lvl(line, allServer_conf, 1, i);
+			}
 			else
-				get_data_lvl(line, allServer_conf, 1);
+			{
+				std::stringstream error;
+				error << "Error: ligne[" << i << "]->" << line.str();
+				throw std::runtime_error(error.str());
+			}
 		}
 	}
 }
@@ -128,17 +175,17 @@ int main(int argc, char **argv)
 	// 	std::cout << "aty ee" << std::endl;
 	// 	if(!Server::checkDuplicateValue(allServer))
 	// 		return (1);
-	// 	for (size_t i = 0; i < allServer.size(); i++)
-	// 	{
-	// 		intVect port_tmp = allServer[i].getConfig().getServPort();
-	// 		for (size_t j = 1; j < port_tmp.size(); j++)
-	// 		{
-	// 			Server child(allServer[i]);
-	// 			child.config_ref().init_port_child(port_tmp[j]);
-	// 			childServer.push_back(child);
-	// 		}
-	// 		allServer[i].config_ref().delete_port_child_in_parent();
-	// 	}
+		// for (size_t i = 0; i < allServer.size(); i++)
+		// {
+		// 	intVect port_tmp = allServer[i].getConfig().getServPort();
+		// 	for (size_t j = 1; j < port_tmp.size(); j++)
+		// 	{
+		// 		Server child(allServer[i]);
+		// 		child.config_ref().init_port_child(port_tmp[j]);
+		// 		childServer.push_back(child);
+		// 	}
+		// 	allServer[i].config_ref().delete_port_child_in_parent();
+		// }
 	// 	if (childServer.size())
 	// 		std::copy(childServer.begin(), childServer.end(), std::back_inserter(allServer));
 	// 	for (size_t i = 0; i < allServer.size(); i++)
