@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 11:01:41 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 11:08:48 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,42 @@ void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl, 
 		error_ligne(i, line.str());
 }
 
+void content_lvl_parser(std::string &config, int i, serverVect &allServer_conf, std::istringstream &line)
+{
+	size_t pos;
+	std::string identat = "\t";
+	if (config.find(identat + identat) == 0)
+	{
+		config.erase(0, identat.size() * 2);
+		pos = config.find("\t");
+		if (pos == 0)
+			error_ligne(i, config);
+		if (pos == std::string::npos)
+		{
+			pos = config.find(" ");
+			if (pos == 0)
+				error_ligne(i, config);
+			get_data_lvl(line, allServer_conf, 2, i);
+		}
+	}
+	else if (config.find(identat) == 0)
+	{
+		config.erase(0, identat.size());
+		pos = config.find(" ");
+		if (pos == 0)
+			error_ligne(i, config);
+		if (pos > 0 || pos == std::string::npos)
+		{
+			pos = config.find(" ");
+			if (pos == 0)
+				error_ligne(i, config);
+			get_data_lvl(line, allServer_conf, 1, i);
+		}
+	}
+	else
+		error_ligne(i, config);
+}
+
 void parse_config_data(stringVect &config, serverVect &allServer_conf)
 {
 	std::string identat = "\t";
@@ -82,38 +118,7 @@ void parse_config_data(stringVect &config, serverVect &allServer_conf)
 			server_line_checker(line, allServer_conf, i);
 		}
 		else if (pos == 0 && allServer_conf.size())
-		{
-			if (config[i].find(identat + identat) == 0)
-			{
-				config[i].erase(0, identat.size() * 2);
-				pos = config[i].find("\t");
-				if (pos == 0)
-					error_ligne(i, config[i]);
-				if (pos == std::string::npos)
-				{
-					pos = config[i].find(" ");
-					if (pos == 0)
-						error_ligne(i, config[i]);
-					get_data_lvl(line, allServer_conf, 2, i);
-				}
-			}
-			else if (config[i].find(identat) == 0)
-			{
-				config[i].erase(0, identat.size());
-				pos = config[i].find(" ");
-				if (pos == 0)
-					error_ligne(i, config[i]);
-				if (pos > 0 || pos == std::string::npos)
-				{
-					pos = config[i].find(" ");
-					if (pos == 0)
-						error_ligne(i, config[i]);
-					get_data_lvl(line, allServer_conf, 1, i);
-				}
-			}
-			else
-				error_ligne(i, config[i]);
-		}
+			content_lvl_parser(config[i], i, allServer_conf, line);
 		else
 			error_ligne(i, config[i]);
 	}
