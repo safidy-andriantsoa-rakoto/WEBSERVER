@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 11:11:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 11:30:54 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void MyLoc::checkMandatoryElement(stringVect &vect)
 {
     stringVect  mandatory;
 
+    displayStringVect(vect, "Error");
     mandatory.push_back("root");
     mandatory.push_back("method");
     if (findEltInStringVect(vect, mandatory) == false)

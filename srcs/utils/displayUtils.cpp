@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 09:43:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 20:41:24 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/07 11:28:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,20 @@ void	displayServerVectConfig(serverVect & allServer_conf)
 			displayStringVect(allServer_conf[i][j].value, "	| value=");
 		}
 	}	
+}
+
+void print_conf(serverVect & allServer_conf)
+{
+	for (size_t i = 0; i < allServer_conf.size(); i++)
+	{
+		std::cout << "==================================="<< i << "===================================" << std::endl;
+		for (size_t j = 0; j < allServer_conf[i].size(); j++)
+		{
+			std::cout << "LVL=" << allServer_conf[i][j].lvl << std::endl;
+			std::cout << "key=" << allServer_conf[i][j].key << std::endl;
+			for (size_t k = 0; k < allServer_conf[i][j].value.size(); k++)
+				std::cout << "	value=" << allServer_conf[i][j].value[k] << std::endl;
+		}
+		std::cout << "==================================="<< i << "===================================" << std::endl;
+	}
 }
