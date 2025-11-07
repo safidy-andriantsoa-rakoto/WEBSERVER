@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 09:37:59 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 10:11:42 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void server_line_checker(std::istringstream &line, serverVect &allServer_conf, i
 	if (line_data.size() != 1 || line_data[0] != "server")
 	{
 		std::stringstream error;
-		error << "Error: ligne[" << i << "]->" << line.str();
+		error << "\033[031;47mError: ligne[" << i + 1 << "]->" << line.str()  << "<-\033[0m";
 		throw std::runtime_error(error.str());
 	}
 	else
@@ -57,7 +57,7 @@ void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl, 
 	else
 	{
 		std::stringstream error;
-		error << "Error: ligne[" << i << "]->" << line.str();
+		error << "\033[031;47mError: ligne[" << i + 1 << "]->" << line.str()  << "<-\033[0m";
 		throw std::runtime_error(error.str());
 	}
 }
@@ -80,48 +80,66 @@ void parse_config_data(stringVect &config, serverVect &allServer_conf)
 		pos = config[i].find(identat);// if faut rechercher dabort un tab pos 0
 		if (config[i].size() == 1)
 			continue;
-		if (pos == std::string::npos)
+		if (pos > 0)
 			server_line_checker(line, allServer_conf, i);
-		else if (pos == 0)
+		else if (pos == 0 && allServer_conf.size())
 		{
 			if (config[i].find(identat + identat) == 0)
 			{
 				config[i].erase(0, identat.size() * 2);
-				if (identat.size() == 1)
-					pos = config[i].find("\t");
-				else
-					pos = config[i].find(" ");
+				pos = config[i].find("\t");
 				if (pos == 0)
 				{
 					std::stringstream error;
-					error << "Error: ligne[" << i << "]->" << line.str();
+					error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
 					throw std::runtime_error(error.str());
 				}
-				else
+				if (pos == std::string::npos)
+				{
+					pos = config[i].find(" ");
+					if (pos == 0)
+					{
+						std::stringstream error;
+						error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
+						throw std::runtime_error(error.str());
+					}
 					get_data_lvl(line, allServer_conf, 2, i);
+				}
 			}
 			else if (config[i].find(identat) == 0)
 			{
-				config[i].erase(0, (identat.size()));
-								if (identat.size() == 1)
-					pos = config[i].find("\t");
-				else
-					pos = config[i].find(" ");
+				config[i].erase(0, identat.size());
+				pos = config[i].find("\t");
 				if (pos == 0)
 				{
 					std::stringstream error;
-					error << "Error: ligne[" << i << "]->" << line.str();
+					error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
 					throw std::runtime_error(error.str());
 				}
-				else
+				if (pos == std::string::npos)
+				{
+					pos = config[i].find(" ");
+					if (pos == 0)
+					{
+						std::stringstream error;
+						error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
+						throw std::runtime_error(error.str());
+					}
 					get_data_lvl(line, allServer_conf, 1, i);
+				}
 			}
 			else
 			{
 				std::stringstream error;
-				error << "Error: ligne[" << i << "]->" << line.str();
+				error << "\033[031;47mError: ligne[" << i + 1 << "]->" << config[i]  << "<-\033[0m";
 				throw std::runtime_error(error.str());
 			}
+		}
+		else
+		{
+			std::stringstream error;
+			error << "\033[031;47mError: ligne[" << i + 1 << "]->" << "identation server block error"  << "<-\033[0m";
+			throw std::runtime_error(error.str());
 		}
 	}
 }
@@ -130,6 +148,7 @@ void print_conf(serverVect	allServer_conf)
 {
 	for (size_t i = 0; i < allServer_conf.size(); i++)
 	{
+		std::cout << "==================================="<< i << "===================================" << std::endl;
 		for (size_t j = 0; j < allServer_conf[i].size(); j++)
 		{
 			std::cout << "LVL=" << allServer_conf[i][j].lvl << std::endl;
@@ -137,6 +156,7 @@ void print_conf(serverVect	allServer_conf)
 			for (size_t k = 0; k < allServer_conf[i][j].value.size(); k++)
 				std::cout << "	value=" << allServer_conf[i][j].value[k] << std::endl;
 		}
+		std::cout << "==================================="<< i << "===================================" << std::endl;
 	}
 }
 
