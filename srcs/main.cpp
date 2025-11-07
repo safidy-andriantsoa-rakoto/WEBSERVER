@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 08:43:19 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 08:51:06 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,23 @@
 // 	closedir(dir);
 // }
 
+void server_line_checker(std::istringstream &line, serverVect &allServer_conf, int i)
+{
+	std::string word;
+	stringVect	line_data;
+	vectData	all_data_conf;
+	
+	while (line >> word)
+		line_data.push_back(word);
+	if (line_data.size() != 1 || line_data[0] != "server")
+	{
+		std::stringstream error;
+		error << "Error: ligne[" << i << "]->" << line.str();
+		throw std::runtime_error(error.str());
+	}
+	else
+		allServer_conf.push_back(all_data_conf);
+}
 
 void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl)
 {
@@ -44,7 +61,6 @@ int main(int argc, char **argv)
 	// Handler 	handler;
 	stringVect	config;
 	serverVect	allServer_conf;
-	vectData	all_data_conf;
 	// dataMap		_data_conf;
 	// vectServer	allServer;
 	// vectServer	childServer;
@@ -63,40 +79,20 @@ int main(int argc, char **argv)
 			std::istringstream line(config[i]);
 			// parseMap _content_conf;
 			std::string word;
-			stringVect	line_data;
 			pos = config[i].find("\t");// if faut rechercher dabort un tab pos 0
 			if (config[i].size() == 1)
-			continue;
-			std::cout << "=============================================================================" << std::endl;
+				continue;
 			if (pos == std::string::npos)
-			{
-				while (line >> word)
-					line_data.push_back(word);
-				if (line_data.size() != 1 || line_data[0] != "server") //server bloc
-				{
-					std::stringstream error;
-					error << "Error: ligne[" << i << "]->" << config[i];
-					throw std::runtime_error(error.str());
-				}
-				else
-				{
-					all_data_conf.clear();
-					allServer_conf.push_back(all_data_conf);
-				}
-				std::cout << "		\033[042mSERVER NB=" << allServer_conf.size() << "\033[0m" << std::endl;
-			}
+				server_line_checker(line, allServer_conf, i);
 			else if (pos == 0)
 			{
 				config[i].erase(0, 1);// changer par rapport a la identation space or tab
-				std::cout << "\033[046mLEVEL->"<< config[i] <<"<-\033[0m" << std::endl;
 				pos = config[i].find("\t");
 				if (pos == 0)
 					get_data_lvl(line, allServer_conf, 2);
 				else
 					get_data_lvl(line, allServer_conf, 1);
 			}
-			std::cout << "Ligne["<< i <<"]->"<< config[i] << "<-size=" << config[i].size() << std::endl;
-			std::cout << "=============================================================================" << std::endl;
 		}
 		for (size_t i = 0; i < allServer_conf.size(); i++)
 		{
