@@ -6,7 +6,7 @@
 /*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 16:06:55 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/07 08:43:19 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,26 @@
 // 	DIR *dir = openDir(UPLOAD_PATH);
 // 	closedir(dir);
 // }
+
+
+void	get_data_lvl(std::istringstream &line, serverVect &allServer_conf,int lvl)
+{
+	std::string word;
+	
+	s_dataConf secLvl;
+	std::cout << "\033[045mLEVEL 2v\033[0m" << std::endl;
+	while (line >> word)
+	{
+		if (!secLvl.key.size())
+		{
+			secLvl.key = word;
+			secLvl.lvl = lvl;
+		}
+		else
+			secLvl.value.push_back(word);
+	}
+	allServer_conf[allServer_conf.size() - 1].push_back(secLvl);
+}
 
 int main(int argc, char **argv)
 {
@@ -71,39 +91,9 @@ int main(int argc, char **argv)
 				std::cout << "\033[046mLEVEL->"<< config[i] <<"<-\033[0m" << std::endl;
 				pos = config[i].find("\t");
 				if (pos == 0)
-				{
-					s_dataConf secLvl;
-					std::cout << "\033[045mLEVEL 2v\033[0m" << std::endl;
-					while (line >> word)
-					{
-						if (!secLvl.key.size())
-						{
-							secLvl.key = word;
-							secLvl.lvl = 2;
-						}
-						else
-							secLvl.value.push_back(word);
-					}
-					allServer_conf[allServer_conf.size() - 1].push_back(secLvl);
-					std::cout << "\033[045mLEVEL 2^\033[0m" << std::endl;
-				}
+					get_data_lvl(line, allServer_conf, 2);
 				else
-				{
-					s_dataConf firLVl;
-					std::cout << "\033[044mLEVEL 1v\033[0m" << std::endl;
-					while (line >> word)
-					{
-						if (!firLVl.key.size())
-						{
-							firLVl.key = word;
-							firLVl.lvl = 1;
-						}
-						else
-							firLVl.value.push_back(word);
-					}
-					allServer_conf[allServer_conf.size() - 1].push_back(firLVl);
-					std::cout << "\033[044mLEVEL 1^\033[0m" << std::endl;
-				}
+					get_data_lvl(line, allServer_conf, 1);
 			}
 			std::cout << "Ligne["<< i <<"]->"<< config[i] << "<-size=" << config[i].size() << std::endl;
 			std::cout << "=============================================================================" << std::endl;
