@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 15:30:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 13:57:23 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		(*it).setResponseStat(OP_ONGOING);
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 	{
-		// std::cout << "			Ending send response" << std::endl;
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
 		(*it).clearPtrCgiFd();

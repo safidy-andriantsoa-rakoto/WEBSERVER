@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 10:02:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 13:10:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ int         openRegFile(std::string const & filePath);
 size_t	    getFileSize(std::string const & path);
 bool		checkIfDirectoryAvailable(std::string const & path);
 bool		checkIfFileAvailabe(std::string const & path, int const & flag);
+bool		checkIfParentDirectory(std::string const & parentPath, std::string const & childPath);
 
 //stringUtils
 stringVect	strictSplit(std::string const & target, std::string const & sep);

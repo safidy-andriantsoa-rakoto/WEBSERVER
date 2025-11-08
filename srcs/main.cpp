@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 19:46:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 13:19:09 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,11 @@ int main(int argc, char **argv)
 		else
 			config = getContentFile(argv[1]);
 		getAllServerFromConfigFile(allServer, config);
-		// Mime::initMapMime(MIME_PATH);
-		// handler.setVectServer(allServer);
-		// launchServer(handler);
-		// std::cout << "\n\n\n\nWebserv shutting down..." << std::endl;
-		// handler.cleanFdAndAlloc();
+		Mime::initMapMime(MIME_PATH);
+		handler.setVectServer(allServer);
+		launchServer(handler);
+		std::cout << "\n\n\n\nWebserv shutting down..." << std::endl;
+		handler.cleanFdAndAlloc();
 	}
 	catch(const std::exception& e)
 	{

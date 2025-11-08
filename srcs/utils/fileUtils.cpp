@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 10:10:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 13:56:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,11 @@ std::string	readFromRegFileFd(int & fd, int & stat)
 	}
 	buffer[bytesRead] = '\0';
 	std::string res(buffer, bytesRead);
+	if (stat == OP_ONCE)
+	{
+		close(fd);
+		fd = -1;
+	}
     return res;
 }
 
@@ -93,7 +98,7 @@ int	openRegFile(std::string const & filePath)
 		throw ErrorExcept(500, "Internal server error");
     }
     if (S_ISREG(st.st_mode) == false) 
-        throw std::runtime_error("Forbidden"); 
+        throw ErrorExcept(403, "Access denied or file doesn't exist");
     fd = open(filePath.c_str(), O_RDONLY);
     if (fd == -1)
     {
@@ -143,4 +148,39 @@ bool	checkIfFileAvailabe(std::string const & path, int const & flag)
 		return false;
     close(fd);
 	return true;
+}
+
+bool	checkIfParentDirectory(std::string const & parentPath, std::string const & childPath)
+{
+	DIR 			*dir;
+	struct dirent*	dirent;
+	std::string		childName;
+	int				stat;
+	size_t			pos;
+
+	std::cout << "Parent = " << parentPath << std::endl;
+	std::cout << "Child = " << childPath << std::endl;
+	dir = opendir(parentPath.c_str());
+	if (!dir)
+		return false;
+	pos = childPath.find_last_of('/');
+	if (pos != std::string::npos)
+	{
+		pos++;
+		childName = childPath.substr(pos, childPath.size() - pos);
+	}
+	else
+		childName = childPath;
+	std::cout << "CHILD NAME = " << childName << std::endl;
+	stat = false;
+	while ((dirent = readdir(dir)))
+	{
+		if (dirent->d_name == childName)
+		{
+			stat = true;
+			break;
+		}
+	}
+	closedir(dir);
+	return stat;
 }

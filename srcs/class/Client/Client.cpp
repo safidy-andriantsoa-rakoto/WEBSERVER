@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/08 10:32:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 13:52:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,10 +104,12 @@ void Client::setRspRegFileFd(int const & fd)
 
 void Client::setRspContentLength(size_t const &size){_response.setContentLength(size);}
 
-void Client::setRegStandardResponse(int const & fd)
+void Client::setRegStandardResponse(int const & fd, int const & stat)
 {
 	_response.setRegFileFd(fd);
-	_response.generateRegStandardResponse();
+	_response.setRespStat(stat);
+	if (stat == OP_ONCE)
+		_response.generateRegStandardResponse();
 }
 
 void Client::setRegFdChunkedResponse()
@@ -327,7 +329,6 @@ void Client::processLocationOption(MyLoc const & location, Request & request)
 {
 	stringVect	locationMethod;
 
-	location.displayLocation();
 	locationMethod = location.getAvailableMethod();
 	processRedirection(location, request);
 	checkMethodInLocation(locationMethod, request.getMethod());
@@ -342,17 +343,12 @@ void Client::checkMethodInLocation(stringVect & locationMethod, std::string cons
 	stringVectIt	it;
 
 	it = std::find(locationMethod.begin(), locationMethod.end(), method);
-	displayStringVect(locationMethod);
-	std::cout << "Method = " << locationMethod.size() << std::endl;
 	if (it == locationMethod.end())
 	{
 		if (method != "GET" && method != "POST" && method != "DELETE")
 			throw ErrorExcept(501, "Method not implemented");
 		else
-		{
-			std::cout << "Method = " << method << std::endl;
 			throw ErrorExcept(405, "Method not allowed");
-		}
 	}
 }
 
@@ -405,30 +401,27 @@ void Client::stdGetRequest()
 	DIR*		dir;
 
 	filePath = _request.getRequestTarget();
-	/* [!] : review the condition !!!*/
-	dir = opendir(filePath.c_str());
-	if (!dir && errno == EACCES)
-		throw ErrorExcept(403, "Directory forbidden");
-	if (dir && _request.getAutoIdx() == true)
-		throw LDirExcept(200, dir, _request.getOriginalRequestTarget(), "Listing directory");
-	if (dir && _request.getAutoIdx() == false)
+	if (checkIfDirectoryAvailable(filePath) == true)
+	{
+		if (_request.getAutoIdx() == true)
+		{
+			dir = opendir(filePath.c_str());
+			throw LDirExcept(200, dir, _request.getOriginalRequestTarget(), "Listing directory");
+		}
 		filePath += "/index.html";
+	}
 	int fd = openRegFile(filePath);
 	size_t	fileSize = getFileSize(filePath);
+	int		stat;
 	setStatusCodeResponse(200);
 	setRspOriginPath(filePath);
 	setRspType(filePath);
 	setRspContentLength(fileSize);
 	if (fileSize <= _BUFFER)
-	{
-		setResponseStat(OP_ONCE);
-		setRegStandardResponse(fd);
-	}
+		stat = OP_ONCE;
 	else
-	{
-		setResponseStat(OP_START);
-		setRspRegFileFd(fd);
-	}
+		stat = OP_START;
+	setRegStandardResponse(fd, stat);
 }
 
 void Client::cgiGetRequest(int *fd, pid_t & childPid)
@@ -437,10 +430,10 @@ void Client::cgiGetRequest(int *fd, pid_t & childPid)
 	int		stockStdOut;
 
 	if (pipe(pipeFd) == -1)
-		throw std::runtime_error("Pipe fd error");
+		throw ErrorExcept(500, "Pipe fd error");
 	childPid = fork();
 	if (childPid == -1)
-		throw std::runtime_error("Fork error");
+		throw ErrorExcept(500, "Fork error");
 	if (childPid == 0)
 	{
 		stockStdOut = dup(STDOUT_FILENO);
@@ -517,12 +510,12 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 	int	stdFd[2] = {-1, -1};
 
 	if (pipe(pipeInFd) == -1)
-		throw std::runtime_error("input fd error");
+		throw ErrorExcept(500, "input fd error");
 	if (pipe(pipeOutFd) == -1)
-		throw std::runtime_error("output fd error");
+		throw ErrorExcept(500, "output fd error");
 	childPid = fork();
 	if (childPid == -1)
-		throw std::runtime_error("Fork error");
+		throw ErrorExcept(500, "Fork error");
 	if (childPid == 0)
 	{
 		dupStandardIO(stdFd);
@@ -551,13 +544,13 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 	}
 }
 
+/* [!] : DELETE error need to be checked */
 void Client::delete_request()
 {
 	std::string	target;
 	struct stat	s_stat;
 
 	target = _request.getRequestTarget();
-	// std::cout << "\n\n\n				TARGET=" << target << std::endl;
 	if (!target.size())
 		throw ErrorExcept(400, "Bad request");
 	if (target[target.size() - 1] == '/')
@@ -789,7 +782,7 @@ bool Client::is_client_timeout()
 	set_time_activity();
 	if (difftime(this->_time_now, this->_last_time) > 62)
 	{
-		std::cout << "			CLIENT TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl;
+		// std::cout << "			CLIENT TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl; /* [Test only] */
 		throw ErrorExcept(408, "Client Timeout"); /* [?] : When to send 408 response to client? On long upload only? */
 	}
     return false;

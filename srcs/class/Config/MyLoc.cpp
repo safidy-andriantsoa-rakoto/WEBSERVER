@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 10:23:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 13:31:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void MyLoc::parseRoot(stringVect & vect)
 {
     if (vect.size() != 1)
         throw std::runtime_error("Root need  one element");
+    std::cout << "Root = " << vect[0] << std::endl;
     if (checkIfDirectoryAvailable(vect[0]) == false)
         throw std::runtime_error("Root is not a directory or can't be reached");
     _root = vect;
@@ -78,7 +79,7 @@ void MyLoc::parseCgiExt(stringVect & vect)
         throw std::runtime_error("Cgi can be activated by ON/OFF");
     if (vect[0] == "OFF" && vect.size() != 1)
         throw std::runtime_error("Cgi is OFF, no need for executable");
-    if (vect[0] == "ON" && checkIfFileAvailabe(vect[1], O_EXCL) == false)
+    if (vect[0] == "ON" && checkIfFileAvailabe(vect[1], O_RDONLY) == false)
         throw std::runtime_error("Cgi executable is not valid");
     _cgiExtension = vect;
 }

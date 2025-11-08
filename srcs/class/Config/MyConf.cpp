@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 10:03:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 13:29:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,14 @@ void MyConf::manageUploadLocation()
 {
 	vectLocationIt	itFirst;
 	vectLocationIt	itUp;
+	std::string		rootUpload;
 
 	itFirst = findClassLocation("/");
 	itUp = findClassLocation("/upload");
 	if (itUp == _location.end())
 	{
 		MyLoc loc;
-		std::string	rootUpload = (*itFirst).getRootDirectory() + "/upload";
+		rootUpload = (*itFirst).getRootDirectory() + "/upload";
 		std::string	locationUpload = DEFAULT_UPLOAD_LOCATION;
 		replaceString(locationUpload, rootUpload, "$1");
 		stringVect vect = splitString(locationUpload, "\n");
@@ -84,10 +85,11 @@ void MyConf::manageUploadLocation()
 	}
 	else
 	{
-		if ((*itUp).getRootDirectory() != (*itFirst).getRootDirectory() + "/upload")
-			throw std::runtime_error("root for location /upload need to be directly inside root for location /");
-		if (checkIfDirectoryAvailable((*itUp).getRootDirectory()) == false)
-        	throw std::runtime_error("upload directory can't be reached");
+		rootUpload = (*itUp).getRootDirectory();
+		if (checkIfParentDirectory((*itFirst).getRootDirectory(), rootUpload) == false)
+			throw std::runtime_error("Root for location /upload need to be directly inside root for location /");
+		if (checkIfDirectoryAvailable(rootUpload) == false)
+        	throw std::runtime_error("Upload directory can't be reached");
 	}
 }
 

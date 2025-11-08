@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/08 10:32:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 11:16:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ class Client : public Server
 		void		setRspRegFileFd(int const & fd);
 		void		setRspContentLength(size_t const & size);
 
-		void		setRegStandardResponse(int const & fd);
+		void		setRegStandardResponse(int const & fd, int const & stat);
 		void		setRegFdChunkedResponse();
 		
 		void		setStringSingleResponse(std::string const & content);

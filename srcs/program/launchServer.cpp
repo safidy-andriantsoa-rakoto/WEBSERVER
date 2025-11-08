@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/05 11:17:27 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/08 11:32:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	manageEpollLoopError(Handler & handler, EpollCreation & epoll, int const & 
 		}
 		catch(const std::exception& e1)
 		{
-			std::cerr << "			Error on CGI exception " << e1.what() << '\n'; /* [TEST ONLY] */
+			std::cerr << "	Error on CGI exception " << e1.what() << '\n'; /* [TEST ONLY] */
 		}
 	}
 }
@@ -79,12 +79,12 @@ void    launchServer(Handler & handler)
 	Signal			sign;
 	EpollCreation	epoll;
 
-	initServer(handler.getVectServer());// check multi port
+	initServer(handler.getVectServer());
 	launchEpoll(handler.getVectServer(), epoll);
 	while (SIGINT != sign.getSigNum())
 	{
 		nb_event = epoll.epoll_wait_event();
-		handler.displayHandlerStat(); /* [TEST ONLY] */
+		// handler.displayHandlerStat(); /* [TEST ONLY] */
 		handler.check_client_timeout_all(epoll);
 		for (int i = 0; i < nb_event; i++)
 		{

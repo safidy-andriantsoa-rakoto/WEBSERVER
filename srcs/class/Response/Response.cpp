@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:57:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 11:21:20 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,18 +152,15 @@ void Response::setupDefaultErrorPage()
 
 void Response::setupCustomErrorPage(std::string const & filePath)
 {
+	_regFileFd = openRegFile(filePath);
 	_contentLength = getFileSize(filePath);
 	if (_contentLength <= _BUFFER)
 	{
 		_respStat = OP_ONCE;
-		_regFileFd = openRegFile(filePath);
 		generateRegStandardResponse();
 	}
 	else
-	{
 		_respStat = OP_START;
-		_regFileFd = openRegFile(filePath);
-	}
 	_respCategory = STD_RSP;
 }
 
@@ -175,8 +172,7 @@ void Response::buildErrorPage(int const & status, t_errPage & errPage, std::stri
 	fdType = STD_FILE;
 	if (errPage.listError.size())
 	{
-		it = std::find(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status));
-		if (it != errPage.listError.end())
+		if (std::count(errPage.listError.begin(), errPage.listError.end(), convertIntToString(status)) == 1)
 			filePath = errPage.filePath;
 	}
 	try
