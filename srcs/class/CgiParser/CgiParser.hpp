@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:11:42 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:29:15 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 21:00:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,23 @@ class CgiParser
 		std::string _scriptFileName;
 		std::string _scriptName;
 		std::string	_contentType;
-		std::string	_execPath;
+		std::string	_httpHeader;
 		size_t		_contentLength;
-
+		
+		std::string	_execPath;
+		stringVect	_envpVect;
 		char**		_envp;
 
-	public:
+		public:
 		CgiParser();
 		CgiParser(CgiParser const & other);
 		CgiParser& operator=(CgiParser const & other);
 		~CgiParser();
 
 		char**		getEnvp();
-	
-		void    	parseCgiRequestTarget(std::string const & requestTarget);
+		
+		void    	parseCgiRequestTarget(std::string const & reqTarget, std::string const & originReqTarget, std::string const & root);
+		void		transformHeader(stringMap const & header);
 		void		buildEnvp();
 		void    	execCgi();
 	

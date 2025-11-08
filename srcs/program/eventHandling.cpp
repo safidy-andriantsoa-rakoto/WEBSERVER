@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   eventHandling.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
+/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/05 11:17:06 by rsafidy-         ###   ########.fr       */
+/*   Updated: 2025/11/08 21:27:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void	readCgiOutput(Handler & handler, int const & i, EpollCreation & epoll)
 	if (bytesRead == -1)
 		throw ErrorExcept(500, "Read error on cgi");
 	bufferString.append(buffer, bytesRead);
-	// std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl << "				******** Buffer CGI END" << std::endl;
+	std::cout << "				******** Buffer CGI = \n" << bufferString << std::endl << "				******** Buffer CGI END" << std::endl;
 	(*it)->setBufferRead(bufferString);
 	if ((*it)->getReadStat() == OP_OPEN)
 		(*it)->setReadStat(OP_ONGOING);

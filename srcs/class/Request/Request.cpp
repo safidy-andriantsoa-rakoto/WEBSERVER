@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:54:05 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 20:37:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,19 +68,20 @@ void Request::setIsCgi(bool const &condition){_isCgi = condition;}
 
 CgiParser Request::getCgiParser() const{return _cgiParser;}
 
-void Request::processCgiClass(std::string & target, std::string const & execPath)
+void Request::processCgiClass(std::string const & execPath, std::string const & root)
 {
 	clearCgiClass();
 	setIsCgi(true);
-	_cgiParser.parseCgiRequestTarget(target);
+	_cgiParser.parseCgiRequestTarget(_requestTarget, _originalRequestTarget, root);
 	_cgiParser.setReqMethod(_method);
 	_cgiParser.setContentLength(_body.size());
 	_cgiParser.setCgiExecPath(execPath);
 	stringMapIt it = _header.find("Content-Type");
 	if (it != _header.end())
 		_cgiParser.setContentType((*it).second);
+	_cgiParser.transformHeader(_header);
 	_cgiParser.buildEnvp();
-	target = _cgiParser.getScriptFileName();
+	_requestTarget = _cgiParser.getScriptFileName();
 }
 
 void Request::setCgiClass(CgiParser const &cgi){_cgiParser = cgi;}

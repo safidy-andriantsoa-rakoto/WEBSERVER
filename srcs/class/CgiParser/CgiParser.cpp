@@ -6,13 +6,31 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:28:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 21:43:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CgiParser.hpp"
 
-CgiParser::CgiParser() : _envp(NULL){}
+void CgiParser::transformHeader(stringMap const & header)
+{
+	std::string	key;
+
+	for(stringMapIt it = header.begin(); it != header.end(); it++)
+	{
+		key = (*it).first;
+		for (size_t i = 0; i < key.size(); i++)
+		{
+			if (key[i] == ' ' || key[i] == '-')
+				key[i] = '_';
+			else
+				key[i] = std::toupper(key[i]);
+		}
+		_envpVect.push_back("HTTP_" + key + "=" + (*it).second);
+	}
+}
+
+CgiParser::CgiParser() : _envp(NULL) {}
 
 CgiParser::CgiParser(CgiParser const &other){*this = other;}
 
@@ -24,8 +42,11 @@ CgiParser &CgiParser::operator=(CgiParser const &other)
 		_query = other._query;
 		_scriptFileName = other._scriptFileName;
 		_scriptName = other._scriptName;
-		_contentLength = other._contentLength;
 		_contentType = other._contentType;
+		_httpHeader = other._httpHeader;
+		_contentLength = other._contentLength;
+		_execPath = other._execPath;
+		_envpVect = other._envpVect;
 		_envp = other._envp;
 	}
 	return *this;
@@ -35,38 +56,58 @@ CgiParser::~CgiParser(){}
 
 char **CgiParser::getEnvp(){return _envp;}
 
-void CgiParser::parseCgiRequestTarget(std::string const & requestTarget)
+void CgiParser::parseCgiRequestTarget(std::string const & reqTarget, std::string const & originReqTarget, std::string const & root)
 {
 	stringVect	vect;
+	std::string	scriptName;
+	std::string	pathInfo;
+	std::string	documentRoot;
+	std::string	ext = ".php";
+	size_t		posQuery;
 
-	vect = splitString(requestTarget, "?");
-	if (vect.size() == 2)
+	_envpVect.push_back("REQUEST_URI=" + originReqTarget);
+	size_t pos = originReqTarget.find(ext);
+	pos += ext.size();
+	scriptName = originReqTarget.substr(0, pos);
+	_envpVect.push_back("SCRIPT_NAME=" + scriptName);
+	_scriptFileName = root + scriptName;
+	_envpVect.push_back("SCRIPT_FILENAME=" + _scriptFileName);
+	posQuery = originReqTarget.find("?");
+	if (posQuery != std::string::npos)
 	{
-		_query = vect[1];
+		vect = splitString(originReqTarget, "?");
+		if (vect.size() == 2)
+			_envpVect.push_back("QUERY=" + vect[1]);
 	}
-	size_t pos = vect[0].find_last_of("/");
-	_scriptName = vect[0].substr(pos, vect[0].size() - pos);
-	_scriptFileName = vect[0];
+	if (pos != std::string::npos && (pos < reqTarget.size()))
+	{
+		if (posQuery != std::string::npos)
+			pathInfo = originReqTarget.substr(pos, posQuery - pos);
+		else
+			pathInfo = originReqTarget.substr(pos, originReqTarget.size() - pos);
+		if (pathInfo.size())
+		{
+			_envpVect.push_back("PATH_INFO=" + pathInfo);
+			_envpVect.push_back("PATH_TRANSLATED=" + documentRoot + pathInfo);
+		}
+	}
 }
 
+/* [!] : SERVER_NAME (from URI), SERVER_ADDR, SERVER_PORT to be added ?*/
 void CgiParser::buildEnvp()
 {
-	std::string	ownedConfig = CGI_ENVP_CONF;
-	stringVect	vect;
-
-	replaceString(ownedConfig, _reqMethod, "$1");
-	replaceString(ownedConfig, _scriptFileName, "$2");
-	replaceString(ownedConfig, _scriptName, "$3");
-	replaceString(ownedConfig, "http:localhost", "$4"); /* [!] : Add request URI, see for the other env */
-	replaceString(ownedConfig, _query, "$5");
-	replaceString(ownedConfig, convertIntToString(_contentLength), "$6");
-	replaceString(ownedConfig, _contentType, "$7");
-	vect = splitString(ownedConfig, "\n");
+	if (_contentLength)
+		_envpVect.push_back("CONTENT_LENGTH=" + convertIntToString(_contentLength));
+	if (_contentType.size())
+		_envpVect.push_back("CONTENT_TYPE=" + _contentType);
+	_envpVect.push_back("GATEWAY_INTERFACE=CGI/1.1");
+	_envpVect.push_back("REQUEST_METHOD=" + _reqMethod);
+	_envpVect.push_back("REDIRECT_STATUS=200");
+	_envpVect.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	clearCharTable(_envp);
-	_envp = convertStringVectToTable(vect);
-	vect.clear();
-	ownedConfig.clear();
-	// displayCharTable(_envp, "CGI ENVP");/* [TEST ONLY] */
+	_envp = convertStringVectToTable(_envpVect);
+	_envpVect.clear();
+	displayCharTable(_envp, "CGI ENVP");/* [TEST ONLY] */
 }
 
 void CgiParser::execCgi()
@@ -121,7 +162,6 @@ void CgiParser::displayCgiClass() const
 bool CgiParser::checkIfFileCgi(std::string const &path)
 {
 	size_t		pos;
-	size_t		lastSlashPos;
 	std::string	ext = ".php";
 	stringVect	sub;
 
@@ -129,9 +169,6 @@ bool CgiParser::checkIfFileCgi(std::string const &path)
 		return true;
 	pos = path.find(ext);
 	if (pos == std::string::npos)
-		return false;
-	lastSlashPos = path.find_last_of("/");
-	if (pos < lastSlashPos)
 		return false;
 	sub = splitString(path, "?");
 	if ((sub.size() == 1 && path[path.size() - 1] == '?') || sub.size() == 2)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 19:48:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 19:20:05 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,10 @@
 						"QUERY_STRING=$5\n" \
 						"CONTENT_LENGTH=$6\n" \
 						"CONTENT_TYPE=$7\n" \
+						"REMOTE_ADDR=$8\n" \
 						"GATEWAY_INTERFACE=CGI/1.1\n" \
 						"SERVER_PROTOCOL=HTTP/1.1\n" \
-						"REDIRECT_STATUS=200\n" \
-						"REMOTE_ADDR=10.11.5.6\n"
+						"REDIRECT_STATUS=200\n"
 
 #define BACKUP_ERR_PAGE "<!DOCTYPE html><html><head>" \
                         "<meta charset=\"UTF-8\">" \

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 13:57:23 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 21:26:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	else
 		rspString = (*it).getFullResponse();
 	std::cout << "		Sending file from " << (*it).getRspOriginPath() << std::endl;
-	// std::cout << rspString << std::endl;
+	std::cout << rspString << std::endl;
 	send_value(fdCli, rspString);
 	if ((*it).getResponseStat() == OP_START)
 		(*it).setResponseStat(OP_ONGOING);

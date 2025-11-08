@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 13:10:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 19:50:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ void	    clearCharTable(char **tab);
 std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize);
 intVect 	containsExactWordInVector(stringVect const & lines, const std::string & word);
 bool 		checkDuplicate(stringVect const & file, std::string const & name, size_t & start, size_t & end);
+stringMapIt findAndGetFromMap(stringMap & map, std::string const & key);
 
 //	Conversion
 std::string convertIntToString(ssize_t const & n);

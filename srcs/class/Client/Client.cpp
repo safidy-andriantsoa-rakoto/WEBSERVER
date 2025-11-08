@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/08 13:52:31 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 20:37:51 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,7 +321,7 @@ void Client::buildRequestTarget()
 		std::cout << "\033[42m" << "CGI ON GOING" << "\033[0m" << std::endl;
 		if ((*itLoc).getCgiActivation() == "OFF")
 			throw ErrorExcept(403, "Cgi extension is OFF");
-		_request.processCgiClass(target, (*itLoc).getCgiExecPath());
+		_request.processCgiClass((*itLoc).getCgiExecPath(), (*itLoc).getRootDirectory());
 	}
 }
 
@@ -544,7 +544,6 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 	}
 }
 
-/* [!] : DELETE error need to be checked */
 void Client::delete_request()
 {
 	std::string	target;
