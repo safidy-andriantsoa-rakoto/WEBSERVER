@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:34:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 10:03:52 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,16 +143,8 @@ void MyConf::parseErrorPage(stringVect const & vect)
 	if (checkDuplicationStr(listStatusCode) == false)
 		throw std::runtime_error("Status code duplicated");
 	_errPage.listError = listStatusCode;
-	try
-	{
-		/* [!] : openreg or filestat */
-		int fd = openRegFile(vect[i]);
-		close(fd);
-	}
-	catch(const std::exception& e)
-	{
+	if (checkIfFileAvailabe(vect[i], O_RDONLY) == false)
 		throw std::runtime_error("Error_page file can't be reached");
-	}
 	if (checkFileExtension(vect[i], ".html") == false)
 		throw std::runtime_error("Error page need to be an html file");
 	_errPage.filePath = vect[i];

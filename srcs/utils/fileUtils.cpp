@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:02:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 10:10:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,25 +83,25 @@ stringVect getContentFile(std::string const & _path)
 
 int	openRegFile(std::string const & filePath)
 {
-	int			fd;
-	struct stat	st;
+	int         fd;
+    struct stat st;
 
-	if (stat(filePath.c_str(), &st) == -1)
-	{
-		if (errno == EACCES)
-			throw std::runtime_error("Forbidden");
-		throw std::runtime_error("Other");
-	}
-	if (S_ISREG(st.st_mode) == false)
-		throw std::runtime_error("Other");
-	fd = open(filePath.c_str(), O_RDONLY);
-	if (fd == -1)
-	{
-		if (errno == EPERM || errno == EACCES)
-			throw std::runtime_error("Forbidden");
-		throw std::runtime_error("Not found");
-	}
-	return fd;
+    if (stat(filePath.c_str(), &st) == -1)
+    {
+        if (errno == ENOENT || errno == EACCES) 
+            throw ErrorExcept(404, "Access denied or file doesn't exist");
+		throw ErrorExcept(500, "Internal server error");
+    }
+    if (S_ISREG(st.st_mode) == false) 
+        throw std::runtime_error("Forbidden"); 
+    fd = open(filePath.c_str(), O_RDONLY);
+    if (fd == -1)
+    {
+        if (errno == EPERM || errno == EACCES) 
+            throw ErrorExcept(403, "Access denied or file doesn't exist");
+		throw ErrorExcept(500, "Internal server error");
+    }
+    return fd;
 }
 
 size_t	getFileSize(std::string const & path)
@@ -110,38 +110,37 @@ size_t	getFileSize(std::string const & path)
 
 	if (stat(path.c_str(), &sf) == -1)
 		throw std::runtime_error("Stat function error");
-	// std::cout << "\e[0;35mFile size = " << sf.st_size  << "\e[0m" << std::endl;
 	return sf.st_size;
-}
-
-DIR*	openDir(std::string const & dirPath)
-{
-	DIR	*dir;
-
-	dir = opendir(dirPath.c_str());
-	if (!dir)
-		throw std::runtime_error("Opendir error");
-	return dir;
 }
 
 bool	checkIfDirectoryAvailable(std::string const & path)
 {
+	DIR	*dir;
 	struct stat	st;
 
 	if (stat(path.c_str(), &st) == -1)
 		return false;
 	if (S_ISDIR(st.st_mode) == false)
 		return false;
+	dir = opendir(path.c_str());
+	if (!dir)
+		return false;
+	closedir(dir);
 	return true;
 }
 
-bool	checkIfFileAvailabe(std::string const & path)
+bool	checkIfFileAvailabe(std::string const & path, int const & flag)
 {
-	struct stat	st;
+	int         fd;
+    struct stat st;
 
-	if (stat(path.c_str(), &st) == -1)
+    if (stat(path.c_str(), &st) == -1)
 		return false;
-	if (S_ISREG(st.st_mode) == false)
+    if (S_ISREG(st.st_mode) == false) 
+        return false;
+    fd = open(path.c_str(), flag);
+    if (fd == -1)
 		return false;
+    close(fd);
 	return true;
 }

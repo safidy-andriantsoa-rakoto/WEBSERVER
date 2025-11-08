@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 19:22:14 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 10:23:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,29 +72,14 @@ void MyLoc::parseAutoIndex(stringVect & vect)
 
 void MyLoc::parseCgiExt(stringVect & vect)
 {
-    bool    isCgi = false;
-
-    if (vect.size() != 2)
-        throw std::runtime_error("Cgi need 3 elements");
+    if (vect.size() == 0 || vect.size() > 2)
+        throw std::runtime_error("Cgi need at least 1 or 2 elements max");
     if (vect[0] != "ON" && vect[0] != "OFF")
         throw std::runtime_error("Cgi can be activated by ON/OFF");
     if (vect[0] == "OFF" && vect.size() != 1)
         throw std::runtime_error("Cgi is OFF, no need for executable");
-    if (vect[0] == "ON")
-        isCgi = true;
-    try
-    {
-        /* [!] : fstat or openRegFile ? */
-        if (isCgi == true)
-        {
-            int fd = openRegFile(vect[1]);
-            close(fd);
-        }
-    }
-    catch(const std::exception& e)
-    {
+    if (vect[0] == "ON" && checkIfFileAvailabe(vect[1], O_EXCL) == false)
         throw std::runtime_error("Cgi executable is not valid");
-    }
     _cgiExtension = vect;
 }
 

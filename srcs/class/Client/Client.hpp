@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/07 20:51:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 10:32:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,13 +107,13 @@ class Client : public Server
 		void		setCatchedResponse(AExcept & e);
 		void		closeRspFd();
 
-		void		setRspRegFileFd(std::string const & path);
+		void		setRspRegFileFd(int const & fd);
 		void		setRspContentLength(size_t const & size);
 
-		void		setRegStandardResponse(std::string const & path);
+		void		setRegStandardResponse(int const & fd);
 		void		setRegFdChunkedResponse();
 		
-		void		setStringSingleResponse(std::string const & content); /* [!] : need to erase */
+		void		setStringSingleResponse(std::string const & content);
 		void		setStringChunkedResponse();
 		void		setupCgiResponse();
 
@@ -140,7 +140,7 @@ class Client : public Server
 
 		std::string 	currentDateTimeString();
 		bool			get_pathfile();
-		void 			get_bounadary_from_header(stringMap &header);
+		void 			get_boundary_from_header(stringMap &header);
 		void			write_in_file_post();
 		void			process_multipart_data();
 

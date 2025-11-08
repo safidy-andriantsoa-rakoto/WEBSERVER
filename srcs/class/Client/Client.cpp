@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/07 20:51:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/08 10:32:18 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,42 +97,15 @@ void Client::setCatchedResponse(AExcept & e)
 
 void Client::closeRspFd(){_response.closeRegFileFd();}
 
-void Client::setRspRegFileFd(std::string const & path)
+void Client::setRspRegFileFd(int const & fd)
 {
-	int fd;
-	try
-	{
-		fd = openRegFile(path);
-	}
-	catch(const std::exception& e)
-	{
-		/* [!] : See how to get error 403*/
-		std::cerr << e.what() << std::endl;
-		std::string err = e.what();
-		if (err == "Forbidden")
-			throw ErrorExcept(403, "Error on open Reg file");
-		throw ErrorExcept(404, "Error on open Reg file");
-	}
 	_response.setRegFileFd(fd);
 }
 
 void Client::setRspContentLength(size_t const &size){_response.setContentLength(size);}
 
-void Client::setRegStandardResponse(std::string const & path)
+void Client::setRegStandardResponse(int const & fd)
 {
-	int fd;
-	try
-	{
-		fd = openRegFile(path);
-	}
-	catch(const std::exception& e)
-	{
-		/* [!] : See how to get error 403*/
-		std::string err = e.what();
-		if (err == "Forbidden")
-			throw ErrorExcept(403, "Error on open Reg file");
-		throw ErrorExcept(404, "Error on open Reg file");
-	}
 	_response.setRegFileFd(fd);
 	_response.generateRegStandardResponse();
 }
@@ -432,6 +405,7 @@ void Client::stdGetRequest()
 	DIR*		dir;
 
 	filePath = _request.getRequestTarget();
+	/* [!] : review the condition !!!*/
 	dir = opendir(filePath.c_str());
 	if (!dir && errno == EACCES)
 		throw ErrorExcept(403, "Directory forbidden");
@@ -439,6 +413,7 @@ void Client::stdGetRequest()
 		throw LDirExcept(200, dir, _request.getOriginalRequestTarget(), "Listing directory");
 	if (dir && _request.getAutoIdx() == false)
 		filePath += "/index.html";
+	int fd = openRegFile(filePath);
 	size_t	fileSize = getFileSize(filePath);
 	setStatusCodeResponse(200);
 	setRspOriginPath(filePath);
@@ -447,12 +422,12 @@ void Client::stdGetRequest()
 	if (fileSize <= _BUFFER)
 	{
 		setResponseStat(OP_ONCE);
-		setRegStandardResponse(filePath);
+		setRegStandardResponse(fd);
 	}
 	else
 	{
 		setResponseStat(OP_START);
-		setRspRegFileFd(filePath);
+		setRspRegFileFd(fd);
 	}
 }
 
@@ -516,7 +491,7 @@ void Client::stdPostRequest(stringMap &header, uint32_t & opt)
 		throw ErrorExcept(411, "Length required");
 	if (header.find("Content-Type")->second.find("multipart/form-data") != std::string::npos)
 	{
-		get_bounadary_from_header(header);
+		get_boundary_from_header(header);
 		process_multipart_data();
 		if (_request.get_c_length_received() == _request.get_content_length())
 			setSingleResponse(201);
@@ -739,7 +714,7 @@ bool Client::get_pathfile()
 	return (false);
 }
 
-void Client::get_bounadary_from_header(stringMap &header)
+void Client::get_boundary_from_header(stringMap &header)
 {
 	if (this->_boundary_sep.empty())
 	{
