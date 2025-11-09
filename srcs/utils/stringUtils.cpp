@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 20:09:57 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 20:14:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,15 +68,12 @@ void split_line(std::vector<std::string> &_data, std::string line)
 void	addToMapString(stringMap & map, std::string const & first, std::string const & second)
 {
 	stringPair	pair(first, second);
-
 	map.insert(pair);
 }
 
 void	replaceString(std::string & text, std::string const & replaceText, std::string const & findText)
 {
-	size_t	pos;
-
-	pos = text.find(findText);
+	size_t	pos = text.find(findText);
 	text.erase(pos, findText.size());
 	text.insert(pos, replaceText);
 }
@@ -117,9 +114,7 @@ void	clearCharTable(char ***tab)
 std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize)
 {
 	size_t		endPos = startPos + bufferSize;
-	std::string	result;
-
-	result = target.substr(startPos, endPos - startPos);
+	std::string	result = result = target.substr(startPos, endPos - startPos);;
 	return result;
 }
 

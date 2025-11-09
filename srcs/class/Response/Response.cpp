@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 11:21:20 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 21:06:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,15 +331,11 @@ std::string Response::getReasonPhrase(int const &statusCode)
 		case 403: result = "Forbidden"; break;
 		case 404: result = "Not Found"; break;
 		case 405: result = "Method Not Allowed"; break;
-		case 406: result = "Not Acceptable"; break;
 		case 408: result = "Request Timeout"; break;
-		case 409: result = "Conflict"; break;
 		case 411: result = "Length Required"; break;
-		case 412: result = "Precondition Failed"; break;
 		case 413: result = "URI Too Long"; break;
 		case 414: result = "Content Too Large"; break;
 		case 415: result = "Unsupported Media Type"; break;
-		case 417: result = "Expectation Failed"; break;
 		case 421: result = "Misdirected Request"; break;
 		case 500: result = "Internal Server Error"; break;
 		case 501: result = "Not Implemented"; break;
@@ -347,7 +343,7 @@ std::string Response::getReasonPhrase(int const &statusCode)
 		case 503: result = "Service Unavailable"; break;
 		case 504: result = "Gateway Timeout"; break;
 		case 505: result = "HTTP Version Not Supported"; break;
-		default: throw std::runtime_error("NO STATUS CODE"); break;
+		default: throw std::runtime_error("Status code not supported"); break;
 	}
 	return result;
 }

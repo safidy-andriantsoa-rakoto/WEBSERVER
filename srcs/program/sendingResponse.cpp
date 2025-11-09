@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 11:20:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 20:43:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	std::string	rspString;
 	int			rspCategory = (*it).getRspCategory();
 	std::cout << "-->> \033[45mSendingResponseToClient : " << (*it).getRspCategory() << "\033[0m" << std::endl;
+
+	(*it).is_client_timeout(); /* [!] : TEST IF THIS CASE IS POSSIBLE*/
 	if (processCgiSetup(it) == 1)
 		return;
 	if ((*it).getResponseStat() != OP_ONCE)

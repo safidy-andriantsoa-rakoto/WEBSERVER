@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 20:09:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 21:09:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,8 @@ void CgiParser::parseCgiURI(std::string const & host, std::string const & origin
 			_envpVect.push_back("PATH_TRANSLATED=" + root + pathInfo);
 		}
 	}
-	if (host.size())
-	{
-		vect = splitString(host, ":");
-		_envpVect.push_back("SERVER_NAME=" + vect[0]);
-	}
+	vect = splitString(host, ":");
+	_envpVect.push_back("SERVER_NAME=" + vect[0]);
 }
 
 void CgiParser::addMethodAndPortEnvp(std::string const &method, int const &port)

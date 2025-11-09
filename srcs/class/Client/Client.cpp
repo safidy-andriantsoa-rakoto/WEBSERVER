@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/09 16:01:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 21:07:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,6 +254,8 @@ void Client::processRequestWithConfig()
 
 	if (_request.getHttp() != "HTTP/1.1")
 		throw ErrorExcept(505, "This server only support HTTP/1.1\n", "Http version error");
+	if (_request.getHeader().find("Host") == _request.getHeader().end())
+		throw ErrorExcept(421, "No host header"); /* [!] : Test this error*/
 	_request.setIsCgi(false);
 	buildRequestTarget();
 	if (_request.getIsCgi() == false && (_request.getMethod() == "POST" || _request.getMethod() == "DELETE"))
@@ -327,9 +329,7 @@ void Client::buildRequestTarget()
 
 void Client::processLocationOption(MyLoc const & location, Request & request)
 {
-	stringVect	locationMethod;
-
-	locationMethod = location.getAvailableMethod();
+	stringVect	locationMethod = location.getAvailableMethod();
 	processRedirection(location, request);
 	checkMethodInLocation(locationMethod, request.getMethod());
 	if (location.getAutoindex() == "ON")
@@ -776,13 +776,9 @@ void Client::set_last_time_activity(){this->_last_time = time(NULL);}
 
 void Client::set_time_activity(){this->_time_now = time(NULL);}
 
-bool Client::is_client_timeout()
+void Client::is_client_timeout()
 {
 	set_time_activity();
 	if (difftime(this->_time_now, this->_last_time) > 62)
-	{
-		// std::cout << "			CLIENT TIME OUT REACHED!!!!!!!!!!!!!!" << std::endl; /* [Test only] */
-		throw ErrorExcept(408, "Client Timeout"); /* [?] : When to send 408 response to client? On long upload only? */
-	}
-    return false;
+		throw ErrorExcept(408, "Client Timeout");
 }
