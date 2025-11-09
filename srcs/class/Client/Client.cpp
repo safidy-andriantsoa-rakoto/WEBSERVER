@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/09 09:26:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 16:01:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,7 +321,7 @@ void Client::buildRequestTarget()
 		std::cout << "\033[42m" << "CGI ON GOING" << "\033[0m" << std::endl;
 		if ((*itLoc).getCgiActivation() == "OFF")
 			throw ErrorExcept(403, "Cgi extension is OFF");
-		_request.processCgiClass((*itLoc).getCgiExecPath(), (*itLoc).getRootDirectory());
+		_request.processCgiClass((*itLoc).getCgiExecPath(), (*itLoc).getRootDirectory(), _config.getServPort()[0]);
 	}
 }
 

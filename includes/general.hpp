@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 19:50:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 15:46:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	    split_line(std::vector<std::string> &_data, std::string line);
 void	    addToMapString(stringMap & map, std::string const & first, std::string const & second);
 void	    replaceString(std::string & text, std::string const & replaceText, std::string const & findText);
 char**	    convertStringVectToTable(stringVect & vect);
-void	    clearCharTable(char **tab);
+void	    clearCharTable(char ***tab);
 std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize);
 intVect 	containsExactWordInVector(stringVect const & lines, const std::string & word);
 bool 		checkDuplicate(stringVect const & file, std::string const & name, size_t & start, size_t & end);

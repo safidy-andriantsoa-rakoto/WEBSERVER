@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 20:37:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 16:00:07 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class Request
 		void					setIsCgi(bool const & condition);
 
 		CgiParser				getCgiParser() const;
-		void					processCgiClass(std::string const & execPath, std::string const & root);
+		void					processCgiClass(std::string const & execPath, std::string const & root, int const & port);
 		void					setCgiClass(CgiParser const & cgi);
 		void					execCgiClass();
 		void					clearCgiClass();

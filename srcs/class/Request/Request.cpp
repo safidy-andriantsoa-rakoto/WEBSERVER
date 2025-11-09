@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 13:31:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 19:45:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,18 +68,21 @@ void Request::setIsCgi(bool const &condition){_isCgi = condition;}
 
 CgiParser Request::getCgiParser() const{return _cgiParser;}
 
-void Request::processCgiClass(std::string const & execPath, std::string const & root)
+void Request::processCgiClass(std::string const & execPath, std::string const & root, int const & port)
 {
+	std::string	host;
+	stringMapIt it = _header.find("Host");
+
+	if (it != _header.end())
+		host = _header["Host"];
 	clearCgiClass();
 	setIsCgi(true);
-	_cgiParser.parseCgiRequestTarget(_requestTarget, _originalRequestTarget, root);
-	_cgiParser.setReqMethod(_method);
-	_cgiParser.setContentLength(_body.size());
+	_cgiParser.parseCgiURI(host, _originalRequestTarget, root);
+	_cgiParser.addMethodAndPortEnvp(_method, port);
+	if (_body.size())
+		_cgiParser.addContentRelatedEnvp(_header["Content-Type"], _body.size());
 	_cgiParser.setCgiExecPath(execPath);
-	stringMapIt it = _header.find("Content-Type");
-	if (it != _header.end())
-		_cgiParser.setContentType((*it).second);
-	_cgiParser.transformHeader(_header);
+	_cgiParser.addTransformHeader(_header);
 	_cgiParser.buildEnvp();
 	_requestTarget = _cgiParser.getScriptFileName();
 }

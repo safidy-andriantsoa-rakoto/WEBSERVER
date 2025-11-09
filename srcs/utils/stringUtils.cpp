@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 13:49:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 20:09:57 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,30 +83,35 @@ void	replaceString(std::string & text, std::string const & replaceText, std::str
 
 char**	convertStringVectToTable(stringVect & vect)
 {
-	char	**res;
-	size_t	i;
+	size_t		i;
+	size_t		tmpLen;
+	std::string	tmp;
+	char		*cpyTmp;
+	char		**res;
 
 	res = new char*[vect.size() + 1];
 	for (i = 0; i < vect.size(); i++)
 	{
-		std::string	s = vect[i];
-		size_t len = s.size() + 1;
-		char *c = new char[len];
-		std::memcpy(c, s.c_str(), len);
-		c[s.size()] = 0;
-		res[i] = c;
+		tmp = vect[i];
+		tmpLen = tmp.size() + 1;
+		cpyTmp = new char[tmpLen];
+		std::memcpy(cpyTmp, tmp.c_str(), tmpLen);
+		res[i] = cpyTmp;
 	}
 	res[i] = NULL;
 	return res;
 }
 
-void	clearCharTable(char **tab)
+void	clearCharTable(char ***tab)
 {
-	if (!tab) 
+	char **tmp = *tab;
+
+	if (!*tab) 
         return;
-    for (int i = 0; tab[i] != NULL; i++) 
-        delete [] tab[i];
-    delete [] tab;
+    for (int i = 0; tmp[i] != NULL; i++) 
+        delete [] tmp[i];
+    delete [] *tab;
+	*tab = NULL;
 }
 
 std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize)
@@ -156,6 +161,7 @@ bool checkDuplicate(stringVect const & file, std::string const & name, size_t & 
 	return (false);
 }
 
+/* [!] : Remove if not necessary at the end*/
 stringMapIt findAndGetFromMap(stringMap &map, std::string const &key)
 {
 	stringMapIt	it;
