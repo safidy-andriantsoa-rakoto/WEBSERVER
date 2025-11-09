@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:57:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 11:09:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@ class Server
         int     		_fdClient;
 	    int     		_fdSocket;
         socklen_t  		_size_sockaddrin;
-        SockAddrIn		_sockaddrIn;
+		SockAddrIn		_sockaddrIn;
 		struct addrinfo	_addrinfo;
 		struct addrinfo	*_resp;
-
+		
 	protected :
 		MyConf			_config;
 

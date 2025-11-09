@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:41:12 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 19:44:58 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 09:26:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,7 @@ std::string	getIdentifier(int const & identifier);
 //Searching Utils
 vectServerIt	findFdInServer(vectServer & allServer, int const & fd);
 VClientIt	findFdInClient(VClient & allClient, int const & fd);
+
+void get_local_info(int sockfd);
 
 #endif

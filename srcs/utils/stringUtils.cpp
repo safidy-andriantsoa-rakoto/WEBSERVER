@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 19:47:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/09 13:49:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,27 +84,17 @@ void	replaceString(std::string & text, std::string const & replaceText, std::str
 char**	convertStringVectToTable(stringVect & vect)
 {
 	char	**res;
-	size_t	size = vect.size() + 1;
-	size_t	sizeIntern;
 	size_t	i;
 
-	if (!vect.size())
-		return NULL;
-	res = static_cast<char **>(calloc(size, sizeof(char *)));
-	if (!res)
-		return NULL;
-	i = 0;
-	for (stringVectIt it = vect.begin(); it != vect.end(); it++)
+	res = new char*[vect.size() + 1];
+	for (i = 0; i < vect.size(); i++)
 	{
-		sizeIntern = (*it).size() + 1;
-		res[i] = static_cast<char *>(calloc(sizeIntern, sizeof(char)));
-		if (!res[i])
-		{
-			clearCharTable(res);
-			return NULL;
-		}
-		strcpy(res[i], (*it).c_str());
-		i++;
+		std::string	s = vect[i];
+		size_t len = s.size() + 1;
+		char *c = new char[len];
+		std::memcpy(c, s.c_str(), len);
+		c[s.size()] = 0;
+		res[i] = c;
 	}
 	res[i] = NULL;
 	return res;
@@ -112,17 +102,11 @@ char**	convertStringVectToTable(stringVect & vect)
 
 void	clearCharTable(char **tab)
 {
-	char	**tmpAll = tab;
-	int		i = 0;
-
-	if (!tab)
-		return;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tmpAll);
+	if (!tab) 
+        return;
+    for (int i = 0; tab[i] != NULL; i++) 
+        delete [] tab[i];
+    delete [] tab;
 }
 
 std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize)
