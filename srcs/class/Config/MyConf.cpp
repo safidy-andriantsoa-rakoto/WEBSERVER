@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 13:29:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 18:49:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void MyConf::checkConfigElement(vectData & data)
 		if ((*it).lvl == 1)
 		{
 			if ((*it).key.size() == 0 || (*it).value.size() == 0)
-				throw std::runtime_error("Config element need at least one value");
+				throw std::runtime_error("Server's element need at least 1 value");
 			if ((*it).key == "location")
 			{
 				if ((*it).value.size() != 1)
@@ -39,18 +39,18 @@ void MyConf::checkConfigElement(vectData & data)
 			upperLvl = it;
 		}
 		else if ((*upperLvl).lvl == 2 || (*upperLvl).key != "location")
-			throw std::runtime_error("Location is the one who has level 2 element");
+			throw std::runtime_error("Only location has level 2 elements");
 	}
 	if (vectLoc.size() == 0)
 		throw std::runtime_error("No location");
 	if ((vectLoc.size() == 1 && vectLoc[0] != "/") || hasLocationMandatory == false)
 		throw std::runtime_error("Must have location /");
 	if (vectElt.size() == 0 || vectElt.size() < 3 || vectElt.size() > 4)
-		throw std::runtime_error("Error on the number of elements");
+		throw std::runtime_error("Server bloc's element is incorrect");
 	if (checkDuplicationStr(vectElt) == false)
-		throw std::runtime_error("Duplicate among the config element");
+		throw std::runtime_error("Duplicate among the server element");
 	if (checkDuplicationStr(vectLoc) == false)
-		throw std::runtime_error("Duplicate among the location");
+		throw std::runtime_error("Duplicate among the location bloc");
 	checkMandatoryElement(vectElt);
 }
 
@@ -96,7 +96,7 @@ void MyConf::manageUploadLocation()
 void MyConf::parseHost(stringVect const & vect)
 {
 	if (vect.size() != 1)
-		throw std::runtime_error("Host contains only one element");
+		throw std::runtime_error("Host contains only one value");
 	_host = vect[0];
 }
 
@@ -105,17 +105,24 @@ void MyConf::parsePort(stringVect const & vect, intVect & allPort)
 	int	n;
 
 	if (vect.size() == 0 || vect.size() > 3)
-		throw std::runtime_error("Multiport per server is limited to 3 and need at least one port");
+		throw std::runtime_error("The number of ports per server is limited between 1 to 3");
 	for (stringVectCIt it = vect.begin(); it != vect.end(); it++)
 	{
-		n = convertStringToInt(*it);
-		allPort.push_back(n);
-		_port.push_back(n);
+		try
+		{
+			n = convertStringToInt(*it);
+			allPort.push_back(n);
+			_port.push_back(n);
+		}
+		catch(const std::exception& e)
+		{
+			throw std::runtime_error("There is an invalid port");
+		}
 	}
 	if (checkValuePort(_port) == false)
-		throw std::runtime_error("Invalid port");
+		throw std::runtime_error("There is an invalid port");
 	if (checkDuplicationInt(_port) == false || checkDuplicationInt(allPort) == false)
-		throw std::runtime_error("Port already used in the server");
+		throw std::runtime_error("The port already used by a server");
 }
 
 void MyConf::parseErrorPage(stringVect const & vect)
@@ -125,9 +132,11 @@ void MyConf::parseErrorPage(stringVect const & vect)
 	stringVect	listStatusCode;
 
 	if (vect.size() < 2)
-		throw std::runtime_error("Error_page elements missing");
-	if (vect.size() == 2 && vect[0] == "ALL")
+		throw std::runtime_error("Error_page's values are missing");
+	if (vect[0] == "ALL")
 	{
+		if (vect.size() != 2)
+			throw std::runtime_error("Error_page with option ALL requires only 2 values");
 		listStatusCode = allStatusCode;
 		i = 1;
 	}
@@ -136,14 +145,14 @@ void MyConf::parseErrorPage(stringVect const & vect)
 		for(i = 0; i < vect.size() - 1; i++)
 		{
 			if (std::find(allStatusCode.begin(), allStatusCode.end(), vect[i]) == allStatusCode.end())
-				throw std::runtime_error("Invalid status code");
+				throw std::runtime_error("There is an invalid status code");
 			listStatusCode.push_back(vect[i]);
 			if (listStatusCode.size() > allStatusCode.size())
 				throw std::runtime_error("Status code limit exceeded");
 		}
 	}
 	if (checkDuplicationStr(listStatusCode) == false)
-		throw std::runtime_error("Status code duplicated");
+		throw std::runtime_error("Error_page's list of status code duplicated");
 	_errPage.listError = listStatusCode;
 	if (checkIfFileAvailabe(vect[i], O_RDONLY) == false)
 		throw std::runtime_error("Error_page file can't be reached");
@@ -152,12 +161,13 @@ void MyConf::parseErrorPage(stringVect const & vect)
 	_errPage.filePath = vect[i];
 }
 
+/* [?] : Size value per units need to be limited and be > 0? */
 void MyConf::parseSize(stringVect const & vect)
 {
 	float size;
 
 	if (vect.size() != 2)
-		throw std::runtime_error("Size contains only two element");
+		throw std::runtime_error("Size contains only two values");
 	_size = vect;
 	try
 	{
@@ -165,18 +175,21 @@ void MyConf::parseSize(stringVect const & vect)
 	}
 	catch(const std::exception& e)
 	{
-		throw std::runtime_error("Invalid size unit or value");
+		throw std::runtime_error("The value or unit of the size element is invalid");
 	}
 	if (size < 0)
 		throw std::runtime_error("Size need to be a positive number");
 	_maxSize =  size;
 }
 
+/* [!] : Eliminate double // */
 void MyConf::parseLocationBloc(vectDataIt & itUpper, vectData & data)
 {
 	std::string	locValue = (*itUpper).value[0];
 
-	if ((locValue[0] != '/') || (locValue.size() > 1 && locValue[locValue.size() - 1] == '/'))
+	if ((locValue[0] != '/') 
+			|| (locValue.size() > 1 && locValue[locValue.size() - 1] == '/')
+			|| locValue.find("//") != std::string::npos)
 		throw std::runtime_error("Syntax incorrect for location name");
 	MyLoc loc(locValue);
 	loc.parseLocation(data);
@@ -247,13 +260,15 @@ void MyConf::parseConfig(vectData & data, intVect& allPort)
 			parseSize((*it).value);
 		else if (elt == "location")
 		{
+			if ((*it).lvl != 1)
+				throw std::runtime_error("Location's indentation is wrong");
 			itUpper = it;
 			collectData = true;
 		}
 		else if ((*it).lvl == 2)
 			locationData.push_back(*it);
 		else
-			throw std::runtime_error("Unknown element");
+			throw std::runtime_error(elt + " is not part of the server's elements");
 	}
 	if (collectData == true)
 		parseLocationBloc(itUpper, locationData);

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 20:14:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 18:19:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void	clearCharTable(char ***tab)
 std::string	divideStringBySize(std::string const & target, size_t const & startPos, size_t const & bufferSize)
 {
 	size_t		endPos = startPos + bufferSize;
-	std::string	result = result = target.substr(startPos, endPos - startPos);;
+	std::string	result = target.substr(startPos, endPos - startPos);;
 	return result;
 }
 

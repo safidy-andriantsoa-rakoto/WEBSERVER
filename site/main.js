@@ -56,7 +56,6 @@
   // The form in the HTML has id="form"
   document.getElementById('form').addEventListener('submit', handleFileUpload);
   
-  
   // Original template script functionality (menu toggle, etc.)
   const menuToggle = document.getElementById('menuToggle');
   const navLinks = document.getElementById('navLinks');

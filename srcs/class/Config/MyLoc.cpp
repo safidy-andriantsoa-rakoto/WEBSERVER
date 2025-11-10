@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/08 13:31:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 18:40:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,8 +183,8 @@ MyLoc::~MyLoc() {}
 
 void MyLoc::specialParseLocation(stringVect const &file)
 {
-    static intVect index = containsExactWordInVector(file, "location");
-    static size_t currentBlock = 0;
+    intVect index = containsExactWordInVector(file, "location");
+    size_t currentBlock = 0;
 
     if (currentBlock >= index.size())
         return;
@@ -227,6 +227,6 @@ void MyLoc::parseLocation(vectData & data)
         else if (elt == "cgi")
             parseCgiExt((*it).value);
         else
-            throw std::runtime_error("Unknown element in location bloc");
+            throw std::runtime_error(elt + " is not part of the location's elements");
     }
 }
