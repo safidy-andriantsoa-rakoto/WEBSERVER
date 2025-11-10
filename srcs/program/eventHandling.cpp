@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 20:42:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 20:44:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,17 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 	std::string client_request;
 	int			fdCgi[2] = {-1, -1};
 
-	(*it).is_client_timeout(); /* [!] : TEST IF THIS CASE IS POSSIBLE*/
-	(*it).receiveClientRequest();
-	client_request = (*it).getClientRequest();
-	if (client_request.size() == 0)
-		throw std::runtime_error("Request from client size = 0");
 	try
 	{
+		(*it).is_client_timeout(); /* [!] : TEST IF THIS CASE IS POSSIBLE*/
+		(*it).receiveClientRequest();
+		client_request = (*it).getClientRequest();
+		if (client_request.size() == 0)
+		{
+			if ((*it).getObjRequest().getPartRequest().size())
+				throw ErrorExcept(400, "Parsing was not done properly");
+			throw std::runtime_error("Request from client size = 0");
+		}
 		(*it).processRequest(client_request, epollOpt, fdCgi, childPid);
 	}
 	catch(AExcept & e)

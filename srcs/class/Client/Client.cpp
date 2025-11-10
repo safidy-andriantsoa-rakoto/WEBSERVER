@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/10 20:17:40 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 20:47:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,8 +252,6 @@ void Client::processRequestWithConfig()
 	vectLocationIt	it;
 	std::string		target = _request.getRequestTarget();
 
-	if (_request.getHttp() != "HTTP/1.1")
-		throw ErrorExcept(505, "This server only support HTTP/1.1\n", "Http version error");
 	if (_request.getHeader().find("Host") == _request.getHeader().end())
 		throw ErrorExcept(421, "No host header"); /* [!] : Test this error*/
 	_request.setIsCgi(false);
@@ -445,7 +443,7 @@ void Client::cgiGetRequest(int *fd, pid_t & childPid)
 		catch(const std::exception& e)
 		{
 			makeDup2(stockStdOut, STDOUT_FILENO);
-			_request.clearCgiClass(); /* [?] : Needed for leaks? */
+			_request.clearCgiClass();
 			fd[FD_STDOUT] = -2;
 			throw std::runtime_error("Execve error");
 		}
@@ -571,7 +569,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	stringMap	header;
 	
 	// std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
-	if (!_request.get_is_CRLF_header())
+	if (_request.get_is_CRLF_header() == false)
 	{
 		_request.setPartRequest(clientRequest);
 		if (_request.getPartRequest().find(CRLF_SEP) == std::string::npos)
@@ -779,6 +777,6 @@ void Client::set_time_activity(){this->_time_now = time(NULL);}
 void Client::is_client_timeout()
 {
 	set_time_activity();
-	if (difftime(this->_time_now, this->_last_time) > 62)
+	if (difftime(this->_time_now, this->_last_time) > CLIENT_MAX_TIME)
 		throw ErrorExcept(408, "Client Timeout");
 }

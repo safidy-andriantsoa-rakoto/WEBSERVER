@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 19:45:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 20:41:48 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,17 +132,17 @@ std::string Request::getBody() const{return _body;}
 
 void Request::setRequestTarget(std::string const &target){_requestTarget = target;}
 
+/* [!] : Review request line parsing*/
 void Request::setRequestLine(std::string const & replacement)
 {
-	stringVect	splitted;
-
-	_requestLine = replacement;
-	splitted = splitString(replacement, " ");
+	stringVect splitted = splitString(replacement, " ");
 	if (splitted.size() != 3)
-	{
-		std::cout << "\033[42mRequest = \n" << _requestLine << "\033[0m" << std::endl;
-		throw std::runtime_error("Error on request line");
-	}
+		throw ErrorExcept(400, "Request Line is invalid");
+	if (splitted[0] != "GET" && splitted[0] != "POST" && splitted[0] != "DELETE")
+		throw ErrorExcept(500, "Method not implemented");
+	if (_clientHttp != "HTTP/1.1")
+		throw ErrorExcept(505, "This server only support HTTP/1.1\n", "Http version error");
+	_requestLine = replacement;
 	_method = splitted[0];
 	_requestTarget = splitted[1];
 	_clientHttp = splitted[2];
@@ -179,7 +179,7 @@ void	Request::parseRequest()
 	// std::cout << "REQUEST_STRING--->" << _partRequest << "<----" << std::endl;
 	pos = _partRequest.find(sep, startPos);
 	if (pos == std::string::npos)
-		throw std::runtime_error("Parsing request : No request line found");
+		throw ErrorExcept(400, "No request line found");
 	line = _partRequest.substr(startPos, pos - startPos);
 	setRequestLine(line);
 	_header.clear();
@@ -192,6 +192,8 @@ void	Request::parseRequest()
 			break ;
 		line = _partRequest.substr(startPos, pos - startPos);
 		headerVect = strictSplit(line, ": ");
+		if (headerVect.size() != 2)
+			throw ErrorExcept(400, "Parsing header is invalid");
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();

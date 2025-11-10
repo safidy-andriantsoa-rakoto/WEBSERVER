@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 20:43:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 20:59:10 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 	int			rspCategory = (*it).getRspCategory();
 	std::cout << "-->> \033[45mSendingResponseToClient : " << (*it).getRspCategory() << "\033[0m" << std::endl;
 
-	(*it).is_client_timeout(); /* [!] : TEST IF THIS CASE IS POSSIBLE*/
 	if (processCgiSetup(it) == 1)
 		return;
 	if ((*it).getResponseStat() != OP_ONCE)
@@ -54,6 +53,9 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		(*it).setResponseStat(OP_ONGOING);
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 	{
+		/* [!] : Need to test this functionnality 408*/
+		if ((*it).getObjResponse().getStatusCode() == 408)
+			throw std::runtime_error("Close this client for timeout");
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
 		(*it).clearPtrCgiFd();
@@ -65,21 +67,14 @@ void send_value(int const & fd, std::string & _send_content)
     size_t to_send = _send_content.size();
 
     if (fd < 0)
-	{
         throw ErrorExcept(500, "Invalid fd to send");
-	}
 	if (to_send == 0)
 		return;
     const char *resp =  _send_content.c_str();
     ssize_t sent = send(fd, resp, to_send, 0);
     if (sent < 0)
-    {
-        perror("Send failed");
         throw ErrorExcept(500, "Send_value error");
-    }
     else if (sent == 0)
-	{
-        throw ErrorExcept(400, "Connection closed by peer"); //400?
-	}
+        throw ErrorExcept(400, "Connection closed by peer"); /* [?] : error 400 ? */
 	_send_content.clear();
 }

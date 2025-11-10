@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 16:00:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 20:31:19 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "general.hpp"
 #include "../CgiParser/CgiParser.hpp"
+#include "../Response/ErrorExcept.hpp"
 
 class Request
 {
