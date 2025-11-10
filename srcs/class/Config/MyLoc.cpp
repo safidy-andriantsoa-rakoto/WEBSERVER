@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 18:40:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 20:05:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,14 @@ void MyLoc::parseRoot(stringVect & vect)
 {
     if (vect.size() != 1)
         throw std::runtime_error("Root need  one element");
-    std::cout << "Root = " << vect[0] << std::endl;
+    std::string root = vect[0];
+    if (root[root.size() - 1] == '/')
+        throw std::runtime_error("Root does not end with /");
     if (checkIfDirectoryAvailable(vect[0]) == false)
         throw std::runtime_error("Root is not a directory or can't be reached");
+    /* [?] : Can we allowed .. and . as root? */
+    if (vect[0] == ".." || vect[0] == ".")
+        throw std::runtime_error("Root [" + vect[0] + "] is not allowed");
     _root = vect;
 }
 
@@ -79,8 +84,13 @@ void MyLoc::parseCgiExt(stringVect & vect)
         throw std::runtime_error("Cgi can be activated by ON/OFF");
     if (vect[0] == "OFF" && vect.size() != 1)
         throw std::runtime_error("Cgi is OFF, no need for executable");
-    if (vect[0] == "ON" && checkIfFileAvailabe(vect[1], O_RDONLY) == false)
-        throw std::runtime_error("Cgi executable is not valid");
+    if (vect[0] == "ON")
+    {
+        if (vect.size() != 2)
+            throw std::runtime_error("Cgi executable is missing");
+        if (checkIfFileAvailabe(vect[1], O_RDONLY) == false)
+            throw std::runtime_error("Cgi executable is not valid");
+    }
     _cgiExtension = vect;
 }
 
@@ -88,8 +98,8 @@ void MyLoc::parseRedirect(stringVect & vect)
 {
 	size_t  i;
 
-	if (vect.size() < 2)
-		throw std::runtime_error("Redirect elements missing");
+	if (vect.size() != 2)
+		throw std::runtime_error("Redirect need 2 values");
 	for(i = 0; i < vect.size() - 1; i++)
 	{
 		if (vect[0] != "30i" && vect[0] != "302" && vect[0] != "307" && vect[0] != "308")

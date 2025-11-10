@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 09:18:08 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 19:54:21 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ int main(int argc, char **argv)
 	{
 		std::cerr << "\033[41mMain Function : " << e.what() << "\033[0m" << std::endl;
 		std::string error = e.what();
+		handler.cleanFdAndAlloc();
 		if (error == "Execve error")
 			return 42;
-		handler.cleanFdAndAlloc();
 		return 1;
 	}
 	return 0;

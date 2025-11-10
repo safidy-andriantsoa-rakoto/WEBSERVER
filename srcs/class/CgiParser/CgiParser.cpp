@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 10:33:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 21:09:41 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 19:56:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void CgiParser::buildEnvp()
 	std::sort(_envpVect.begin(), _envpVect.end());
 	_envp = convertStringVectToTable(_envpVect);
 	_envpVect.clear();
-	// displayCharTable(_envp, "CGI ENVP");/* [TEST ONLY] */
+	displayCharTable(_envp, "CGI ENVP");/* [TEST ONLY] */
 }
 
 void CgiParser::execCgi()

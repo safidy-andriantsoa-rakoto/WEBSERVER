@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/09 21:07:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 20:17:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,7 +285,7 @@ void Client::checkContentLength()
 	maxSize = _config.getMaxSize();
 	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
 	if (requestSize > maxSize)
-		throw ErrorExcept(414, "Size limit not respected");
+		throw ErrorExcept(413, "Size limit not respected");
 }
 
 void Client::buildRequestTarget()

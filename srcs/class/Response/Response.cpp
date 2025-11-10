@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 21:06:22 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/10 20:17:26 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -333,8 +333,8 @@ std::string Response::getReasonPhrase(int const &statusCode)
 		case 405: result = "Method Not Allowed"; break;
 		case 408: result = "Request Timeout"; break;
 		case 411: result = "Length Required"; break;
-		case 413: result = "URI Too Long"; break;
-		case 414: result = "Content Too Large"; break;
+		case 413: result = "Content Too Large"; break;
+		case 414: result = "URI Too Long"; break;
 		case 415: result = "Unsupported Media Type"; break;
 		case 421: result = "Misdirected Request"; break;
 		case 500: result = "Internal Server Error"; break;
