@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 20:41:48 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/11 20:43:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,7 @@ CgiParser Request::getCgiParser() const{return _cgiParser;}
 
 void Request::processCgiClass(std::string const & execPath, std::string const & root, int const & port)
 {
-	std::string	host;
-	stringMapIt it = _header.find("Host");
-
-	if (it != _header.end())
-		host = _header["Host"];
+	std::string	host = _header["Host"];
 	clearCgiClass();
 	setIsCgi(true);
 	_cgiParser.parseCgiURI(host, _originalRequestTarget, root);
@@ -132,15 +128,15 @@ std::string Request::getBody() const{return _body;}
 
 void Request::setRequestTarget(std::string const &target){_requestTarget = target;}
 
-/* [!] : Review request line parsing*/
 void Request::setRequestLine(std::string const & replacement)
 {
 	stringVect splitted = splitString(replacement, " ");
+	displayStringVect(splitted, "SPLITTED");
 	if (splitted.size() != 3)
 		throw ErrorExcept(400, "Request Line is invalid");
 	if (splitted[0] != "GET" && splitted[0] != "POST" && splitted[0] != "DELETE")
 		throw ErrorExcept(500, "Method not implemented");
-	if (_clientHttp != "HTTP/1.1")
+	if (splitted[2] != "HTTP/1.1")
 		throw ErrorExcept(505, "This server only support HTTP/1.1\n", "Http version error");
 	_requestLine = replacement;
 	_method = splitted[0];
@@ -191,21 +187,33 @@ void	Request::parseRequest()
 		if (pos == startPos)
 			break ;
 		line = _partRequest.substr(startPos, pos - startPos);
-		headerVect = strictSplit(line, ": ");
+		try
+		{
+			headerVect = strictSplit(line, ": ");
+		}
+		catch(const std::exception& e)
+		{
+			throw ErrorExcept(400, "Parsing header is invalid");
+		}
 		if (headerVect.size() != 2)
+			throw ErrorExcept(400, "Parsing header is invalid");
+		if (headerVect[0].find(' ') != std::string::npos)
 			throw ErrorExcept(400, "Parsing header is invalid");
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();
 	}
+	if (_header.size() == 0)
+		throw ErrorExcept(400, "No header field");
+	if (_header.find("Host") == _header.end())
+		throw ErrorExcept(400, "No host header");
 	addRequestBody(_partRequest, pos + sep.size());
 	_partRequest.clear();
 }
 
 void Request::displayRequest() const
 {
-	// std::cout << "\033[2J\033[H\033[44m==================REQUEST PARSING==================" << std::endl
-	std::cout << "==================REQUEST PARSING==================" << std::endl
+	std::cout << "\033[2J\033[H\033[44m==================REQUEST PARSING==================" << std::endl
 	<< "==== Request Line ===" << std::endl;
 	std::cout << "Method = ["<< _method << "]" << std::endl
 	<< "Request target = [" << _requestTarget << "]" << std::endl
@@ -221,7 +229,6 @@ void Request::displayRequestMultipartData()
 {
 
 	std::cout << "==============================MULTIPARTDATA================================" << std::endl;
-	// std::cout << "\033[2J\033[H==============================MULTIPARTDATA================================" << std::endl;
 	for (MapSVectStrIt it = _multipart_body.begin(); it != _multipart_body.end(); it++)
 	{
 		std::cout << "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" << std::endl;

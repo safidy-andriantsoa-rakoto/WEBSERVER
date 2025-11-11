@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 20:59:10 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/11 19:58:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,17 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 void send_value(int const & fd, std::string & _send_content)
 {
     size_t to_send = _send_content.size();
+	ssize_t sent;
 
-    if (fd < 0)
-        throw ErrorExcept(500, "Invalid fd to send");
 	if (to_send == 0)
 		return;
     const char *resp =  _send_content.c_str();
-    ssize_t sent = send(fd, resp, to_send, 0);
+    sent = send(fd, resp, to_send, 0);
     if (sent < 0)
         throw ErrorExcept(500, "Send_value error");
-    else if (sent == 0)
+    if (sent == 0)
+	{
         throw ErrorExcept(400, "Connection closed by peer"); /* [?] : error 400 ? */
+	}
 	_send_content.clear();
 }

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/10 20:47:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/11 20:52:39 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,8 +252,6 @@ void Client::processRequestWithConfig()
 	vectLocationIt	it;
 	std::string		target = _request.getRequestTarget();
 
-	if (_request.getHeader().find("Host") == _request.getHeader().end())
-		throw ErrorExcept(421, "No host header"); /* [!] : Test this error*/
 	_request.setIsCgi(false);
 	buildRequestTarget();
 	if (_request.getIsCgi() == false && (_request.getMethod() == "POST" || _request.getMethod() == "DELETE"))
@@ -577,6 +575,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 			opt = EPOLLIN;
 			return;
 		}
+		// std::cout << "\033[42mPART REQUEST SIZE = " << _request.getPartRequest().size() << "\033[0m" << std::endl;
 		_request.parseRequest();
 		processRequestWithConfig();
 	}
@@ -779,4 +778,5 @@ void Client::is_client_timeout()
 	set_time_activity();
 	if (difftime(this->_time_now, this->_last_time) > CLIENT_MAX_TIME)
 		throw ErrorExcept(408, "Client Timeout");
+	std::cout << "Checking time out done" << std::endl;
 }

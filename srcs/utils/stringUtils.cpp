@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:27 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 18:19:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/11 20:44:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ stringVect	strictSplit(std::string const & target, std::string const & sep)
 	size_t		pos;
 	stringVect	result;
 
-	pos = target.find_first_of(sep);
+	pos = target.find(sep);
 	if (pos == std::string::npos)
 		throw std::runtime_error("Strict split error");
 	result.push_back(target.substr(0, pos));
@@ -154,17 +154,4 @@ bool checkDuplicate(stringVect const & file, std::string const & name, size_t & 
 	if (count != 1)
 		return (true);
 	return (false);
-}
-
-/* [!] : Remove if not necessary at the end*/
-stringMapIt findAndGetFromMap(stringMap &map, std::string const &key)
-{
-	stringMapIt	it;
-
-	for (it = map.begin(); it != map.end(); it++)
-	{
-		if ((*it).first == key)
-			break;
-	}
-    return it;
 }
