@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/11 19:58:00 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 21:53:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		/* [!] : Need to test this functionnality 408*/
 		if ((*it).getObjResponse().getStatusCode() == 408)
 			throw std::runtime_error("Close this client for timeout");
+		std::cout << "End sending response" << std::endl;
 		epoll.epoll_update_event(fdCli, EPOLLIN);
 		(*it).getObjRequest().set_is_CRLF_header(false);
 		(*it).clearPtrCgiFd();
@@ -72,10 +73,10 @@ void send_value(int const & fd, std::string & _send_content)
     const char *resp =  _send_content.c_str();
     sent = send(fd, resp, to_send, 0);
     if (sent < 0)
-        throw ErrorExcept(500, "Send_value error");
+        throw std::runtime_error("Send_value error");
     if (sent == 0)
 	{
-        throw ErrorExcept(400, "Connection closed by peer"); /* [?] : error 400 ? */
+        throw std::runtime_error("Connection closed by peer");
 	}
 	_send_content.clear();
 }

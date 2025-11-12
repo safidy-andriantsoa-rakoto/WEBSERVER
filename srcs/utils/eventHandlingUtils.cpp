@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 10:07:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/04 14:22:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 21:51:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ void	closeCgiFdEvent(Handler & handler, int const & i, EpollCreation & epoll)
 
 void	createCgiFd(VClientIt & it, Handler & handler, EpollCreation & epoll, int *fd, pid_t const & childPid)
 {
-	std::cout << "Create CGI FD" << std::endl; /* [TEST ONLY] */
-
 	if ((*it).getFdType() == GET_PHP_SCRIPT)
 	{
 		handler.addToVectCgiFd(it, fd, childPid);
@@ -63,7 +61,6 @@ void	handleCgiError(Handler & handler, int const & index, EpollCreation & epoll,
 	int fdCli = (*itCgi)->getClientFd();
 	VClientIt	it = findFdInClient(handler.getVectClient(), fdCli);
 
-	std::cout << "Handle cgi error " << std::endl; /* [TEST ONLY] */
 	(*it).setCatchedResponse(err);
 	closeCgiFdEvent(handler, index, epoll);
 	(*it).clearPtrCgiFd();

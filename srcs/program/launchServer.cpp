@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/10 20:56:16 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 21:53:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void    launchServer(Handler & handler)
 			}
 			catch(std::exception & e)
 			{
-				std::cerr << "\033[41m" << fdEvent << " , idt = " << getIdentifier(identifier) << " => Error on epoll event loop : " << e.what() << "\033[0m" << std::endl;
+				std::cerr << "\033[41mfd =" << fdEvent << " , idt = " << getIdentifier(identifier) << " => Error on epoll event loop : " << e.what() << "\033[0m" << std::endl;
 				manageEpollLoopError(handler, epoll, identifier, fdEvent, index, e);
 				break ;
 			}

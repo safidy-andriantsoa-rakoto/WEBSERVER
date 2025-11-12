@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/11 20:58:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 20:20:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,15 @@
 #define MIME_PATH "./config/ext"
 
 //HTTP
-#define HTTP_REQUEST "HTTP/1.1 200 OK\r\n"
-#define CONTENT_TYPE "Content-Type: text/html\r\n"
-#define CONTENT_TYPE_CSS "Content-Type: text/css\r\n"
-#define CONTENT_LENGTH "Content-Length: "
 #define CRLF_SEP "\r\n\r\n"
-#define _NB_CLIENT 10
 #define MAX_EVENT 2042
 #define _BUFFER 1000
 #define _BUFFER_RECV 1024
 #define	CLIENT_MAX_TIME 60
 #define	CGI_MAX_TIME CLIENT_MAX_TIME / 2
+#define LIM_PORT 3
+
+/*[?] : What about URI TOO LONG? */
 #define	HEADER_MAX_SIZE 2000
 
 //Listing directory

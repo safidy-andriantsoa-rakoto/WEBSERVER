@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 19:34:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 10:57:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 19:20:11 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void parse_config_data(stringVect &config, serverVect &allServer_conf)
 void	getAllServerFromDataConf(vectServer & allServer, serverVect & allServer_conf)
 {
 	intVect	allPort;
-	
+
 	for (size_t i = 0; i < allServer_conf.size(); i++)
 	{
 		MyConf	config;

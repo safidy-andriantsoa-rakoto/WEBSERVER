@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/11 20:43:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 21:19:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,6 @@ void Request::setRequestTarget(std::string const &target){_requestTarget = targe
 void Request::setRequestLine(std::string const & replacement)
 {
 	stringVect splitted = splitString(replacement, " ");
-	displayStringVect(splitted, "SPLITTED");
 	if (splitted.size() != 3)
 		throw ErrorExcept(400, "Request Line is invalid");
 	if (splitted[0] != "GET" && splitted[0] != "POST" && splitted[0] != "DELETE")

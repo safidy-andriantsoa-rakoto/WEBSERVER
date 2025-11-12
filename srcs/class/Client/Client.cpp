@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/11 20:52:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 21:57:13 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,9 @@ int Client::get_clientFD() const {return (this->_clientFD);}
 
 void Client::setCatchedResponse(AExcept & e)
 {
-	std::cout << "				Catched Response status code = " << e._statusCode << std::endl;
 	t_errPage	errPage = _config.getErrPage();
 	std::string	filePath = _request.getRequestTarget();
+
 	_request.setIsCgi(false);
 	_response.generateCatchedResponse(e, errPage, filePath, _fdType);
 	_request.setRequestTarget(filePath);
@@ -355,7 +355,6 @@ void Client::processRedirection(MyLoc const & location, Request & request)
 	stringVect	redirect;
 	int			statusRedirect;
 
-	/* [!] : Review redirection process*/
 	redirect = location.getRedirect();
 	if (!redirect.size())
 		return ;
@@ -406,7 +405,7 @@ void Client::stdGetRequest()
 		}
 		filePath += "/index.html";
 	}
-	int fd = openRegFile(filePath);
+	int 	fd = openRegFile(filePath);
 	size_t	fileSize = getFileSize(filePath);
 	int		stat;
 	setStatusCodeResponse(200);
@@ -432,15 +431,19 @@ void Client::cgiGetRequest(int *fd, pid_t & childPid)
 		throw ErrorExcept(500, "Fork error");
 	if (childPid == 0)
 	{
-		stockStdOut = dup(STDOUT_FILENO);
-		makeDup2(pipeFd[1], STDOUT_FILENO, pipeFd[0]);
 		try
 		{
+			stockStdOut = dup(STDOUT_FILENO);
+			makeDup2(pipeFd[1], STDOUT_FILENO, pipeFd[0]);
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			makeDup2(stockStdOut, STDOUT_FILENO);
+			try
+			{
+				makeDup2(stockStdOut, STDOUT_FILENO);
+			}
+			catch(const std::exception& e){}
 			_request.clearCgiClass();
 			fd[FD_STDOUT] = -2;
 			throw std::runtime_error("Execve error");
@@ -514,17 +517,21 @@ void Client::cgiPostRequest(int *fd, pid_t & childPid)
 		throw ErrorExcept(500, "Fork error");
 	if (childPid == 0)
 	{
-		dupStandardIO(stdFd);
-		makeDup2(pipeInFd[0], STDIN_FILENO, pipeInFd[1]);
-		makeDup2(pipeOutFd[1], STDOUT_FILENO, pipeOutFd[0]);
 		try
 		{
+			dupStandardIO(stdFd);
+			makeDup2(pipeInFd[0], STDIN_FILENO, pipeInFd[1]);
+			makeDup2(pipeOutFd[1], STDOUT_FILENO, pipeOutFd[0]);
 			_request.execCgiClass();
 		}
 		catch(const std::exception& e)
 		{
-			makeDup2(stdFd[FD_STDIN], STDIN_FILENO);
-			makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			try
+			{
+				makeDup2(stdFd[FD_STDIN], STDIN_FILENO);
+				makeDup2(stdFd[FD_STDOUT], STDOUT_FILENO);
+			}
+			catch(const std::exception& e){}
 			fd[FD_STDIN] = -2;
 			fd[FD_STDOUT] = -2;
 			throw std::runtime_error("Execve error");
@@ -559,7 +566,6 @@ void Client::delete_request()
 	}
 	else
 		throw ErrorExcept(403, "Forbidden");
-	_response.setRespCategory(SINGLE_RSP);
 }
 
 void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, pid_t & childPid)
@@ -575,7 +581,6 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 			opt = EPOLLIN;
 			return;
 		}
-		// std::cout << "\033[42mPART REQUEST SIZE = " << _request.getPartRequest().size() << "\033[0m" << std::endl;
 		_request.parseRequest();
 		processRequestWithConfig();
 	}
@@ -598,6 +603,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 	else if (_request.getMethod() == "DELETE")
 	{
 		delete_request();
+		setRspCategory(SINGLE_RSP);
 		setSingleResponse(204);
 	}
 }
@@ -778,5 +784,4 @@ void Client::is_client_timeout()
 	set_time_activity();
 	if (difftime(this->_time_now, this->_last_time) > CLIENT_MAX_TIME)
 		throw ErrorExcept(408, "Client Timeout");
-	std::cout << "Checking time out done" << std::endl;
 }

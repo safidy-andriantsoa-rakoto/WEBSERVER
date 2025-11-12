@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:45:07 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 21:47:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,7 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 			removeCgiFd(itCgi);
 		(*it).clearPtrCgiFd();
 	}
+	(*it).getObjResponse().closeRegFileFd();
 	_vectClient.erase(it);
 }
 
@@ -187,12 +188,12 @@ void Handler::removeClient(VClientIt & it, EpollCreation & epoll)
 		removeCgiFd(itCgi);
 		(*it).clearPtrCgiFd();
 	}
+	(*it).getObjResponse().closeRegFileFd();
 	_vectClient.erase(it);
 }
 
 void	Handler::cleanFdAndAlloc()
 {
-	std::cout << "CLEAN FD AND ALLOC : " << _isChildProcess << std::endl;
 	for (vectServerIt itVect = _vectServer.begin(); itVect != _vectServer.end(); itVect++)
 		(*itVect).clearAllFd();
 	for (vectCgiFdIt itCgiFd = _vectCgiFd.begin(); itCgiFd != _vectCgiFd.end(); itCgiFd++)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 19:54:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 20:23:38 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ int main(int argc, char **argv)
 		Mime::initMapMime(MIME_PATH);
 		handler.setVectServer(allServer);
 		launchServer(handler);
-		std::cout << "\n\n\n\nWebserv shutting down..." << std::endl;
 		handler.cleanFdAndAlloc();
 	}
 	catch(const std::exception& e)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/09 10:57:42 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 19:31:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ int Server::create_socket()
 	if (this->_fdSocket == -1)
 	{
 		std::cerr << "Error\ncreate an endpoint for communication" << std::endl;
-		return (0); 
+		return 0; 
 	}
-	return (1);
+	return 1;
 }
 
 void Server::configure_sockaddrin(int port)
@@ -121,10 +121,10 @@ int Server::resolve_host(std::string const &host, int const &port)
 int Server::wait_connexion_from_client()
 {
 	this->_fdClient = listen(this->_fdSocket, SOMAXCONN);
-	std::cout << "Wait..." << std::endl;
+	std::cout << "Wait..." << std::endl; /* [Test only] */
 	if (this->_fdClient == -1)
 	{
-		std::cout << "Error\nlisten for connections on a socket" << std::endl;
+		std::cerr << "Error\nlisten for connections on a socket" << std::endl;
 		return (0);    
 	}
 	return (1);

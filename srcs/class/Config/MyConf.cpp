@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 18:49:21 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/12 20:17:43 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,15 @@ void MyConf::checkConfigElement(vectData & data)
 			throw std::runtime_error("Only location has level 2 elements");
 	}
 	if (vectLoc.size() == 0)
-		throw std::runtime_error("No location");
+		throw std::runtime_error("The server does not have location bloc");
 	if ((vectLoc.size() == 1 && vectLoc[0] != "/") || hasLocationMandatory == false)
-		throw std::runtime_error("Must have location /");
+		throw std::runtime_error("The server must have location /");
 	if (vectElt.size() == 0 || vectElt.size() < 3 || vectElt.size() > 4)
-		throw std::runtime_error("Server bloc's element is incorrect");
+		throw std::runtime_error("The server bloc's elements are incorrect");
 	if (checkDuplicationStr(vectElt) == false)
-		throw std::runtime_error("Duplicate among the server element");
+		throw std::runtime_error("There is a duplicated element among the server bloc");
 	if (checkDuplicationStr(vectLoc) == false)
-		throw std::runtime_error("Duplicate among the location bloc");
+		throw std::runtime_error("There is a duplicated element among the location name");
 	checkMandatoryElement(vectElt);
 }
 
@@ -62,7 +62,7 @@ void MyConf::checkMandatoryElement(stringVect &vectElt)
 	mandatory.push_back("port");
 	mandatory.push_back("size");
 	if (findEltInStringVect(vectElt, mandatory) == false)
-		throw std::runtime_error("host, port and size are mandatory for config element");
+		throw std::runtime_error("host, port and size are mandatory elements for the server bloc");
 }
 
 void MyConf::manageUploadLocation()
@@ -104,7 +104,7 @@ void MyConf::parsePort(stringVect const & vect, intVect & allPort)
 {
 	int	n;
 
-	if (vect.size() == 0 || vect.size() > 3)
+	if (vect.size() == 0 || vect.size() > LIM_PORT)
 		throw std::runtime_error("The number of ports per server is limited between 1 to 3");
 	for (stringVectCIt it = vect.begin(); it != vect.end(); it++)
 	{
@@ -182,7 +182,6 @@ void MyConf::parseSize(stringVect const & vect)
 	_maxSize =  size;
 }
 
-/* [!] : Eliminate double // */
 void MyConf::parseLocationBloc(vectDataIt & itUpper, vectData & data)
 {
 	std::string	locValue = (*itUpper).value[0];
