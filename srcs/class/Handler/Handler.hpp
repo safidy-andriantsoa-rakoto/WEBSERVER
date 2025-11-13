@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:37:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/13 19:54:58 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,8 @@ class Handler
 		void			removeClient(int const & index, EpollCreation & epoll);
 		void			removeClient(VClientIt & it, EpollCreation & epoll);
 
-		void			removeCgiFd(int const & index);
 		void			removeCgiFd(vectCgiFdIt & it);
 		vectCgiFdIt		findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd);
-		vectCgiFdIt		findPtrInCgiFd(vectCgiFd & allCgiFd, CgiFd *ptr);
 		
 		void			cleanFdAndAlloc();
 

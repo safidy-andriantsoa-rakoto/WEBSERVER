@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/09 20:41:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/13 19:35:25 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ class Client : public Server
 		std::string	getBodyResponse();
 		int			getStatusCodeResponse();
 		void		setStatusCodeResponse(int const & status);
-		void		clearResponse();
+		void		clearFullResponse();
 		int			getRspCategory();
 		void		setRspCategory(int const & stat);
 		void		setCatchedResponse(AExcept & e);

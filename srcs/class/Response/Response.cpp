@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 20:17:26 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/13 19:34:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ std::string Response::getOriginBody() const{return _originBody;}
 
 void Response::setOriginBody(std::string const &body){_originBody = body;}
 
-void	Response::clearResponse(){_fullResponse.clear();}
+void	Response::clearFullResponse(){_fullResponse.clear();}
 
 void Response::addStatusCode(std::string & content)
 {

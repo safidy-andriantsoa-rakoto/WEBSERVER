@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/12 21:47:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/13 20:06:30 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,24 +122,6 @@ vectCgiFdIt Handler::findFdInCgiFd(vectCgiFd & allCgiFd, int const & fd)
 	return it;
 }
 
-vectCgiFdIt Handler::findPtrInCgiFd(vectCgiFd &allCgiFd, CgiFd *ptr)
-{
-	vectCgiFdIt it;
-
-	for(it = allCgiFd.begin(); it != allCgiFd.end(); it++)
-	{
-		if ((*it) == ptr)
-			break;
-	}
-	return it;
-}
-
-void Handler::removeCgiFd(int const &index)
-{
-	std::cout << "RemoveCgiFd :" << index << std::endl;
-	_vectCgiFd.erase(_vectCgiFd.begin() + index);
-}
-
 void Handler::removeCgiFd(vectCgiFdIt &it)
 {
 	std::cout << "RemoveCgiFd from iterator:" << std::endl;
@@ -148,11 +130,16 @@ void Handler::removeCgiFd(vectCgiFdIt &it)
 
 void Handler::removeClient(int const & index, EpollCreation & epoll)
 {
-	VClientIt		it = _vectClient.begin() + index;
-	vectCgiFdIt		itCgi;
-	int				cgiFd[2];
+	VClientIt	it = _vectClient.begin() + index;
+	removeClient(it, epoll);
+}
 
-	std::cout << "REMOVING CLIENT " << index << std::endl;
+void Handler::removeClient(VClientIt & it, EpollCreation & epoll)
+{
+	vectCgiFdIt	itCgi;
+	int			cgiFd[2];
+
+	std::cout << "REMOVING CLIENT" << std::endl;
 	if ((*it).getPtrCgiFd())
 	{
 		cgiFd[FD_STDOUT] = (*it).getPtrCgiFd()->getOutputFd();
@@ -166,29 +153,7 @@ void Handler::removeClient(int const & index, EpollCreation & epoll)
 			removeCgiFd(itCgi);
 		(*it).clearPtrCgiFd();
 	}
-	(*it).getObjResponse().closeRegFileFd();
-	_vectClient.erase(it);
-}
-
-void Handler::removeClient(VClientIt & it, EpollCreation & epoll)
-{
-	vectCgiFdIt		itCgi;
-	int				cgiFd[2];
-
-	std::cout << "REMOVING CLIENT FROM ITERATOR" << std::endl;
-	if ((*it).getPtrCgiFd())
-	{
-		cgiFd[FD_STDOUT] = (*it).getPtrCgiFd()->getOutputFd();
-		cgiFd[FD_STDIN] = (*it).getPtrCgiFd()->getInputFd();
-		itCgi = findFdInCgiFd(_vectCgiFd, cgiFd[FD_STDOUT]);
-		if (cgiFd[FD_STDOUT] > 0)
-			epoll.epoll_clean(cgiFd[FD_STDOUT]);
-		if (cgiFd[FD_STDIN] > 0)
-			epoll.epoll_clean(cgiFd[FD_STDIN]);
-		removeCgiFd(itCgi);
-		(*it).clearPtrCgiFd();
-	}
-	(*it).getObjResponse().closeRegFileFd();
+	(*it).closeRspFd();
 	_vectClient.erase(it);
 }
 
@@ -204,7 +169,6 @@ void	Handler::cleanFdAndAlloc()
 				close((*itCgiFd)->getOutputFd());
 			if ((*itCgiFd)->getInputFd() != -1)
 				close((*itCgiFd)->getInputFd());
-			std::cout << "\033[43mCHILD PID TO BE KILLED = " << (*itCgiFd)->getChildPid() << "\033[0m" << std::endl;
 			kill((*itCgiFd)->getChildPid(), SIGKILL); /* [!] : SIGKILL or SIGTERM or SIGINT ? */
 		}
 	}

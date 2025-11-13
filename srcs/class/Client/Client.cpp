@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/12 21:57:13 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/13 20:17:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,14 @@ void Client::setRegStandardResponse(int const & fd, int const & stat)
 void Client::setRegFdChunkedResponse()
 {
 	std::cout << "\033[35mSending reg chunked response" << "\033[0m"<< std::endl;
-	_response.generateRegChunkedResponse();
+	try
+	{
+		_response.generateRegChunkedResponse();
+	}
+	catch(const std::exception& e)
+	{
+		throw ErrorExcept(500, "Error on reading regFd");
+	}
 }
 
 void Client::setStringSingleResponse(std::string const & content){_response.generateStringSingleResponse(content);}
@@ -224,7 +231,7 @@ int Client::getStatusCodeResponse(){return _response.getStatusCode();}
 
 void Client::setStatusCodeResponse(int const &status){_response.setStatusCode(status);}
 
-void Client::clearResponse(){_response.clearResponse();}
+void Client::clearFullResponse(){_response.clearFullResponse();}
 
 void Client::setRspCategory(int const &stat){_response.setRespCategory(stat);}
 
@@ -571,7 +578,7 @@ void Client::delete_request()
 void Client::processRequest(std::string const & clientRequest, uint32_t & opt, int *fd, pid_t & childPid)
 {
 	stringMap	header;
-	
+
 	// std::cout << "REQUEST--->\n" << clientRequest << "\n<----" << _request.get_is_CRLF_header() << std::endl;
 	if (_request.get_is_CRLF_header() == false)
 	{

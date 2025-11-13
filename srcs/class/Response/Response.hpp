@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 21:15:18 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/13 19:34:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ class Response
 		std::string			getOriginBody() const;
 		void				setOriginBody(std::string const & body);
 
-		void				clearResponse();
+		void				clearFullResponse();
 
         void				generateStringSingleResponse(std::string const & body);
         void				generateRegStandardResponse();
