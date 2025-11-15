@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 19:34:09 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/12 19:20:11 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/15 15:28:42 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,8 @@ void	getAllServerFromDataConf(vectServer & allServer, serverVect & allServer_con
 {
 	intVect	allPort;
 
+	if (allServer_conf.size() == 0)
+		throw std::runtime_error("The config file did not contains data");
 	for (size_t i = 0; i < allServer_conf.size(); i++)
 	{
 		MyConf	config;

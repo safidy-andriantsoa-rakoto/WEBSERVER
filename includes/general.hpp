@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:33:48 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/11 20:44:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/15 15:51:22 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,38 +17,36 @@
 #include <string>
 #include <stdexcept>
 #include <exception>
-#include <exception>
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
+#include <typeinfo>
 
 #include <cstdio>
-#include <unistd.h>
 #include <cmath>
-#include <fcntl.h>
 #include <csignal>
 #include <cstdlib>
 #include <csignal>
-#include <typeinfo>
 #include <cerrno>
-#include <dirent.h>
 #include <cstring>
+#include <ctime>
 
-#include <string.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <sys/epoll.h>
-#include <netinet/in.h>
 
 #include "typedef.hpp"
 #include "define.hpp"
 #include "enum.hpp"
-#include <sys/time.h>
-#include <ctime>
-#include <netdb.h>
 
 			/*	UTILS */
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/12 21:13:02 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/15 15:23:29 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 bool	checkFileExtension(std::string const & fileName, std::string extension)
 {
+	if (fileName.find("..conf") != std::string::npos)
+		return false;
 	if (fileName.compare(fileName.size() - extension.size(), extension.size(), extension) != 0)
 		return false;
 	return true;
@@ -66,12 +68,12 @@ std::string	getFileExtension(std::string const & fileName)
 	return ext_file;
 }
 
-stringVect getContentFile(std::string const & _path)
+stringVect getContentFile(std::string const & path)
 {
 	std::fstream	fluxFile;
 	stringVect		lines;
 
-	fluxFile.open(_path.c_str(), std::ios::in);
+	fluxFile.open(path.c_str(), std::ios::in);
 	if (fluxFile.is_open())
 	{
 		std::string line;
@@ -83,7 +85,9 @@ stringVect getContentFile(std::string const & _path)
 		fluxFile.close();
 	}
 	else
-		std::cerr << "Error : to open the file" << std::endl;
+		throw std::runtime_error("The configuration file can't be reached");
+	if (lines.size() == 0)
+		throw std::runtime_error("The configuration file is empty");
 	return (lines);
 }
 

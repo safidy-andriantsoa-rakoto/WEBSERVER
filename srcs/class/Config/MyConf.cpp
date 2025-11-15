@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/12 20:17:43 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/15 15:31:17 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,14 @@ void MyConf::checkConfigElement(vectData & data)
 		else if ((*upperLvl).lvl == 2 || (*upperLvl).key != "location")
 			throw std::runtime_error("Only location has level 2 elements");
 	}
-	if (vectLoc.size() == 0)
-		throw std::runtime_error("The server does not have location bloc");
-	if ((vectLoc.size() == 1 && vectLoc[0] != "/") || hasLocationMandatory == false)
-		throw std::runtime_error("The server must have location /");
 	if (vectElt.size() == 0 || vectElt.size() < 3 || vectElt.size() > 4)
 		throw std::runtime_error("The server bloc's elements are incorrect");
 	if (checkDuplicationStr(vectElt) == false)
 		throw std::runtime_error("There is a duplicated element among the server bloc");
+	if (vectLoc.size() == 0)
+		throw std::runtime_error("The server does not have location bloc");
+	if ((vectLoc.size() == 1 && vectLoc[0] != "/") || hasLocationMandatory == false)
+		throw std::runtime_error("The server must have location /");
 	if (checkDuplicationStr(vectLoc) == false)
 		throw std::runtime_error("There is a duplicated element among the location name");
 	checkMandatoryElement(vectElt);

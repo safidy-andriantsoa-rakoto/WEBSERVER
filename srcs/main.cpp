@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/12 20:23:38 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/15 15:19:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,11 @@ int main(int argc, char **argv)
 		if (argc == 1)
 			config = splitString(DEFAULT_CONFIG, "\n");
 		else
+		{
+			if (checkFileExtension(argv[1], ".conf") == false)
+				throw std::runtime_error("The configuration file extension must be .conf");
 			config = getContentFile(argv[1]);
+		}
 		getAllServerFromConfigFile(allServer, config);
 		Mime::initMapMime(MIME_PATH);
 		handler.setVectServer(allServer);
