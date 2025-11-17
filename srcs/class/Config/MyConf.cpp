@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 08:13:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 12:50:36 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,10 @@ void MyConf::manageUploadLocation()
 		stringVect vect = splitString(locationUpload, "\n");
 		loc.specialParseLocation(vect);
 		if (checkIfDirectoryAvailable(loc.getRootDirectory()) == false)
-        	throw std::runtime_error("Upload directory can't be reached");
+		{
+			std::string	msgErr = "The directory " + loc.getRootDirectory() + " need to be created and reachable";
+        	throw std::runtime_error(msgErr.c_str());
+		}
 		_location.push_back(loc);
 	}
 	else

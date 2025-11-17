@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 11:36:34 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 13:00:04 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,7 @@ void	Response::generateStringSingleResponse(std::string const &  body)
 	_header.clear();
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = _type;
-	if (_statusCode == 200 || _statusCode == 201 || _statusCode == 204)
+	if (checkStatusCodeConnectivity(_statusCode) == true)
 		_header["Connection"] = "keep-alive";
 	else
 		_header["Connection"] = "close";
@@ -218,7 +218,7 @@ void Response::generateRegStandardResponse()
 	_header.clear();
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = _type;
-	if (_statusCode == 200 || _statusCode == 201 || _statusCode == 204)
+	if (checkStatusCodeConnectivity(_statusCode) == true)
 		_header["Connection"] = "keep-alive";
 	else
 		_header["Connection"] = "close";
@@ -231,7 +231,7 @@ void Response::generateRegChunkedResponse()
 	_header.clear();
 	_header["Content-Length"] = convertIntToString(_contentLength);
 	_header["Content-Type"] = _type;
-	if (_statusCode == 200 || _statusCode == 201 || _statusCode == 204)
+	if (checkStatusCodeConnectivity(_statusCode) == true)
 		_header["Connection"] = "keep-alive";
 	else
 		_header["Connection"] = "close";
@@ -244,7 +244,7 @@ void Response::generateStringChunkedResponse(std::string const & body)
 	_header.clear();
 	_header["Content-Type"] = _type;
 	_header["Content-Length"] = convertIntToString(_originBody.size());
-	if (_statusCode == 200 || _statusCode == 201 || _statusCode == 204)
+	if (checkStatusCodeConnectivity(_statusCode) == true)
 		_header["Connection"] = "keep-alive";
 	else
 		_header["Connection"] = "close";
@@ -321,8 +321,11 @@ void Response::generateSingleResponse(int const &statusCode)
 	setStatusLine();
 	_header.clear();
 	_body.clear();
-	_header["Connection"] = "keep-alive";
 	_header["Content-Length"] = "0";
+	if (checkStatusCodeConnectivity(_statusCode) == true)
+		_header["Connection"] = "keep-alive";
+	else
+		_header["Connection"] = "close";
 }
 
 /* [!] : Review unused status code and do update on list too */
@@ -347,7 +350,6 @@ std::string Response::getReasonPhrase(int const &statusCode)
 		case 411: result = "Length Required"; break;
 		case 413: result = "Content Too Large"; break;
 		case 414: result = "URI Too Long"; break;
-		case 415: result = "Unsupported Media Type"; break;
 		case 500: result = "Internal Server Error"; break;
 		case 501: result = "Not Implemented"; break;
 		case 502: result = "Bad Gateway"; break;
@@ -357,4 +359,24 @@ std::string Response::getReasonPhrase(int const &statusCode)
 		default: throw std::runtime_error("Status code not supported"); break;
 	}
 	return result;
+}
+
+/* [!] : Review this depending on used status code */
+bool Response::checkStatusCodeConnectivity(int const &statusCode)
+{
+    switch (statusCode) {
+        case 408:
+        case 413:
+        case 414:
+        case 500:
+        case 501:
+        case 502:
+     	case 503:
+        case 504:
+        case 505:
+            return false;
+            
+        default:
+            return true;
+    }
 }

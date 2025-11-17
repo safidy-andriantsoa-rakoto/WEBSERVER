@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/17 11:36:47 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 12:52:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,6 +327,15 @@ void Client::buildRequestTarget()
 		if ((*itLoc).getCgiActivation() == "OFF")
 			throw ErrorExcept(403, "Cgi extension is OFF");
 		_request.processCgiClass((*itLoc).getCgiExecPath(), (*itLoc).getRootDirectory(), _config.getServPort()[0]);
+	}
+	else
+	{
+		/* [!] : Test this functionnality for non cgi with clean site */
+		if (target.find("?") != std::string::npos)
+		{
+			stringVect vect = splitString(target, "?");
+			_request.setRequestTarget(vect[0]);
+		}
 	}
 }
 

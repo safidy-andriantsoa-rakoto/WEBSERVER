@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:52 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/13 19:34:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 12:57:03 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ class Response
 		void				generateSingleResponse(int const & statusCode);
 
 		static std::string	getReasonPhrase(int const & statusCode);
+		static bool			checkStatusCodeConnectivity(int const & statusCode);
 };
 
 #endif
