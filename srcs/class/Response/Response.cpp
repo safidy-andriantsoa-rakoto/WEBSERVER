@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 08:01:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 11:36:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,10 @@ void	Response::generateStringSingleResponse(std::string const &  body)
 	_header.clear();
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = _type;
-	_header["Connection"] = "keep-alive";
+	if (_statusCode == 200 || _statusCode == 201 || _statusCode == 204)
+		_header["Connection"] = "keep-alive";
+	else
+		_header["Connection"] = "close";
 }
 
 void Response::generateRegStandardResponse()
@@ -215,7 +218,10 @@ void Response::generateRegStandardResponse()
 	_header.clear();
 	_header["Content-Length"] = convertIntToString(_body.size());
 	_header["Content-Type"] = _type;
-	_header["Connection"] = "keep-alive";
+	if (_statusCode == 200 || _statusCode == 201 || _statusCode == 204)
+		_header["Connection"] = "keep-alive";
+	else
+		_header["Connection"] = "close";
 }
 
 void Response::generateRegChunkedResponse()
@@ -225,7 +231,10 @@ void Response::generateRegChunkedResponse()
 	_header.clear();
 	_header["Content-Length"] = convertIntToString(_contentLength);
 	_header["Content-Type"] = _type;
-	_header["Connection"] = "keep-alive";
+	if (_statusCode == 200 || _statusCode == 201 || _statusCode == 204)
+		_header["Connection"] = "keep-alive";
+	else
+		_header["Connection"] = "close";
 }
 
 void Response::generateStringChunkedResponse(std::string const & body)
@@ -233,9 +242,12 @@ void Response::generateStringChunkedResponse(std::string const & body)
 	setStatusLine();
 	_body = body;
 	_header.clear();
-	_header["Connection"] = "keep-alive";
 	_header["Content-Type"] = _type;
 	_header["Content-Length"] = convertIntToString(_originBody.size());
+	if (_statusCode == 200 || _statusCode == 201 || _statusCode == 204)
+		_header["Connection"] = "keep-alive";
+	else
+		_header["Connection"] = "close";
 }
 
 void Response::generateCatchedResponse(AExcept & e, t_errPage & errPage, std::string & filePath, int & fdType)
