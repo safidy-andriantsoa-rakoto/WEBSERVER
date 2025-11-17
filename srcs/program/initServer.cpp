@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 09:29:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/12 19:30:53 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 13:07:47 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	launchEpoll(vectServer & vectServer, EpollCreation &epoll)
 			throw std::runtime_error("Failed to load server");
 		if (!(*it).link_socket_adress())
 		{
-			std::cout << "\033[31mFAILED TO BIND ON IP: ... \033[0m" << std::endl;
+			std::cout << "\033[31mFAILED TO BIND ON ADRESS: " << (*it).getConfig().getServHost() << "\033[0m" << std::endl;
 			std::cout << "\033[32mRedirecting to: default(0.0.0.0)\033[0m" << std::endl;
 			(*it).getConfig().setHostName("0.0.0.0");
 			(*it).configure_sockaddrin(port);
