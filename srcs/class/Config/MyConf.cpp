@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/15 15:31:17 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 08:13:34 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,26 +67,28 @@ void MyConf::checkMandatoryElement(stringVect &vectElt)
 
 void MyConf::manageUploadLocation()
 {
-	vectLocationIt	itFirst;
-	vectLocationIt	itUp;
+	vectLocationIt	itOriginLocation;
+	vectLocationIt	itUpload;
 	std::string		rootUpload;
 
-	itFirst = findClassLocation("/");
-	itUp = findClassLocation("/upload");
-	if (itUp == _location.end())
+	itOriginLocation = findClassLocation("/");
+	itUpload = findClassLocation("/upload");
+	if (itUpload == _location.end())
 	{
 		MyLoc loc;
-		rootUpload = (*itFirst).getRootDirectory() + "/upload";
+		rootUpload = (*itOriginLocation).getRootDirectory() + "/upload";
 		std::string	locationUpload = DEFAULT_UPLOAD_LOCATION;
 		replaceString(locationUpload, rootUpload, "$1");
 		stringVect vect = splitString(locationUpload, "\n");
 		loc.specialParseLocation(vect);
+		if (checkIfDirectoryAvailable(loc.getRootDirectory()) == false)
+        	throw std::runtime_error("Upload directory can't be reached");
 		_location.push_back(loc);
 	}
 	else
 	{
-		rootUpload = (*itUp).getRootDirectory();
-		if (checkIfParentDirectory((*itFirst).getRootDirectory(), rootUpload) == false)
+		rootUpload = (*itUpload).getRootDirectory();
+		if (checkIfParentDirectory((*itOriginLocation).getRootDirectory(), rootUpload) == false)
 			throw std::runtime_error("Root for location /upload need to be directly inside root for location /");
 		if (checkIfDirectoryAvailable(rootUpload) == false)
         	throw std::runtime_error("Upload directory can't be reached");

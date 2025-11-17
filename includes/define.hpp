@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/12 20:20:03 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 08:01:37 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 #define TAIL_LDIR "</ul></div></body></html>"
 
 //Status Code
-#define ALL_STATUS_CODE "200;201;204;301;302;307;308;400;403;404;405;408;411;413;414;415;421;500;501;502;503;504;505"
+#define ALL_STATUS_CODE "200;201;204;301;302;307;308;400;403;404;405;408;411;413;414;415;500;501;502;503;504;505"
 
 #define BACKUP_ERR_PAGE "<!DOCTYPE html><html><head>" \
                         "<meta charset=\"UTF-8\">" \
@@ -48,7 +48,7 @@
 #define DEFAULT_CONFIG "server\n" \
 						"	host localhost\n" \
 						"	port 2003\n" \
-						"	size 100 MB\n" \
+						"	size 250 MB\n" \
 						"	location /\n" \
 						"		root ./site\n" \
 						"		method GET POST DELETE\n" \

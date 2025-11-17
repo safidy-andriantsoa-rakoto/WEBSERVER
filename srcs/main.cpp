@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/15 15:19:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 07:59:59 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ int main(int argc, char **argv)
 		{
 			if (checkFileExtension(argv[1], ".conf") == false)
 				throw std::runtime_error("The configuration file extension must be .conf");
+			if (checkIfFileAvailabe(argv[1], O_RDONLY) == false)
+				throw std::runtime_error("The configuration file is not reachable or is not a file");
 			config = getContentFile(argv[1]);
 		}
 		getAllServerFromConfigFile(allServer, config);
@@ -66,7 +68,7 @@ int main(int argc, char **argv)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << "\033[41mMain Function : " << e.what() << "\033[0m" << std::endl;
+		std::cerr << "\033[41mError : " << e.what() << "\033[0m" << std::endl;
 		std::string error = e.what();
 		handler.cleanFdAndAlloc();
 		if (error == "Execve error")

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/15 15:23:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 08:14:01 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,8 +163,6 @@ bool	checkIfParentDirectory(std::string const & parentPath, std::string const & 
 	int				stat;
 	size_t			pos;
 
-	std::cout << "Parent = " << parentPath << std::endl;
-	std::cout << "Child = " << childPath << std::endl;
 	dir = opendir(parentPath.c_str());
 	if (!dir)
 		return false;
@@ -176,7 +174,6 @@ bool	checkIfParentDirectory(std::string const & parentPath, std::string const & 
 	}
 	else
 		childName = childPath;
-	std::cout << "CHILD NAME = " << childName << std::endl;
 	stat = false;
 	while ((dirent = readdir(dir)))
 	{

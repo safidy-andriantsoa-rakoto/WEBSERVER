@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/13 19:34:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 08:01:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,7 +336,6 @@ std::string Response::getReasonPhrase(int const &statusCode)
 		case 413: result = "Content Too Large"; break;
 		case 414: result = "URI Too Long"; break;
 		case 415: result = "Unsupported Media Type"; break;
-		case 421: result = "Misdirected Request"; break;
 		case 500: result = "Internal Server Error"; break;
 		case 501: result = "Not Implemented"; break;
 		case 502: result = "Bad Gateway"; break;
