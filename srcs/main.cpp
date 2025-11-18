@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:35:15 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 07:59:59 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:08:15 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ int main(int argc, char **argv)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << "\033[41mError : " << e.what() << "\033[0m" << std::endl;
 		std::string error = e.what();
+		std::cerr << "\033[41mError : " << e.what() << "\033[0m" << std::endl;
 		handler.cleanFdAndAlloc();
 		if (error == "Execve error")
 			return 42;

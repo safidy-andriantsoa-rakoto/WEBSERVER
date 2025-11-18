@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:58:31 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 18:02:55 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:53:02 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class MyLoc : public ALocation
 		void	parseAutoIndex(stringVect & vect);
 		void	parseCgiExt(stringVect & vect);
 		void	parseRedirect(stringVect & vect);
+		void	parseIndex(stringVect & vect);
 
 		void 	getElementLocation(const size_t &start, const size_t &end, const stringVect &file);
 

@@ -1,14 +1,4 @@
-/*
 
-Tooplate 2141 Minimal White
-
-https://www.tooplate.com/view/2141-minimal-white
-
-*/
-
-// JavaScript Document
-
-        // Mobile menu toggle
         const menuToggle = document.getElementById('menuToggle');
         const navLinks = document.getElementById('navLinks');
 
@@ -17,7 +7,6 @@ https://www.tooplate.com/view/2141-minimal-white
             navLinks.classList.toggle('active');
         });
 
-        // Close mobile menu when link is clicked
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function() {
                 menuToggle.classList.remove('active');
@@ -25,21 +14,19 @@ https://www.tooplate.com/view/2141-minimal-white
             });
         });
 
-        // Navbar scroll effect and active menu highlighting
+
         const sections = document.querySelectorAll('section');
         const navItems = document.querySelectorAll('.nav-link');
 
         window.addEventListener('scroll', function() {
             const navbar = document.getElementById('navbar');
-            
-            // Navbar style on scroll
+
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
             }
 
-            // Active menu highlighting
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
@@ -57,10 +44,8 @@ https://www.tooplate.com/view/2141-minimal-white
             });
         });
 
-        // Trigger scroll event on load to set initial active state
         window.dispatchEvent(new Event('scroll'));
 
-        // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -74,7 +59,6 @@ https://www.tooplate.com/view/2141-minimal-white
             });
         });
 
-        // Fade in animation on scroll
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -92,7 +76,6 @@ https://www.tooplate.com/view/2141-minimal-white
             observer.observe(el);
         });
 
-        // Form submission (prevent default for demo)
         document.querySelector('form').addEventListener('submit', function(e) {
             e.preventDefault();
             alert('Message sent successfully!');

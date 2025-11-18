@@ -27,6 +27,7 @@
     background: #fff;
     padding: 30px;
     margin: 20px;
+    min-width: 300px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
     border: 1px solid #ddd;

@@ -8,6 +8,7 @@
   <style>
     :root{
       --bg:#f8fafc;
+      --btn_bg:#3b3f45;
       --panel:#ffffff;
       --text:#0f172a;
       --muted:#64748b;
@@ -123,14 +124,31 @@
       }
     }
 
-    .fa-trash {
-      margin-right: 8px;
+    #back{
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      transition: color .2s;
+      background:var(--bg);
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--btn_bg);
     }
+
+    #back:hover{
+      box-shadow: 0 0 8px 2px var(--btn_bg);
+    }
+
   </style>
 </head>
 <body>
   <div class="container">
     <div class="panel">
+      <a href="/" id="back">Home</a>
       <h1>Test DELETE</h1>
       
       <div class="input-group">

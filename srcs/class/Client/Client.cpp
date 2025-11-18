@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/17 12:52:49 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 20:44:09 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,6 +248,7 @@ std::string Client::getRspOriginPath() const{return _response.getOriginPath();}
 void Client::setRspOriginPath(std::string const &path){_response.setOriginPath(path);}
 
 void Client::setRspType(std::string const &filePath){_response.setType(Mime::getFileType(filePath));}
+
 void Client::setRspType(std::string const & type, int){_response.setType(type);}
 
 const char *Client::Deconnect::what() const throw(){return ("disconnected!");}
@@ -274,17 +275,13 @@ void Client::processRequestWithConfig()
 
 void Client::checkContentLength()
 {
-	float		maxSize;
-	float		requestSize;
-	stringMapIt	itFind;
+	float	maxSize;
+	float	requestSize;
 
-	maxSize = 0;
-	requestSize = 0;
 	if (_request.getMethod() != "POST")
 		return ;
-	itFind = _request.getHeader().find("Content-Length");
-	if (itFind == _request.getHeader().end())
-		throw ErrorExcept(411, "Length required");
+	maxSize = 0;
+	requestSize = 0;
 	maxSize = _config.getMaxSize();
 	requestSize = convertStringToFLoat(_request.getHeader()["Content-Length"]);
 	if (requestSize > maxSize)
@@ -295,29 +292,30 @@ void Client::buildRequestTarget()
 {
 	vectLocationIt	itLoc;
 	std::string		target;
-	std::string		originTarget;
 	vectLocation	loc;
 
 	target = _request.getRequestTarget();
-	originTarget = target;
 	std::cout << "\033[96m********TARGET = " << target << "***************\033[0m" << std::endl;
-	if (target == "/")
-	{
-		processLocationOption(_config.getClassLocation()[0], _request);
-		itLoc = _config.findClassLocation("/");
-		target = _config.getClassLocation()[0].getRootDirectory();
-		target += "/index.html";
-	}
+	loc = _config.getClassLocation();
+	itLoc = findLongestMatch(target, loc);
+	processLocationOption(*itLoc, _request);
+	std::cout << "\033[96mLOCATION SELECTED = " << (*itLoc).getName() << " => " << (*itLoc).getRootDirectory() << "\033[0m" << std::endl;
+	if ((*itLoc).getName() != "/")
+		target.replace(target.find((*itLoc).getName(), 0), (*itLoc).getName().size(), (*itLoc).getRootDirectory());
 	else
+		target = (*itLoc).getRootDirectory() + target;
+	if (_request.getMethod() == "GET" && checkIfDirectoryAvailable(target) == true)
 	{
-		loc = _config.getClassLocation();
-		itLoc = findLongestMatch(target, loc);
-		processLocationOption(*itLoc, _request);
-		std::cout << "\033[96mLOCATION SELECTED = " << (*itLoc).getName() << " => " << (*itLoc).getRootDirectory() << "\033[0m" << std::endl;
-		if ((*itLoc).getName() != "/")
-			target.replace(target.find((*itLoc).getName(), 0), (*itLoc).getName().size(), (*itLoc).getRootDirectory());
-		else
-			target = (*itLoc).getRootDirectory() + target;
+		if (_request.getAutoIdx() == true)
+		{
+			DIR *dir;
+			dir = opendir(target.c_str());
+			throw LDirExcept(200, dir, _request.getOriginalRequestTarget(), "Listing directory");
+		}
+		if (target[target.size() - 1] != '/')
+			target += "/";
+		target += _request.getIndex();
+		_request.setOriginalRequestTarget((*itLoc).getName() + (*itLoc).getIndex());
 	}
 	_request.setRequestTarget(target);
 	std::cout << "\033[96mREQUEST TARGET = " << _request.getRequestTarget() << "\033[0m" << std::endl;
@@ -328,14 +326,10 @@ void Client::buildRequestTarget()
 			throw ErrorExcept(403, "Cgi extension is OFF");
 		_request.processCgiClass((*itLoc).getCgiExecPath(), (*itLoc).getRootDirectory(), _config.getServPort()[0]);
 	}
-	else
-	{
-		/* [!] : Test this functionnality for non cgi with clean site */
-		if (target.find("?") != std::string::npos)
-		{
-			stringVect vect = splitString(target, "?");
-			_request.setRequestTarget(vect[0]);
-		}
+	else if (target.find("?") != std::string::npos)
+	{	
+		stringVect vect = splitString(target, "?");
+		_request.setRequestTarget(vect[0]);
 	}
 }
 
@@ -348,6 +342,7 @@ void Client::processLocationOption(MyLoc const & location, Request & request)
 		request.setAutoIdx(true);
 	else
 		request.setAutoIdx(false);
+	request.setIndex(location.getIndex());
 }
 
 void Client::checkMethodInLocation(stringVect & locationMethod, std::string const & method)
@@ -407,23 +402,14 @@ void Client::get_request(uint32_t & opt, int *fd, pid_t & childPid)
 
 void Client::stdGetRequest()
 {
-	std::string	filePath;
-	std::string	fileContent;
-	DIR*		dir;
-
+	int			stat;
+	int			fd;
+	size_t		fileSize;
+	std::string	filePath = _request.getRequestTarget();
+	
 	filePath = _request.getRequestTarget();
-	if (checkIfDirectoryAvailable(filePath) == true)
-	{
-		if (_request.getAutoIdx() == true)
-		{
-			dir = opendir(filePath.c_str());
-			throw LDirExcept(200, dir, _request.getOriginalRequestTarget(), "Listing directory");
-		}
-		filePath += "/index.html";
-	}
-	int 	fd = openRegFile(filePath);
-	size_t	fileSize = getFileSize(filePath);
-	int		stat;
+	fd = openRegFile(filePath);
+	fileSize = getFileSize(filePath);
 	setStatusCodeResponse(200);
 	setRspOriginPath(filePath);
 	setRspType(filePath);
@@ -437,8 +423,8 @@ void Client::stdGetRequest()
 
 void Client::cgiGetRequest(int *fd, pid_t & childPid)
 {
-	int		pipeFd[2];
-	int		stockStdOut;
+	int	pipeFd[2];
+	int	stockStdOut;
 
 	if (pipe(pipeFd) == -1)
 		throw ErrorExcept(500, "Pipe fd error");
@@ -736,7 +722,6 @@ void Client::get_boundary_from_header(stringMap &header)
 			getboundary.erase(0, pos + 9); 
 			this->_boundary_sep = "--" + getboundary;
 		}
-		// std::cout << "		BOUNDARY=" << this->_boundary_sep << std::endl;
 	}
 }
 

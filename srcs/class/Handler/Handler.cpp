@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/13 20:06:30 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:16:40 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ void	Handler::cleanFdAndAlloc()
 				close((*itCgiFd)->getOutputFd());
 			if ((*itCgiFd)->getInputFd() != -1)
 				close((*itCgiFd)->getInputFd());
-			kill((*itCgiFd)->getChildPid(), SIGKILL); /* [!] : SIGKILL or SIGTERM or SIGINT ? */
+			kill((*itCgiFd)->getChildPid(), SIGKILL);
 		}
 	}
 	for (VClientIt itCli = _vectClient.begin(); itCli != _vectClient.end(); itCli++)

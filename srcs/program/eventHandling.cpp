@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 14:34:53 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 20:44:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 09:25:20 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	manageRequestFromClient(VClientIt & it, int & fdCli, EpollCreation & epoll,
 
 	try
 	{
-		(*it).is_client_timeout(); /* [!] : TEST IF THIS CASE IS POSSIBLE*/
+		(*it).is_client_timeout();
 		(*it).receiveClientRequest();
 		client_request = (*it).getClientRequest();
 		if (client_request.size() == 0)

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 20:31:19 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 15:36:32 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Request
 			
 		size_t					_request_length;
 		bool					_autoIdx;
+		std::string				_index;
 			
 		MapSVectStr				_multipart_body;
 		size_t					_content_length;
@@ -54,10 +55,12 @@ class Request
 		std::string				getHttp() const;
 		std::string				getMethod() const;
 		std::string				getRequestTarget() const;
-		std::string				getOriginalRequestTarget() const;
 		std::string				getRequestLine() const;
 		std::string				getBody() const;
 		stringMap				getHeader() const;
+
+		std::string				getOriginalRequestTarget() const;
+		void					setOriginalRequestTarget(std::string const & add);
 
 		void					setPartRequest(std::string const & content);
 		std::string				getPartRequest() const;
@@ -77,6 +80,9 @@ class Request
 
 		bool					getAutoIdx() const;
 		void					setAutoIdx(bool const & autoIdx);
+
+		std::string				getIndex() const;
+		void					setIndex(std::string const & index);
 
 		void					setRequestSize(ssize_t size);
 		ssize_t					getRequestSize();

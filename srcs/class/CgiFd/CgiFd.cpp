@@ -104,14 +104,17 @@ void CgiFd::bufferReadParser()
 	_body.clear();
 	startPos = 0;
 	pos = 0;
+	if (_bufferRead.find(sep) == std::string::npos)
+		throw ErrorExcept(502, "Error on cgi response");
 	while (pos != std::string::npos)
 	{
 		pos = _bufferRead.find(sep, startPos);
 		if (pos == startPos || pos == std::string::npos)
 			break ;
 		line = _bufferRead.substr(startPos, pos - startPos);
-		std::cout << line << std::endl;
 		headerVect = strictSplit(line, ": ");
+		if (headerVect.size() != 2)
+			throw ErrorExcept(502, "Error on cgi response header");
 		addToMapString(_header, headerVect[0], headerVect[1]);
 		startPos = pos + sep.size();
 		headerVect.clear();
@@ -216,7 +219,7 @@ void CgiFd::checkTimeOut()
 
 	if (difftime(currentTime, _startTime) > CGI_MAX_TIME)
 	{
-		kill(_childPid, SIGINT); /* [!] : SIGKILL or SIGTERM or SIGINT ? */
+		kill(_childPid, SIGKILL);
 		_isChildAlive = false;
 		throw ErrorExcept(504, "CGI Took too long");
 	}

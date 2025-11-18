@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/12 21:19:25 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 08:18:28 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ std::string Request::getMethod() const{return _method;}
 std::string Request::getRequestTarget() const{return _requestTarget;}
 
 std::string Request::getOriginalRequestTarget() const{return _originalRequestTarget;}
+
+void Request::setOriginalRequestTarget(std::string const &target){ _originalRequestTarget = target;}
 
 std::string Request::getHttp() const{return _clientHttp;}
 
@@ -101,6 +103,10 @@ bool Request::getAutoIdx() const{return _autoIdx;}
 
 void Request::setAutoIdx(bool const &autoIdx){_autoIdx = autoIdx;}
 
+std::string Request::getIndex() const {return _index;}
+
+void Request::setIndex(std::string const &index){ _index = index;}
+
 void Request::setRequestSize(ssize_t size){this->_request_length = size;}
 
 ssize_t Request::getRequestSize(){return (this->_request_length);}
@@ -134,9 +140,9 @@ void Request::setRequestLine(std::string const & replacement)
 	if (splitted.size() != 3)
 		throw ErrorExcept(400, "Request Line is invalid");
 	if (splitted[0] != "GET" && splitted[0] != "POST" && splitted[0] != "DELETE")
-		throw ErrorExcept(500, "Method not implemented");
+		throw ErrorExcept(501, "Method not implemented");
 	if (splitted[2] != "HTTP/1.1")
-		throw ErrorExcept(505, "This server only support HTTP/1.1\n", "Http version error");
+		throw ErrorExcept(505, "Http version error");
 	_requestLine = replacement;
 	_method = splitted[0];
 	_requestTarget = splitted[1];
@@ -150,10 +156,13 @@ void	Request::addRequestBody(std::string const & requeststring, size_t const & p
 	std::string	content;
 	stringMapIt	it;
 
-	it = _header.find("Content-Length");
-	if (it == _header.end())
-		return ;
-	length = atoi((*it).second.c_str());
+	if (_method != "POST")
+		return;
+	if (_header.find("Content-Type") == _header.end())
+		throw ErrorExcept(400, "Bad request");
+	if (_header.find("Content-Length") == _header.end())
+		throw ErrorExcept(411, "Length required");
+	length = atoi(_header["Content-Length"].c_str());
 	content = requeststring.substr(pos, static_cast<size_t>(length));
 	_body = content;
 	_c_length_received = content.size();
@@ -171,7 +180,6 @@ void	Request::parseRequest()
 	stringVect	headerVect;
 
 	startPos = 0;
-	// std::cout << "REQUEST_STRING--->" << _partRequest << "<----" << std::endl;
 	pos = _partRequest.find(sep, startPos);
 	if (pos == std::string::npos)
 		throw ErrorExcept(400, "No request line found");

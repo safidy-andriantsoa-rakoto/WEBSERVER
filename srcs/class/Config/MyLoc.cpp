@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/10 20:05:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 09:19:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ void MyLoc::checkLocElement(vectData & data)
             throw std::runtime_error("Location's minimal element requirement not respected");
         elt.push_back((*it).key);
     }
+    if (elt.size() == 0 || elt.size() > 5)
+        throw std::runtime_error("Location's number of element is between 1 to 5");
     if ((std::find(elt.begin(), elt.end(), "redirect") != elt.end()) && elt.size() != 1)
         throw std::runtime_error("redirect go alone inside a location bloc");
     if (checkDuplicationStr(elt) == false)
@@ -50,7 +52,6 @@ void MyLoc::parseRoot(stringVect & vect)
         throw std::runtime_error("Root does not end with /");
     if (checkIfDirectoryAvailable(vect[0]) == false)
         throw std::runtime_error("Root is not a directory or can't be reached");
-    /* [?] : Can we allowed .. and . as root? */
     if (vect[0] == ".." || vect[0] == ".")
         throw std::runtime_error("Root [" + vect[0] + "] is not allowed");
     _root = vect;
@@ -106,6 +107,18 @@ void MyLoc::parseRedirect(stringVect & vect)
 			throw std::runtime_error("Invalid status code for redirection");
 	}
     _redirect = vect;
+}
+
+void MyLoc::parseIndex(stringVect &vect)
+{
+    if (vect.size() == 0 || vect.size() > 1)
+        throw std::runtime_error("Index need one element");
+    if (vect[0].find("/") != std::string::npos)
+        throw std::runtime_error("Index should not contain /");
+    if (checkFileExtension(vect[0], ".php") == false && checkFileExtension(vect[0], ".html") == false)
+        throw std::runtime_error("Index need to be an html or php file");
+    _index.clear();
+    _index = vect;
 }
 
 void MyLoc::getElementLocation(const size_t &start, const size_t &end, const stringVect &file)
@@ -220,7 +233,8 @@ void MyLoc::specialParseLocation(stringVect const &file)
 
 void MyLoc::parseLocation(vectData & data)
 {
-    std::string  elt;
+    std::string elt;
+    std::string rootDirectory;
 
     checkLocElement(data);
     for(vectDataIt it = data.begin(); it != data.end(); it++)
@@ -236,6 +250,8 @@ void MyLoc::parseLocation(vectData & data)
             parseRedirect((*it).value);
         else if (elt == "cgi")
             parseCgiExt((*it).value);
+        else if (elt == "index")
+            parseIndex((*it).value);
         else
             throw std::runtime_error(elt + " is not part of the location's elements");
     }

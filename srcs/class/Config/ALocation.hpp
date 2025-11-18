@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:42:08 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 20:32:45 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:40:53 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class ALocation
 		stringVect		_root;
 		stringVect		_method;
 		stringVect		_redirect;
-		stringVect		_index;
+		stringVect	_index;
 		stringVect		_cgiExtension;
 		bool 			_checkStats;
 		size_t 			_endConfig;
@@ -49,7 +49,7 @@ class ALocation
 		std::string		getCgiExecPath() const;
 		stringVect  	getAvailableMethod() const;
 		stringVect  	getRedirect() const;
-		stringVect  	getIndex() const;
+		std::string  	getIndex() const;
 
 		virtual void	parseLocation(vectData & data) = 0;
 

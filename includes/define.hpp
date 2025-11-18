@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 20:40:59 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 08:01:37 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 08:10:45 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,12 @@
 #define	CGI_MAX_TIME CLIENT_MAX_TIME / 2
 #define LIM_PORT 3
 
-/*[?] : What about URI TOO LONG? */
-#define	HEADER_MAX_SIZE 2000
-
 //Listing directory
 #define HEAD_LDIR "<!DOCTYPE html></head><body><h1>LISTING DIRECTORY</h1><div><ul>"
 #define TAIL_LDIR "</ul></div></body></html>"
 
 //Status Code
-#define ALL_STATUS_CODE "200;201;204;301;302;307;308;400;403;404;405;408;411;413;414;415;500;501;502;503;504;505"
+#define ALL_STATUS_CODE "200;201;204;301;302;307;308;400;403;404;405;408;411;413;500;501;502;504;505"
 
 #define BACKUP_ERR_PAGE "<!DOCTYPE html><html><head>" \
                         "<meta charset=\"UTF-8\">" \

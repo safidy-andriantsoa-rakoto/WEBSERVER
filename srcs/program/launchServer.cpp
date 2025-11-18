@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   launchServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 07:56:47 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/12 21:53:29 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:14:43 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void    launchServer(Handler & handler)
 
 	initServer(handler.getVectServer());
 	launchEpoll(handler.getVectServer(), epoll);
-	while (SIGINT != sign.getSigNum())
+	while (sign.getSigNum() != SIGINT)
 	{
 		nb_event = epoll.epoll_wait_event();
 		// handler.displayHandlerStat(); /* [TEST ONLY] */
@@ -105,4 +105,5 @@ void    launchServer(Handler & handler)
 				throw std::runtime_error("Program break launched");
 		}
 	}
+	std::cout << "\033[43mSIGINT received, shutting down server...\033[0m" << std::endl;
 }

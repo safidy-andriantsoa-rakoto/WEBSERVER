@@ -173,6 +173,20 @@
             font-size: 0.9rem;
         }
         
+        #back {
+            color: white;
+            text-decoration: none;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+
+        }
+
         @media (max-width: 768px) {
             .content {
                 flex-direction: column;
@@ -187,6 +201,7 @@
 <body>
     <div class="container">
         <header>
+            <a href="/" id="back" >Home</a>
             <h1>Test Méthodes GET et POST</h1>
             <p class="subtitle">Comparaison des méthodes HTTP GET et POST en PHP</p>
         </header>
@@ -336,9 +351,6 @@
                 </div>
                 <div class="info-item">
                     <strong>URL complète:</strong> <?php echo $_SERVER['REQUEST_URI']; ?>
-                </div>
-                <div class="info-item">
-                    <strong>Adresse IP:</strong> <?php echo $_SERVER['REMOTE_ADDR']; ?>
                 </div>
                 
                 <h3 style="margin-top: 20px;">Test Mixte GET/POST</h3>

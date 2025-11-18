@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 09:54:02 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/07 20:45:39 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 13:24:00 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ std::string Mime::getFileType(std::string const &file)
     else if (it != _mime.end())
     	type = it->second;
     else
-        throw ErrorExcept(404, "Error on extension");
+        type = "application/octet-stream";
     return type;
 }
 

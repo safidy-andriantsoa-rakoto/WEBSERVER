@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:11:46 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 08:14:01 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 15:42:49 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,17 +99,17 @@ int	openRegFile(std::string const & filePath)
     if (stat(filePath.c_str(), &st) == -1)
     {
         if (errno == ENOENT || errno == EACCES) 
-            throw ErrorExcept(404, "Access denied or file doesn't exist");
-		throw ErrorExcept(500, "Internal server error");
+            throw ErrorExcept(404, filePath + ": Access denied or file doesn't exist");
+		throw ErrorExcept(500, filePath + ": Internal server error");
     }
     if (S_ISREG(st.st_mode) == false) 
-        throw ErrorExcept(403, "Access denied or file doesn't exist");
+        throw ErrorExcept(403, filePath + ": Access denied or file doesn't exist");
     fd = open(filePath.c_str(), O_RDONLY);
     if (fd == -1)
     {
         if (errno == EPERM || errno == EACCES) 
-            throw ErrorExcept(403, "Access denied or file doesn't exist");
-		throw ErrorExcept(500, "Internal server error");
+            throw ErrorExcept(403, filePath + ": Access denied or file doesn't exist");
+		throw ErrorExcept(500, filePath + ": Internal server error");
     }
     return fd;
 }

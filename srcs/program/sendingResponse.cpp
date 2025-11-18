@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 13:04:52 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 14:14:56 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 		(*it).setResponseStat(OP_ONGOING);
 	if ((*it).getResponseStat() == OP_ONCE || (*it).getResponseStat() == OP_CLOSE)
 	{
-		/* [!] : Need to test this functionnality 408*/
 		if (Response::checkStatusCodeConnectivity((*it).getStatusCodeResponse()) == false)
 			throw std::runtime_error("Close the client");
 		(*it).getObjRequest().set_is_CRLF_header(false);

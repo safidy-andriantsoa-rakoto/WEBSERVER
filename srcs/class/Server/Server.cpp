@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:55 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/12 19:31:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 09:36:50 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,7 @@ int Server::resolve_host(std::string const &host, int const &port)
 	int stat = getaddrinfo(host.c_str(), port_str.c_str(), &_addrinfo, &_resp);
 	if (stat != 0)
 	{
-		/* [?] : fprintf? Safidy */
-		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(errno));
+		std::cerr << "getaddrinfo: " << gai_strerror(errno) << " or Invalid HostName." << std::endl;
 		return (0);
 	}
 	if (_resp && _resp->ai_family == AF_INET)

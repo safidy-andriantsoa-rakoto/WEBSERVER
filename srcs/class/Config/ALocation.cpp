@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:57:54 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/07 08:14:12 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/17 15:05:44 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@ ALocation::ALocation()
 {
 	_autoindex.push_back("OFF");
 	_cgiExtension.push_back("OFF");
+	_index.push_back("index.html");
 }
 
 ALocation::ALocation(std::string const &locationName) : _name(locationName)
 {
 	_autoindex.push_back("OFF");
 	_cgiExtension.push_back("OFF");
+	_index.push_back("index.html");
 }
 
 ALocation::ALocation(ALocation const &other) :
@@ -77,9 +79,9 @@ stringVect ALocation::getRedirect() const
 	return _redirect;
 }
 
-stringVect ALocation::getIndex() const
+std::string ALocation::getIndex() const
 {
-	return _index;
+	return _index[0];
 }
 
 std::string ALocation::getCgiActivation() const

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   MyConf.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:22 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 12:50:36 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:23:46 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,8 @@ void MyConf::parsePort(stringVect const & vect, intVect & allPort)
 		try
 		{
 			n = convertStringToInt(*it);
+			if (n == 0)
+				throw std::runtime_error("Port can't be 0");
 			allPort.push_back(n);
 			_port.push_back(n);
 		}
@@ -142,7 +144,8 @@ void MyConf::parseErrorPage(stringVect const & vect)
 	{
 		if (vect.size() != 2)
 			throw std::runtime_error("Error_page with option ALL requires only 2 values");
-		listStatusCode = allStatusCode;
+		stringVectIt it = std::find(allStatusCode.begin(), allStatusCode.end(), "400");
+		std::copy(it, allStatusCode.end(), std::back_inserter(listStatusCode));
 		i = 1;
 	}
 	else
@@ -166,7 +169,6 @@ void MyConf::parseErrorPage(stringVect const & vect)
 	_errPage.filePath = vect[i];
 }
 
-/* [?] : Size value per units need to be limited and be > 0? */
 void MyConf::parseSize(stringVect const & vect)
 {
 	float size;

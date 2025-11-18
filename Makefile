@@ -1,5 +1,5 @@
 CC = c++
-FLAG = -Wall -Werror -Wextra -std=c++98 -g
+FLAG = -Wall -Werror -Wextra -std=c++98
 
 INC_DIR = includes/
 INC_FILE = webserv.hpp

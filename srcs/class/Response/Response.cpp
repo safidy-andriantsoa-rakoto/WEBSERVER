@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:41 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 13:00:04 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 08:23:50 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,6 @@ void Response::addStatusCode(std::string & content)
 
 	replace = convertIntToString(_statusCode);
 	replace += " : " + getReasonPhrase(_statusCode);
-	if (_statusCode == 505)
-		replace += "\n" + _body; //NEED TO TEST FOR ERROR 505
 	replaceString(content, replace, "$status");
 }
 
@@ -328,7 +326,6 @@ void Response::generateSingleResponse(int const &statusCode)
 		_header["Connection"] = "close";
 }
 
-/* [!] : Review unused status code and do update on list too */
 std::string Response::getReasonPhrase(int const &statusCode)
 {
 	std::string result;
@@ -349,11 +346,9 @@ std::string Response::getReasonPhrase(int const &statusCode)
 		case 408: result = "Request Timeout"; break;
 		case 411: result = "Length Required"; break;
 		case 413: result = "Content Too Large"; break;
-		case 414: result = "URI Too Long"; break;
 		case 500: result = "Internal Server Error"; break;
 		case 501: result = "Not Implemented"; break;
 		case 502: result = "Bad Gateway"; break;
-		case 503: result = "Service Unavailable"; break;
 		case 504: result = "Gateway Timeout"; break;
 		case 505: result = "HTTP Version Not Supported"; break;
 		default: throw std::runtime_error("Status code not supported"); break;
@@ -361,21 +356,17 @@ std::string Response::getReasonPhrase(int const &statusCode)
 	return result;
 }
 
-/* [!] : Review this depending on used status code */
 bool Response::checkStatusCodeConnectivity(int const &statusCode)
 {
     switch (statusCode) {
         case 408:
         case 413:
-        case 414:
         case 500:
         case 501:
         case 502:
-     	case 503:
         case 504:
         case 505:
             return false;
-            
         default:
             return true;
     }

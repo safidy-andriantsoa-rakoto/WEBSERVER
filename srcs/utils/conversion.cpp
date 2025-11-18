@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   conversion.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
+/*   By: rsafidy- <rsafidy-@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 08:02:39 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/06 14:14:44 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 13:34:27 by rsafidy-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,13 @@ float	convertToBytes(stringVect const & vect)
 		throw std::runtime_error("Value is not valid");
 	unit = vect[1];
 	exp = 0;
-	if (unit == "KB")
-		exp = 3;
-	else if (unit == "MB")
+	if (unit == "MB")
 		exp = 6;
 	else if (unit == "GB")
 		exp = 9;
-	else if (unit != "B")
+	else
 		throw std::runtime_error("Conversion failed");
 	value *= std::pow(10, exp);
+	value += 0.1;
 	return (value);
 }
