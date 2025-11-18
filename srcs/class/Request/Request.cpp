@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:34:36 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/18 08:18:28 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 17:53:33 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	Request::addRequestBody(std::string const & requeststring, size_t const & p
 		throw ErrorExcept(400, "Bad request");
 	if (_header.find("Content-Length") == _header.end())
 		throw ErrorExcept(411, "Length required");
-	length = atoi(_header["Content-Length"].c_str());
+	length = convertStringToInt(_header["Content-Length"]); /* [!] : OVAINA */
 	content = requeststring.substr(pos, static_cast<size_t>(length));
 	_body = content;
 	_c_length_received = content.size();

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 09:59:34 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/18 09:19:50 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 17:53:41 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,7 @@ void MyLoc::getElementLocation(const size_t &start, const size_t &end, const str
                     _redirect.push_back(word);
                     if (_redirect[0] == "301" || _redirect[0] == "302" || _redirect[0] == "307" || _redirect[0] == "308")
                     {
-                        _redirection.error = atoi(_redirect[0].c_str());
+                        _redirection.error = convertStringToInt(_redirect[0]); /* [!] : OVAINA */
                         try
                         {
                             _redirection.filePath = _redirect.at(1);
