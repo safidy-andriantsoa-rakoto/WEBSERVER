@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 08:13:07 by barandri          #+#    #+#             */
-/*   Updated: 2025/11/17 14:14:56 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 21:13:16 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	sendingResponseToClient(VClientIt & it, int & fdCli, EpollCreation & epoll)
 			throw std::runtime_error("Close the client");
 		(*it).getObjRequest().set_is_CRLF_header(false);
 		(*it).clearPtrCgiFd();
-		epoll.epoll_update_event(fdCli, EPOLLIN | EPOLLET);
+		epoll.epoll_update_event(fdCli, EPOLLIN); /* [!] ESORINA EPOLLET */
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: barandri <barandri@student.42antananarivo. +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 08:50:00 by rsafidy-          #+#    #+#             */
-/*   Updated: 2025/11/17 20:44:09 by barandri         ###   ########.fr       */
+/*   Updated: 2025/11/18 21:13:31 by barandri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -580,7 +580,7 @@ void Client::processRequest(std::string const & clientRequest, uint32_t & opt, i
 		_request.setPartRequest(clientRequest);
 		if (_request.getPartRequest().find(CRLF_SEP) == std::string::npos)
 		{
-			opt = EPOLLIN | EPOLLET;
+			opt = EPOLLIN; /* [!] ESORINA EPOLLET */
 			return;
 		}
 		_request.parseRequest();
